@@ -3,13 +3,28 @@ module.exports = {
   env: { browser: true, es2020: true },
   extends: [
     "eslint:recommended",
+    "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:react-hooks/recommended",
-    "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "prettier",
   ],
-  ignorePatterns: ["dist", ".eslintrc.cjs", "webpack.config.js"],
+  ignorePatterns: [
+    "dist",
+    ".eslintrc.cjs",
+    "webpack.config.js",
+    "jest.config.cjs",
+    "jestSetup.js",
+  ],
+  overrides: [
+    {
+      files: ["tests/**/*"],
+      plugins: ["jest"],
+      env: {
+        "jest/globals": true,
+      },
+    },
+  ],
   parser: "@typescript-eslint/parser",
   plugins: ["prettier", "react"],
   parserOptions: {
@@ -17,5 +32,9 @@ module.exports = {
     sourceType: "module",
     project: ["./tsconfig.json"],
     tsconfigRootDir: __dirname,
+  },
+  rules: {
+    "react/jsx-uses-vars": "error",
+    "react/jsx-uses-react": "error",
   },
 };
