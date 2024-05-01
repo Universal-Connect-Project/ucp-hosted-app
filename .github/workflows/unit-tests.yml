@@ -1,0 +1,26 @@
+name: Unit/Integration tests
+
+on: pull_request
+
+jobs:
+  run-jest-tests:
+    name: Jest Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout under $GITHUB_WORKSPACE
+        uses: actions/checkout@v4
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          check-latest: true
+
+      - name: Install all dependencies
+        run: |
+          npm ci
+
+      - name: Run Jest Tests
+        run: |
+          npx jest --all --ci
