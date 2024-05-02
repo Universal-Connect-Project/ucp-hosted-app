@@ -3,9 +3,9 @@ module.exports = {
   env: { browser: true, es2020: true },
   extends: [
     "eslint:recommended",
+    "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:react-hooks/recommended",
-    "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "prettier",
   ],
@@ -14,6 +14,17 @@ module.exports = {
     ".eslintrc.cjs",
     "webpack.config.js",
     "cypress.config.ts",
+    "jest.config.cjs",
+    "jestSetup.js",
+  ],
+  overrides: [
+    {
+      files: ["tests/**/*"],
+      plugins: ["jest"],
+      env: {
+        "jest/globals": true,
+      },
+    },
   ],
   parser: "@typescript-eslint/parser",
   plugins: ["prettier", "react", "cypress"],
@@ -22,5 +33,9 @@ module.exports = {
     sourceType: "module",
     project: true,
     tsconfigRootDir: __dirname,
+  },
+  rules: {
+    "react/jsx-uses-vars": "error",
+    "react/jsx-uses-react": "error",
   },
 };
