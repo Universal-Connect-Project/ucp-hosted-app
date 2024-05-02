@@ -16,7 +16,6 @@ jobs:
           check-latest: true
       - run: npm ci
 
-      - run: ci
       - name: Cypress run
         uses: cypress-io/github-action@v6
 
