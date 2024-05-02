@@ -9,13 +9,18 @@ module.exports = {
     "plugin:react/jsx-runtime",
     "prettier",
   ],
-  ignorePatterns: ["dist", ".eslintrc.cjs", "webpack.config.js"],
+  ignorePatterns: [
+    "dist",
+    ".eslintrc.cjs",
+    "webpack.config.js",
+    "cypress.config.ts",
+  ],
   parser: "@typescript-eslint/parser",
-  plugins: ["prettier", "react"],
+  plugins: ["prettier", "react", "cypress"],
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
-    project: ["./tsconfig.json"],
+    project: true,
     tsconfigRootDir: __dirname,
   },
 };
