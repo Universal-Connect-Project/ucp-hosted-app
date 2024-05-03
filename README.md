@@ -10,4 +10,4 @@ This repo is a user interface for the Universal Connect Project
 
 ## Architecture decision records
 
-We use [architecture decision records](https://adr.github.io/) to make, document, and enforce our decisions. They live in the [architectureDecisionRecords](https://github.com/Universal-Connect-Project/ucw-app/tree/main/architectureDecisionRecords) folder.
+We use [architecture decision records](https://adr.github.io/) to make, document, and enforce our decisions. They live in the [architectureDecisionRecords](https://github.com/Universal-Connect-Project/ucp-ui/tree/main/architectureDecisionRecords) folder.
