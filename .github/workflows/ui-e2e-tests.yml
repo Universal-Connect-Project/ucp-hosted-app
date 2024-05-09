@@ -1,4 +1,4 @@
-name: E2E Tests
+name: UI E2E Tests
 
 on: pull_request
 
@@ -20,7 +20,8 @@ jobs:
         uses: cypress-io/github-action@v6
 
         with:
-          start: npm run start
+          project: apps/ui
+          start: npm run dev
           wait-on: "http://localhost:8080"
 
       - name: Upload screenshots

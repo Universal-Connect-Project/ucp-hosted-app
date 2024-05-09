@@ -1,12 +1,12 @@
 # Universal Connect Project UI
 
-This repo is a user interface for the Universal Connect Project
+This repo is a monorepo for the Universal Connect Project app
 
 ## Getting Started (in development)
 
 1. clone the repo
 1. Run `npm install`
-1. Run: `npm run start`
+1. Run: `npm run dev`
 
 ## Architecture decision records
 
