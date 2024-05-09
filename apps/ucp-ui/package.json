@@ -14,15 +14,6 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Universal-Connect-Project/ucp-ui.git"
-  },
-  "author": "",
-  "bugs": {
-    "url": "https://github.com/Universal-Connect-Project/ucp-ui/issues"
-  },
-  "homepage": "https://github.com/Universal-Connect-Project/ucp-ui#readme",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

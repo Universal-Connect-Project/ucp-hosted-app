@@ -1,6 +1,15 @@
 {
-  "name": "ucp-app",
+  "name": "ucp-hosted-app",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Universal-Connect-Project/ucp-hosted-app.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/Universal-Connect-Project/ucp-hosted-app/issues"
+  },
+  "homepage": "https://github.com/Universal-Connect-Project/ucp-hosted-app#readme",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
