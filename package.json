@@ -1,5 +1,5 @@
 {
-  "name": "ucp-app",
+  "name": "ucp-hosted-app",
   "private": true,
   "repository": {
     "type": "git",
