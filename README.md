@@ -1,6 +1,6 @@
 # Universal Connect Project UI
 
-This repo is a monorepo for the Universal Connect Project app
+This repo is a monorepo using [turborepo](https://turbo.build/repo) for the Universal Connect Project app
 
 ## Getting Started (in development)
 
