@@ -1,0 +1,9 @@
+{
+  "name": "institution-service",
+  "version": "1.0.0",
+  "description": "Insitution service",
+  "type": "module",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}
