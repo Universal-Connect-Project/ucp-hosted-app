@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "jsx": "react",
     "moduleResolution": "node",
     "outDir": "./dist",
     "strict": true,
