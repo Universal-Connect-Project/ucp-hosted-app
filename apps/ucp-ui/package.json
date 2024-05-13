@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Frontend for the universal connect project",
   "type": "module",
-  "main": "index.js",
   "scripts": {
     "build": "webpack --mode production",
     "cypress:open": "cypress open",
