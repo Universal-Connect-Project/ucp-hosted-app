@@ -1,6 +1,6 @@
 import cors from "cors";
 import * as dotenv from "dotenv";
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import nocache from "nocache";
 import helmet from "helmet";
 import { errorHandler } from "./middleware/error.middleware";
@@ -14,12 +14,14 @@ if (!(process.env.PORT && process.env.CLIENT_ORIGIN_URL)) {
   );
 }
 
+export const SERVICE_NAME = "ucp-authentication-service";
 const PORT = parseInt(process.env.PORT, 10);
 const CLIENT_ORIGIN_URL = process.env.CLIENT_ORIGIN_URL;
 
 const app = express();
 const apiRouter = express.Router();
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set("json spaces", 2);
 
@@ -41,16 +43,10 @@ app.use(
   }),
 );
 
-app.use(
-  (
-    _req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ) => {
-    res.contentType("application/json; charset=utf-8");
-    next();
-  },
-);
+app.use((_req: Request, res: Response, next: NextFunction) => {
+  res.contentType("application/json; charset=utf-8");
+  next();
+});
 app.use(nocache());
 
 app.use(
@@ -67,6 +63,10 @@ app.use("/api", apiRouter);
 app.use(errorHandler);
 app.use(notFoundHandler);
 
+apiRouter.get("/ping", (_req: Request, res: Response) => {
+  res.send("Ping...");
+});
+
 app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
+  console.log(`${SERVICE_NAME} is listening on port ${PORT}`);
 });
