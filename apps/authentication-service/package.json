@@ -5,8 +5,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "npx -y nodemon ./src/index.ts",
-    "dev-ts": "npx -y nodemon -w ./src --ext ts --exec ts-node ./src/index.ts",
-    "dev-tsnode": "npx -y ts-node src/index.ts"
+    "prettier": "prettier . --check"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -22,6 +21,7 @@
     "@types/express": "^4.17.21",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.12.11",
+    "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },

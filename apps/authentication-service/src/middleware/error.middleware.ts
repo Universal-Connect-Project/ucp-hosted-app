@@ -4,7 +4,7 @@ export const errorHandler = (
   _error: any,
   _request: Request,
   response: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
   const status = 500;
   const message = "Internal Server Error";

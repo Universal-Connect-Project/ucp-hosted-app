@@ -10,7 +10,7 @@ dotenv.config();
 
 if (!(process.env.PORT && process.env.CLIENT_ORIGIN_URL)) {
   throw new Error(
-    "Missing required environment variables. Check docs for more info."
+    "Missing required environment variables. Check docs for more info.",
   );
 }
 
@@ -38,13 +38,19 @@ app.use(
     frameguard: {
       action: "deny",
     },
-  })
+  }),
 );
 
-app.use((_req: express.Request, res: express.Response, next: express.NextFunction) => {
-  res.contentType("application/json; charset=utf-8");
-  next();
-});
+app.use(
+  (
+    _req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    res.contentType("application/json; charset=utf-8");
+    next();
+  },
+);
 app.use(nocache());
 
 app.use(
@@ -53,7 +59,7 @@ app.use(
     methods: ["GET"],
     allowedHeaders: ["Authorization", "Content-Type"],
     maxAge: 86400,
-  })
+  }),
 );
 
 app.use("/api", apiRouter);
