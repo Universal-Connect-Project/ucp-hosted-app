@@ -14,3 +14,9 @@ From the root of the monorepo, do the following:
    .env file for this project
 1. Set up your environment variables in the new .env file
 1. Run `npm run dev --workspace apps/authentication-service` to start the server
+
+## Auth0
+
+We are using [Auth0](https://auth0.com/) as our authentication provider.
+
+For more information about Auth0, please see the [Auth0 Docs](https://auth0.com/docs/)
