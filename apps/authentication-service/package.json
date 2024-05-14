@@ -1,6 +1,6 @@
 {
   "name": "ucp-authentication-service",
-  "version": "0.0.1-dev",
+  "version": "0.0.1",
   "description": "UCP Authentication Service",
   "scripts": {
     "build": "tsc",
