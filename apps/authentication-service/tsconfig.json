@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "typeRoots": [
+      "../../node_modules/@types",
+      "../../node_modules/@testing-library"
+    ]
+  },
+  "include": ["src/**/*"]
+}
