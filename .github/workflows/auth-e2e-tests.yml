@@ -3,8 +3,14 @@ name: Auth Service E2E Tests
 on: pull_request
 
 jobs:
+  setup-env:
+    name: 'Load ENV Vars'
+    uses: ./.github/workflows/setup-env.yml
+    secrets: inherit
+
   e2e-tests:
     runs-on: ubuntu-latest
+    needs: [setup-env]
 
     steps:
       - name: Checkout
@@ -16,13 +22,22 @@ jobs:
           check-latest: true
       - run: npm ci
 
+      - name: 'Create env file'
+        run: |
+          ENV_FILE_PATH=./apps/authentication-service/.env
+          touch ${ENV_FILE_PATH}
+          
+          # Vars
+          echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
+          cat ${ENV_FILE_PATH}
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
 
         with:
           project: apps/authentication-service
           start: npm run dev
-          wait-on: "http://localhost:8080"
+          wait-on: "http://localhost:8081"
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v3
