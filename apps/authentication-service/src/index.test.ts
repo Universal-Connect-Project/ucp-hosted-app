@@ -11,7 +11,7 @@ describe("Express test", () => {
     const req: Request = {} as Request;
     const next: jest.Mock = jest.fn();
 
-    notFoundHandler(req, res, next);
+    notFoundHandler(req as any, res as any, next);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: "Not Found" });
@@ -25,7 +25,7 @@ describe("Express test", () => {
     const req: Request = {} as Request;
     const next = jest.fn();
 
-    errorHandler(new Error("Test Error"), req, res, next);
+    errorHandler(new Error("Test Error"), req as any, res as any, next);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: "Internal Server Error" });
