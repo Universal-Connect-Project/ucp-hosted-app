@@ -37,7 +37,7 @@ jobs:
 
         with:
           project: apps/authentication-service
-          start: npm run dev
+          start: npm run dev --workspace apps/authentication-service
           wait-on: "http://localhost:8089"
 
       - name: Upload screenshots
