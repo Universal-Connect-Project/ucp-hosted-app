@@ -1,0 +1,32 @@
+name: Auth Service E2E Tests
+
+on: pull_request
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          check-latest: true
+      - run: npm ci
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+
+        with:
+          project: apps/authentication-service
+          start: npm run dev
+          wait-on: "http://localhost:8080"
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: apps/authentication-service/cypress/screenshots
