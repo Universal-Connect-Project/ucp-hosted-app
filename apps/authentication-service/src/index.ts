@@ -53,7 +53,11 @@ app.use(
 app.use("/api", apiRouter);
 
 apiRouter.get("/ping", (_req: Request, res: Response) => {
-  res.send("Ping...");
+  res.send(
+    JSON.stringify({
+      message: "pong",
+    }),
+  );
 });
 
 app.use(errorHandler);

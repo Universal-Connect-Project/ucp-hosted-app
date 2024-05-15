@@ -5,7 +5,7 @@ import {
 } from "express-oauth2-jwt-bearer";
 
 export const errorHandler = (
-  error: any,
+  error: Error,
   _request: Request,
   response: Response,
   _next: NextFunction,
