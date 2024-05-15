@@ -6,12 +6,6 @@ import helmet from "helmet";
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/not-found.middleware";
 
-if (!(envs.PORT && envs.CLIENT_ORIGIN_URL)) {
-  throw new Error(
-    "Missing required environment variables. Check docs for more info.",
-  );
-}
-
 export const SERVICE_NAME = "ucp-authentication-service";
 const PORT = parseInt(envs.PORT, 10);
 const CLIENT_ORIGIN_URL = envs.CLIENT_ORIGIN_URL;
