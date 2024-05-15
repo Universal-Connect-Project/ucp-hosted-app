@@ -29,6 +29,7 @@ jobs:
           
           # Vars
           echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
+          echo PORT="8089" >> ${ENV_FILE_PATH}
           cat ${ENV_FILE_PATH}
 
       - name: Cypress run
@@ -37,10 +38,10 @@ jobs:
         with:
           project: apps/authentication-service
           start: npm run dev
-          wait-on: "http://localhost:8081"
+          wait-on: "http://localhost:8089"
 
       - name: Upload screenshots
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots
