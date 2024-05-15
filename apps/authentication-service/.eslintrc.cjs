@@ -7,7 +7,6 @@ module.exports = {
     "prettier",
   ],
   ignorePatterns: [
-    "dist",
     ".eslintrc.cjs",
     "cypress.config.ts",
     "jest.config.cjs",
