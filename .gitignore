@@ -27,3 +27,6 @@ dist-ssr
 
 .env
 .turbo
+
+cypress/screenshots/
+cypress/videos/

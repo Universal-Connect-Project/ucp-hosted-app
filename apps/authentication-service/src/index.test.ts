@@ -1,8 +1,33 @@
+import { errorHandler } from "./middleware/error.middleware";
+import { notFoundHandler } from "./middleware/not-found.middleware";
+
 describe("Express test", () => {
   it("tests notFoundHandler", () => {
-    expect(true).toBe(true);
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const req: Request = {} as Request;
+    const next: jest.Mock = jest.fn();
+
+    notFoundHandler(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: "Not Found" });
   });
-  // it("tests errorHandler", () => {
-  //   expect(true).toBe(true);
-  // });
+  it("tests errorHandler", () => {
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const req: Request = {} as Request;
+    const next = jest.fn();
+
+    errorHandler(new Error("Test Error"), req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Internal Server Error" });
+  });
 });

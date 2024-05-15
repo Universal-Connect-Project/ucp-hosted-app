@@ -1,1 +1,5 @@
-require("@testing-library/jest-dom/jest-globals");
+const { server } = require("./src/test/testServer");
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
