@@ -38,7 +38,7 @@ jobs:
           CYPRESS_PORT: ${{ vars.PORT }}
         with:
           project: apps/authentication-service
-          start: npm run dev --workspace apps/authentication-service
+          start: npm run dev
           wait-on: "http://localhost:8089"
 
       - name: Upload screenshots
