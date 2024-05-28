@@ -8,6 +8,7 @@ export const errorHandler = (
   error: Error,
   _request: Request,
   response: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction,
 ) => {
   let message: string = "Internal Server Error";

@@ -29,9 +29,4 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname,
   },
-  rules: {
-    "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unsafe-argument": "off",
-  },
 };
