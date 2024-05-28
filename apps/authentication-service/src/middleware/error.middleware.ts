@@ -1,13 +1,30 @@
 import { Request, Response, NextFunction } from "express";
+import {
+  InvalidTokenError,
+  UnauthorizedError,
+} from "express-oauth2-jwt-bearer";
 
 export const errorHandler = (
-  _error: any,
+  error: Error,
   _request: Request,
   response: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction,
 ) => {
-  const status = 500;
-  const message = "Internal Server Error";
+  let message: string = "Internal Server Error";
 
+  if (error instanceof InvalidTokenError) {
+    message = "Invalid Token";
+    response.status(error.status).json({ message });
+    return;
+  }
+
+  if (error instanceof UnauthorizedError) {
+    message = "Requires Authentication";
+    response.status(error.status).json({ message });
+    return;
+  }
+
+  const status: number = 500;
   response.status(status).json({ message });
 };

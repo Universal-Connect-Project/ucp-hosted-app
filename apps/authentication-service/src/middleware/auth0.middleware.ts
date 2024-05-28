@@ -1,10 +1,8 @@
-import * as dotenv from "dotenv";
+import envs from "./../config";
 import { auth } from "express-oauth2-jwt-bearer";
 
-dotenv.config();
-
 export const validateAccessToken = auth({
-  audience: process.env.AUTH0_AUDIENCE,
-  issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
+  audience: envs.AUTH0_AUDIENCE,
+  issuerBaseURL: `https://${envs.AUTH0_DOMAIN}`,
   tokenSigningAlg: "RS256",
 });
