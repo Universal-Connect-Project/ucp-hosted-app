@@ -20,7 +20,7 @@ export const errorHandler = (
   }
 
   if (error instanceof UnauthorizedError) {
-    message = "Requires authentication";
+    message = "Requires Authentication";
     response.status(error.status).json({ message });
     return;
   }
