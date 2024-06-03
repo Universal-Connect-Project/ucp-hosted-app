@@ -1,5 +1,5 @@
 import { Application } from "express";
-import apiRoutes from "./api";
+import apiRoutes from "./auth0.route";
 
 export function initRoutes(app: Application): void {
   apiRoutes(app);

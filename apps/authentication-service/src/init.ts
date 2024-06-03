@@ -2,7 +2,7 @@ import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import nocache from "nocache";
-import initRoutes from "./routes";
+import initRoutes from "./routes/v1";
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/not-found.middleware";
 import envs from "./config";
@@ -52,7 +52,9 @@ export function initExpress(app: Application): void {
     }),
   );
 
+  // Routes
   initRoutes(app);
+
   // Keep this at the bottom
   initErrorHandling(app);
 }
