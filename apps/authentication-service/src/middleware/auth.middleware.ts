@@ -1,4 +1,4 @@
-import envs from "./../config";
+import envs from "@/config";
 import { auth } from "express-oauth2-jwt-bearer";
 
 export const validateAccessToken = auth({

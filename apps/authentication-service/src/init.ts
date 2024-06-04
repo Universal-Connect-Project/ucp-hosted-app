@@ -2,12 +2,13 @@ import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import nocache from "nocache";
-import initRoutes from "./routes/v1";
+import initRoutes from "@/routes";
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/not-found.middleware";
-import envs from "./config";
 
-const CLIENT_ORIGIN_URL = envs.CLIENT_ORIGIN_URL;
+// import envs from "./config";
+
+// const CLIENT_ORIGIN_URL = envs.CLIENT_ORIGIN_URL;
 
 function initErrorHandling(app: Application): void {
   app.use(errorHandler);
@@ -44,12 +45,18 @@ export function initExpress(app: Application): void {
   app.use(nocache());
 
   app.use(
-    cors({
-      origin: CLIENT_ORIGIN_URL,
-      methods: ["GET"],
-      allowedHeaders: ["Authorization", "Content-Type"],
-      maxAge: 86400,
-    }),
+    cors(), // <-- for testing...tighten it up when we're ready for deployment
+    // cors({
+    //   origin: CLIENT_ORIGIN_URL,
+    //   methods: ["GET", "POST"],
+    //
+    //   allowedHeaders: [
+    //     "Access-Control-Allow-Origin",
+    //     "Authorization",
+    //     "Content-Type",
+    //   ],
+    //   maxAge: 86400,
+    // }),
   );
 
   // Routes

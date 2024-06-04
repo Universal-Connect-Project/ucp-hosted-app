@@ -1,12 +1,11 @@
-import express, { Application, Request, Response } from "express";
-import { validateAccessToken } from "@/middleware/auth0.middleware";
+// import config from "@/config";
+import { validateAccessToken } from "@/middleware/auth.middleware";
+import { Request, Response, Router } from "express";
 
-const apiRouter = express.Router();
+function authV1Routes(router: Router): void {
+  // const baseAuth0Url = `https://${config.AUTH0_DOMAIN}`;
 
-function apiRoutes(app: Application): void {
-  app.use("/api", apiRouter);
-
-  apiRouter.get("/ping", (_req: Request, res: Response) => {
+  router.get("/ping", (_req: Request, res: Response) => {
     res.send(
       JSON.stringify({
         message: "pong",
@@ -14,7 +13,15 @@ function apiRoutes(app: Application): void {
     );
   });
 
-  apiRouter.post(
+  router.get("/post-login", (_req: Request, res: Response) => {
+    res.send(
+      JSON.stringify({
+        message: "post-login",
+      }),
+    );
+  });
+
+  router.post(
     "/createClient",
     validateAccessToken,
     (req: Request, res: Response) => {
@@ -29,7 +36,8 @@ function apiRoutes(app: Application): void {
       );
     },
   );
-  apiRouter.post(
+
+  router.post(
     "/getClient",
     validateAccessToken,
     (req: Request, res: Response) => {
@@ -46,4 +54,4 @@ function apiRoutes(app: Application): void {
   );
 }
 
-export default apiRoutes;
+export default authV1Routes;

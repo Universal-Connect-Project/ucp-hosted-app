@@ -1,8 +1,8 @@
 import { Application } from "express";
-import apiRoutes from "./auth0.route";
+import authRoutes from "@/routes/auth";
 
 export function initRoutes(app: Application): void {
-  apiRoutes(app);
+  authRoutes(app);
 }
 
 export default initRoutes;
