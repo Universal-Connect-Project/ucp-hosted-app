@@ -42,7 +42,6 @@ const Auth0Service: Singleton<AuthService> = (function () {
 
     const getAccessToken = async (): Promise<string> => {
       if (!token) {
-        //
         await fetchServiceToken();
       }
 

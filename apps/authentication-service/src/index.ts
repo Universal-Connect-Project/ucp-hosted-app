@@ -12,6 +12,7 @@ initExpress(app);
 
 app.listen(PORT, () => {
   const auth0Service = Auth0Service.getInstance();
-  void auth0Service.getAccessToken();
-  console.log(`${SERVICE_NAME} is listening on port ${PORT}`);
+  void auth0Service.getAccessToken().then(() => {
+    console.log(`${SERVICE_NAME} is listening on port ${PORT}`);
+  });
 });
