@@ -7,4 +7,4 @@ export function initRoutes(app: Application): void {
   clientsRoutes(app);
 }
 
-export default initRoutes;
+export default { initRoutes };

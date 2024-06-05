@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "UCP Authentication Service",
   "scripts": {
-    "build": "tsc",
     "dev": "npx -y nodemon -r tsconfig-paths/register ./src/index.ts",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
@@ -25,8 +24,7 @@
     "express-oauth2-jwt-bearer": "^1.6.0",
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
-    "nocache": "^4.0.0",
-    "node-fetch": "^3.3.2"
+    "nocache": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

@@ -1,9 +1,5 @@
 import { Client } from "auth0";
-
-type Credentials = {
-  id: string;
-  secret: string;
-};
+import { Credentials } from "@/resources/clients/client-model";
 
 const createClient = (): Client => {
   return {} as Client;

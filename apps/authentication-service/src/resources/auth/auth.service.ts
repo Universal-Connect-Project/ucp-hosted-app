@@ -1,6 +1,5 @@
 import envs from "@/config";
 import { TokenResponse } from "auth0";
-import fetch, { Response } from "node-fetch";
 
 type AuthService = {
   fetchServiceToken: () => Promise<void>;
@@ -16,7 +15,6 @@ const Auth0Service: Singleton<AuthService> = (function () {
   let instance: AuthService;
 
   function createInstance(): AuthService {
-    // TODO: Set token from Auth0 Management API
     const domain: string = envs.AUTH0_DOMAIN;
     const audience: string = envs.AUTH0_AUDIENCE;
     const clientId: string = envs.AUTH0_CLIENT_ID;
@@ -44,6 +42,7 @@ const Auth0Service: Singleton<AuthService> = (function () {
 
     const getAccessToken = async (): Promise<string> => {
       if (!token) {
+        //
         await fetchServiceToken();
       }
 
