@@ -14,7 +14,7 @@ export const errorHandler = (
   let message: string = "Internal Server Error";
 
   if (error instanceof InvalidTokenError) {
-    message = "Invalid Token";
+    message = "Invalid ClientModel";
     response.status(error.status).json({ message });
     return;
   }

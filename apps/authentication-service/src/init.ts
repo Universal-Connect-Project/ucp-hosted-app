@@ -2,7 +2,7 @@ import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import nocache from "nocache";
-import initRoutes from "@/routes";
+import initRoutes from "@/resources";
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/not-found.middleware";
 

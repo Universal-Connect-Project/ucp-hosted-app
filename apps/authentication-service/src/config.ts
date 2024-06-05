@@ -14,7 +14,10 @@ if (
     envs?.PORT &&
     envs?.CLIENT_ORIGIN_URL &&
     envs?.AUTH0_AUDIENCE &&
-    envs?.AUTH0_DOMAIN
+    envs?.AUTH0_DOMAIN &&
+    envs?.AUTH0_MGMNT_API_URL &&
+    envs?.AUTH0_CLIENT_ID &&
+    envs?.AUTH0_CLIENT_SECRET
   )
 ) {
   throw new Error(
@@ -27,4 +30,7 @@ export default {
   CLIENT_ORIGIN_URL: envs?.CLIENT_ORIGIN_URL,
   AUTH0_AUDIENCE: envs?.AUTH0_AUDIENCE,
   AUTH0_DOMAIN: envs?.AUTH0_DOMAIN,
+  AUTH0_MGMNT_API_URL: envs?.AUTH0_MGMNT_API_URL,
+  AUTH0_CLIENT_ID: envs?.AUTH0_CLIENT_ID,
+  AUTH0_CLIENT_SECRET: envs?.AUTH0_CLIENT_SECRET,
 };

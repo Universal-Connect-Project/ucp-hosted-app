@@ -1,4 +1,4 @@
-import authV1Routes from "@/routes/auth/v1";
+import authV1Routes from "@/resources/auth/auth.v1.routes";
 import express, { Application } from "express";
 
 const authRouterV1 = express.Router();
