@@ -56,7 +56,7 @@ describe("Express test", () => {
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ message: "Invalid ClientModel" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Invalid Token" });
   });
   it("tests errorHandler UnauthorizedError", () => {
     const res = {

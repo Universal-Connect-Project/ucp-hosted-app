@@ -9,6 +9,11 @@ module.exports = {
     "plugin:react/jsx-runtime",
     "prettier",
   ],
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
   ignorePatterns: [
     "dist",
     ".eslintrc.cjs",
