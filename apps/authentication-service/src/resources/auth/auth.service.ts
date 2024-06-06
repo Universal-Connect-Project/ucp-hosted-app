@@ -1,20 +1,13 @@
+import { TokenSet } from "auth0";
+import { decode, JwtPayload } from "jsonwebtoken";
+
 import envs from "@/config";
-import { TokenResponse } from "auth0";
+import { AuthenticationService, Singleton } from "@/resources/auth/auth.model";
 
-type AuthService = {
-  fetchServiceToken: () => Promise<void>;
-  getAccessToken: () => Promise<string>;
-};
+const AuthService: Singleton<AuthenticationService> = (function () {
+  let instance: AuthenticationService;
 
-type Singleton<T> = {
-  getInstance: () => T;
-};
-
-// Singleton UserAuth
-const Auth0Service: Singleton<AuthService> = (function () {
-  let instance: AuthService;
-
-  function createInstance(): AuthService {
+  const createInstance = (): AuthenticationService => {
     const domain: string = envs.AUTH0_DOMAIN;
     const audience: string = envs.AUTH0_AUDIENCE;
     const clientId: string = envs.AUTH0_CLIENT_ID;
@@ -22,7 +15,12 @@ const Auth0Service: Singleton<AuthService> = (function () {
 
     let token: string;
 
-    const fetchServiceToken = async (): Promise<void> => {
+    const isTokenExpired = (token: string): boolean => {
+      const { exp } = decode(token, { json: true }) as JwtPayload;
+      return !exp || Date.now() >= exp * 1000;
+    };
+
+    const fetchAccessToken = async (): Promise<void> => {
       const body = {
         grant_type: "client_credentials",
         client_id: clientId,
@@ -36,35 +34,38 @@ const Auth0Service: Singleton<AuthService> = (function () {
         headers: { "Content-Type": "application/json" },
       });
 
-      const data: TokenResponse = (await response.json()) as TokenResponse;
+      const data: TokenSet = (await response.json()) as TokenSet;
       token = data.access_token;
     };
 
     const getAccessToken = async (): Promise<string> => {
       if (!token) {
-        await fetchServiceToken();
+        await fetchAccessToken();
       }
 
       return token;
     };
 
-    return {
-      fetchServiceToken,
-      getAccessToken,
-    };
-  }
+    void fetchAccessToken();
 
-  function getInstance(): AuthService {
+    return {
+      fetchAccessToken,
+      getAccessToken,
+      isTokenExpired,
+    };
+  };
+
+  const getInstance = (): AuthenticationService => {
     if (!instance) {
       instance = createInstance();
     }
 
     return instance;
-  }
+  };
 
   return {
     getInstance,
   };
 })();
 
-export default Auth0Service;
+export default AuthService;
