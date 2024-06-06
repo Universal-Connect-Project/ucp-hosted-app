@@ -37,9 +37,6 @@ jobs:
 
           cat ${ENV_FILE_PATH}
 
-#      - name: Test Dev Run
-#        run: npm run dev --workspace apps/authentication-service
-
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
