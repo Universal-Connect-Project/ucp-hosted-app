@@ -2,18 +2,31 @@ import { TokenSet } from "auth0";
 import { decode, JwtPayload } from "jsonwebtoken";
 
 import envs from "@/config";
-import { AuthenticationService, Singleton } from "@/resources/auth/auth.model";
+import { AuthService } from "@/resources/auth/auth.model";
+import { Singleton } from "@/shared/models";
 
-const AuthService: Singleton<AuthenticationService> = (function () {
-  let instance: AuthenticationService;
+const Auth: Singleton<AuthService> = (function () {
+  let instance: AuthService;
 
-  const createInstance = (): AuthenticationService => {
+  const createInstance = (): AuthService => {
     const domain: string = envs.AUTH0_DOMAIN;
     const audience: string = envs.AUTH0_AUDIENCE;
     const clientId: string = envs.AUTH0_CLIENT_ID;
     const clientSecret: string = envs.AUTH0_CLIENT_SECRET;
 
     let token: string;
+    // let refreshPromise: Promise<any> | null = null;
+
+    // const refreshToken = () => {
+    //   if (!refreshPromise) {
+    //     // start a refresh request only if one isn't in flight
+    //     refreshPromise = axios(...).then((res) => {
+    //       // ... reset token
+    //       refreshPromise = null;
+    //     });
+    //   }
+    //   return refreshPromise;
+    // };
 
     const isTokenExpired = (token: string): boolean => {
       const { exp } = decode(token, { json: true }) as JwtPayload;
@@ -55,7 +68,7 @@ const AuthService: Singleton<AuthenticationService> = (function () {
     };
   };
 
-  const getInstance = (): AuthenticationService => {
+  const getInstance = (): AuthService => {
     if (!instance) {
       instance = createInstance();
     }
@@ -68,4 +81,4 @@ const AuthService: Singleton<AuthenticationService> = (function () {
   };
 })();
 
-export default AuthService;
+export default Auth;

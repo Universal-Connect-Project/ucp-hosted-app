@@ -1,9 +1,7 @@
-export type AuthenticationService = {
+type AuthService = {
   fetchAccessToken: () => Promise<void>;
   getAccessToken: () => Promise<string>;
   isTokenExpired: (token: string) => boolean;
 };
 
-export type Singleton<T> = {
-  getInstance: () => T;
-};
+export { AuthService };
