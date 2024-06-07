@@ -38,19 +38,19 @@ jobs:
           cat ${ENV_FILE_PATH}
 
       - name: Test dev run
-        run: npm run dev --workspace apps/institution-service
+        run: npm run dev
 
-#      - name: Cypress run
-#        uses: cypress-io/github-action@v6
-#        env:
-#          CYPRESS_PORT: ${{ vars.PORT }}
-#        with:
-#          project: apps/authentication-service
-#          start: npm run dev --workspace apps/authentication-service
-#
-#      - name: Upload screenshots
-#        uses: actions/upload-artifact@v4
-#        if: failure()
-#        with:
-#          name: cypress-screenshots
-#          path: apps/authentication-service/cypress/screenshots
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_PORT: ${{ vars.PORT }}
+        with:
+          project: apps/authentication-service
+          start: npm run dev --workspace apps/authentication-service
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: apps/authentication-service/cypress/screenshots
