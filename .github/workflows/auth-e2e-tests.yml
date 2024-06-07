@@ -38,7 +38,7 @@ jobs:
           cat ${ENV_FILE_PATH}
 
       - name: Test dev run
-        run: npm run dev
+        run: npm run dev --workspace apps/ucp-ui
 
 #      - name: Cypress run
 #        uses: cypress-io/github-action@v6
