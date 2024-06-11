@@ -46,7 +46,7 @@ const AuthService: ISingleton<IAuthService> = (function () {
     };
 
     const getAccessToken = async (): Promise<string> => {
-      if (!token) {
+      if (!token || isTokenExpired(token)) {
         await fetchAccessToken();
       }
 
