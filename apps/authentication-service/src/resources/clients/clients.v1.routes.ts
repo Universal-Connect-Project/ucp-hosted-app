@@ -21,21 +21,17 @@ function clientsV1Routes(router: Router): void {
     },
   );
 
-  router.post(
-    "/getClient",
-    validateAccessToken,
-    (req: Request, res: Response) => {
-      const body = req.body as string;
+  router.post("/client", validateAccessToken, (req: Request, res: Response) => {
+    const body = req.body as string;
 
-      console.log(body);
+    console.log(body);
 
-      res.send(
-        JSON.stringify({
-          message: "pong",
-        }),
-      );
-    },
-  );
+    res.send(
+      JSON.stringify({
+        message: "pong",
+      }),
+    );
+  });
 }
 
 export default clientsV1Routes;

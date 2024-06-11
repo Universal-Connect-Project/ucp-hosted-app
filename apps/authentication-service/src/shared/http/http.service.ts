@@ -1,38 +1,117 @@
 import { ResponseError } from "auth0";
 import fetchIntercept, { FetchInterceptorResponse } from "fetch-intercept";
 
-import { HttpService } from "@/shared/http/https.model";
-import { Singleton } from "@/shared/models";
+import AuthService, { authEndpoint } from "@/resources/auth/auth.service";
+import { IAuthService } from "@/resources/auth/auth.model";
+import {
+  IHttpDataRequest,
+  IHttpRefreshCallback,
+  IHttpRequestOptions,
+  IHttpService,
+} from "@/shared/http/https.model";
+import { ISingleton } from "@/shared/models";
 
-const Http: Singleton<HttpService> = (function () {
-  let instance: HttpService;
+const getRelativeUrl = (url: string): string => {
+  const _url = new URL(url);
 
-  const createInstance = (): HttpService => {
-    // const get = (url: string) => {
-    //   return fetch(url).get(url);
-    // };
+  return url.replace(_url.origin, "");
+};
+
+const HttpService: ISingleton<IHttpService> = (function () {
+  let instance: IHttpService;
+  let Auth: IAuthService;
+
+  let refreshSubscribers: IHttpRefreshCallback[] = [];
+  let dataRequests = {} as IHttpDataRequest;
+
+  const subscribeTokenRefresh = (callback: IHttpRefreshCallback): void => {
+    refreshSubscribers.push(callback);
+  };
+
+  const onRefreshed = () => {
+    refreshSubscribers.map((callback: IHttpRefreshCallback) => callback());
+    refreshSubscribers = [];
+  };
+
+  const removeDataRequestsItem = (requestKey: string) => {
+    const { [requestKey]: _omit, ...remaining } = dataRequests;
+    dataRequests = remaining;
+  };
+
+  const createInstance = (): IHttpService => {
+    let isRefreshing = false;
+    Auth = AuthService.getInstance();
 
     const unregisterInterceptor = fetchIntercept.register({
-      request: (url, config): [url: string, config: RequestInit] => {
+      request: (url, config: Request): IHttpRequestOptions => {
         console.log(`Intercepted request: ${url}`);
-        // Modify the url or config here
+
+        if (config && url.includes(authEndpoint)) {
+          dataRequests = {
+            ...dataRequests,
+            [`${getRelativeUrl(url)}_${config.method || "GET"}`]: config,
+          };
+        }
+
         return [url, config];
       },
 
-      requestError: (error): Promise<never> => {
-        // Called when an error occurred during another 'request' interceptor call
-        return Promise.reject(error);
-      },
+      response: (
+        response: FetchInterceptorResponse,
+      ): FetchInterceptorResponse => {
+        const requestKey: string = `${getRelativeUrl(response.url)}_${response.request.method}`;
 
-      response: (response): FetchInterceptorResponse => {
-        // Modify the response object
+        if (response.status === 401 && response.url.includes(authEndpoint)) {
+          if (!isRefreshing) {
+            isRefreshing = true;
+            Auth.fetchAccessToken()
+              .then(() => {
+                onRefreshed();
+              })
+              .catch(() => {
+                // TODO: Handle logging
+              })
+              .finally(() => {
+                isRefreshing = false;
+              });
+          }
+
+          const retryOrigReq: Promise<FetchInterceptorResponse> =
+            new Promise<FetchInterceptorResponse>((resolve, reject) => {
+              subscribeTokenRefresh(() => {
+                fetch(response.url, {
+                  ...dataRequests[requestKey],
+                })
+                  .then((origReqResponse) => {
+                    resolve({
+                      ...origReqResponse,
+                    } as FetchInterceptorResponse);
+                  })
+                  .catch((err) => {
+                    reject(err);
+                  })
+                  .finally(() => {
+                    removeDataRequestsItem(requestKey);
+                  });
+              });
+            });
+
+          retryOrigReq
+            .then((response: FetchInterceptorResponse) => {
+              return response;
+            })
+            .catch((reason) => {
+              throw new ResponseError(
+                401,
+                reason as string,
+                response.headers,
+                reason as string,
+              );
+            });
+        }
+
+        removeDataRequestsItem(requestKey);
         return response;
-      },
-
-      responseError: (error): Promise<ResponseError> => {
-        // TODO: Handle token expiration
-        // Handle an fetch error
-        return Promise.reject(error);
       },
     });
 
@@ -51,4 +130,4 @@ const Http: Singleton<HttpService> = (function () {
   };
 })();
 
-export default Http;
+export default HttpService;

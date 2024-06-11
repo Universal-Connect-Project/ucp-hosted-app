@@ -1,4 +1,4 @@
-export type Credentials = {
+export type ICredentials = {
   id: string;
   secret: string;
 };

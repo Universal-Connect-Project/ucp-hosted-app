@@ -1,7 +1,7 @@
-type AuthService = {
-  fetchAccessToken: () => Promise<void>;
+type IAuthService = {
+  fetchAccessToken: () => Promise<string>;
   getAccessToken: () => Promise<string>;
   isTokenExpired: (token: string) => boolean;
 };
 
-export { AuthService };
+export { IAuthService };

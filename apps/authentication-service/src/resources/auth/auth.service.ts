@@ -2,38 +2,28 @@ import { TokenSet } from "auth0";
 import { decode, JwtPayload } from "jsonwebtoken";
 
 import envs from "@/config";
-import { AuthService } from "@/resources/auth/auth.model";
-import { Singleton } from "@/shared/models";
+import { IAuthService } from "@/resources/auth/auth.model";
+import { ISingleton } from "@/shared/models";
 
-const Auth: Singleton<AuthService> = (function () {
-  let instance: AuthService;
+const authEndpoint = "oauth/token";
 
-  const createInstance = (): AuthService => {
+const AuthService: ISingleton<IAuthService> = (function () {
+  let instance: IAuthService;
+
+  const createInstance = (): IAuthService => {
     const domain: string = envs.AUTH0_DOMAIN;
     const audience: string = envs.AUTH0_AUDIENCE;
     const clientId: string = envs.AUTH0_CLIENT_ID;
     const clientSecret: string = envs.AUTH0_CLIENT_SECRET;
 
     let token: string;
-    // let refreshPromise: Promise<any> | null = null;
-
-    // const refreshToken = () => {
-    //   if (!refreshPromise) {
-    //     // start a refresh request only if one isn't in flight
-    //     refreshPromise = axios(...).then((res) => {
-    //       // ... reset token
-    //       refreshPromise = null;
-    //     });
-    //   }
-    //   return refreshPromise;
-    // };
 
     const isTokenExpired = (token: string): boolean => {
       const { exp } = decode(token, { json: true }) as JwtPayload;
       return !exp || Date.now() >= exp * 1000;
     };
 
-    const fetchAccessToken = async (): Promise<void> => {
+    const fetchAccessToken = async (): Promise<string> => {
       const body = {
         grant_type: "client_credentials",
         client_id: clientId,
@@ -41,14 +31,18 @@ const Auth: Singleton<AuthService> = (function () {
         audience: audience,
       };
 
-      const response: Response = await fetch(`https://${domain}/oauth/token`, {
-        method: "post",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-      });
+      const response: Response = await fetch(
+        `https://${domain}/${authEndpoint}`,
+        {
+          method: "post",
+          body: JSON.stringify(body),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
 
       const data: TokenSet = (await response.json()) as TokenSet;
       token = data.access_token;
+      return Promise.resolve(token);
     };
 
     const getAccessToken = async (): Promise<string> => {
@@ -68,7 +62,7 @@ const Auth: Singleton<AuthService> = (function () {
     };
   };
 
-  const getInstance = (): AuthService => {
+  const getInstance = (): IAuthService => {
     if (!instance) {
       instance = createInstance();
     }
@@ -81,4 +75,5 @@ const Auth: Singleton<AuthService> = (function () {
   };
 })();
 
-export default Auth;
+export { authEndpoint };
+export default AuthService;
