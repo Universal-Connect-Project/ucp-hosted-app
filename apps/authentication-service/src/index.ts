@@ -3,7 +3,7 @@ import express from "express";
 
 import envs from "./config";
 import { initExpress } from "./init";
-import AuthService from "@/resources/auth/auth.service";
+import AuthService from "@/shared/auth/auth.service";
 import { IHttpService } from "@/shared/http/https.model";
 import HttpService from "@/shared/http/http.service";
 

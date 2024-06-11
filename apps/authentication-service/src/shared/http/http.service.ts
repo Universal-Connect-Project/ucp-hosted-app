@@ -1,8 +1,8 @@
 import { ResponseError } from "auth0";
 import fetchIntercept, { FetchInterceptorResponse } from "fetch-intercept";
 
-import AuthService, { authEndpoint } from "@/resources/auth/auth.service";
-import { IAuthService } from "@/resources/auth/auth.model";
+import AuthService, { authEndpoint } from "@/shared/auth/auth.service";
+import { IAuthService } from "@/shared/auth/auth.model";
 import {
   IHttpDataRequest,
   IHttpRefreshCallback,
