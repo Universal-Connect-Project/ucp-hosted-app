@@ -1,5 +1,8 @@
-import { validateAccessToken } from "@/middleware/auth.middleware";
+import { Client } from "auth0";
 import { Request, Response, Router } from "express";
+
+import { validateAccessToken } from "@/middleware/auth.middleware";
+import { getClient } from "./clients.service";
 
 function clientsRoutesV1(router: Router): void {
   router.get("/ping", (_req: Request, res: Response) => {
@@ -10,19 +13,28 @@ function clientsRoutesV1(router: Router): void {
     );
   });
 
-  router.get("/client", validateAccessToken, (req: Request, res: Response) => {
-    const body = req.body as string;
+  router.get("/:id", validateAccessToken, (req: Request, res: Response) => {
+    const clientId: string = req.params.id;
 
-    console.log(body);
-
-    res.send(
-      JSON.stringify({
-        message: "coming soon...(client get)",
-      }),
-    );
+    void getClient(clientId)
+      .then((client: Client | Error) => {
+        res.send(
+          JSON.stringify({
+            ...client,
+          }),
+        );
+      })
+      .catch((error: Error) => {
+        console.log("Error", error);
+        res.send(
+          JSON.stringify({
+            message: error.message,
+          }),
+        );
+      });
   });
 
-  router.post("/client", validateAccessToken, (req: Request, res: Response) => {
+  router.post("/", validateAccessToken, (req: Request, res: Response) => {
     const body = req.body as string;
 
     console.log(body);

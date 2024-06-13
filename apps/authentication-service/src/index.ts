@@ -19,10 +19,13 @@ app.listen(PORT, () => {
   Http = HttpService.getInstance();
   const Auth = AuthService.getInstance();
 
-  void Auth.getAccessToken()
-    .then(() => {
+  void Auth.init()
+    .then((token: string) => {
+      if (envs.ENV === "dev") {
+        console.log(`\nToken: ${ConsoleColors.FgGray}${token}`);
+      }
       console.log(
-        `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on port ${PORT}`,
+        `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${PORT}; ENV=${envs.ENV}`,
       );
       console.log(
         `${ConsoleColors.FgGreen}Service is initialized and ready to roll${ConsoleColors.Reset}`,

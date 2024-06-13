@@ -17,6 +17,13 @@ const getRelativeUrl = (url: string): string => {
   return url.replace(_url.origin, "");
 };
 
+const handleErrors = async (response: Response) => {
+  if (!response.ok) {
+    throw Error(response.statusText);
+  }
+  return response.json();
+};
+
 const HttpService: ISingleton<IHttpService> = (function () {
   let instance: IHttpService;
   let Auth: IAuthService;
@@ -131,3 +138,4 @@ const HttpService: ISingleton<IHttpService> = (function () {
 })();
 
 export default HttpService;
+export { handleErrors };

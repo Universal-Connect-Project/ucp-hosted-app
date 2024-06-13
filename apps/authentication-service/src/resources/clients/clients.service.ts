@@ -1,44 +1,39 @@
 import { Client } from "auth0";
-import { ICredentials } from "@/resources/clients/client-model";
 import envs from "@/config";
+import { ICredentials } from "@/resources/clients/client-model";
+import AuthService from "@/shared/auth/auth.service";
+import { handleErrors } from "@/shared/http/http.service";
 
 const createClient = (): Client => {
   return {} as Client;
 };
 
-const getClient = async (): Promise<Client> => {
-  const response = await fetch(
-    `https://${envs.AUTH0_DOMAIN}/api/v2/clients/${envs.AUTH0_CLIENT_ID}`,
-    {
-      headers: {
-        Authorization: `Bearer ${envs.AUTH0_CLIENT_SECRET}`,
-      },
-    },
-  );
-  const data: Client = (await response.json()) as Client;
+const Auth = AuthService.getInstance();
 
-  console.log(
-    JSON.stringify(
-      {
-        data,
-      },
-      null,
-      2,
-    ),
-  );
+const getClient = async (id: string): Promise<Client | Error> => {
+  const token = await Auth.getAccessToken();
 
-  return Promise.resolve(data);
+  console.log("token", token);
+  try {
+    const client = (await handleErrors(
+      await fetch(`https://${envs.AUTH0_DOMAIN}/api/v2/clients/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    )) as Promise<Client>;
+
+    return Promise.resolve(client);
+  } catch (error) {
+    return Promise.reject(error);
+  }
 };
 
-const getCredentials = (): ICredentials => {
-  return {
-    id: "",
-    secret: "",
-  } as ICredentials;
+const getCredentials = (): Promise<ICredentials> => {
+  return Promise.resolve({
+    id: "placeholder_id",
+    secret: "placeholder_secret",
+  });
 };
 
-export default {
-  createClient,
-  getClient,
-  getCredentials,
-};
+export { createClient, getClient, getCredentials };
