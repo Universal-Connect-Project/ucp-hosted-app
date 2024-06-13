@@ -32,12 +32,9 @@ const AuthService: ISingleton<IAuthService> = (function () {
     };
 
     const getCachedToken = (): string | undefined => {
-      console.log("getCachedToken::tokenFile", tokenFile);
       if (fs.existsSync(tokenFile)) {
-        console.log("--------> File exists...");
         return fs.readFileSync(tokenFile, "utf8");
       } else {
-        console.log("--------> File does not exist...");
         return undefined;
       }
     };
@@ -47,7 +44,7 @@ const AuthService: ISingleton<IAuthService> = (function () {
       return !exp || Date.now() >= exp * 1000;
     };
 
-    const fetchAccessToken = async (): Promise<string> => {
+    const fetchAccessToken = async (skipCache?: boolean): Promise<string> => {
       const body: ICredentialRequestBody = {
         grant_type: "client_credentials",
         client_id: clientId,
@@ -55,17 +52,13 @@ const AuthService: ISingleton<IAuthService> = (function () {
         audience: audience,
       };
 
-      const _token = getCachedToken();
-
-      console.log("_token:", _token);
+      const _token = skipCache ? undefined : getCachedToken();
 
       if (_token) {
-        console.log("--------> Getting cached token...");
         token = _token;
         return Promise.resolve(token);
       }
 
-      console.log("--------> Fetching token from Auth0 API");
       try {
         const response: Response = await fetch(
           `https://${domain}/${authEndpoint}`,
@@ -78,21 +71,16 @@ const AuthService: ISingleton<IAuthService> = (function () {
 
         token = ((await response.json()) as TokenSet).access_token;
 
-        console.log("--------> Before cacheToken");
         setCachedToken(token);
-        console.log("--------> After cacheToken");
         return Promise.resolve(token);
       } catch (error) {
         return Promise.reject(error);
       }
     };
 
-    const getAccessToken = async (): Promise<string> => {
+    const getAccessToken = async (skipCache?: boolean): Promise<string> => {
       if (!token || isTokenExpired(token)) {
-        console.log('-------->Either "token" is not defined or it is expired.');
-        await fetchAccessToken();
-      } else {
-        console.log("-------->Token is valid, and not expired.");
+        await fetchAccessToken(skipCache);
       }
 
       return Promise.resolve(token);

@@ -5,8 +5,14 @@ describe("Auth test", () => {
     const Auth = AuthService.getInstance();
     expect(Auth).not.toBeNull();
 
-    const token = await Auth.getAccessToken();
+    // API token
+    const token = await Auth.getAccessToken(true);
     expect(token).not.toBeNull();
     expect(Auth.isTokenExpired(token)).toBeTruthy();
+
+    // Cached token
+    const cachedToken = await Auth.getAccessToken();
+    expect(cachedToken).not.toBeNull();
+    expect(Auth.isTokenExpired(cachedToken)).toBeTruthy();
   });
 });
