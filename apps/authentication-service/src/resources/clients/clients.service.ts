@@ -13,10 +13,12 @@ const Auth = AuthService.getInstance();
 const getClient = async (id: string): Promise<Client | Error> => {
   const token = await Auth.getAccessToken();
 
+  const _id = encodeURIComponent(id);
+
   console.log("token", token);
   try {
     const client = (await handleErrors(
-      await fetch(`https://${envs.AUTH0_DOMAIN}/api/v2/clients/${id}`, {
+      await fetch(`https://${envs.AUTH0_DOMAIN}/api/v2/clients/${_id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
