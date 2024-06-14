@@ -5,14 +5,6 @@ import { validateAccessToken } from "@/middleware/auth.middleware";
 import { getClient } from "./clients.service";
 
 function clientsRoutesV1(router: Router): void {
-  router.get("/ping", (_req: Request, res: Response) => {
-    res.send(
-      JSON.stringify({
-        message: "pong",
-      }),
-    );
-  });
-
   router.get("/:id", validateAccessToken, (req: Request, res: Response) => {
     const clientId: string = req.params.id;
 

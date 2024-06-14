@@ -62,6 +62,14 @@ export function initExpress(app: Application): void {
   // Routes
   initRoutes(app);
 
+  app.get("/ping", (_req: Request, res: Response) => {
+    res.send(
+      JSON.stringify({
+        message: "pong",
+      }),
+    );
+  });
+
   // Keep this at the bottom
   initErrorHandling(app);
 }
