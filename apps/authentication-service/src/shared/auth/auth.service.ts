@@ -10,7 +10,7 @@ import { ISingleton } from "@/shared/models";
 
 const authEndpoint = "oauth/token";
 
-const AuthService: ISingleton<IAuthService> = (function () {
+const AuthService: ISingleton<IAuthService> = (() => {
   let instance: IAuthService;
 
   const createInstance = (): IAuthService => {

@@ -4,7 +4,7 @@ import { Request, Response, Router } from "express";
 import { validateAccessToken } from "@/middleware/auth.middleware";
 import { getClient } from "./clients.service";
 
-function clientsRoutesV1(router: Router): void {
+const clientsRoutesV1 = (router: Router): void => {
   router.get("/:id", validateAccessToken, (req: Request, res: Response) => {
     const clientId: string = req.params.id;
 
@@ -37,6 +37,6 @@ function clientsRoutesV1(router: Router): void {
       }),
     );
   });
-}
+};
 
 export default clientsRoutesV1;

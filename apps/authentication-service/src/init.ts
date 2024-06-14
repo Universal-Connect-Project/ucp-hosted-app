@@ -10,12 +10,12 @@ import { notFoundHandler } from "./middleware/not-found.middleware";
 
 // const CLIENT_ORIGIN_URL = envs.CLIENT_ORIGIN_URL;
 
-function initErrorHandling(app: Application): void {
+const initErrorHandling = (app: Application): void => {
   app.use(errorHandler);
   app.use(notFoundHandler);
-}
+};
 
-export function initExpress(app: Application): void {
+const initExpress = (app: Application): void => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.set("json spaces", 2);
@@ -72,4 +72,6 @@ export function initExpress(app: Application): void {
 
   // Keep this at the bottom
   initErrorHandling(app);
-}
+};
+
+export { initExpress };

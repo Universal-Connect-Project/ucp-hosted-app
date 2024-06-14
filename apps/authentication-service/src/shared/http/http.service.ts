@@ -24,7 +24,7 @@ const handleErrors = async (response: Response) => {
   return response.json();
 };
 
-const HttpService: ISingleton<IHttpService> = (function () {
+const HttpService: ISingleton<IHttpService> = (() => {
   let instance: IHttpService;
   let Auth: IAuthService;
 
