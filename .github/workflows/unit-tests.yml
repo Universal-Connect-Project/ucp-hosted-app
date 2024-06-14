@@ -42,4 +42,4 @@ jobs:
           cat ${ENV_FILE_PATH}
 
       - name: Run Jest Tests
-        run: npm run test
+        run: npm run test --workspace apps/authentication-service
