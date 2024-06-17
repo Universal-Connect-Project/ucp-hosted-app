@@ -6,6 +6,8 @@ import { ReqValidate } from "@/middleware/validate.middleware";
 import { validateAccessToken } from "@/middleware/auth.middleware";
 import { getClient, createClient } from "./clients.service";
 
+const apiVersion = "v1";
+
 const clientsRoutesV1 = (router: Router): void => {
   router.get("/:id", [validateAccessToken], (req: Request, res: Response) => {
     const clientId: string = req.params.id;
@@ -31,7 +33,12 @@ const clientsRoutesV1 = (router: Router): void => {
     "/",
     [validateAccessToken, ReqValidate.body(clientCreateSchema)],
     (req: Request<object, object, ClientCreate>, res: Response) => {
-      const body = req.body;
+      const body = {
+        ...req.body,
+        client_metadata: {
+          created_via: `api-${apiVersion}`,
+        },
+      };
 
       void createClient(body)
         .then((client: Client | Error) => {
