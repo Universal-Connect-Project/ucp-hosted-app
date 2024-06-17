@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
+import { JwtPayload } from "jsonwebtoken";
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -36,3 +38,39 @@ import "@testing-library/cypress/add-commands";
 //     }
 //   }
 // }
+Cypress.Commands.add("loginByAuth0Api", () => {
+  const client_id = Cypress.env("AUTH0_CLIENT_ID") as string;
+  const client_secret = Cypress.env("AUTH0_CLIENT_SECRET") as string;
+  const audience = Cypress.env("AUTH0_AUDIENCE") as string;
+
+  cy.log("client_id", client_id);
+  cy.log("audience", audience);
+
+  cy.request({
+    method: "POST",
+    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
+    body: {
+      grant_type: "client_credentials",
+      // username,
+      // password,
+      audience,
+      client_id,
+      client_secret,
+    },
+  }).then((response: Cypress.Response<JwtPayload>) => {
+    cy.log("body", response.body);
+
+    cy.window().then((win: Cypress.AUTWindow) =>
+      win.localStorage.setItem("jwt", response.body.access_token as string),
+    );
+  });
+});
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Cypress {
+    interface Chainable {
+      loginByAuth0Api(): void;
+    }
+  }
+}
