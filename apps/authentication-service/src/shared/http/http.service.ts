@@ -66,6 +66,10 @@ const HttpService: ISingleton<IHttpService> = (() => {
       response: (
         response: FetchInterceptorResponse,
       ): FetchInterceptorResponse => {
+        console.log(
+          `Intercepted response: ${response.url}, method: ${response.request.method}, status: ${response.status}`,
+        );
+
         const requestKey: string = `${getRelativeUrl(response.url)}_${response.request.method}`;
 
         if (response.status === 401 && response.url.includes(authEndpoint)) {
