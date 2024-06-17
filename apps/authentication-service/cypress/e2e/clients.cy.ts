@@ -30,7 +30,7 @@ describe("Client API", () => {
   });
 
   it("creates new client", () => {
-    // let newClientId: string;
+    let newClientId: string;
     const clientName = "__Test Client__";
 
     cy.request({
@@ -44,20 +44,21 @@ describe("Client API", () => {
         name: clientName,
         description: "--DELETE ME--",
       },
-    }).then((response: Cypress.Response<{ body: Client }>) => {
-      // newClientId = (response.body as unknown as Client).client_id;
-      expect(response.status).to.eq(200);
-      expect(response.body).property("name").to.eq(clientName);
-    });
-    // .then(() => {
-    //   cy.wait(5000);
-    //   cy.request({
-    //     method: "DELETE",
-    //     url: `https://${Cypress.env("AUTH0_DOMAIN")}/v1/clients/${newClientId}`,
-    //     headers: {
-    //       Authorization: `Bearer ${ACCESS_TOKEN}`,
-    //     },
-    //   });
-    // });
+    })
+      .then((response: Cypress.Response<{ body: Client }>) => {
+        newClientId = (response.body as unknown as Client).client_id;
+        expect(response.status).to.eq(200);
+        expect(response.body).property("name").to.eq(clientName);
+      })
+      .then(() => {
+        cy.wait(5000);
+        cy.request({
+          method: "DELETE",
+          url: `http://localhost:${PORT}/v1/clients/${newClientId}`,
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+      });
   });
 });

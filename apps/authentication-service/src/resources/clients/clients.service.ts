@@ -6,6 +6,7 @@ import AuthService from "@/shared/auth/auth.service";
 import { handleErrors } from "@/shared/http/http.service";
 
 const authDomain = envs.AUTH0_DOMAIN;
+const Auth = AuthService.getInstance();
 
 const createClient = async (client: ClientCreate): Promise<Client | Error> => {
   const token = await Auth.getAccessToken();
@@ -32,7 +33,27 @@ const createClient = async (client: ClientCreate): Promise<Client | Error> => {
   }
 };
 
-const Auth = AuthService.getInstance();
+const deleteClient = async (id: string): Promise<Client | Error> => {
+  const token = await Auth.getAccessToken();
+  const _id = encodeURIComponent(id);
+
+  try {
+    const client = (await handleErrors(
+      await fetch(`https://${authDomain}/api/v2/clients/${_id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }),
+    )) as Promise<Client>;
+
+    return Promise.resolve(client);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
 
 const getClient = async (id: string): Promise<Client | Error> => {
   const token = await Auth.getAccessToken();
@@ -63,4 +84,4 @@ const getCredentials = (): Promise<ICredentials> => {
   });
 };
 
-export { createClient, getClient, getCredentials };
+export { createClient, getClient, deleteClient, getCredentials };
