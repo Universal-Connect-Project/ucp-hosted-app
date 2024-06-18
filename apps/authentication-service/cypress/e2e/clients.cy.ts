@@ -51,7 +51,7 @@ describe("Client API", () => {
         expect(response.body).property("name").to.eq(clientName);
       })
       .then(() => {
-        cy.wait(5000);
+        cy.wait(2500);
         cy.request({
           method: "DELETE",
           url: `http://localhost:${PORT}/v1/clients/${newClientId}`,
