@@ -1,18 +1,36 @@
-// import { AuthService } from "@/shared/auth/authService";
+import { Client } from "auth0";
+import {
+  getClient,
+  createClient,
+  deleteClient,
+} from "@/resources/clients/clientsService";
 
 describe("Clients test", () => {
+  const clientId: string = "ucp-test-client";
+  const clientName = "Ucp Test Client";
+  const clientDesc = "For unit testing";
+
   it("Test Client Creation", async () => {
-    // const Auth = AuthService.getInstance();
-    // expect(Auth).not.toBeNull();
-    //
-    // // API token
-    // const token = await Auth.getAccessToken(true);
-    // expect(token).not.toBeNull();
-    // expect(Auth.isTokenExpired(token)).toBeTruthy();
-    //
-    // // Cached token
-    // const cachedToken = await Auth.getAccessToken();
-    // expect(cachedToken).not.toBeNull();
-    // expect(Auth.isTokenExpired(cachedToken)).toBeTruthy();
+    const client: Client | Error = await createClient({
+      name: clientName,
+      description: clientDesc,
+    });
+
+    expect(client).not.toBe(undefined);
+    expect((client as Client).client_id).toBe(clientId);
+  });
+
+  it("Test Client Get with ID", async () => {
+    const client: Client | Error = await getClient(clientId);
+
+    expect(client).not.toBe(undefined);
+    expect((client as Client).client_id).toBe(clientId);
+  });
+
+  it("Test Client Delete", async () => {
+    const client: Client | Error = await deleteClient(clientId);
+
+    expect(client).not.toBe(undefined);
+    expect((client as Client).client_id).toBe(clientId);
   });
 });
