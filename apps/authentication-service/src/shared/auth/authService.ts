@@ -8,9 +8,9 @@ import envs from "@/config";
 import { IAuthService, ICredentialRequestBody } from "@/shared/auth/authModel";
 import { ISingleton } from "@/shared/models";
 
-const authEndpoint = "oauth/token";
+export const authEndpoint = "oauth/token";
 
-const AuthService: ISingleton<IAuthService> = (() => {
+export const AuthService: ISingleton<IAuthService> = (() => {
   let instance: IAuthService;
 
   const createInstance = (): IAuthService => {
@@ -54,7 +54,7 @@ const AuthService: ISingleton<IAuthService> = (() => {
 
       const _token = skipCache ? undefined : getCachedToken();
 
-      if (_token) {
+      if (_token && !isTokenExpired(_token)) {
         token = _token;
         return Promise.resolve(token);
       }
@@ -110,6 +110,3 @@ const AuthService: ISingleton<IAuthService> = (() => {
     getInstance,
   };
 })();
-
-export { authEndpoint };
-export default AuthService;

@@ -6,16 +6,12 @@ import { initRoutes } from "@/resources";
 import { errorHandler } from "@/middleware/errorMiddleware";
 import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 
-// import envs from "./config";
-
-// const CLIENT_ORIGIN_URL = envs.CLIENT_ORIGIN_URL;
-
 const initErrorHandling = (app: Application): void => {
   app.use(errorHandler);
   app.use(notFoundHandler);
 };
 
-const initExpress = (app: Application): void => {
+export const initExpress = (app: Application): void => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.set("json spaces", 2);
@@ -45,18 +41,16 @@ const initExpress = (app: Application): void => {
   app.use(nocache());
 
   app.use(
-    cors(), // <-- for testing...tighten it up when we're ready for deployment
-    // cors({
-    //   origin: CLIENT_ORIGIN_URL,
-    //   methods: ["GET", "POST"],
-    //
-    //   allowedHeaders: [
-    //     "Access-Control-Allow-Origin",
-    //     "Authorization",
-    //     "Content-Type",
-    //   ],
-    //   maxAge: 86400,
-    // }),
+    cors({
+      methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
+
+      allowedHeaders: [
+        "Access-Control-Allow-Origin",
+        "Authorization",
+        "Content-Type",
+      ],
+      maxAge: 86400,
+    }),
   );
 
   // Routes
@@ -73,5 +67,3 @@ const initExpress = (app: Application): void => {
   // Keep this at the bottom
   initErrorHandling(app);
 };
-
-export { initExpress };

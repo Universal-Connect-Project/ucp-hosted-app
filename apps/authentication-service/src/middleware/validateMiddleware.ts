@@ -20,8 +20,6 @@ const ReqValidateBody: ReqValidate = (schema) => async (req, res, next) => {
 
 type ReqValidate = (schema: ObjectSchema<object>) => RequestHandler;
 
-const ReqValidate = {
+export const ReqValidate = {
   body: ReqValidateBody,
 };
-
-export { ReqValidate };

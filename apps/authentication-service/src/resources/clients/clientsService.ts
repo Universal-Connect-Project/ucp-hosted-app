@@ -2,13 +2,15 @@ import { Client, ClientCreate } from "auth0";
 
 import envs from "@/config";
 import { ICredentials } from "@/resources/clients/clientsModel";
-import AuthService from "@/shared/auth/authService";
+import { AuthService } from "@/shared/auth/authService";
 import { parseResponse } from "@/shared/http/httpService";
 
 const authDomain = envs.AUTH0_DOMAIN;
 const Auth = AuthService.getInstance();
 
-const createClient = async (client: ClientCreate): Promise<Client | Error> => {
+export const createClient = async (
+  client: ClientCreate,
+): Promise<Client | Error> => {
   const token = await Auth.getAccessToken();
 
   try {
@@ -33,7 +35,7 @@ const createClient = async (client: ClientCreate): Promise<Client | Error> => {
   }
 };
 
-const deleteClient = async (id: string): Promise<Client | Error> => {
+export const deleteClient = async (id: string): Promise<Client | Error> => {
   const token = await Auth.getAccessToken();
   const _id = encodeURIComponent(id);
 
@@ -55,7 +57,7 @@ const deleteClient = async (id: string): Promise<Client | Error> => {
   }
 };
 
-const getClient = async (id: string): Promise<Client | Error> => {
+export const getClient = async (id: string): Promise<Client | Error> => {
   const token = await Auth.getAccessToken();
   const _id = encodeURIComponent(id);
 
@@ -77,11 +79,9 @@ const getClient = async (id: string): Promise<Client | Error> => {
   }
 };
 
-const getCredentials = (): Promise<ICredentials> => {
+export const getCredentials = (): Promise<ICredentials> => {
   return Promise.resolve({
     id: "placeholder_id",
     secret: "placeholder_secret",
   });
 };
-
-export { createClient, getClient, deleteClient, getCredentials };

@@ -1,5 +1,3 @@
-type ISingleton<T> = {
+export type ISingleton<T> = {
   getInstance: () => T;
 };
-
-export { ISingleton };

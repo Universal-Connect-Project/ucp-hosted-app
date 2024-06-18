@@ -1,4 +1,4 @@
-enum ConsoleColors {
+export enum ConsoleColors {
   Reset = "\x1b[0m",
   Bright = "\x1b[1m",
   Dim = "\x1b[2m",
@@ -25,5 +25,3 @@ enum ConsoleColors {
   BgWhite = "\x1b[47m",
   BgGray = "\x1b[100m",
 }
-
-export { ConsoleColors };

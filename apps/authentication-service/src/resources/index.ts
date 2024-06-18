@@ -1,8 +1,6 @@
 import { Application } from "express";
-import clientsRoutes from "@/resources/clients/clientsRoutes";
+import { clientsRoutes } from "@/resources/clients/clientsRoutes";
 
-const initRoutes = (app: Application): void => {
+export const initRoutes = (app: Application): void => {
   clientsRoutes(app);
 };
-
-export { initRoutes };

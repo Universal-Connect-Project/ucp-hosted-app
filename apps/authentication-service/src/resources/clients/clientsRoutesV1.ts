@@ -12,7 +12,7 @@ import {
 
 const apiVersion = "v1";
 
-const clientsRoutesV1 = (router: Router): void => {
+export const clientsRoutesV1 = (router: Router): void => {
   router.get("/:id", [validateAccessToken], (req: Request, res: Response) => {
     const clientId: string = req.params.id;
 
@@ -86,5 +86,3 @@ const clientsRoutesV1 = (router: Router): void => {
     },
   );
 };
-
-export default clientsRoutesV1;

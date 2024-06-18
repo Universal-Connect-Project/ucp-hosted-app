@@ -2,7 +2,7 @@ import { object, string } from "yup";
 
 const restrictedCharacters: RegExp = /[<>]/gi;
 
-const clientCreateSchema = object({
+export const clientCreateSchema = object({
   name: string()
     .trim()
     .required()
@@ -15,5 +15,3 @@ const clientCreateSchema = object({
     ),
   description: string().min(3).max(140),
 });
-
-export { clientCreateSchema };
