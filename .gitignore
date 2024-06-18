@@ -30,3 +30,5 @@ dist-ssr
 
 **/cypress/screenshots/
 **/cypress/videos/
+
+**/coverage/
