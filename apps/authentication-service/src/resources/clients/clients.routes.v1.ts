@@ -4,7 +4,7 @@ import { Request, Response, Router } from "express";
 
 import { ReqValidate } from "@/middleware/validate.middleware";
 import { validateAccessToken } from "@/middleware/auth.middleware";
-import { getClient, createClient } from "./clients.service";
+import { getClient, createClient, deleteClient } from "./clients.service";
 
 const apiVersion = "v1";
 
@@ -35,7 +35,7 @@ const clientsRoutesV1 = (router: Router): void => {
     (req: Request, res: Response) => {
       const clientId: string = req.params.id;
 
-      void getClient(clientId)
+      void deleteClient(clientId)
         .then((client: Client | Error) => {
           res.send(
             JSON.stringify({

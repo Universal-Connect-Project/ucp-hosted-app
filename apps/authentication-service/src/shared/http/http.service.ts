@@ -51,7 +51,7 @@ const HttpService: ISingleton<IHttpService> = (() => {
 
     const unregisterInterceptor = fetchIntercept.register({
       request: (url, config: Request): IHttpRequestOptions => {
-        console.log(`Intercepted request: ${url}`);
+        console.log(`Intercepted request: ${url}, method: ${config.method}`);
 
         if (config && url.includes(authEndpoint)) {
           dataRequests = {

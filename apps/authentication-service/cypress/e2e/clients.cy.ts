@@ -58,6 +58,8 @@ describe("Client API", () => {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
+        }).then((response) => {
+          expect(response.status).to.eq(200);
         });
       });
   });
