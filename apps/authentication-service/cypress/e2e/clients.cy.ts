@@ -29,7 +29,7 @@ describe("Client API", () => {
     });
   });
 
-  it("creates new client", () => {
+  it("creates and deletes new client", () => {
     let newClientId: string;
     const clientName = "__Test Client__";
 

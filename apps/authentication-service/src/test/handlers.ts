@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import envs from "@/config";
-import { authEndpoint } from "@/shared/auth/auth.service";
+import { authEndpoint } from "@/shared/auth/authService";
 
 const domain: string = envs.AUTH0_DOMAIN;
 

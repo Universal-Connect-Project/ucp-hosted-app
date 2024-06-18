@@ -1,4 +1,4 @@
-import clientsRoutesV1 from "@/resources/clients/clients.routes.v1";
+import clientsRoutesV1 from "@/resources/clients/clientsRoutesV1";
 import express, { Application } from "express";
 
 const clientsRouter = express.Router();

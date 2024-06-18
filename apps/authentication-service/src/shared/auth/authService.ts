@@ -5,7 +5,7 @@ import { TokenSet } from "auth0";
 import { decode, JwtPayload } from "jsonwebtoken";
 
 import envs from "@/config";
-import { IAuthService, ICredentialRequestBody } from "@/shared/auth/auth.model";
+import { IAuthService, ICredentialRequestBody } from "@/shared/auth/authModel";
 import { ISingleton } from "@/shared/models";
 
 const authEndpoint = "oauth/token";

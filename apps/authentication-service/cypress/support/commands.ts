@@ -43,23 +43,16 @@ Cypress.Commands.add("loginByAuth0Api", () => {
   const client_secret = Cypress.env("AUTH0_CLIENT_SECRET") as string;
   const audience = Cypress.env("AUTH0_AUDIENCE") as string;
 
-  cy.log("client_id", client_id);
-  cy.log("audience", audience);
-
   cy.request({
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
     body: {
       grant_type: "client_credentials",
-      // username,
-      // password,
       audience,
       client_id,
       client_secret,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
-    cy.log("body", response.body);
-
     cy.window().then((win: Cypress.AUTWindow) =>
       win.localStorage.setItem("jwt", response.body.access_token as string),
     );

@@ -1,10 +1,14 @@
-import { clientCreateSchema } from "@/resources/clients/clients.validation";
+import { clientCreateSchema } from "@/resources/clients/clientsValidation";
 import { Client, ClientCreate } from "auth0";
 import { Request, Response, Router } from "express";
 
-import { ReqValidate } from "@/middleware/validate.middleware";
-import { validateAccessToken } from "@/middleware/auth.middleware";
-import { getClient, createClient, deleteClient } from "./clients.service";
+import { ReqValidate } from "@/middleware/validateMiddleware";
+import { validateAccessToken } from "@/middleware/authMiddleware";
+import {
+  getClient,
+  createClient,
+  deleteClient,
+} from "@/resources/clients/clientsService";
 
 const apiVersion = "v1";
 

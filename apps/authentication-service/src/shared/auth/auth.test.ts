@@ -1,4 +1,4 @@
-import AuthService from "@/shared/auth/auth.service";
+import AuthService from "@/shared/auth/authService";
 
 describe("Auth test", () => {
   it("tests Auth0 token request", async () => {

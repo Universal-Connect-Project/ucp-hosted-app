@@ -3,8 +3,8 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import nocache from "nocache";
 import { initRoutes } from "@/resources";
-import { errorHandler } from "./middleware/error.middleware";
-import { notFoundHandler } from "./middleware/not-found.middleware";
+import { errorHandler } from "@/middleware/errorMiddleware";
+import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 
 // import envs from "./config";
 

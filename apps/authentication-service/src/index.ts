@@ -3,9 +3,9 @@ import express from "express";
 
 import envs from "./config";
 import { initExpress } from "./init";
-import AuthService from "@/shared/auth/auth.service";
-import { IHttpService } from "@/shared/http/https.model";
-import HttpService from "@/shared/http/http.service";
+import AuthService from "@/shared/auth/authService";
+import { IHttpService } from "@/shared/http/httpModel";
+import HttpService from "@/shared/http/httpService";
 
 export const SERVICE_NAME = "ucp-authentication-service";
 const PORT = parseInt(envs.PORT, 10);

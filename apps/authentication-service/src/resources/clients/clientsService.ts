@@ -1,9 +1,9 @@
 import { Client, ClientCreate } from "auth0";
 
 import envs from "@/config";
-import { ICredentials } from "@/resources/clients/client-model";
-import AuthService from "@/shared/auth/auth.service";
-import { handleErrors } from "@/shared/http/http.service";
+import { ICredentials } from "@/resources/clients/clientsModel";
+import AuthService from "@/shared/auth/authService";
+import { parseResponse } from "@/shared/http/httpService";
 
 const authDomain = envs.AUTH0_DOMAIN;
 const Auth = AuthService.getInstance();
@@ -12,7 +12,7 @@ const createClient = async (client: ClientCreate): Promise<Client | Error> => {
   const token = await Auth.getAccessToken();
 
   try {
-    const newClient: Promise<Client> = (await handleErrors(
+    const newClient: Promise<Client> = (await parseResponse(
       await fetch(`https://${authDomain}/api/v2/clients`, {
         method: "POST",
         headers: {
@@ -38,7 +38,7 @@ const deleteClient = async (id: string): Promise<Client | Error> => {
   const _id = encodeURIComponent(id);
 
   try {
-    const client = (await handleErrors(
+    const client = (await parseResponse(
       await fetch(`https://${authDomain}/api/v2/clients/${_id}`, {
         method: "DELETE",
         headers: {
@@ -60,7 +60,7 @@ const getClient = async (id: string): Promise<Client | Error> => {
   const _id = encodeURIComponent(id);
 
   try {
-    const client = (await handleErrors(
+    const client = (await parseResponse(
       await fetch(`https://${authDomain}/api/v2/clients/${_id}`, {
         method: "GET",
         headers: {

@@ -1,14 +1,14 @@
 import { ResponseError } from "auth0";
 import fetchIntercept, { FetchInterceptorResponse } from "fetch-intercept";
 
-import AuthService, { authEndpoint } from "@/shared/auth/auth.service";
-import { IAuthService } from "@/shared/auth/auth.model";
+import AuthService, { authEndpoint } from "@/shared/auth/authService";
+import { IAuthService } from "@/shared/auth/authModel";
 import {
   IHttpDataRequest,
   IHttpRefreshCallback,
   IHttpRequestOptions,
   IHttpService,
-} from "@/shared/http/https.model";
+} from "@/shared/http/httpModel";
 import { ISingleton } from "@/shared/models";
 
 const getRelativeUrl = (url: string): string => {
@@ -17,7 +17,7 @@ const getRelativeUrl = (url: string): string => {
   return url.replace(_url.origin, "");
 };
 
-const handleErrors = async (response: Response) => {
+const parseResponse = async (response: Response) => {
   if (!response.ok) {
     throw Error(response.statusText);
   }
@@ -142,4 +142,4 @@ const HttpService: ISingleton<IHttpService> = (() => {
 })();
 
 export default HttpService;
-export { handleErrors };
+export { parseResponse };
