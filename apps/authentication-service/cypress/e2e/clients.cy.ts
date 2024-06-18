@@ -2,35 +2,30 @@ import { Client } from "auth0";
 
 describe("Client API", () => {
   const PORT: number = (Cypress.env("PORT") as number) || 8089;
-  let ACCESS_TOKEN: string;
+  let accessToken: string;
+  let newClientId: string;
 
-  beforeEach(function () {
-    cy.loginByAuth0Api();
+  const getToken = () => {
     cy.window()
       .its("localStorage")
       .invoke("getItem", "jwt")
       .then((token) => {
-        ACCESS_TOKEN = token;
+        if (token) {
+          accessToken = token;
+        }
       });
+  };
+
+  beforeEach(() => {
+    getToken();
+    if (!accessToken) {
+      cy.loginByAuth0Api();
+      cy.wait(1500);
+      getToken();
+    }
   });
 
-  it("returns client info", () => {
-    const clientId: string = Cypress.env("AUTH0_CLIENT_ID") as string;
-
-    cy.request({
-      method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/${clientId}`,
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-    }).then((response: Cypress.Response<{ message: string }>) => {
-      expect(response.status).to.eq(200);
-      expect(response.body).property("client_id").to.eq(clientId);
-    });
-  });
-
-  it("creates and deletes new client", () => {
-    let newClientId: string;
+  it("creates new client", () => {
     const clientName = "__Test Client__";
 
     cy.request({
@@ -38,29 +33,42 @@ describe("Client API", () => {
       url: `http://localhost:${PORT}/v1/clients`,
       headers: {
         ContentType: "application/json",
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: {
         name: clientName,
         description: "--DELETE ME--",
       },
-    })
-      .then((response: Cypress.Response<{ body: Client }>) => {
-        newClientId = (response.body as unknown as Client).client_id;
-        expect(response.status).to.eq(200);
-        expect(response.body).property("name").to.eq(clientName);
-      })
-      .then(() => {
-        cy.wait(2500);
-        cy.request({
-          method: "DELETE",
-          url: `http://localhost:${PORT}/v1/clients/${newClientId}`,
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        }).then((response) => {
-          expect(response.status).to.eq(200);
-        });
-      });
+    }).then((response: Cypress.Response<{ body: Client }>) => {
+      newClientId = (response.body as unknown as Client).client_id;
+      expect(response.status).to.eq(200);
+      expect(response.body).property("name").to.eq(clientName);
+    });
+  });
+
+  it("returns client info", () => {
+    cy.wait(1500);
+    cy.request({
+      method: "GET",
+      url: `http://localhost:${PORT}/v1/clients/${newClientId}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((response: Cypress.Response<{ message: string }>) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).property("client_id").to.eq(newClientId);
+    });
+  });
+
+  it("deletes client", () => {
+    cy.request({
+      method: "DELETE",
+      url: `http://localhost:${PORT}/v1/clients/${newClientId}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+    });
   });
 });

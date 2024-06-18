@@ -1,7 +1,7 @@
 // import { AuthService } from "@/shared/auth/authService";
 
-describe("Auth test", () => {
-  it("tests Auth0 token request", async () => {
+describe("Clients test", () => {
+  it("Test Client Creation", async () => {
     // const Auth = AuthService.getInstance();
     // expect(Auth).not.toBeNull();
     //
