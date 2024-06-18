@@ -16,7 +16,7 @@ describe("Client API", () => {
       });
   };
 
-  beforeEach(() => {
+  before(() => {
     getToken();
     if (!accessToken) {
       cy.loginByAuth0Api();
