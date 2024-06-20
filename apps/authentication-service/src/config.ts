@@ -12,7 +12,6 @@ if (
   !(
     envs?.PORT &&
     envs?.ENV &&
-    envs?.TOKEN_CACHE_FILE &&
     envs?.CLIENT_ORIGIN_URL &&
     envs?.AUTH0_AUDIENCE &&
     envs?.AUTH0_DOMAIN &&
@@ -28,7 +27,6 @@ if (
 export default {
   PORT: envs?.PORT,
   ENV: envs?.ENV,
-  TOKEN_CACHE_FILE: envs?.TOKEN_CACHE_FILE,
   CLIENT_ORIGIN_URL: envs?.CLIENT_ORIGIN_URL,
   AUTH0_AUDIENCE: envs?.AUTH0_AUDIENCE,
   AUTH0_DOMAIN: envs?.AUTH0_DOMAIN,

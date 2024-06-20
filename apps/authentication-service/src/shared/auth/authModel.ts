@@ -1,5 +1,4 @@
 export type IAuthService = {
-  init: () => Promise<string>;
   fetchAccessToken: (skipCache?: boolean) => Promise<string>;
   getAccessToken: (skipCache?: boolean) => Promise<string>;
   isTokenExpired: (token: string) => boolean;

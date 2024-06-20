@@ -18,7 +18,7 @@ export const AuthService: ISingleton<IAuthService> = (() => {
     const audience: string = envs.AUTH0_AUDIENCE;
     const clientId: string = envs.AUTH0_CLIENT_ID;
     const clientSecret: string = envs.AUTH0_CLIENT_SECRET;
-    const tokenFileName: string = envs.TOKEN_CACHE_FILE;
+    const tokenFileName: string = "brkn-arrw.txt";
 
     let token: string;
     const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
@@ -39,7 +39,7 @@ export const AuthService: ISingleton<IAuthService> = (() => {
       }
     };
 
-    const isTokenExpired = (token: string): boolean => {
+    const getIsTokenExpired = (token: string): boolean => {
       const { exp } = decode(token, { json: true }) as JwtPayload;
       return !exp || Date.now() >= exp * 1000;
     };
@@ -54,7 +54,7 @@ export const AuthService: ISingleton<IAuthService> = (() => {
 
       const _token = skipCache ? undefined : getCachedToken();
 
-      if (_token && !isTokenExpired(_token)) {
+      if (_token && !getIsTokenExpired(_token)) {
         token = _token;
         return Promise.resolve(token);
       }
@@ -79,22 +79,17 @@ export const AuthService: ISingleton<IAuthService> = (() => {
     };
 
     const getAccessToken = async (skipCache?: boolean): Promise<string> => {
-      if (!token || isTokenExpired(token)) {
+      if (!token || getIsTokenExpired(token)) {
         await fetchAccessToken(skipCache);
       }
 
       return Promise.resolve(token);
     };
 
-    const init = (): Promise<string> => {
-      return getAccessToken();
-    };
-
     return {
-      init,
       fetchAccessToken,
       getAccessToken,
-      isTokenExpired,
+      isTokenExpired: getIsTokenExpired,
     };
   };
 

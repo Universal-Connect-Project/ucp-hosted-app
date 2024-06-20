@@ -15,7 +15,7 @@ initExpress(app);
 app.listen(PORT, () => {
   const Auth = AuthService.getInstance();
 
-  void Auth.init()
+  void Auth.getAccessToken()
     .then((token: string) => {
       if (envs.ENV === "dev") {
         console.log(`\nToken: ${ConsoleColors.FgGray}${token}`);
