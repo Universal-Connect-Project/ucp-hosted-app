@@ -3,7 +3,7 @@ import { Client, ClientCreate } from "auth0";
 import envs from "@/config";
 import { ICredentials } from "@/resources/clients/clientsModel";
 import { AuthService } from "@/shared/auth/authService";
-import { parseResponse } from "@/shared/http/httpService";
+import { parseResponse } from "@/shared/http/http";
 
 const authDomain = envs.AUTH0_DOMAIN;
 const Auth = AuthService.getInstance();

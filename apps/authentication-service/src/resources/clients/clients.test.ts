@@ -1,9 +1,5 @@
 import { Client } from "auth0";
-import {
-  getClient,
-  createClient,
-  deleteClient,
-} from "@/resources/clients/clientsService";
+import { getClient, createClient, deleteClient } from "./clientsService";
 
 describe("Clients test", () => {
   const clientId: string = "ucp-test-client";
