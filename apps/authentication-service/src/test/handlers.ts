@@ -1,3 +1,4 @@
+import { exampleUser } from "@/test/testData/users";
 import { http, HttpResponse } from "msw";
 import envs from "@/config";
 import { authEndpoint } from "@/shared/auth/authService";
@@ -5,6 +6,12 @@ import { authEndpoint } from "@/shared/auth/authService";
 const domain: string = envs.AUTH0_DOMAIN;
 
 export const handlers = [
+  http.get(`https://${domain}/api/v2/users/:id`, () =>
+    HttpResponse.json(exampleUser),
+  ),
+  http.patch(`https://${domain}/api/v2/users/:id`, () =>
+    HttpResponse.json(exampleUser),
+  ),
   http.post(`https://${domain}/${authEndpoint}`, () =>
     HttpResponse.json({
       access_token:

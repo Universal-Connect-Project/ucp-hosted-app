@@ -7,7 +7,7 @@ describe("Clients test", () => {
   const clientName = "Ucp Test Client";
   const clientDesc = "For unit testing";
 
-  it("Test Client Creation", async () => {
+  it("returns a new client", async () => {
     const client: Client = await createClient(userId, {
       name: clientName,
       description: clientDesc,
@@ -17,14 +17,14 @@ describe("Clients test", () => {
     expect(client.client_id).toBe(clientId);
   });
 
-  it("Test Client Get with ID", async () => {
+  it("returns an existing client", async () => {
     const client: Client = await getClient(clientId);
 
     expect(client).not.toBe(undefined);
     expect(client.client_id).toBe(clientId);
   });
 
-  it("Test Client Delete", async () => {
+  it("deletes a client", async () => {
     const client: Client = await deleteClient(clientId);
 
     expect(client).not.toBe(undefined);

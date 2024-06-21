@@ -12,14 +12,12 @@ export type User = {
   [key: string]: unknown;
 };
 
-export const getUserClientId = async (userId: string): Promise<string> => {
+export const getUserById = async (userId: string): Promise<User> => {
   const token = await Auth.getAccessToken();
   const userIdEncoded = encodeURIComponent(userId);
 
-  let userClientId: string;
-
   try {
-    const userInfo: User = (await parseResponse(
+    return (await parseResponse(
       await fetch(`https://${authDomain}/api/v2/users/${userIdEncoded}`, {
         method: "GET",
         headers: {
@@ -28,11 +26,16 @@ export const getUserClientId = async (userId: string): Promise<string> => {
           "Content-Type": "application/json",
         },
       }),
-    )) as User;
+    )) as Promise<User>;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
 
-    userClientId = userInfo?.user_metadata?.client_id;
-
-    return Promise.resolve(userClientId);
+export const getUserClientId = async (userId: string): Promise<string> => {
+  try {
+    const userInfo: User = await getUserById(userId);
+    return Promise.resolve(userInfo?.user_metadata?.client_id || "");
   } catch (error) {
     return Promise.reject(error);
   }
@@ -41,15 +44,15 @@ export const getUserClientId = async (userId: string): Promise<string> => {
 export const setUserClientId = async (
   userId: string,
   clientId: string,
-): Promise<void> => {
+): Promise<User> => {
   const token = await Auth.getAccessToken();
   const userIdEncoded = encodeURIComponent(userId);
   const clientIdEncoded = encodeURIComponent(clientId);
 
   try {
-    await parseResponse(
+    const user: User = (await parseResponse(
       await fetch(`https://${authDomain}/api/v2/users/${userIdEncoded}`, {
-        method: "POST",
+        method: "PATCH",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
@@ -61,9 +64,9 @@ export const setUserClientId = async (
           },
         }),
       }),
-    );
+    )) as User;
 
-    return Promise.resolve();
+    return Promise.resolve(user);
   } catch (error) {
     return Promise.reject(error);
   }

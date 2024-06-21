@@ -1,4 +1,4 @@
-import { getUserClientId, setUserClientId } from "@/shared/user/userService";
+import { getUserClientId, setUserClientId } from "@/shared/users/userService";
 import { Client, ClientCreate } from "auth0";
 
 import envs from "@/config";
