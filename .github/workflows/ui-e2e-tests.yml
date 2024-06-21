@@ -24,7 +24,7 @@ jobs:
 
         with:
           project: apps/ucp-ui
-          start: npm run dev
+          start: npm run dev --workspace=apps/ucp-ui
           wait-on: "http://localhost:8080"
 
       - name: Upload screenshots
