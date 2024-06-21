@@ -5,6 +5,7 @@ export default {
   entry: "./src/index.tsx",
   devServer: {
     historyApiFallback: true,
+    port: 3000,
   },
   output: {
     filename: "bundle.js",
