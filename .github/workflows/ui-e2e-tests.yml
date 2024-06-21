@@ -32,4 +32,4 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: apps/ui/cypress/screenshots
+          path: apps/ucp-ui/cypress/screenshots
