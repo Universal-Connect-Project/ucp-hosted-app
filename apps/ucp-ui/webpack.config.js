@@ -3,6 +3,10 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 
 export default {
   entry: "./src/index.tsx",
+  devServer: {
+    historyApiFallback: true,
+    port: 3000,
+  },
   output: {
     filename: "bundle.js",
     path: path.resolve(path.dirname(""), "dist"),

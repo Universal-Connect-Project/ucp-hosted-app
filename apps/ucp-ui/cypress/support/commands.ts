@@ -36,3 +36,31 @@ import "@testing-library/cypress/add-commands";
 //     }
 //   }
 // }
+
+Cypress.Commands.add("login", () => {
+  const username = Cypress.env("auth_username") as string;
+  const password = Cypress.env("auth_password") as string;
+
+  cy.visit("/");
+
+  cy.origin(
+    "dev-d23wau8o0uc5hw8n.us.auth0.com",
+    { args: { username, password } },
+    ({ username, password }) => {
+      cy.get("input#username").type(username);
+      cy.get("input#password").type(password, { log: false });
+      cy.contains("button[value=default]", "Continue").click();
+    },
+  );
+
+  cy.url().should("equal", Cypress.config("baseUrl"));
+});
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Cypress {
+    interface Chainable {
+      login(): Chainable<void>;
+    }
+  }
+}
