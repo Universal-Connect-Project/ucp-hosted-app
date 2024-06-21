@@ -1,10 +1,9 @@
 import React from "react";
-import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
+import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./Home";
 
 const Routes = () => {
-  const { logout } = useAuth0();
-
   const router = createBrowserRouter([
     {
       path: "*",
@@ -12,12 +11,7 @@ const Routes = () => {
     },
     {
       path: "/",
-      element: (
-        <>
-          Hello world!
-          <button onClick={() => void logout()}>Log out</button>
-        </>
-      ),
+      element: <Home />,
     },
   ]);
 
