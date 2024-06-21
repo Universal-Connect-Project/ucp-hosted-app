@@ -18,6 +18,9 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_auth_username: ${{ secrets.AUTH_USERNAME }}
+          CYPRESS_auth_password: ${{ secrets.AUTH_PASSWORD }}
 
         with:
           project: apps/ucp-ui
