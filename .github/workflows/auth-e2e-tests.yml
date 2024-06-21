@@ -35,8 +35,6 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
-        env:
-          CYPRESS_PORT: ${{ vars.PORT }}
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
