@@ -1,10 +1,10 @@
-import { getUserClientId, setUserClientId } from "@/shared/users/userService";
-import { Client, ClientCreate } from "auth0";
+import { Client, ClientCreate, ResponseError } from "auth0";
 
 import envs from "@/config";
 import { ICredentials } from "@/resources/clients/clientsModel";
 import { AuthService } from "@/shared/auth/authService";
 import { parseResponse } from "@/shared/utils";
+import { getUserClientId, setUserClientId } from "@/shared/users/userService";
 
 const authDomain = envs.AUTH0_DOMAIN;
 const Auth = AuthService.getInstance();
@@ -20,7 +20,9 @@ export const createClient = async (
     const userClientID = await getUserClientId(userId);
 
     if (userClientID && userClientID.length > 0) {
-      return Promise.reject(new Error("User already has a client"));
+      return Promise.reject(
+        new ResponseError(400, "User already has a client", {} as Headers),
+      );
     }
   } catch (error) {
     return Promise.reject(error);

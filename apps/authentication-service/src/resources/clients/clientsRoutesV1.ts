@@ -1,5 +1,5 @@
 import { clientCreateSchema } from "@/resources/clients/clientsValidation";
-import { Client } from "auth0";
+import { Client, ResponseError } from "auth0";
 import { Request, Response, Router } from "express";
 
 import { ReqValidate } from "@/middleware/validateMiddleware";
@@ -81,10 +81,11 @@ export const clientsRoutesV1 = (router: Router): void => {
             }),
           );
         })
-        .catch((error: Error) => {
-          res.send(
+        .catch((error: ResponseError) => {
+          console.log("(catch) Error creating client", error);
+          res.status(error.statusCode).send(
             JSON.stringify({
-              message: error.message,
+              message: error.body,
             }),
           );
         });

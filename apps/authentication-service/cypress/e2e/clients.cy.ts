@@ -27,7 +27,7 @@ describe("Client API", () => {
     }
   });
 
-  it("deletes client_id from user metadata", () => {
+  it("deletes the client_id from user metadata", () => {
     cy.request({
       method: "PATCH",
       url: `https://${Cypress.env("AUTH0_DOMAIN")}/api/v2/users/${USER_ID}`,
@@ -42,7 +42,28 @@ describe("Client API", () => {
     });
   });
 
-  it("creates new client", () => {
+  it("creates a new client with incorrect parameters", () => {
+    cy.request({
+      failOnStatusCode: false,
+      method: "POST",
+      url: `http://localhost:${PORT}/v1/clients`,
+      headers: {
+        ContentType: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: {
+        clientId: "",
+      },
+    }).then((response: Cypress.Response<{ body: Client }>) => {
+      expect(response.status).to.eq(422);
+      expect(response.body)
+        .property("errors")
+        .property("message")
+        .to.eq("userId is a required field");
+    });
+  });
+
+  it("creates a new client", () => {
     cy.request({
       method: "POST",
       url: `http://localhost:${PORT}/v1/clients`,
@@ -59,7 +80,7 @@ describe("Client API", () => {
     });
   });
 
-  it("returns client info", () => {
+  it("returns new client info", () => {
     cy.wait(1500);
     cy.request({
       method: "GET",
@@ -73,7 +94,25 @@ describe("Client API", () => {
     });
   });
 
-  it("deletes client", () => {
+  it("tries creating a new client for user that already has one", () => {
+    cy.request({
+      failOnStatusCode: false,
+      method: "POST",
+      url: `http://localhost:${PORT}/v1/clients`,
+      headers: {
+        ContentType: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: {
+        userId: USER_ID,
+      },
+    }).then((response: Cypress.Response<never>) => {
+      expect(response.status).to.eq(400);
+      expect(response.body).to.property("message", "User already has a client");
+    });
+  });
+
+  it("deletes the new client", () => {
     cy.request({
       method: "DELETE",
       url: `http://localhost:${PORT}/v1/clients/${newClientId}`,
