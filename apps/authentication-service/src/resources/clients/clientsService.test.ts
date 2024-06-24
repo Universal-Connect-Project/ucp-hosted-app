@@ -13,7 +13,7 @@ describe("Clients test", () => {
   const clientName = "Ucp Test Client";
   const clientDesc = "For unit testing";
 
-  it("returns a new client", async () => {
+  it("creates a new client", async () => {
     server.use(
       http.get(AUTH0_USER_BY_ID, () => HttpResponse.json(exampleUser)),
     );
@@ -26,7 +26,7 @@ describe("Clients test", () => {
     expect(client.client_id).toBe(clientId);
   });
 
-  it("returns an existing client", async () => {
+  it("gets info for an existing client", async () => {
     const client: Client = await getClient(clientId);
 
     expect(client).not.toBe(undefined);
