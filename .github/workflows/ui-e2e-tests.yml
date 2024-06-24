@@ -18,15 +18,18 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_auth_username: ${{ secrets.AUTH_USERNAME }}
+          CYPRESS_auth_password: ${{ secrets.AUTH_PASSWORD }}
 
         with:
           project: apps/ucp-ui
-          start: npm run dev
-          wait-on: "http://localhost:8080"
+          start: npm run dev --workspace=apps/ucp-ui
+          wait-on: "http://localhost:3000"
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-screenshots
-          path: apps/ui/cypress/screenshots
+          path: apps/ucp-ui/cypress/screenshots
