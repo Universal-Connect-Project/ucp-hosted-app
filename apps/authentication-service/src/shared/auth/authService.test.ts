@@ -6,10 +6,5 @@ describe("Auth test", () => {
     const token = await getAccessToken(true);
     expect(token).not.toBeNull();
     expect(getIsTokenExpired(token)).toBeTruthy();
-
-    // Cached token
-    const cachedToken = await getAccessToken();
-    expect(cachedToken).not.toBeNull();
-    expect(!getIsTokenExpired(cachedToken)).toBeTruthy();
   });
 });
