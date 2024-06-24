@@ -8,8 +8,6 @@ import envs from "@/config";
 import { IAuthService, ICredentialRequestBody } from "@/shared/auth/authModel";
 import { ISingleton } from "@/shared/models";
 
-export const authEndpoint = "oauth/token";
-
 export const AuthService: ISingleton<IAuthService> = (() => {
   let instance: IAuthService;
 
@@ -61,7 +59,7 @@ export const AuthService: ISingleton<IAuthService> = (() => {
 
       try {
         const response: Response = await fetch(
-          `https://${domain}/${authEndpoint}`,
+          `https://${domain}/oauth/token`,
           {
             method: "post",
             body: JSON.stringify(body),

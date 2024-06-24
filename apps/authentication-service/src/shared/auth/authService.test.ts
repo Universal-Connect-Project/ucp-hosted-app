@@ -1,7 +1,7 @@
 import { AuthService } from "./authService";
 
 describe("Auth test", () => {
-  it("tests Auth0 token request", async () => {
+  it("returns an auth0 access token", async () => {
     const Auth = AuthService.getInstance();
     expect(Auth).not.toBeNull();
 

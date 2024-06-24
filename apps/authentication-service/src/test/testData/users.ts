@@ -23,10 +23,14 @@ export const exampleUser: User = {
     "https://login.universalconnectproject.org/assets/logo-small-grey-white-dbafd52d.svg",
   updated_at: "2024-06-20T17:02:12.345Z",
   user_id: "google-oauth2|115545703201865461059",
-  user_metadata: {
-    client_id: "test-client-id",
-  },
   last_ip: "0.0.0.0",
   last_login: "2024-06-20T17:02:12.344Z",
   logins_count: 5,
+};
+
+export const exampleUserWithClientId: User = {
+  ...exampleUser,
+  user_metadata: {
+    client_id: "test-client-id",
+  },
 };

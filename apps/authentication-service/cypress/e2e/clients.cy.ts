@@ -9,7 +9,7 @@ describe("Client API", () => {
     cy.window()
       .its("localStorage")
       .invoke("getItem", "jwt")
-      .then((token) => {
+      .then((token: string) => {
         if (token) {
           accessToken = token;
         }

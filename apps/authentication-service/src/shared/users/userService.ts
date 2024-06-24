@@ -6,8 +6,8 @@ const authDomain = envs.AUTH0_DOMAIN;
 const Auth = AuthService.getInstance();
 
 export type User = {
-  user_metadata: {
-    client_id: string;
+  user_metadata?: {
+    client_id?: string;
   };
   [key: string]: unknown;
 };
