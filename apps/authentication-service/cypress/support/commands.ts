@@ -38,6 +38,7 @@ import { JwtPayload } from "jsonwebtoken";
 //     }
 //   }
 // }
+
 Cypress.Commands.add("loginByAuth0Api", () => {
   const client_id = Cypress.env("AUTH0_CLIENT_ID") as string;
   const client_secret = Cypress.env("AUTH0_CLIENT_SECRET") as string;

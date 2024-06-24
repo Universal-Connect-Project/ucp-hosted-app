@@ -1,5 +1,7 @@
 import { Client } from "auth0";
 
+const USER_ID = "google-oauth2|115545703201865461059";
+
 describe("Client API", () => {
   const PORT: number = (Cypress.env("PORT") as number) || 8089;
   let accessToken: string;
@@ -25,9 +27,22 @@ describe("Client API", () => {
     }
   });
 
-  it("creates new client", () => {
-    const clientName = "__Test Client__";
+  it("deletes client_id from user metadata", () => {
+    cy.request({
+      method: "PATCH",
+      url: `https://${Cypress.env("AUTH0_DOMAIN")}/api/v2/users/${USER_ID}`,
+      body: {
+        user_metadata: {
+          client_id: "",
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  });
 
+  it("creates new client", () => {
     cy.request({
       method: "POST",
       url: `http://localhost:${PORT}/v1/clients`,
@@ -36,13 +51,11 @@ describe("Client API", () => {
         Authorization: `Bearer ${accessToken}`,
       },
       body: {
-        name: clientName,
-        description: "--DELETE ME--",
+        userId: USER_ID,
       },
     }).then((response: Cypress.Response<{ body: Client }>) => {
       newClientId = (response.body as unknown as Client).client_id;
       expect(response.status).to.eq(200);
-      expect(response.body).property("name").to.eq(clientName);
     });
   });
 
