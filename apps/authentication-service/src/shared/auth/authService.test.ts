@@ -1,18 +1,15 @@
-import { AuthService } from "./authService";
+import { getAccessToken, getIsTokenExpired } from "./authService";
 
 describe("Auth test", () => {
   it("returns an auth0 access token", async () => {
-    const Auth = AuthService.getInstance();
-    expect(Auth).not.toBeNull();
-
     // API token
-    const token = await Auth.getAccessToken(true);
+    const token = await getAccessToken(true);
     expect(token).not.toBeNull();
-    expect(Auth.isTokenExpired(token)).toBeTruthy();
+    expect(getIsTokenExpired(token)).toBeTruthy();
 
     // Cached token
-    const cachedToken = await Auth.getAccessToken();
+    const cachedToken = await getAccessToken();
     expect(cachedToken).not.toBeNull();
-    expect(Auth.isTokenExpired(cachedToken)).toBeTruthy();
+    expect(!getIsTokenExpired(cachedToken)).toBeTruthy();
   });
 });

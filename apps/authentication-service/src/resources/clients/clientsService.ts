@@ -2,18 +2,17 @@ import { Client, ClientCreate, ResponseError } from "auth0";
 
 import envs from "@/config";
 import { ICredentials } from "@/resources/clients/clientsModel";
-import { AuthService } from "@/shared/auth/authService";
+import { getAccessToken } from "@/shared/auth/authService";
 import { parseResponse } from "@/shared/utils";
 import { getUserClientId, setUserClientId } from "@/shared/users/userService";
 
 const authDomain = envs.AUTH0_DOMAIN;
-const Auth = AuthService.getInstance();
 
 export const createClient = async (
   userId: string,
   client: ClientCreate,
 ): Promise<Client> => {
-  const token = await Auth.getAccessToken();
+  const token = await getAccessToken();
 
   // Check if user already has a client
   try {
@@ -54,7 +53,7 @@ export const createClient = async (
 };
 
 export const deleteClient = async (id: string): Promise<Client> => {
-  const token = await Auth.getAccessToken();
+  const token = await getAccessToken();
   const idEncoded = encodeURIComponent(id);
 
   try {
@@ -76,7 +75,7 @@ export const deleteClient = async (id: string): Promise<Client> => {
 };
 
 export const getClient = async (id: string): Promise<Client> => {
-  const token = await Auth.getAccessToken();
+  const token = await getAccessToken();
   const _id = encodeURIComponent(id);
 
   try {

@@ -1,9 +1,8 @@
 import envs from "@/config";
-import { AuthService } from "@/shared/auth/authService";
+import { getAccessToken } from "@/shared/auth/authService";
 import { parseResponse } from "@/shared/utils";
 
 const authDomain = envs.AUTH0_DOMAIN;
-const Auth = AuthService.getInstance();
 
 export type User = {
   user_metadata?: {
@@ -13,7 +12,7 @@ export type User = {
 };
 
 export const getUserById = async (userId: string): Promise<User> => {
-  const token = await Auth.getAccessToken();
+  const token = await getAccessToken();
   const userIdEncoded = encodeURIComponent(userId);
 
   try {
@@ -45,7 +44,7 @@ export const setUserClientId = async (
   userId: string,
   clientId: string,
 ): Promise<User> => {
-  const token = await Auth.getAccessToken();
+  const token = await getAccessToken();
   const userIdEncoded = encodeURIComponent(userId);
   const clientIdEncoded = encodeURIComponent(clientId);
 
