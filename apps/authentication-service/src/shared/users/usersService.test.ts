@@ -1,13 +1,9 @@
+import { User } from "@/shared/users/usersModel";
 import { AUTH0_USER_BY_ID } from "@/test/handlers";
 import { exampleUserWithClientId } from "@/test/testData/users";
 import { server } from "@/test/testServer";
 import { http, HttpResponse } from "msw";
-import {
-  getUserClientId,
-  getUserById,
-  User,
-  setUserClientId,
-} from "./usersService";
+import { getUserClientId, getUserById, setUserClientId } from "./usersService";
 
 describe("User Service tests", () => {
   const USER_ID = "google-oauth2|115545703201865461059";

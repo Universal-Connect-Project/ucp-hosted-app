@@ -1,7 +1,8 @@
-import { UserInfoClient, UserInfoResponse, JSONApiResponse } from "auth0";
+import { JSONApiResponse, UserInfoClient, UserInfoResponse } from "auth0";
 
 import envs from "@/config";
 import { getAccessToken } from "@/shared/auth/authService";
+import { User } from "@/shared/users/usersModel";
 import { parseResponse } from "@/shared/utils";
 
 const authDomain = envs.AUTH0_DOMAIN;
@@ -13,20 +14,7 @@ const userInfo: UserInfoClient = new UserInfoClient({
   },
 });
 
-export type User = {
-  user_metadata?: {
-    client_id?: string;
-  };
-  [key: string]: unknown;
-};
-
-export const getUserIdFromToken = async (token: string): Promise<string> => {
-  const user: JSONApiResponse<UserInfoResponse> =
-    await getUserInfoFromToken(token);
-  return Promise.resolve(user.data.sub);
-};
-
-export const getUserInfoFromToken = async (
+const getUserInfoFromToken = async (
   token: string,
 ): Promise<JSONApiResponse<UserInfoResponse>> => {
   try {
@@ -34,6 +22,12 @@ export const getUserInfoFromToken = async (
   } catch (error) {
     return Promise.reject(error);
   }
+};
+
+export const getUserIdFromToken = async (token: string): Promise<string> => {
+  const user: JSONApiResponse<UserInfoResponse> =
+    await getUserInfoFromToken(token);
+  return Promise.resolve(user.data.sub);
 };
 
 export const getUserById = async (userId: string): Promise<User> => {
