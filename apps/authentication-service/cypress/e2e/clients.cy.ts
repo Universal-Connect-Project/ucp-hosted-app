@@ -1,16 +1,25 @@
 import { Client } from "auth0";
 
-const USER_ID = "google-oauth2|115545703201865461059";
+const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
 
 describe("Client API", () => {
   const PORT: number = (Cypress.env("PORT") as number) || 8089;
   let accessToken: string;
+  let m2mToken: string;
   let newClientId: string;
 
-  const getToken = () => {
+  const getTokens = () => {
     cy.window()
       .its("localStorage")
-      .invoke("getItem", "jwt")
+      .invoke("getItem", "jwt-m2m")
+      .then((token: string) => {
+        if (token) {
+          m2mToken = token;
+        }
+      });
+    cy.window()
+      .its("localStorage")
+      .invoke("getItem", "jwt-client")
       .then((token: string) => {
         if (token) {
           accessToken = token;
@@ -19,15 +28,20 @@ describe("Client API", () => {
   };
 
   before(() => {
-    getToken();
+    getTokens();
     if (!accessToken) {
-      cy.loginByAuth0Api();
+      cy.loginM2MAuth0();
       cy.wait(1500);
-      getToken();
     }
+    if (!m2mToken) {
+      cy.loginClientAuth0();
+      cy.wait(1500);
+    }
+    getTokens();
   });
 
-  it("deletes the client_id from user metadata", () => {
+  // "creates a client, fails if another client request is made, gets the newly created client, and deletes the client"
+  it("clears the client_id from user metadata, tries creating a client without access token, creates a client, fails if another client request is made, gets the newly created client, and deletes the client", () => {
     cy.request({
       method: "PATCH",
       url: `https://${Cypress.env("AUTH0_DOMAIN")}/api/v2/users/${USER_ID}`,
@@ -37,33 +51,24 @@ describe("Client API", () => {
         },
       },
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${m2mToken}`,
       },
     });
-  });
 
-  it("creates a new client with incorrect parameters", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
       url: `http://localhost:${PORT}/v1/clients`,
       headers: {
         ContentType: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: {
-        clientId: "",
       },
     }).then((response: Cypress.Response<{ body: Client }>) => {
-      expect(response.status).to.eq(422);
+      expect(response.status).to.eq(401);
       expect(response.body)
-        .property("errors")
         .property("message")
-        .to.eq("userId is a required field");
+        .to.eq("Requires Authentication");
     });
-  });
 
-  it("creates a new client", () => {
     cy.request({
       method: "POST",
       url: `http://localhost:${PORT}/v1/clients`,
@@ -71,20 +76,16 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: {
-        userId: USER_ID,
-      },
     }).then((response: Cypress.Response<{ body: Client }>) => {
       newClientId = (response.body as unknown as Client).client_id;
       expect(response.status).to.eq(200);
     });
-  });
 
-  it("returns new client info", () => {
-    cy.wait(1500);
+    cy.wait(2500);
+
     cy.request({
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/${newClientId}`,
+      url: `http://localhost:${PORT}/v1/clients`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -92,9 +93,7 @@ describe("Client API", () => {
       expect(response.status).to.eq(200);
       expect(response.body).property("client_id").to.eq(newClientId);
     });
-  });
 
-  it("tries creating a new client for user that already has one", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
@@ -108,14 +107,12 @@ describe("Client API", () => {
       },
     }).then((response: Cypress.Response<never>) => {
       expect(response.status).to.eq(400);
-      expect(response.body).to.property("message", "User already has a client");
+      expect(response.body).to.property("body", "User already has a client");
     });
-  });
 
-  it("deletes the new client", () => {
     cy.request({
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients/${newClientId}`,
+      url: `http://localhost:${PORT}/v1/clients`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

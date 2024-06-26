@@ -1,8 +1,6 @@
-import { clientCreateSchema } from "@/resources/clients/clientsValidation";
 import { Client, ResponseError } from "auth0";
 import { Request, Response, Router } from "express";
 
-import { ReqValidate } from "@/middleware/validateMiddleware";
 import { validateAccessToken } from "@/middleware/authMiddleware";
 import {
   getClient,
@@ -17,10 +15,12 @@ type ClientCreateBody = {
 };
 
 export const clientsRoutesV1 = (router: Router): void => {
-  router.get("/:id", [validateAccessToken], (req: Request, res: Response) => {
-    const clientId: string = req.params.id;
+  router.get("/", [validateAccessToken], (req: Request, res: Response) => {
+    const clientToken = (req?.headers?.authorization || "Bearer ").split(
+      " ",
+    )[1];
 
-    void getClient(clientId)
+    void getClient(clientToken)
       .then((client: Client) => {
         res.send(
           JSON.stringify({
@@ -28,44 +28,36 @@ export const clientsRoutesV1 = (router: Router): void => {
           }),
         );
       })
-      .catch((error: Error) => {
-        res.send(
-          JSON.stringify({
-            message: error.message,
-          }),
-        );
+      .catch((error: ResponseError) => {
+        res.send(JSON.stringify(error));
       });
   });
 
-  router.delete(
-    "/:id",
-    [validateAccessToken],
-    (req: Request, res: Response) => {
-      const clientId: string = req.params.id;
+  router.delete("/", [validateAccessToken], (req: Request, res: Response) => {
+    const clientToken = (req?.headers?.authorization || "Bearer ").split(
+      " ",
+    )[1];
 
-      void deleteClient(clientId)
-        .then((client: Client) => {
-          res.send(
-            JSON.stringify({
-              ...client,
-            }),
-          );
-        })
-        .catch((error: Error) => {
-          res.send(
-            JSON.stringify({
-              message: error.message,
-            }),
-          );
-        });
-    },
-  );
+    void deleteClient(clientToken)
+      .then((client: Client) => {
+        res.send(
+          JSON.stringify({
+            ...client,
+          }),
+        );
+      })
+      .catch((error: ResponseError) => {
+        res.send(JSON.stringify(error));
+      });
+  });
 
   router.post(
     "/",
-    [validateAccessToken, ReqValidate.body(clientCreateSchema)],
+    [validateAccessToken],
     (req: Request<object, object, ClientCreateBody>, res: Response) => {
-      const { userId } = req.body;
+      const clientToken = (req?.headers?.authorization || "Bearer ").split(
+        " ",
+      )[1];
       const client = {
         name: `ucp-${crypto.randomUUID()}`,
         client_metadata: {
@@ -73,7 +65,7 @@ export const clientsRoutesV1 = (router: Router): void => {
         },
       };
 
-      void createClient(userId, client)
+      void createClient(clientToken, client)
         .then((client: Client) => {
           res.send(
             JSON.stringify({
@@ -83,11 +75,7 @@ export const clientsRoutesV1 = (router: Router): void => {
         })
         .catch((error: ResponseError) => {
           console.log("(catch) Error creating client", error);
-          res.status(error.statusCode).send(
-            JSON.stringify({
-              message: error.body,
-            }),
-          );
+          res.status(error.statusCode).send(JSON.stringify(error));
         });
     },
   );

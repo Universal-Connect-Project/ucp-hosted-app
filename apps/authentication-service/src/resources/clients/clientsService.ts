@@ -4,15 +4,20 @@ import envs from "@/config";
 import { ICredentials } from "@/resources/clients/clientsModel";
 import { getAccessToken } from "@/shared/auth/authService";
 import { parseResponse } from "@/shared/utils";
-import { getUserClientId, setUserClientId } from "@/shared/users/userService";
+import {
+  getUserClientId,
+  getUserIdFromToken,
+  setUserClientId,
+} from "@/shared/users/usersService";
 
 const authDomain = envs.AUTH0_DOMAIN;
 
 export const createClient = async (
-  userId: string,
+  userToken: string,
   client: ClientCreate,
 ): Promise<Client> => {
   const token = await getAccessToken();
+  const userId = await getUserIdFromToken(userToken);
 
   // Check if user already has a client
   try {
@@ -52,20 +57,23 @@ export const createClient = async (
   }
 };
 
-export const deleteClient = async (id: string): Promise<Client> => {
+export const deleteClient = async (userToken: string): Promise<Client> => {
   const token = await getAccessToken();
-  const idEncoded = encodeURIComponent(id);
+  const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
   try {
     const client: Client = (await parseResponse(
-      await fetch(`https://${authDomain}/api/v2/clients/${idEncoded}`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      await fetch(
+        `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         },
-      }),
+      ),
     )) as Client;
 
     return Promise.resolve(client);
@@ -74,25 +82,31 @@ export const deleteClient = async (id: string): Promise<Client> => {
   }
 };
 
-export const getClient = async (id: string): Promise<Client> => {
-  const token = await getAccessToken();
-  const _id = encodeURIComponent(id);
+export const getClient = async (userToken: string): Promise<Client> => {
+  const token: string = await getAccessToken();
+  const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
   try {
     const client: Client = (await parseResponse(
-      await fetch(`https://${authDomain}/api/v2/clients/${_id}`, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      await fetch(
+        `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         },
-      }),
+      ),
     )) as Client;
 
     return Promise.resolve(client);
   } catch (error) {
-    return Promise.reject(error);
+    console.log("Unable to get client", error);
+    return Promise.reject(
+      new ResponseError(500, "An unexpected error occurred", {} as Headers),
+    );
   }
 };
 

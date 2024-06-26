@@ -7,7 +7,7 @@ import {
   getUserById,
   User,
   setUserClientId,
-} from "./userService";
+} from "./usersService";
 
 describe("User Service tests", () => {
   const USER_ID = "google-oauth2|115545703201865461059";

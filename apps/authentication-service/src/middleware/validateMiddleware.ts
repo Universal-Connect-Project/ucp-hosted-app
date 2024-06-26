@@ -10,10 +10,8 @@ const ReqValidateBody: ReqValidate = (schema) => async (req, res, next) => {
 
   try {
     await schema.validate(req.body);
-    console.log("ReqValidateBody ", req.body);
     return next();
   } catch (errors) {
-    console.log("ReqValidateBody Error", errors);
     return res.status(422).json({ status: 422, errors });
   }
 };
