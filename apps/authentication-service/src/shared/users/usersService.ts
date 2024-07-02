@@ -14,6 +14,10 @@ const userInfo: UserInfoClient = new UserInfoClient({
   },
 });
 
+export const getArrayOfUserProps = (users: User[], key: string): string[] => {
+  return users.map((user: User) => user[key]) as string[];
+};
+
 const getUserInfoFromToken = async (
   token: string,
 ): Promise<JSONApiResponse<UserInfoResponse>> => {
@@ -45,6 +49,30 @@ export const getUserById = async (userId: string): Promise<User> => {
         },
       }),
     )) as Promise<User>;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+export const getUsersByClientId = async (clientId: string): Promise<User[]> => {
+  const token = await getAccessToken();
+  const clientIdEncoded = encodeURIComponent(clientId);
+  try {
+    const users: User[] = (await parseResponse(
+      await fetch(
+        `https://${authDomain}/api/v2/users?q=user_metadata.client_id=${clientIdEncoded}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      ),
+    )) as User[];
+
+    return Promise.resolve(users);
   } catch (error) {
     return Promise.reject(error);
   }

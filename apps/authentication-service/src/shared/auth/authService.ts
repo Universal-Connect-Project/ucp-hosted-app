@@ -7,21 +7,21 @@ import { decode, JwtPayload } from "jsonwebtoken";
 import envs from "@/config";
 import { ICredentialRequestBody } from "@/shared/auth/authModel";
 
-let token: string;
-
 const domain: string = envs.AUTH0_DOMAIN;
 const audience: string = envs.AUTH0_AUDIENCE;
 const clientId: string = envs.AUTH0_CLIENT_ID;
 const clientSecret: string = envs.AUTH0_CLIENT_SECRET;
 const tokenFileName: string = "brkn-arrw.txt";
 
-const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
+export const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
 
-const setCachedToken = (token: string): void => {
+const setCachedToken = (token: string): boolean => {
   try {
     fs.writeFileSync(tokenFile, token);
+    return true;
   } catch (Error) {
     console.log("Unable to cache token", Error);
+    return false;
   }
 };
 
@@ -33,20 +33,15 @@ const getCachedToken = (): string | undefined => {
   }
 };
 
-const fetchAccessToken = async (skipCache?: boolean): Promise<string> => {
+let token: string;
+
+const fetchAccessToken = async (): Promise<string> => {
   const body: ICredentialRequestBody = {
     grant_type: "client_credentials",
     client_id: clientId,
     client_secret: clientSecret,
     audience: audience,
   };
-
-  const _token = skipCache ? undefined : getCachedToken();
-
-  if (_token && !getIsTokenExpired(_token)) {
-    token = _token;
-    return Promise.resolve(token);
-  }
 
   try {
     const response: Response = await fetch(`https://${domain}/oauth/token`, {
@@ -57,23 +52,23 @@ const fetchAccessToken = async (skipCache?: boolean): Promise<string> => {
 
     token = ((await response.json()) as TokenSet).access_token;
 
-    if (token && !getIsTokenExpired(token)) {
-      setCachedToken(token);
-    }
+    token && setCachedToken(token);
     return Promise.resolve(token);
   } catch (error) {
     return Promise.reject(error);
   }
 };
 
-export const getIsTokenExpired = (token: string): boolean => {
+const getIsTokenExpired = (token: string): boolean => {
   const { exp } = decode(token, { json: true }) as JwtPayload;
   return !exp || Date.now() >= exp * 1000;
 };
 
-export const getAccessToken = async (skipCache?: boolean): Promise<string> => {
-  if (!token || getIsTokenExpired(token)) {
-    await fetchAccessToken(skipCache);
+export const getAccessToken = async (): Promise<string> => {
+  const currentToken = token || getCachedToken();
+
+  if (!currentToken || getIsTokenExpired(currentToken)) {
+    await fetchAccessToken();
   }
 
   return Promise.resolve(token);

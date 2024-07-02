@@ -110,9 +110,13 @@ export const getClient = async (userToken: string): Promise<Client> => {
   }
 };
 
-export const getCredentials = (): Promise<ICredentials> => {
-  return Promise.resolve({
-    id: "placeholder_id",
-    secret: "placeholder_secret",
-  });
+export const getClientCredentials = (client: Client): Promise<ICredentials> => {
+  try {
+    return Promise.resolve({
+      id: client.client_id,
+      secret: client.client_secret,
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
 };

@@ -31,11 +31,9 @@ describe("Client API", () => {
     getTokens();
     if (!accessToken) {
       cy.loginM2MAuth0();
-      cy.wait(1500);
     }
     if (!m2mToken) {
       cy.loginClientAuth0();
-      cy.wait(1500);
     }
     getTokens();
   });
@@ -80,8 +78,6 @@ describe("Client API", () => {
       newClientId = (response.body as unknown as Client).client_id;
       expect(response.status).to.eq(200);
     });
-
-    cy.wait(2500);
 
     cy.request({
       method: "GET",

@@ -7,14 +7,40 @@ import {
   createClient,
   deleteClient,
 } from "@/resources/clients/clientsService";
+import { ClientCreateBody } from "@/resources/clients/clientsModel";
 
 const apiVersion = "v1";
 
-type ClientCreateBody = {
-  userId: string;
-};
-
 export const clientsRoutesV1 = (router: Router): void => {
+  router.post(
+    "/",
+    [validateAccessToken],
+    (req: Request<object, object, ClientCreateBody>, res: Response) => {
+      const clientToken = (req?.headers?.authorization || "Bearer ").split(
+        " ",
+      )[1];
+      const client = {
+        name: `ucp-${crypto.randomUUID()}`,
+        client_metadata: {
+          created_via: `api-${apiVersion}`,
+        },
+      };
+
+      void createClient(clientToken, client)
+        .then((client: Client) => {
+          res.send(
+            JSON.stringify({
+              ...client,
+            }),
+          );
+        })
+        .catch((error: ResponseError) => {
+          console.log("(catch) Error creating client", error);
+          res.status(error.statusCode).send(JSON.stringify(error));
+        });
+    },
+  );
+
   router.get("/", [validateAccessToken], (req: Request, res: Response) => {
     const clientToken = (req?.headers?.authorization || "Bearer ").split(
       " ",
@@ -50,33 +76,4 @@ export const clientsRoutesV1 = (router: Router): void => {
         res.send(JSON.stringify(error));
       });
   });
-
-  router.post(
-    "/",
-    [validateAccessToken],
-    (req: Request<object, object, ClientCreateBody>, res: Response) => {
-      const clientToken = (req?.headers?.authorization || "Bearer ").split(
-        " ",
-      )[1];
-      const client = {
-        name: `ucp-${crypto.randomUUID()}`,
-        client_metadata: {
-          created_via: `api-${apiVersion}`,
-        },
-      };
-
-      void createClient(clientToken, client)
-        .then((client: Client) => {
-          res.send(
-            JSON.stringify({
-              ...client,
-            }),
-          );
-        })
-        .catch((error: ResponseError) => {
-          console.log("(catch) Error creating client", error);
-          res.status(error.statusCode).send(JSON.stringify(error));
-        });
-    },
-  );
 };
