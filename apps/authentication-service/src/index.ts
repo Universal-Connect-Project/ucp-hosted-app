@@ -13,13 +13,11 @@ const app = express();
 initExpress(app);
 
 app.listen(PORT, () => {
-  // const Auth = AuthService.getInstance();
-
   void getAccessToken()
     .then((token: string) => {
-      if (envs.ENV === "dev") {
-        console.log(`\nToken: ${ConsoleColors.FgGray}${token}`);
-      }
+      console.log(
+        `\nToken: ${ConsoleColors.FgGray}${envs.ENV === "test" ? token : `${token.slice(0, 10)}...${token.slice(-10)}`}`,
+      );
       console.log(
         `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${PORT}; ENV=${envs.ENV}`,
       );

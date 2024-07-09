@@ -13,6 +13,8 @@ const clientId: string = envs.AUTH0_CLIENT_ID;
 const clientSecret: string = envs.AUTH0_CLIENT_SECRET;
 const tokenFileName: string = "brkn-arrw.txt";
 
+let token: string;
+
 export const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
 
 const setCachedToken = (token: string): boolean => {
@@ -27,13 +29,12 @@ const setCachedToken = (token: string): boolean => {
 
 const getCachedToken = (): string | undefined => {
   if (fs.existsSync(tokenFile)) {
-    return fs.readFileSync(tokenFile, "utf8");
+    token = fs.readFileSync(tokenFile, "utf8");
+    return token;
   } else {
     return undefined;
   }
 };
-
-let token: string;
 
 const fetchAccessToken = async (): Promise<string> => {
   const body: ICredentialRequestBody = {

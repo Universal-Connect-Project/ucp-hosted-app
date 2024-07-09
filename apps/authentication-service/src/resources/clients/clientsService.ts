@@ -59,7 +59,8 @@ export const createClient = async (
 
 export const deleteClient = async (userToken: string): Promise<Client> => {
   const token = await getAccessToken();
-  const clientId = await getUserClientId(await getUserIdFromToken(userToken));
+  const userId = await getUserIdFromToken(userToken);
+  const clientId = await getUserClientId(userId);
 
   try {
     const client: Client = (await parseResponse(
@@ -75,6 +76,9 @@ export const deleteClient = async (userToken: string): Promise<Client> => {
         },
       ),
     )) as Client;
+
+    // Remove client id from user
+    await setUserClientId(userId, "");
 
     return Promise.resolve(client);
   } catch (error) {
