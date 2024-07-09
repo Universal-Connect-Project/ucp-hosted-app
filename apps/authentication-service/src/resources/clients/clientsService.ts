@@ -53,7 +53,13 @@ export const createClient = async (
 
     return Promise.resolve(newClient);
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.reject(
+      new ResponseError(
+        500,
+        "Unable to create client: An unexpected error occurred",
+        {} as Headers,
+      ),
+    );
   }
 };
 
@@ -82,7 +88,14 @@ export const deleteClient = async (userToken: string): Promise<Client> => {
 
     return Promise.resolve(client);
   } catch (error) {
-    return Promise.reject(error);
+    console.log(error);
+    return Promise.reject(
+      new ResponseError(
+        500,
+        "Unable to delete client: An unexpected error occurred",
+        {} as Headers,
+      ),
+    );
   }
 };
 
@@ -107,7 +120,6 @@ export const getClient = async (userToken: string): Promise<Client> => {
 
     return Promise.resolve(client);
   } catch (error) {
-    console.log("Unable to get client", error);
     return Promise.reject(
       new ResponseError(500, "An unexpected error occurred", {} as Headers),
     );

@@ -55,7 +55,7 @@ export const clientsRoutesV1 = (router: Router): void => {
         );
       })
       .catch((error: ResponseError) => {
-        res.send(JSON.stringify(error));
+        res.status(error.statusCode).send(JSON.stringify(error));
       });
   });
 
@@ -73,7 +73,7 @@ export const clientsRoutesV1 = (router: Router): void => {
         );
       })
       .catch((error: ResponseError) => {
-        res.send(JSON.stringify(error));
+        res.status(error.statusCode).send(JSON.stringify(error));
       });
   });
 };

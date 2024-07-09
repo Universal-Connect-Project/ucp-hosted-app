@@ -2,5 +2,5 @@ export const parseResponse = async (response: Response) => {
   if (!response.ok) {
     throw Error(response.statusText);
   }
-  return response.json();
+  return response.body ? response.json() : {};
 };

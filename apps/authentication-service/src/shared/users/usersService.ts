@@ -95,15 +95,6 @@ export const setUserClientId = async (
   const userIdEncoded = encodeURIComponent(userId);
   const clientIdEncoded = encodeURIComponent(clientId);
 
-  console.log(
-    "----------------------->",
-    JSON.stringify({
-      user_metadata: {
-        client_id: clientId.length === 0 ? null : clientIdEncoded,
-      },
-    }),
-  );
-
   try {
     const user: User = (await parseResponse(
       await fetch(`https://${authDomain}/api/v2/users/${userIdEncoded}`, {
