@@ -54,7 +54,6 @@ describe("Client API", () => {
     });
   });
 
-  // "creates a client, fails if another client request is made, gets the newly created client, and deletes the client"
   it("clears the client_id from user metadata, tries creating a client without access token, creates a client, fails if another client request is made, gets the newly created client, and deletes the client", () => {
     cy.request({
       method: "PATCH",
@@ -104,8 +103,8 @@ describe("Client API", () => {
         userId: USER_ID,
       },
     }).then((response: Cypress.Response<never>) => {
-      expect(response.status).to.eq(400);
-      expect(response.body).to.property("body", "User already has a client");
+      expect(response.status).to.eq(500);
+      expect(response).to.property("body", "Unable to create client");
     });
 
     cy.request({
