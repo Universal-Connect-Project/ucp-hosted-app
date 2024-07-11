@@ -1,3 +1,4 @@
+import { getUserClientId } from "@/shared/users/usersService";
 import { Client } from "auth0";
 import { http, HttpResponse } from "msw";
 
@@ -5,8 +6,9 @@ import { AUTH0_USER_BY_ID } from "@/test/handlers";
 import {
   exampleUser,
   exampleToken,
-  exampleUserInfoResponse,
   exampleUserAlreadyHasAClientResponseError,
+  exampleUserInfoResponse,
+  exampleUserID,
 } from "@/test/testData/users";
 import { server } from "@/test/testServer";
 import { exampleClient } from "@/test/testData/clients";
@@ -61,5 +63,17 @@ describe("Clients test", () => {
     expect(response).toBe(null);
   });
 
-  it("removes client_id from user metadata", async () => {});
+  it("deletes a client and check that the user_metadata has been cleared", async () => {
+    await deleteClient(exampleToken);
+
+    const response = await deleteClient(exampleToken);
+    expect(response).toBe(null);
+
+    server.use(
+      http.get(AUTH0_USER_BY_ID, () => HttpResponse.json(exampleUser)),
+    );
+
+    const clientId = await getUserClientId(exampleUserID);
+    expect(clientId).toBe("");
+  });
 });

@@ -38,6 +38,22 @@ describe("Client API", () => {
     getTokens();
   });
 
+  it("creates a client without access token", () => {
+    cy.request({
+      failOnStatusCode: false,
+      method: "POST",
+      url: `http://localhost:${PORT}/v1/clients`,
+      headers: {
+        ContentType: "application/json",
+      },
+    }).then((response: Cypress.Response<{ body: Client }>) => {
+      expect(response.status).to.eq(401);
+      expect(response.body)
+        .property("message")
+        .to.eq("Requires Authentication");
+    });
+  });
+
   // "creates a client, fails if another client request is made, gets the newly created client, and deletes the client"
   it("clears the client_id from user metadata, tries creating a client without access token, creates a client, fails if another client request is made, gets the newly created client, and deletes the client", () => {
     cy.request({
@@ -51,20 +67,6 @@ describe("Client API", () => {
       headers: {
         Authorization: `Bearer ${m2mToken}`,
       },
-    });
-
-    cy.request({
-      failOnStatusCode: false,
-      method: "POST",
-      url: `http://localhost:${PORT}/v1/clients`,
-      headers: {
-        ContentType: "application/json",
-      },
-    }).then((response: Cypress.Response<{ body: Client }>) => {
-      expect(response.status).to.eq(401);
-      expect(response.body)
-        .property("message")
-        .to.eq("Requires Authentication");
     });
 
     cy.request({

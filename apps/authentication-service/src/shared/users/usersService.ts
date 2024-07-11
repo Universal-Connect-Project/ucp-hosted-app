@@ -14,10 +14,6 @@ const userInfo: UserInfoClient = new UserInfoClient({
   },
 });
 
-export const getArrayOfUserProps = (users: User[], key: string): string[] => {
-  return users.map((user: User) => user[key]) as string[];
-};
-
 const getUserInfoFromToken = async (
   token: string,
 ): Promise<JSONApiResponse<UserInfoResponse>> => {
@@ -28,6 +24,11 @@ export const getUserIdFromToken = async (token: string): Promise<string> => {
   const user: JSONApiResponse<UserInfoResponse> =
     await getUserInfoFromToken(token);
   return Promise.resolve(user.data.sub);
+};
+
+export const getUserClientId = async (userId: string): Promise<string> => {
+  const userInfo: User = await getUserById(userId);
+  return Promise.resolve(userInfo?.user_metadata?.client_id || "");
 };
 
 export const getUserById = async (userId: string): Promise<User> => {
@@ -46,6 +47,7 @@ export const getUserById = async (userId: string): Promise<User> => {
   );
 };
 
+// Keeping for future functionality
 export const getUsersByClientId = async (clientId: string): Promise<User[]> => {
   const token = await getAccessToken();
   const clientIdEncoded = encodeURIComponent(clientId);
@@ -65,11 +67,6 @@ export const getUsersByClientId = async (clientId: string): Promise<User[]> => {
   );
 
   return Promise.resolve(users);
-};
-
-export const getUserClientId = async (userId: string): Promise<string> => {
-  const userInfo: User = await getUserById(userId);
-  return Promise.resolve(userInfo?.user_metadata?.client_id || "");
 };
 
 export const setUserClientId = async (
