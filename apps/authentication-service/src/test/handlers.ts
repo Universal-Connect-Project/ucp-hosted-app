@@ -1,3 +1,4 @@
+import { exampleClient } from "@/test/testData/clients";
 import { http, HttpResponse } from "msw";
 import { exampleUserWithClientId, exampleToken } from "@/test/testData/users";
 import envs from "@/config";
@@ -20,36 +21,7 @@ export const handlers = [
       access_token: exampleToken,
     }),
   ),
-  http.get(AUTH0_CLIENTS_BY_ID, () =>
-    HttpResponse.json({
-      tenant: "dev-ucp",
-      name: "Unit Test Client",
-      description: "For unit testing",
-      client_id: "ucp-test-client",
-      client_aliases: [],
-      token_endpoint_auth_method: "client_secret_post",
-      app_type: "non_interactive",
-      grant_types: [
-        "client_credentials",
-        "password",
-        "http://auth0.com/oauth/grant-type/password-realm",
-      ],
-    }),
-  ),
-  http.post(AUTH0_CLIENTS, () =>
-    HttpResponse.json({
-      client_id: "ucp-test-client",
-      name: "Unit Test Client",
-      description: "For unit testing",
-      app_type: "non_interactive",
-    }),
-  ),
-  http.delete(AUTH0_CLIENTS_BY_ID, () =>
-    HttpResponse.json({
-      client_id: "ucp-test-client",
-      name: "Unit Test Client",
-      description: "For unit testing",
-      app_type: "non_interactive",
-    }),
-  ),
+  http.get(AUTH0_CLIENTS_BY_ID, () => HttpResponse.json(exampleClient)),
+  http.post(AUTH0_CLIENTS, () => HttpResponse.json(exampleClient)),
+  http.delete(AUTH0_CLIENTS_BY_ID, () => HttpResponse.json(null)),
 ];

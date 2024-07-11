@@ -4,7 +4,7 @@ export const exampleClient: Partial<Client> = {
   tenant: "dev-ucp",
   global: false,
   is_token_endpoint_ip_header_trusted: false,
-  name: "UCP Auth APP (Dev)",
+  name: "UCP Test Client",
   is_first_party: true,
   oidc_conformant: true,
   sso_disabled: false,
@@ -29,7 +29,7 @@ export const exampleClient: Partial<Client> = {
     },
   },
   allowed_logout_urls: [],
-  description: "This is the main APP we are using for testing",
+  description: "For unit testing",
   initiate_login_uri: "",
   logo_uri:
     "https://login.universalconnectproject.org/assets/logo-small-grey-white-dbafd52d.svg",
@@ -41,7 +41,7 @@ export const exampleClient: Partial<Client> = {
     },
   ],
   allowed_origins: [],
-  client_id: "zTBmxxdxdOiKZNrViPH1I5RTIn39jBwT",
+  client_id: "ucp-test-client",
   callback_url_template: false,
   client_secret: "fake-secret",
   jwt_configuration: {

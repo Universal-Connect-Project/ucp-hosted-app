@@ -1,6 +1,6 @@
-export const parseResponse = async (response: Response) => {
+export const parseResponse = async <T>(response: Response): Promise<T> => {
   if (!response.ok) {
     throw Error(response.statusText);
   }
-  return response.body ? response.json() : {};
+  return response.body ? response.json() : null;
 };

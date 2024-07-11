@@ -1,7 +1,6 @@
 import { Client, ClientCreate, ResponseError } from "auth0";
 
 import envs from "@/config";
-import { ICredentials } from "@/resources/clients/clientsModel";
 import { getAccessToken } from "@/shared/auth/authService";
 import { parseResponse } from "@/shared/utils";
 import {
@@ -20,119 +19,77 @@ export const createClient = async (
   const userId = await getUserIdFromToken(userToken);
 
   // Check if user already has a client
-  try {
-    const userClientID = await getUserClientId(userId);
+  const userClientID = await getUserClientId(userId);
 
-    if (userClientID && userClientID.length > 0) {
-      return Promise.reject(
-        new ResponseError(400, "User already has a client", {} as Headers),
-      );
-    }
-  } catch (error) {
-    return Promise.reject(error);
+  if (userClientID && userClientID.length > 0) {
+    return Promise.reject(
+      new ResponseError(400, "User already has a client", {} as Headers),
+    );
   }
 
   // Create new client
-  try {
-    const newClient: Client = (await parseResponse(
-      await fetch(`https://${authDomain}/api/v2/clients`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...client,
-          app_type: "non_interactive",
-        }),
+  const newClient: Client = await parseResponse(
+    await fetch(`https://${authDomain}/api/v2/clients`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...client,
+        app_type: "non_interactive",
       }),
-    )) as Client;
+    }),
+  );
 
-    await setUserClientId(userId, newClient.client_id);
+  await setUserClientId(userId, newClient?.client_id || "");
 
-    return Promise.resolve(newClient);
-  } catch (error) {
-    return Promise.reject(
-      new ResponseError(
-        500,
-        "Unable to create client: An unexpected error occurred",
-        {} as Headers,
-      ),
-    );
-  }
-};
-
-export const deleteClient = async (userToken: string): Promise<Client> => {
-  const token = await getAccessToken();
-  const userId = await getUserIdFromToken(userToken);
-  const clientId = await getUserClientId(userId);
-
-  try {
-    const client: Client = (await parseResponse(
-      await fetch(
-        `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}`,
-        {
-          method: "DELETE",
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      ),
-    )) as Client;
-
-    // Remove client id from user
-    await setUserClientId(userId, "");
-
-    return Promise.resolve(client);
-  } catch (error) {
-    console.log(error);
-    return Promise.reject(
-      new ResponseError(
-        500,
-        "Unable to delete client: An unexpected error occurred",
-        {} as Headers,
-      ),
-    );
-  }
+  return Promise.resolve(newClient);
 };
 
 export const getClient = async (userToken: string): Promise<Client> => {
   const token: string = await getAccessToken();
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
-  try {
-    const client: Client = (await parseResponse(
-      await fetch(
-        `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+  const client: Client = await parseResponse<Client>(
+    await fetch(
+      `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-      ),
-    )) as Client;
+      },
+    ),
+  );
 
-    return Promise.resolve(client);
-  } catch (error) {
-    return Promise.reject(
-      new ResponseError(500, "An unexpected error occurred", {} as Headers),
-    );
-  }
+  return Promise.resolve(client);
 };
 
-export const getClientCredentials = (client: Client): Promise<ICredentials> => {
-  try {
-    return Promise.resolve({
-      id: client.client_id,
-      secret: client.client_secret,
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
+export const deleteClient = async (userToken: string): Promise<null> => {
+  const token = await getAccessToken();
+  const userId = await getUserIdFromToken(userToken);
+  const clientId = await getUserClientId(userId);
+
+  await parseResponse<Client>(
+    await fetch(
+      `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    ),
+  );
+
+  // Remove client id from user
+  await setUserClientId(userId, "");
+
+  return Promise.resolve(null);
 };

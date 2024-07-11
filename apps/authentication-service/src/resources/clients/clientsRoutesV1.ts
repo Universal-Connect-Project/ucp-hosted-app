@@ -1,4 +1,4 @@
-import { Client, ResponseError } from "auth0";
+import { Client } from "auth0";
 import { Request, Response, Router } from "express";
 
 import { validateAccessToken } from "@/middleware/authMiddleware";
@@ -34,9 +34,8 @@ export const clientsRoutesV1 = (router: Router): void => {
             }),
           );
         })
-        .catch((error: ResponseError) => {
-          console.log("(catch) Error creating client", error);
-          res.status(error.statusCode).send(JSON.stringify(error));
+        .catch(() => {
+          res.status(500).send(JSON.stringify("Unable to create client"));
         });
     },
   );
@@ -54,8 +53,8 @@ export const clientsRoutesV1 = (router: Router): void => {
           }),
         );
       })
-      .catch((error: ResponseError) => {
-        res.status(error.statusCode).send(JSON.stringify(error));
+      .catch(() => {
+        res.status(500).send(JSON.stringify("Unable to get client"));
       });
   });
 
@@ -65,15 +64,11 @@ export const clientsRoutesV1 = (router: Router): void => {
     )[1];
 
     void deleteClient(clientToken)
-      .then((client: Client) => {
-        res.send(
-          JSON.stringify({
-            ...client,
-          }),
-        );
+      .then(() => {
+        res.send(null);
       })
-      .catch((error: ResponseError) => {
-        res.status(error.statusCode).send(JSON.stringify(error));
+      .catch(() => {
+        res.status(500).send(JSON.stringify("Unable to delete client"));
       });
   });
 };

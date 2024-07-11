@@ -21,11 +21,7 @@ export const getArrayOfUserProps = (users: User[], key: string): string[] => {
 const getUserInfoFromToken = async (
   token: string,
 ): Promise<JSONApiResponse<UserInfoResponse>> => {
-  try {
-    return await userInfo.getUserInfo(token);
-  } catch (error) {
-    return Promise.reject(error);
-  }
+  return await userInfo.getUserInfo(token);
 };
 
 export const getUserIdFromToken = async (token: string): Promise<string> => {
@@ -38,53 +34,42 @@ export const getUserById = async (userId: string): Promise<User> => {
   const token = await getAccessToken();
   const userIdEncoded = encodeURIComponent(userId);
 
-  try {
-    return (await parseResponse(
-      await fetch(`https://${authDomain}/api/v2/users/${userIdEncoded}`, {
+  return await parseResponse<User>(
+    await fetch(`https://${authDomain}/api/v2/users/${userIdEncoded}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }),
+  );
+};
+
+export const getUsersByClientId = async (clientId: string): Promise<User[]> => {
+  const token = await getAccessToken();
+  const clientIdEncoded = encodeURIComponent(clientId);
+
+  const users: User[] = await parseResponse<User[]>(
+    await fetch(
+      `https://${authDomain}/api/v2/users?q=user_metadata.client_id=${clientIdEncoded}`,
+      {
         method: "GET",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      }),
-    )) as Promise<User>;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
+      },
+    ),
+  );
 
-export const getUsersByClientId = async (clientId: string): Promise<User[]> => {
-  const token = await getAccessToken();
-  const clientIdEncoded = encodeURIComponent(clientId);
-  try {
-    const users: User[] = (await parseResponse(
-      await fetch(
-        `https://${authDomain}/api/v2/users?q=user_metadata.client_id=${clientIdEncoded}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      ),
-    )) as User[];
-
-    return Promise.resolve(users);
-  } catch (error) {
-    return Promise.reject(error);
-  }
+  return Promise.resolve(users);
 };
 
 export const getUserClientId = async (userId: string): Promise<string> => {
-  try {
-    const userInfo: User = await getUserById(userId);
-    return Promise.resolve(userInfo?.user_metadata?.client_id || "");
-  } catch (error) {
-    return Promise.reject(error);
-  }
+  const userInfo: User = await getUserById(userId);
+  return Promise.resolve(userInfo?.user_metadata?.client_id || "");
 };
 
 export const setUserClientId = async (
@@ -95,25 +80,21 @@ export const setUserClientId = async (
   const userIdEncoded = encodeURIComponent(userId);
   const clientIdEncoded = encodeURIComponent(clientId);
 
-  try {
-    const user: User = (await parseResponse(
-      await fetch(`https://${authDomain}/api/v2/users/${userIdEncoded}`, {
-        method: "PATCH",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+  const user: User = await parseResponse<User>(
+    await fetch(`https://${authDomain}/api/v2/users/${userIdEncoded}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_metadata: {
+          client_id: clientId.length === 0 ? null : clientIdEncoded,
         },
-        body: JSON.stringify({
-          user_metadata: {
-            client_id: clientId.length === 0 ? null : clientIdEncoded,
-          },
-        }),
       }),
-    )) as User;
+    }),
+  );
 
-    return Promise.resolve(user);
-  } catch (error) {
-    return Promise.reject(error);
-  }
+  return Promise.resolve(user);
 };
