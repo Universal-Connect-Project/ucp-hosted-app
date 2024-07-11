@@ -19,7 +19,6 @@ const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
 
 const setCachedToken = (token: string): boolean => {
   try {
-    // console.log("-----> setCachedToken", token);
     fs.writeFileSync(tokenFile, token);
     return true;
   } catch (Error) {
@@ -69,9 +68,7 @@ export const getIsTokenExpired = (token: string): boolean => {
 export const getAccessToken = async (): Promise<string> => {
   const currentToken = token || getCachedToken();
 
-  // console.log("Current token", currentToken);
   if (!currentToken || getIsTokenExpired(currentToken)) {
-    // console.log("Token expired or not found. Fetching new token...");
     await fetchAccessToken();
   }
 
