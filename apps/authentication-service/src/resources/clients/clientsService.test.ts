@@ -40,7 +40,7 @@ describe("Clients test", () => {
     expect(client).toEqual(exampleClient);
   });
 
-  it("creates a new client when user already has one", async () => {
+  it("tries to create a new client when user already has one", async () => {
     await expect(
       createClient(exampleToken, {
         name: exampleClientName,
