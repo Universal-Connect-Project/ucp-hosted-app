@@ -1,5 +1,8 @@
 import { Client } from "auth0";
 
+export const exampleClientName = "UCP Test Client";
+export const exampleClientDesc = "For unit testing";
+
 export const exampleClient: Partial<Client> = {
   tenant: "dev-ucp",
   global: false,

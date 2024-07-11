@@ -11,7 +11,11 @@ import {
   exampleUserID,
 } from "@/test/testData/users";
 import { server } from "@/test/testServer";
-import { exampleClient } from "@/test/testData/clients";
+import {
+  exampleClient,
+  exampleClientDesc,
+  exampleClientName,
+} from "@/test/testData/clients";
 import { getClient, createClient, deleteClient } from "./clientsService";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -23,17 +27,13 @@ jest.mock("auth0", () => ({
 }));
 
 describe("Clients test", () => {
-  const clientId: string = "ucp-test-client";
-  const clientName = "UCP Test Client";
-  const clientDesc = "For unit testing";
-
   it("creates a new client", async () => {
     server.use(
       http.get(AUTH0_USER_BY_ID, () => HttpResponse.json(exampleUser)),
     );
     const client: Client = await createClient(exampleToken, {
-      name: clientName,
-      description: clientDesc,
+      name: exampleClientName,
+      description: exampleClientDesc,
     });
 
     expect(client).not.toBe(undefined);
@@ -43,8 +43,8 @@ describe("Clients test", () => {
   it("creates a new client when user already has one", async () => {
     await expect(
       createClient(exampleToken, {
-        name: clientName,
-        description: clientDesc,
+        name: exampleClientName,
+        description: exampleClientDesc,
       }),
     ).rejects.toEqual(exampleUserAlreadyHasAClientResponseError);
   });
@@ -53,7 +53,7 @@ describe("Clients test", () => {
     const client: Client = await getClient(exampleToken);
 
     expect(client).not.toBe(undefined);
-    expect(client.client_id).toBe(clientId);
+    expect(client).toEqual(exampleClient);
   });
 
   it("deletes a client", async () => {
