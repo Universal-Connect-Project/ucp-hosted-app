@@ -15,10 +15,11 @@ const tokenFileName: string = "brkn-arrw.txt";
 
 let token: string;
 
-export const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
+const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
 
 const setCachedToken = (token: string): boolean => {
   try {
+    // console.log("-----> setCachedToken", token);
     fs.writeFileSync(tokenFile, token);
     return true;
   } catch (Error) {
@@ -60,7 +61,7 @@ const fetchAccessToken = async (): Promise<string> => {
   }
 };
 
-const getIsTokenExpired = (token: string): boolean => {
+export const getIsTokenExpired = (token: string): boolean => {
   const { exp } = decode(token, { json: true }) as JwtPayload;
   return !exp || Date.now() >= exp * 1000;
 };
@@ -68,9 +69,17 @@ const getIsTokenExpired = (token: string): boolean => {
 export const getAccessToken = async (): Promise<string> => {
   const currentToken = token || getCachedToken();
 
+  // console.log("Current token", currentToken);
   if (!currentToken || getIsTokenExpired(currentToken)) {
+    // console.log("Token expired or not found. Fetching new token...");
     await fetchAccessToken();
   }
 
   return Promise.resolve(token);
+};
+
+export const _testing = {
+  tokenFile,
+  setCachedToken,
+  getCachedToken,
 };
