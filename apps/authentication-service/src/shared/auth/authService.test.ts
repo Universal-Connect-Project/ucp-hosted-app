@@ -7,16 +7,16 @@ const exampleErrorString = "Error: Authentication error";
 
 let tokenBackup: string;
 
-beforeAll(() => {
-  tokenBackup = _testing.getCachedToken() || "";
-  _testing.setCachedToken(exampleToken);
-});
-
-afterAll(() => {
-  _testing.setCachedToken(tokenBackup);
-});
-
 describe("authService", () => {
+  beforeAll(() => {
+    tokenBackup = _testing.getCachedToken() || "";
+    _testing.setCachedToken(exampleToken);
+  });
+
+  afterAll(() => {
+    _testing.setCachedToken(tokenBackup);
+  });
+
   describe("getAccessToken", () => {
     it("handles an error from the token endpoint", async () => {
       jest

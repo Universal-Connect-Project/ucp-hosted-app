@@ -36,11 +36,10 @@ describe("Clients test", () => {
       description: exampleClientDesc,
     });
 
-    expect(client).not.toBe(undefined);
     expect(client).toEqual(exampleClient);
   });
 
-  it("tries to create a new client when user already has one", async () => {
+  it("rejects when trying to create a new client when user already has one", async () => {
     await expect(
       createClient(exampleToken, {
         name: exampleClientName,
@@ -52,7 +51,6 @@ describe("Clients test", () => {
   it("gets info for an existing client", async () => {
     const client: Client = await getClient(exampleToken);
 
-    expect(client).not.toBe(undefined);
     expect(client).toEqual(exampleClient);
   });
 

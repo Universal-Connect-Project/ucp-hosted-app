@@ -23,25 +23,21 @@ jest.mock("auth0", () => ({
 describe("User Service tests", () => {
   it("returns a user resource", async () => {
     const user: User = await getUserById(exampleUserID);
-    expect(user).not.toBe(undefined);
     expect(user).toEqual(exampleUserWithClientId);
   });
 
-  it("gets a user's id from ", async () => {
+  it("gets the client id from a user resource", async () => {
     const clientId = await getUserClientId(exampleUserID);
-    expect(clientId).not.toBe(undefined);
     expect(clientId).toBe(exampleClientID);
   });
 
   it("returns a user's client id", async () => {
     const clientId = await getUserClientId(exampleUserID);
-    expect(clientId).not.toBe(undefined);
     expect(clientId).toBe(exampleClientID);
   });
 
   it("sets a user's client id", async () => {
     const user = await setUserClientId(exampleUserID, exampleClientID);
-    expect(user).not.toBe(undefined);
     expect(user).toEqual(exampleUserWithClientId);
   });
 
