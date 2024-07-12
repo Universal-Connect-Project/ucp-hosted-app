@@ -21,38 +21,41 @@ jest.mock("auth0", () => ({
 }));
 
 describe("User Service tests", () => {
-  it("returns a user resource", async () => {
-    const user: User = await getUserById(exampleUserID);
-    expect(user).toEqual(exampleUserWithClientId);
+  describe("getUserById", () => {
+    it("returns a user resource", async () => {
+      const user: User = await getUserById(exampleUserID);
+      expect(user).toEqual(exampleUserWithClientId);
+    });
   });
 
-  it("gets the client id from a user resource", async () => {
-    const clientId = await getUserClientId(exampleUserID);
-    expect(clientId).toBe(exampleClientID);
+  describe("getUserClientId", () => {
+    it("gets the client id from a user resource", async () => {
+      const clientId = await getUserClientId(exampleUserID);
+      expect(clientId).toBe(exampleClientID);
+    });
   });
 
-  it("returns a user's client id", async () => {
-    const clientId = await getUserClientId(exampleUserID);
-    expect(clientId).toBe(exampleClientID);
+  describe("setUserClientId", () => {
+    it("sets a user's client id", async () => {
+      const user = await setUserClientId(exampleUserID, exampleClientID);
+      expect(user).toEqual(exampleUserWithClientId);
+    });
   });
 
-  it("sets a user's client id", async () => {
-    const user = await setUserClientId(exampleUserID, exampleClientID);
-    expect(user).toEqual(exampleUserWithClientId);
-  });
+  describe("setUserClientId errors", () => {
+    it("handles an api failure", async () => {
+      server.use(
+        http.patch(AUTH0_USER_BY_ID, () => {
+          return HttpResponse.json(exampleUserAlreadyHasAClientError);
+        }),
+      );
 
-  it("handles an api failure", async () => {
-    server.use(
-      http.patch(AUTH0_USER_BY_ID, () => {
-        return HttpResponse.json(exampleUserAlreadyHasAClientError);
-      }),
-    );
-
-    const error = await setUserClientId(exampleUserID, exampleClientID);
-    expect(error).toEqual({
-      error: {
-        message: "User already has a client",
-      },
+      const error = await setUserClientId(exampleUserID, exampleClientID);
+      expect(error).toEqual({
+        error: {
+          message: "User already has a client",
+        },
+      });
     });
   });
 });
