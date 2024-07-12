@@ -63,6 +63,17 @@ describe("Client API", () => {
     // 6. Get the client, to make sure it's deleted
 
     cy.request({
+      failOnStatusCode: false,
+      method: "DELETE",
+      url: `http://localhost:${PORT}/v1/clients`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((response) => {
+      expect(response.status).to.eq(500);
+    });
+
+    cy.request({
       method: "POST",
       url: `http://localhost:${PORT}/v1/clients`,
       headers: {
@@ -109,6 +120,18 @@ describe("Client API", () => {
       },
     }).then((response) => {
       expect(response.status).to.eq(200);
+    });
+
+    cy.request({
+      failOnStatusCode: false,
+      method: "GET",
+      url: `http://localhost:${PORT}/v1/clients`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((response: Cypress.Response<{ message: string }>) => {
+      expect(response.status).to.eq(500);
+      expect(response).to.property("body", "Unable to get client");
     });
   });
 });
