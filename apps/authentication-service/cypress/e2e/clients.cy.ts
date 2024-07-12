@@ -55,18 +55,12 @@ describe("Client API", () => {
   });
 
   it("clears the client_id from user metadata, tries creating a client without access token, creates a client, fails if another client request is made, gets the newly created client, and deletes the client", () => {
-    cy.request({
-      method: "PATCH",
-      url: `https://${Cypress.env("AUTH0_DOMAIN")}/api/v2/users/${USER_ID}`,
-      body: {
-        user_metadata: {
-          client_id: "",
-        },
-      },
-      headers: {
-        Authorization: `Bearer ${m2mToken}`,
-      },
-    });
+    // 1. Delete the Client
+    // 2. Create a new Client
+    // 3. Get the client
+    // 4. Try to create again, make sure error is returned
+    // 5. Delete the Client
+    // 6. Get the client, to make sure it's deleted
 
     cy.request({
       method: "POST",
