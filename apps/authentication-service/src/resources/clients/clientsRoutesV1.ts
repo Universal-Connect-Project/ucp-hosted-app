@@ -1,6 +1,7 @@
 import { Client } from "auth0";
 import { Request, Response, Router } from "express";
 
+import { getClientTokenFromRequest } from "@/shared/utils";
 import { validateAccessToken } from "@/middleware/authMiddleware";
 import {
   getClient,
@@ -17,9 +18,10 @@ export const clientsRoutesV1 = (router: Router): void => {
     "/",
     [validateAccessToken],
     (req: Request<object, object, ClientCreateBody>, res: Response) => {
-      const clientToken = (req?.headers?.authorization || "Bearer ").split(
-        " ",
-      )[1];
+      const clientToken = getClientTokenFromRequest(
+        req as Request<object, object, never>,
+      );
+
       const client = {
         name: `ucp-${crypto.randomUUID()}`,
         client_metadata: {
@@ -45,9 +47,9 @@ export const clientsRoutesV1 = (router: Router): void => {
     "/rotate-secret",
     [validateAccessToken],
     (req: Request<object, object, ClientCreateBody>, res: Response) => {
-      const clientToken = (req?.headers?.authorization || "Bearer ").split(
-        " ",
-      )[1];
+      const clientToken = getClientTokenFromRequest(
+        req as Request<object, object, never>,
+      );
 
       void rotateClientSecret(clientToken)
         .then((client: Client) => {
@@ -66,9 +68,9 @@ export const clientsRoutesV1 = (router: Router): void => {
   );
 
   router.get("/", [validateAccessToken], (req: Request, res: Response) => {
-    const clientToken = (req?.headers?.authorization || "Bearer ").split(
-      " ",
-    )[1];
+    const clientToken = getClientTokenFromRequest(
+      req as Request<object, object, never>,
+    );
 
     void getClient(clientToken)
       .then((client: Client) => {
@@ -84,9 +86,9 @@ export const clientsRoutesV1 = (router: Router): void => {
   });
 
   router.delete("/", [validateAccessToken], (req: Request, res: Response) => {
-    const clientToken = (req?.headers?.authorization || "Bearer ").split(
-      " ",
-    )[1];
+    const clientToken = getClientTokenFromRequest(
+      req as Request<object, object, never>,
+    );
 
     void deleteClient(clientToken)
       .then(() => {
