@@ -1,4 +1,5 @@
 import { Client } from "auth0";
+import { HttpResponse } from "msw";
 
 export const exampleClientName = "UCP Test Client";
 export const exampleClientDesc = "For unit testing";
@@ -64,3 +65,12 @@ export const exampleClient: Partial<Client> = {
   web_origins: ["http://localhost:3031"],
   custom_login_page_on: true,
 };
+
+export const exampleClientRotatedSecret = {
+  ...exampleClient,
+  client_secret: "fake-secret-rotated",
+};
+
+export const clientRotateSecretError = new HttpResponse(null, {
+  status: 404,
+});

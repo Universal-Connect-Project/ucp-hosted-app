@@ -1,4 +1,7 @@
-import { exampleClient } from "@/test/testData/clients";
+import {
+  exampleClient,
+  exampleClientRotatedSecret,
+} from "@/test/testData/clients";
 import { http, HttpResponse } from "msw";
 import { exampleUserWithClientId, exampleToken } from "@/test/testData/users";
 import envs from "@/config";
@@ -24,4 +27,7 @@ export const handlers = [
   http.get(AUTH0_CLIENTS_BY_ID, () => HttpResponse.json(exampleClient)),
   http.post(AUTH0_CLIENTS, () => HttpResponse.json(exampleClient)),
   http.delete(AUTH0_CLIENTS_BY_ID, () => HttpResponse.json(null)),
+  http.post(`${AUTH0_CLIENTS_BY_ID}/rotate-secret`, () =>
+    HttpResponse.json(exampleClientRotatedSecret),
+  ),
 ];
