@@ -6,6 +6,7 @@ import {
   getClient,
   createClient,
   deleteClient,
+  rotateClientSecret,
 } from "@/resources/clients/clientsService";
 import { ClientCreateBody } from "@/resources/clients/clientsModel";
 
@@ -36,6 +37,30 @@ export const clientsRoutesV1 = (router: Router): void => {
         })
         .catch(() => {
           res.status(500).send(JSON.stringify("Unable to create client"));
+        });
+    },
+  );
+
+  router.post(
+    "/rotate-secret",
+    [validateAccessToken],
+    (req: Request<object, object, ClientCreateBody>, res: Response) => {
+      const clientToken = (req?.headers?.authorization || "Bearer ").split(
+        " ",
+      )[1];
+
+      void rotateClientSecret(clientToken)
+        .then((client: Client) => {
+          res.send(
+            JSON.stringify({
+              ...client,
+            }),
+          );
+        })
+        .catch(() => {
+          res
+            .status(500)
+            .send(JSON.stringify("Unable to rotate client secret"));
         });
     },
   );
