@@ -93,26 +93,3 @@ export const deleteClient = async (userToken: string): Promise<null> => {
 
   return Promise.resolve(null);
 };
-
-export const rotateClientSecret = async (
-  userToken: string,
-): Promise<Client> => {
-  const token: string = await getAccessToken();
-  const clientId = await getUserClientId(await getUserIdFromToken(userToken));
-
-  const client: Client = await parseResponse<Client>(
-    await fetch(
-      `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}/rotate-secret`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      },
-    ),
-  );
-
-  return Promise.resolve(client);
-};

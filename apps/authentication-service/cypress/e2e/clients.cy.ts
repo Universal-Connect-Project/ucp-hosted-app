@@ -7,7 +7,6 @@ describe("Client API", () => {
   let accessToken: string;
   let m2mToken: string;
   let newClientId: string;
-  let newClientSecret: string;
 
   const getTokens = () => {
     cy.window()
@@ -116,19 +115,6 @@ describe("Client API", () => {
     });
 
     cy.request({
-      method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/rotate-secret`,
-      headers: {
-        ContentType: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }).then((response: Cypress.Response<{ body: Client }>) => {
-      expect((response.body as unknown as Client).client_secret).not.to.eq(
-        newClientSecret,
-      );
-    });
-
-    cy.request({
       method: "DELETE",
       url: `http://localhost:${PORT}/v1/clients`,
       headers: {
@@ -149,19 +135,6 @@ describe("Client API", () => {
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(500);
       expect(response).to.property("body", "Unable to get client");
-    });
-
-    cy.request({
-      failOnStatusCode: false,
-      method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/rotate-secret`,
-      headers: {
-        ContentType: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }).then((response: Cypress.Response<{ message: string }>) => {
-      expect(response.status).to.eq(500);
-      expect(response).to.property("body", "Unable to rotate client secret");
     });
   });
 });

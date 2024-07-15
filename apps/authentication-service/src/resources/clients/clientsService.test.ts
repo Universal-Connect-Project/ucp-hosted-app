@@ -1,7 +1,7 @@
 import { Client } from "auth0";
 import { http, HttpResponse } from "msw";
 
-import { AUTH0_CLIENTS_BY_ID, AUTH0_USER_BY_ID } from "@/test/handlers";
+import { AUTH0_USER_BY_ID } from "@/test/handlers";
 import {
   exampleUser,
   exampleToken,
@@ -10,18 +10,11 @@ import {
 } from "@/test/testData/users";
 import { server } from "@/test/testServer";
 import {
-  clientRotateSecretError,
   exampleClient,
   exampleClientDesc,
   exampleClientName,
-  exampleClientRotatedSecret,
 } from "@/test/testData/clients";
-import {
-  getClient,
-  createClient,
-  deleteClient,
-  rotateClientSecret,
-} from "./clientsService";
+import { getClient, createClient, deleteClient } from "./clientsService";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 jest.mock("auth0", () => ({
@@ -62,35 +55,12 @@ describe("Clients Service", () => {
     });
   });
 
-  describe("rotateClientSecret", () => {
-    it("rotate secret for existing client", async () => {
-      const client: Client = await rotateClientSecret(exampleToken);
-
-      expect(client).toEqual(exampleClientRotatedSecret);
-    });
-  });
-
   describe("deleteClient", () => {
     it("deletes a client", async () => {
       await deleteClient(exampleToken);
 
       const response = await deleteClient(exampleToken);
       expect(response).toBe(null);
-    });
-  });
-
-  describe("rotateClientSecret with error", () => {
-    it("rotate secret for non-existing client", async () => {
-      server.use(
-        http.post(
-          `${AUTH0_CLIENTS_BY_ID}/rotate-secret`,
-          () => clientRotateSecretError,
-        ),
-      );
-
-      await expect(rotateClientSecret(exampleToken)).rejects.toEqual(
-        new Error("Not Found"),
-      );
     });
   });
 });
