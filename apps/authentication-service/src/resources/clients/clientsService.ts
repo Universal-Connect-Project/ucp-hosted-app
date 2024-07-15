@@ -1,4 +1,4 @@
-import { Client, ClientCreate, ResponseError } from "auth0";
+import { Client, ClientCreate } from "auth0";
 
 import envs from "@/config";
 import { getAccessToken } from "@/shared/auth/authService";
@@ -22,9 +22,7 @@ export const createClient = async (
   const userClientID = await getUserClientId(userId);
 
   if (userClientID && userClientID.length > 0) {
-    return Promise.reject(
-      new ResponseError(400, "User already has a client", {} as Headers),
-    );
+    return Promise.reject("User already has a client");
   }
 
   // Create new client

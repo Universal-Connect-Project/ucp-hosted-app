@@ -47,28 +47,6 @@ export const getUserById = async (userId: string): Promise<User> => {
   );
 };
 
-// Keeping for future functionality
-export const getUsersByClientId = async (clientId: string): Promise<User[]> => {
-  const token = await getAccessToken();
-  const clientIdEncoded = encodeURIComponent(clientId);
-
-  const users: User[] = await parseResponse<User[]>(
-    await fetch(
-      `https://${authDomain}/api/v2/users?q=user_metadata.client_id=${clientIdEncoded}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      },
-    ),
-  );
-
-  return Promise.resolve(users);
-};
-
 export const setUserClientId = async (
   userId: string,
   clientId: string,

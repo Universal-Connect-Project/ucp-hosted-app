@@ -1,4 +1,4 @@
-import { ResponseError, UserInfoResponse } from "auth0";
+import { UserInfoResponse } from "auth0";
 import { User } from "@/shared/users/usersModel";
 
 export const exampleUserID = "google-oauth2|0000000000000000000000000000000";
@@ -60,8 +60,5 @@ export const exampleUserAlreadyHasAClientError = {
   },
 };
 
-export const exampleUserAlreadyHasAClientResponseError = new ResponseError(
-  400,
-  exampleUserAlreadyHasAClientError.error.message,
-  {} as Headers,
-);
+export const exampleUserAlreadyHasAClientResponseError =
+  exampleUserAlreadyHasAClientError.error.message;

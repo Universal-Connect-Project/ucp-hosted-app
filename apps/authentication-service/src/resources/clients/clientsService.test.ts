@@ -37,14 +37,6 @@ describe("Clients Service", () => {
 
       expect(client).toEqual(exampleClient);
     });
-  });
-
-  describe("getClient success", () => {
-    it("gets info for an existing client", async () => {
-      const client: Client = await getClient(exampleToken);
-
-      expect(client).toEqual(exampleClient);
-    });
     it("rejects when trying to create a new client when user already has one", async () => {
       await expect(
         createClient(exampleToken, {
@@ -52,6 +44,14 @@ describe("Clients Service", () => {
           description: exampleClientDesc,
         }),
       ).rejects.toEqual(exampleUserAlreadyHasAClientResponseError);
+    });
+  });
+
+  describe("getClient success", () => {
+    it("gets info for an existing client", async () => {
+      const client: Client = await getClient(exampleToken);
+
+      expect(client).toEqual(exampleClient);
     });
   });
 

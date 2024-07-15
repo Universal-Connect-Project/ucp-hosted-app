@@ -95,8 +95,8 @@ describe("Client API", () => {
         userId: USER_ID,
       },
     }).then((response: Cypress.Response<never>) => {
-      expect(response.status).to.eq(500);
-      expect(response).to.property("body", "Unable to create client");
+      expect(response.status).to.eq(400);
+      expect(response).to.property("body", "User already has a client");
     });
 
     cy.request({

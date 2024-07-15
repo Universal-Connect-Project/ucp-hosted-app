@@ -36,8 +36,15 @@ export const clientsRoutesV1 = (router: Router): void => {
             }),
           );
         })
-        .catch(() => {
-          res.status(500).send(JSON.stringify("Unable to create client"));
+        .catch((reason) => {
+          if (
+            typeof reason === "string" &&
+            reason === "User already has a client"
+          ) {
+            res.status(400).send(JSON.stringify(reason));
+          } else {
+            res.status(500).send(JSON.stringify(reason));
+          }
         });
     },
   );
@@ -55,8 +62,12 @@ export const clientsRoutesV1 = (router: Router): void => {
           }),
         );
       })
-      .catch(() => {
-        res.status(500).send(JSON.stringify("Unable to get client"));
+      .catch((reason) => {
+        if (reason instanceof Error && reason.message === "Not Found") {
+          res.status(404).send(JSON.stringify("Client not found"));
+        } else {
+          res.status(500).send(JSON.stringify("Unable to get client"));
+        }
       });
   });
 
