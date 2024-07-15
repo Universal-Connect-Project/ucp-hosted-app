@@ -82,7 +82,6 @@ describe("Client API", () => {
       },
     }).then((response: Cypress.Response<{ body: Client }>) => {
       newClientId = (response.body as unknown as Client).client_id;
-      newClientSecret = (response.body as unknown as Client).client_secret;
       expect(response.status).to.eq(200);
     });
 
