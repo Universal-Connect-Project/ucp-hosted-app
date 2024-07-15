@@ -6,13 +6,13 @@ import { tokenFile } from "@/shared/tokenUtils";
 import { AUTH0_AUTH_TOKEN } from "@/test/handlers";
 import { server } from "@/test/testServer";
 import { getAccessToken } from "./authService";
-import { exampleToken } from "@/test/testData/users";
+import { exampleCachedToken, exampleApiToken } from "@/test/testData/users";
 
 const exampleErrorString = "Failed to authenticate using M2M Credentials";
 
 describe("authService", () => {
   beforeAll(() => {
-    jest.spyOn(tokenUtil, "getLocalToken").mockReturnValue(exampleToken);
+    jest.spyOn(tokenUtil, "getLocalToken").mockReturnValue(exampleApiToken);
     jest.spyOn(tokenUtil, "setLocalToken").mockImplementation(() => {});
   });
 
@@ -45,7 +45,7 @@ describe("authService", () => {
       jest.spyOn(tokenUtil, "getCachedToken").mockReturnValue(undefined);
 
       await getAccessToken();
-      expect(fs.writeFileSync).toHaveBeenCalledWith(tokenFile, exampleToken);
+      expect(fs.writeFileSync).toHaveBeenCalledWith(tokenFile, exampleApiToken);
     });
 
     it("fetches a new access token if the token is expired", async () => {
@@ -53,20 +53,22 @@ describe("authService", () => {
       jest.spyOn(tokenUtil, "getIsTokenExpired");
       const token = await getAccessToken();
 
-      expect(token).toEqual(exampleToken);
-      expect(tokenUtil.getIsTokenExpired).toHaveBeenCalledWith(exampleToken);
-      expect(fs.writeFileSync).toHaveBeenCalledWith(tokenFile, exampleToken);
+      expect(token).toEqual(exampleApiToken);
+      expect(tokenUtil.getIsTokenExpired).toHaveBeenCalledWith(exampleApiToken);
+      expect(fs.writeFileSync).toHaveBeenCalledWith(tokenFile, exampleApiToken);
     });
 
     it("returns the cached token", async () => {
       jest.spyOn(fs, "existsSync");
-      jest.spyOn(fs, "readFileSync").mockReturnValueOnce(exampleToken);
+      jest.spyOn(fs, "readFileSync").mockReturnValueOnce(exampleCachedToken);
       jest.spyOn(tokenUtil, "getLocalToken").mockReturnValueOnce(undefined);
       jest.spyOn(tokenUtil, "getIsTokenExpired").mockReturnValueOnce(false);
       const token = await getAccessToken();
 
-      expect(token).toEqual(exampleToken);
-      expect(tokenUtil.getIsTokenExpired).toHaveBeenCalledWith(exampleToken);
+      expect(token).toEqual(exampleCachedToken);
+      expect(tokenUtil.getIsTokenExpired).toHaveBeenCalledWith(
+        exampleCachedToken,
+      );
       expect(fs.existsSync).toHaveBeenCalledWith(tokenFile);
       expect(fs.readFileSync).toHaveBeenCalledWith(tokenFile, "utf8");
     });

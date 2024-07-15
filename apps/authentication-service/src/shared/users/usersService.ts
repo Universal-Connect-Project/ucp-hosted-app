@@ -55,7 +55,7 @@ export const setUserClientId = async (
   const userIdEncoded = encodeURIComponent(userId);
   const clientIdEncoded = encodeURIComponent(clientId);
 
-  const user: User = await parseResponse<User>(
+  return await parseResponse<User>(
     await fetch(`https://${authDomain}/api/v2/users/${userIdEncoded}`, {
       method: "PATCH",
       headers: {
@@ -70,6 +70,4 @@ export const setUserClientId = async (
       }),
     }),
   );
-
-  return Promise.resolve(user);
 };

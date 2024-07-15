@@ -4,7 +4,6 @@ import { User } from "@/shared/users/usersModel";
 import { AUTH0_USER_BY_ID } from "@/test/handlers";
 import {
   exampleClientID,
-  exampleUserAlreadyHasAClientError,
   exampleUserID,
   exampleUserInfoResponse,
   exampleUserWithClientId,
@@ -46,16 +45,15 @@ describe("User Service tests", () => {
     it("handles an api failure", async () => {
       server.use(
         http.patch(AUTH0_USER_BY_ID, () => {
-          return HttpResponse.json(exampleUserAlreadyHasAClientError);
+          return new HttpResponse(null, {
+            status: 500,
+          });
         }),
       );
 
-      const error = await setUserClientId(exampleUserID, exampleClientID);
-      expect(error).toEqual({
-        error: {
-          message: "User already has a client",
-        },
-      });
+      await expect(
+        setUserClientId(exampleUserID, exampleClientID),
+      ).rejects.toEqual(new Error("Internal Server Error"));
     });
   });
 });

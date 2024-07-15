@@ -4,7 +4,7 @@ import { http, HttpResponse } from "msw";
 import { AUTH0_USER_BY_ID } from "@/test/handlers";
 import {
   exampleUser,
-  exampleToken,
+  exampleApiToken,
   exampleUserAlreadyHasAClientResponseError,
   exampleUserInfoResponse,
 } from "@/test/testData/users";
@@ -30,7 +30,7 @@ describe("Clients Service", () => {
       server.use(
         http.get(AUTH0_USER_BY_ID, () => HttpResponse.json(exampleUser)),
       );
-      const client: Client = await createClient(exampleToken, {
+      const client: Client = await createClient(exampleApiToken, {
         name: exampleClientName,
         description: exampleClientDesc,
       });
@@ -39,7 +39,7 @@ describe("Clients Service", () => {
     });
     it("rejects when trying to create a new client when user already has one", async () => {
       await expect(
-        createClient(exampleToken, {
+        createClient(exampleApiToken, {
           name: exampleClientName,
           description: exampleClientDesc,
         }),
@@ -49,7 +49,7 @@ describe("Clients Service", () => {
 
   describe("getClient success", () => {
     it("gets info for an existing client", async () => {
-      const client: Client = await getClient(exampleToken);
+      const client: Client = await getClient(exampleApiToken);
 
       expect(client).toEqual(exampleClient);
     });
@@ -57,9 +57,9 @@ describe("Clients Service", () => {
 
   describe("deleteClient", () => {
     it("deletes a client", async () => {
-      await deleteClient(exampleToken);
+      await deleteClient(exampleApiToken);
 
-      const response = await deleteClient(exampleToken);
+      const response = await deleteClient(exampleApiToken);
       expect(response).toBe(null);
     });
   });

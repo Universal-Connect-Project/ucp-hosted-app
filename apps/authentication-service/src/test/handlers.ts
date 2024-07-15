@@ -1,6 +1,9 @@
 import { exampleClient } from "@/test/testData/clients";
 import { http, HttpResponse } from "msw";
-import { exampleUserWithClientId, exampleToken } from "@/test/testData/users";
+import {
+  exampleUserWithClientId,
+  exampleApiToken,
+} from "@/test/testData/users";
 import envs from "@/config";
 
 const domain: string = envs.AUTH0_DOMAIN;
@@ -18,7 +21,7 @@ export const handlers = [
   ),
   http.post(AUTH0_AUTH_TOKEN, () =>
     HttpResponse.json({
-      access_token: exampleToken,
+      access_token: exampleApiToken,
     }),
   ),
   http.get(AUTH0_CLIENTS_BY_ID, () => HttpResponse.json(exampleClient)),
