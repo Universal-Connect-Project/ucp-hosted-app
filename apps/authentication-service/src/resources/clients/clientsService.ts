@@ -43,16 +43,16 @@ export const createClient = async (
     }),
   );
 
-  await setUserClientId(userId, newClient?.client_id || "");
+  await setUserClientId(userId, newClient.client_id);
 
-  return Promise.resolve(newClient);
+  return newClient;
 };
 
 export const getClient = async (userToken: string): Promise<Client> => {
   const token: string = await getAccessToken();
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
-  const client: Client = await parseResponse<Client>(
+  return await parseResponse<Client>(
     await fetch(
       `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}`,
       {
@@ -65,8 +65,6 @@ export const getClient = async (userToken: string): Promise<Client> => {
       },
     ),
   );
-
-  return Promise.resolve(client);
 };
 
 export const deleteClient = async (userToken: string): Promise<null> => {
@@ -91,5 +89,5 @@ export const deleteClient = async (userToken: string): Promise<null> => {
   // Remove client id from user
   await setUserClientId(userId, "");
 
-  return Promise.resolve(null);
+  return null;
 };

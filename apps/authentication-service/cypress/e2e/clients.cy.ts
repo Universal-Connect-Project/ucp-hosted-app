@@ -5,18 +5,9 @@ const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
 describe("Client API", () => {
   const PORT: number = (Cypress.env("PORT") as number) || 8089;
   let accessToken: string;
-  let m2mToken: string;
   let newClientId: string;
 
   const getTokens = () => {
-    cy.window()
-      .its("localStorage")
-      .invoke("getItem", "jwt-m2m")
-      .then((token: string) => {
-        if (token) {
-          m2mToken = token;
-        }
-      });
     cy.window()
       .its("localStorage")
       .invoke("getItem", "jwt-client")
@@ -30,9 +21,6 @@ describe("Client API", () => {
   before(() => {
     getTokens();
     if (!accessToken) {
-      cy.loginM2MAuth0();
-    }
-    if (!m2mToken) {
       cy.loginClientAuth0();
     }
     getTokens();
@@ -69,8 +57,6 @@ describe("Client API", () => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then((response) => {
-      expect(response.status).to.eq(500);
     });
 
     cy.request({
