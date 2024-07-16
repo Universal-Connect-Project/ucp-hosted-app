@@ -12,6 +12,7 @@ import { ClientCreateBody } from "@/resources/clients/clientsModel";
 
 const apiVersion = "v1";
 
+// TODO: Extract route handlers to a separate file
 export const clientsRoutesV1 = (router: Router): void => {
   router.post(
     "/",
