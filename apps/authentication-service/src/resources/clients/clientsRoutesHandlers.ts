@@ -9,9 +9,7 @@ import {
 } from "@/resources/clients/clientsService";
 import { getClientTokenFromRequest } from "@/shared/utils";
 
-const apiVersion = "v1";
-
-export const routeClientCreate = (
+export const clientsCreateV1 = async (
   req: Request<object, object, ClientCreateBody>,
   res: Response,
 ) => {
@@ -19,34 +17,30 @@ export const routeClientCreate = (
     req as Request<object, object, never>,
   );
 
-  const client = {
+  const clientBody = {
     name: `ucp-${crypto.randomUUID()}`,
     client_metadata: {
-      created_via: `api-${apiVersion}`,
+      created_via: `ucp-api-v1`,
     },
   };
 
-  void createClient(clientToken, client)
-    .then((client: Client) => {
-      res.send(
-        JSON.stringify({
-          ...client,
-        }),
-      );
-    })
-    .catch((reason) => {
-      if (
-        typeof reason === "string" &&
-        reason === "User already has a client"
-      ) {
-        res.status(400).send(JSON.stringify(reason));
-      } else {
-        res.status(500).send(JSON.stringify(reason));
-      }
-    });
+  try {
+    const client = await createClient(clientToken, clientBody);
+    res.send(
+      JSON.stringify({
+        ...client,
+      }),
+    );
+  } catch (reason) {
+    if (typeof reason === "string" && reason === "User already has a client") {
+      res.status(400).send(JSON.stringify(reason));
+    } else {
+      res.status(500).send(JSON.stringify(reason));
+    }
+  }
 };
 
-export const routeClientGet = (req: Request, res: Response) => {
+export const clientsGetV1 = (req: Request, res: Response) => {
   const clientToken = getClientTokenFromRequest(
     req as Request<object, object, never>,
   );
@@ -68,7 +62,7 @@ export const routeClientGet = (req: Request, res: Response) => {
     });
 };
 
-export const routeClientDelete = (req: Request, res: Response) => {
+export const clientsDeleteV1 = (req: Request, res: Response) => {
   const clientToken = getClientTokenFromRequest(
     req as Request<object, object, never>,
   );

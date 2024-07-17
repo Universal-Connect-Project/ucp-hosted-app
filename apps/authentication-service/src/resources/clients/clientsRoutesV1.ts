@@ -1,15 +1,14 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 
 import { validateAccessToken } from "@/middleware/authMiddleware";
 import {
-  routeClientCreate,
-  routeClientDelete,
-  routeClientGet,
+  clientsCreateV1,
+  clientsDeleteV1,
+  clientsGetV1,
 } from "@/resources/clients/clientsRoutesHandlers";
 
-// TODO: Extract route handlers to a separate file
 export const clientsRoutesV1 = (router: Router): void => {
-  router.post("/", [validateAccessToken], routeClientCreate);
-  router.get("/", [validateAccessToken], routeClientGet);
-  router.delete("/", [validateAccessToken], routeClientDelete);
+  router.post("/", [validateAccessToken], clientsCreateV1 as RequestHandler);
+  router.get("/", [validateAccessToken], clientsGetV1);
+  router.delete("/", [validateAccessToken], clientsDeleteV1);
 };
