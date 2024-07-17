@@ -33,9 +33,9 @@ export const clientsCreateV1 = async (
     );
   } catch (reason) {
     if (typeof reason === "string" && reason === "User already has a client") {
-      res.status(400).send(JSON.stringify(reason));
+      res.status(400).send("User already has a client");
     } else {
-      res.status(500).send(JSON.stringify(reason));
+      res.status(500).send(JSON.stringify("Unable to create client"));
     }
   }
 };
