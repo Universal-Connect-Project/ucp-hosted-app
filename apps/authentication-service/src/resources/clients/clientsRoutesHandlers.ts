@@ -1,7 +1,6 @@
 import { Client } from "auth0";
 import { Request, Response } from "express";
 
-import { ClientCreateBody } from "@/resources/clients/clientsModel";
 import {
   createClient,
   deleteClient,
@@ -9,13 +8,8 @@ import {
 } from "@/resources/clients/clientsService";
 import { getClientTokenFromRequest } from "@/shared/utils";
 
-export const clientsCreateV1 = async (
-  req: Request<object, object, ClientCreateBody>,
-  res: Response,
-) => {
-  const clientToken = getClientTokenFromRequest(
-    req as Request<object, object, never>,
-  );
+export const clientsCreateV1 = async (req: Request, res: Response) => {
+  const clientToken = getClientTokenFromRequest(req);
 
   const clientBody = {
     name: `ucp-${crypto.randomUUID()}`,
@@ -25,12 +19,8 @@ export const clientsCreateV1 = async (
   };
 
   try {
-    const client = await createClient(clientToken, clientBody);
-    res.send(
-      JSON.stringify({
-        ...client,
-      }),
-    );
+    const client: Client = await createClient(clientToken, clientBody);
+    res.json(client);
   } catch (reason) {
     if (typeof reason === "string" && reason === "User already has a client") {
       res.status(400).send("User already has a client");
@@ -40,38 +30,28 @@ export const clientsCreateV1 = async (
   }
 };
 
-export const clientsGetV1 = (req: Request, res: Response) => {
-  const clientToken = getClientTokenFromRequest(
-    req as Request<object, object, never>,
-  );
+export const clientsGetV1 = async (req: Request, res: Response) => {
+  const clientToken = getClientTokenFromRequest(req);
 
-  void getClient(clientToken)
-    .then((client: Client) => {
-      res.send(
-        JSON.stringify({
-          ...client,
-        }),
-      );
-    })
-    .catch((reason) => {
-      if (reason instanceof Error && reason.message === "Not Found") {
-        res.status(404).send(JSON.stringify("Client not found"));
-      } else {
-        res.status(500).send(JSON.stringify("Unable to get client"));
-      }
-    });
+  try {
+    const client: Client = await getClient(clientToken);
+    res.json(client);
+  } catch (reason) {
+    if (reason instanceof Error && reason.message === "Not Found") {
+      res.status(404).send(JSON.stringify("Client not found"));
+    } else {
+      res.status(500).send(JSON.stringify("Unable to get client"));
+    }
+  }
 };
 
-export const clientsDeleteV1 = (req: Request, res: Response) => {
-  const clientToken = getClientTokenFromRequest(
-    req as Request<object, object, never>,
-  );
+export const clientsDeleteV1 = async (req: Request, res: Response) => {
+  const clientToken = getClientTokenFromRequest(req);
 
-  void deleteClient(clientToken)
-    .then(() => {
-      res.send(null);
-    })
-    .catch(() => {
-      res.status(500).send(JSON.stringify("Unable to delete client"));
-    });
+  try {
+    await deleteClient(clientToken);
+    res.send(null);
+  } catch (reason) {
+    res.status(500).send(JSON.stringify("Unable to delete client"));
+  }
 };

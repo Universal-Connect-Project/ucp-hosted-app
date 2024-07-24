@@ -1,3 +1,5 @@
+import envs from "@/config";
+import { ConsoleColors } from "@/shared/enums";
 import fs from "fs";
 import { decode, JwtPayload } from "jsonwebtoken";
 import os from "os";
@@ -9,6 +11,7 @@ const tokenFileName: string = "brkn-arrw.txt";
 export const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
 
 export const getLocalToken = (): string | undefined => {
+  logToken(token);
   return token;
 };
 
@@ -40,4 +43,18 @@ export const getCachedToken = (): string | undefined => {
 export const getIsTokenExpired = (token: string): boolean => {
   const { exp } = decode(token, { json: true }) as JwtPayload;
   return !exp || Date.now() >= exp * 1000;
+};
+
+export const logToken = (token: string | undefined) => {
+  if (!token || process.env.JEST_WORKER_ID !== undefined) {
+    return;
+  }
+
+  if (envs.ENV === "test") {
+    console.log(`\nToken: ${ConsoleColors.FgGray}${token}`);
+  } else if (envs.ENV === "dev") {
+    console.log(
+      `\nToken: ${ConsoleColors.FgGray}${token.slice(0, 10)}...${token.slice(-10)}}`,
+    );
+  }
 };

@@ -9,6 +9,6 @@ import {
 
 export const clientsRoutesV1 = (router: Router): void => {
   router.post("/", [validateAccessToken], clientsCreateV1 as RequestHandler);
-  router.get("/", [validateAccessToken], clientsGetV1);
-  router.delete("/", [validateAccessToken], clientsDeleteV1);
+  router.get("/", [validateAccessToken], clientsGetV1 as RequestHandler);
+  router.delete("/", [validateAccessToken], clientsDeleteV1 as RequestHandler);
 };

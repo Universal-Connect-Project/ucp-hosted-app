@@ -6,6 +6,7 @@ import {
   getCachedToken,
   getIsTokenExpired,
   getLocalToken,
+  logToken,
   setCachedToken,
 } from "@/shared/tokenUtils";
 
@@ -36,16 +37,17 @@ const fetchAccessToken = async (): Promise<string> => {
 
   if (token) {
     setCachedToken(token);
+    logToken(token);
   }
   return Promise.resolve(token);
 };
 
-export const getAccessToken = async (): Promise<string> => {
+export const getAccessToken = async (): Promise<string | undefined> => {
   const currentToken = getLocalToken() || getCachedToken();
 
   if (!currentToken || getIsTokenExpired(currentToken)) {
     await fetchAccessToken();
   }
 
-  return Promise.resolve(getLocalToken() || "");
+  return Promise.resolve(getLocalToken());
 };

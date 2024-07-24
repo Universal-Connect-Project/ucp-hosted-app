@@ -15,11 +15,17 @@ export const createClient = async (
   userToken: string,
   client: ClientCreate,
 ): Promise<Client> => {
+  // console.log("creating client", client);
+  // console.log("user token", userToken);
   const token = await getAccessToken();
+  // console.log("token (getAccessToken) ---->", token);
   const userId = await getUserIdFromToken(userToken);
 
   // Check if user already has a client
   const userClientID = await getUserClientId(userId);
+
+  // console.log("userId", userId);
+  // console.log("userClientID", userClientID);
 
   if (userClientID && userClientID.length > 0) {
     return Promise.reject("User already has a client");
@@ -41,14 +47,18 @@ export const createClient = async (
     }),
   );
 
+  // console.log("newClient", newClient);
+
   await setUserClientId(userId, newClient.client_id);
 
   return newClient;
 };
 
 export const getClient = async (userToken: string): Promise<Client> => {
-  const token: string = await getAccessToken();
+  const token = await getAccessToken();
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
+  console.log("token (getAccessToken) ---->", token);
+  console.log("clientId", clientId);
 
   return await parseResponse<Client>(
     await fetch(
@@ -65,12 +75,12 @@ export const getClient = async (userToken: string): Promise<Client> => {
   );
 };
 
-export const deleteClient = async (userToken: string): Promise<null> => {
+export const deleteClient = async (userToken: string): Promise<string> => {
   const token = await getAccessToken();
   const userId = await getUserIdFromToken(userToken);
   const clientId = await getUserClientId(userId);
 
-  await parseResponse<Client>(
+  await parseResponse(
     await fetch(
       `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}`,
       {
@@ -87,5 +97,5 @@ export const deleteClient = async (userToken: string): Promise<null> => {
   // Remove client id from user
   await setUserClientId(userId, "");
 
-  return null;
+  return "Client successfully deleted.";
 };

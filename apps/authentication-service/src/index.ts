@@ -14,10 +14,7 @@ initExpress(app);
 
 app.listen(PORT, () => {
   void getAccessToken()
-    .then((token: string) => {
-      console.log(
-        `\nToken: ${ConsoleColors.FgGray}${envs.ENV === "test" ? token : `${token.slice(0, 10)}...${token.slice(-10)}`}`,
-      );
+    .then(() => {
       console.log(
         `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${PORT}; ENV=${envs.ENV}`,
       );

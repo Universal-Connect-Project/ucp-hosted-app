@@ -60,7 +60,7 @@ describe("Clients Service", () => {
       await deleteClient(exampleApiToken);
 
       const response = await deleteClient(exampleApiToken);
-      expect(response).toBe(null);
+      expect(response).toBe("Client successfully deleted.");
     });
   });
 });

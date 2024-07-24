@@ -49,7 +49,7 @@ export const exampleClient: Partial<Client> = {
   client_secret: "fake-secret",
   jwt_configuration: {
     scopes: [],
-    alg: "HS256",
+    alg: "RS256",
     lifetime_in_seconds: 0,
     secret_encoded: false,
   },
