@@ -25,7 +25,7 @@ export const clientsCreateV1 = async (req: Request, res: Response) => {
     if (typeof reason === "string" && reason === "User already has a client") {
       res.status(400).send("User already has a client");
     } else {
-      res.status(500).send(JSON.stringify("Unable to create client"));
+      res.status(500).send("Unable to create client");
     }
   }
 };
@@ -38,9 +38,9 @@ export const clientsGetV1 = async (req: Request, res: Response) => {
     res.json(client);
   } catch (reason) {
     if (reason instanceof Error && reason.message === "Not Found") {
-      res.status(404).send(JSON.stringify("Client not found"));
+      res.status(404).send("Client not found");
     } else {
-      res.status(500).send(JSON.stringify("Unable to get client"));
+      res.status(500).send("Unable to get client");
     }
   }
 };
@@ -52,6 +52,6 @@ export const clientsDeleteV1 = async (req: Request, res: Response) => {
     await deleteClient(clientToken);
     res.send(null);
   } catch (reason) {
-    res.status(500).send(JSON.stringify("Unable to delete client"));
+    res.status(500).send("Unable to delete client");
   }
 };

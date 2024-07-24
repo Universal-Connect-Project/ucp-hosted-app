@@ -3,7 +3,6 @@ import { server } from "@/test/testServer";
 import { Request, Response } from "express";
 import { http, HttpResponse } from "msw";
 
-import { ClientCreateBody } from "@/resources/clients/clientsModel";
 import {
   clientsCreateV1,
   clientsGetV1,
@@ -71,18 +70,18 @@ describe("clientsRoutesHandlers", () => {
     const token = getTestToken();
 
     const res = {
-      send: jest.fn(),
+      json: jest.fn(),
       status: jest.fn().mockReturnThis(),
     } as unknown as Response;
 
-    const req: Request<object, object, ClientCreateBody> = {
+    const req: Request = {
       headers: {
         authorization: `Bearer ${token}`,
       },
-    } as Request<object, object, ClientCreateBody>;
+    } as Request;
 
-    await clientsGetV1(req as Request, res);
+    await clientsGetV1(req, res);
 
-    expect(res.send).toHaveBeenCalledWith(exampleClient);
+    expect(res.json).toHaveBeenCalledWith(exampleClient);
   });
 });
