@@ -15,17 +15,11 @@ export const createClient = async (
   userToken: string,
   client: ClientCreate,
 ): Promise<Client> => {
-  // console.log("creating client", client);
-  // console.log("user token", userToken);
   const token = await getAccessToken();
-  // console.log("token (getAccessToken) ---->", token);
   const userId = await getUserIdFromToken(userToken);
 
   // Check if user already has a client
   const userClientID = await getUserClientId(userId);
-
-  // console.log("userId", userId);
-  // console.log("userClientID", userClientID);
 
   if (userClientID && userClientID.length > 0) {
     return Promise.reject("User already has a client");
@@ -47,8 +41,6 @@ export const createClient = async (
     }),
   );
 
-  // console.log("newClient", newClient);
-
   await setUserClientId(userId, newClient.client_id);
 
   return newClient;
@@ -57,8 +49,6 @@ export const createClient = async (
 export const getClient = async (userToken: string): Promise<Client> => {
   const token = await getAccessToken();
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
-  console.log("token (getAccessToken) ---->", token);
-  console.log("clientId", clientId);
 
   return await parseResponse<Client>(
     await fetch(
