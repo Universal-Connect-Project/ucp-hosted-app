@@ -49,8 +49,8 @@ export const clientsDeleteV1 = async (req: Request, res: Response) => {
   const clientToken = getClientTokenFromRequest(req);
 
   try {
-    await deleteClient(clientToken);
-    res.send(null);
+    const response = await deleteClient(clientToken);
+    res.send(response);
   } catch (reason) {
     res.status(500).send("Unable to delete client");
   }
