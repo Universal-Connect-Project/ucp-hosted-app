@@ -12,7 +12,7 @@ export const exampleCachedToken =
   "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImwwTlV3MktRaWZfZVNrR3Y3M1FrMyJ9.eyJpc3MiOiJodHRwczovL2Rldi1kMjN3YXU4bzB1YzVodzhuLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJtR1k1RUhDZGc5cVdaMGtYeHhJaGVRQkZmNjk1REVQS0BjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9kZXYtZDIzd2F1OG8wdWM1aHc4bi51cy5hdXRoMC5jb20vYXBpL3YyLyIsImlhdCI6MTcyMTA3NDg4MywiZXhwIjoxNzIxMTYxMjgzLCJzY29wZSI6InJlYWQ6Y2xpZW50X2dyYW50cyBjcmVhdGU6Y2xpZW50X2dyYW50cyBkZWxldGU6Y2xpZW50X2dyYW50cyB1cGRhdGU6Y2xpZW50X2dyYW50cyByZWFkOnVzZXJzIHVwZGF0ZTp1c2VycyBkZWxldGU6dXNlcnMgY3JlYXRlOnVzZXJzIHJlYWQ6dXNlcnNfYXBwX21ldGFkYXRhIHVwZGF0ZTp1c2Vyc19hcHBfbWV0YWRhdGEgZGVsZXRlOnVzZXJzX2FwcF9tZXRhZGF0YSBjcmVhdGU6dXNlcnNfYXBwX21ldGFkYXRhIHJlYWQ6Y2xpZW50cyB1cGRhdGU6Y2xpZW50cyBkZWxldGU6Y2xpZW50cyBjcmVhdGU6Y2xpZW50cyByZWFkOmNsaWVudF9rZXlzIHVwZGF0ZTpjbGllbnRfa2V5cyBkZWxldGU6Y2xpZW50X2tleXMgY3JlYXRlOmNsaWVudF9rZXlzIHJlYWQ6dXNlcl9pZHBfdG9rZW5zIHJlYWQ6Y2xpZW50X2NyZWRlbnRpYWxzIGNyZWF0ZTpjbGllbnRfY3JlZGVudGlhbHMgdXBkYXRlOmNsaWVudF9jcmVkZW50aWFscyBkZWxldGU6Y2xpZW50X2NyZWRlbnRpYWxzIiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIiwiYXpwIjoibUdZNUVIQ2RnOXFXWjBrWHh4SWhlUUJGZjY5NURFUEsifQ.elOTeSWawWmn2H5yCOybGN8zZoIcPkX9tCzePdbYYcasmmlVyx9MXb8aMzoq4896JEAq9_THfsmruu2ZC46HzvZGsf8EVLtGkskAlo20MhiiDiqhLl2ks1USwDrrxssZJO7vatTarNi3XKiHISDg-lgek70z3Y06PL_XlzDLTjhhVvk2732lGma7il0sbAslUNveukawBy5g1k6-_GzhKKlf8BctLTY9BCYLFLOpITTCmYACV7zWTDjAt4oo_U8lqylLFq-1ecdev-_ML2TDyVzzweJfImcc5b8-1PtJx36ObsLW05MqkhBZ5DQLkNFgR00mdqWfOu6dvkENBMt7EA";
 
 export const exampleUserInfoResponse: UserInfoResponse = {
-  sub: "google-oauth2|000000000000000000000",
+  sub: exampleUserID,
   given_name: "Test",
   family_name: "User",
   nickname: "test.user",
@@ -45,7 +45,7 @@ export const exampleUserWithoutClient: User = {
   picture:
     "https://login.universalconnectproject.org/assets/logo-small-grey-white-dbafd52d.svg",
   updated_at: "2024-06-20T17:02:12.345Z",
-  user_id: "google-oauth2|000000000000000000000",
+  user_id: exampleUserID,
   last_ip: "0.0.0.0",
   last_login: "2024-06-20T17:02:12.344Z",
   logins_count: 5,
@@ -112,7 +112,7 @@ export const getTestToken = (isExpired = false): string => {
     "-----END RSA PRIVATE KEY-----";
 
   const payload: JwtPayload = {
-    sub: "auth0|00000000000000000000000",
+    sub: exampleUserID,
     scope: "openid profile email",
   };
 

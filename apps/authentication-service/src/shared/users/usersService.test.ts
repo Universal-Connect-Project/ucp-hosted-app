@@ -7,9 +7,15 @@ import {
   exampleUserID,
   exampleUserInfoResponse,
   exampleUserWithClientId,
+  getTestToken,
 } from "@/test/testData/users";
 import { server } from "@/test/testServer";
-import { getUserClientId, getUserById, setUserClientId } from "./usersService";
+import {
+  getUserClientId,
+  getUserById,
+  setUserClientId,
+  getUserIdFromToken,
+} from "./usersService";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 jest.mock("auth0", () => ({
@@ -54,6 +60,15 @@ describe("User Service tests", () => {
       await expect(
         setUserClientId(exampleUserID, exampleClientID),
       ).rejects.toEqual(new Error("Internal Server Error"));
+    });
+  });
+
+  describe("getUserIdFromToken", () => {
+    it("gets a user id from a token", async () => {
+      const token = getTestToken();
+      const userId = await getUserIdFromToken(token);
+
+      expect(userId).toEqual(exampleUserID);
     });
   });
 });
