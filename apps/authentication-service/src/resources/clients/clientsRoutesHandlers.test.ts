@@ -14,7 +14,7 @@ import {
 } from "@/resources/clients/clientsRoutesHandlers";
 import { exampleClient } from "@/test/testData/clients";
 import {
-  exampleUser,
+  exampleUserWithoutClient,
   exampleUserInfoResponse,
   getTestToken,
 } from "@/test/testData/users";
@@ -28,143 +28,330 @@ jest.mock("auth0", () => ({
 }));
 
 describe("clientsRoutesHandlers", () => {
-  it("should create a new client", async () => {
-    server.use(
-      http.get(AUTH0_USER_BY_ID, () => HttpResponse.json(exampleUser)),
-    );
+  describe("clientsCreateV1", () => {
+    it("should create a new client", async () => {
+      // Makes sure we get a User without a Client
+      server.use(
+        http.get(AUTH0_USER_BY_ID, () =>
+          HttpResponse.json(exampleUserWithoutClient),
+        ),
+      );
 
-    const token = getTestToken();
+      const token = getTestToken();
 
-    const res = {
-      json: jest.fn(),
-    } as unknown as Response;
+      const res = {
+        json: jest.fn(),
+      } as unknown as Response;
 
-    const req: Request = {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    } as Request;
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
 
-    await clientsCreateV1(req, res);
+      await clientsCreateV1(req, res);
 
-    expect(res.json).toHaveBeenCalledWith(exampleClient);
+      expect(res.json).toHaveBeenCalledWith(exampleClient);
+    });
+
+    it("should error when trying to create a new client, when user already has one", async () => {
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsCreateV1(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "User already has a client",
+      });
+    });
+
+    it("should error when trying to create a new client, and the rate limit has been reached", async () => {
+      // Makes sure we get a User without a Client
+      server.use(
+        http.get(AUTH0_USER_BY_ID, () =>
+          HttpResponse.json(exampleUserWithoutClient),
+        ),
+      );
+      server.use(
+        http.post(AUTH0_CLIENTS, () => new HttpResponse(null, { status: 429 })),
+      );
+
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsCreateV1(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(429);
+      expect(res.json).toHaveBeenCalledWith({ message: "Rate limit exceeded" });
+    });
+
+    it("should error when trying to create a new client, and and unknown error occurs", async () => {
+      // Makes sure we get a User without a Client
+      server.use(
+        http.get(AUTH0_USER_BY_ID, () =>
+          HttpResponse.json(exampleUserWithoutClient),
+        ),
+      );
+      server.use(
+        http.post(AUTH0_CLIENTS, () => new HttpResponse(null, { status: 500 })),
+      );
+
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsCreateV1(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Unable to create client",
+      });
+    });
   });
-  it("should error when trying to create a new client, when user already has one", async () => {
-    const token = getTestToken();
 
-    const res = {
-      send: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-    } as unknown as Response;
+  describe("clientsGetV1", () => {
+    it("should get client from a user token where user already is associated with a client", async () => {
+      const token = getTestToken();
 
-    const req: Request = {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    } as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
 
-    await clientsCreateV1(req, res);
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith("User already has a client");
+      await clientsGetV1(req, res);
+
+      expect(res.json).toHaveBeenCalledWith(exampleClient);
+    });
+
+    it("should error when trying to get client from a user who is not associated with a client", async () => {
+      // Makes sure we get a User without a Client
+      server.use(
+        http.get(AUTH0_USER_BY_ID, () =>
+          HttpResponse.json(exampleUserWithoutClient),
+        ),
+      );
+
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsGetV1(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "Client not found" });
+    });
+
+    it("should error when trying to get client, and the rate limit has been reached", async () => {
+      server.use(
+        http.get(
+          AUTH0_CLIENTS_BY_ID,
+          () => new HttpResponse(null, { status: 429 }),
+        ),
+      );
+
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsGetV1(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(429);
+      expect(res.json).toHaveBeenCalledWith({ message: "Rate limit exceeded" });
+    });
+
+    it("should error when trying to get client, and and unknown error occurs", async () => {
+      server.use(
+        http.get(
+          AUTH0_CLIENTS_BY_ID,
+          () => new HttpResponse(null, { status: 500 }),
+        ),
+      );
+
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsGetV1(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Unable to get client",
+      });
+    });
   });
-  it("should error when trying to create a new client, when the token is missing", async () => {
-    server.use(
-      http.get(AUTH0_USER_BY_ID, () => HttpResponse.json(exampleUser)),
-    );
-    server.use(http.post(AUTH0_CLIENTS, () => HttpResponse.error()));
 
-    const res = {
-      send: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-    } as unknown as Response;
+  describe("clientsDeleteV1", () => {
+    it("should delete a client, based on the user token", async () => {
+      const token = getTestToken();
 
-    const req: Request = {
-      headers: {
-        authorization: `Bearer `,
-      },
-    } as Request;
+      const res = {
+        send: jest.fn(),
+      } as unknown as Response;
 
-    await clientsCreateV1(req, res);
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.send).toHaveBeenCalledWith("Unable to create client");
-  });
-  it("should get client from a user token where user already is associated with a client", async () => {
-    const token = getTestToken();
+      await clientsDeleteV1(req, res);
 
-    const res = {
-      json: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-    } as unknown as Response;
+      expect(res.send).toHaveBeenCalledWith("Client successfully deleted.");
+    });
 
-    const req: Request = {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    } as Request;
+    it("should error when trying to delete a client, and the client id is invalid", async () => {
+      // Makes sure we get a User without a Client
+      server.use(
+        http.get(AUTH0_USER_BY_ID, () =>
+          HttpResponse.json(exampleUserWithoutClient),
+        ),
+      );
 
-    await clientsGetV1(req, res);
+      const token = getTestToken();
 
-    expect(res.json).toHaveBeenCalledWith(exampleClient);
-  });
-  it("should error while trying to get client, when the token is missing", async () => {
-    server.use(http.get(AUTH0_CLIENTS_BY_ID, () => HttpResponse.error()));
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
 
-    const res = {
-      send: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-    } as unknown as Response;
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
 
-    const req: Request = {
-      headers: {
-        authorization: `Bearer `,
-      },
-    } as Request;
+      await clientsDeleteV1(req, res);
 
-    await clientsGetV1(req, res);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "Client not found" });
+    });
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.send).toHaveBeenCalledWith("Unable to get client");
-  });
-  it("should delete a client, based on the user token", async () => {
-    const token = getTestToken();
+    it("should error when trying to delete a client, and the rate limit has been reached", async () => {
+      server.use(
+        http.delete(
+          AUTH0_CLIENTS_BY_ID,
+          () => new HttpResponse(null, { status: 429 }),
+        ),
+      );
 
-    const res = {
-      send: jest.fn(),
-    } as unknown as Response;
+      const token = getTestToken();
 
-    const req: Request = {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    } as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
 
-    await clientsDeleteV1(req, res);
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
 
-    expect(res.send).toHaveBeenCalledWith("Client successfully deleted.");
-  });
-  it("should error while trying to delete a client, when the token is missing", async () => {
-    server.use(http.delete(AUTH0_CLIENTS_BY_ID, () => HttpResponse.error()));
+      await clientsDeleteV1(req, res);
 
-    const res = {
-      send: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-    } as unknown as Response;
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(429);
+      expect(res.json).toHaveBeenCalledWith({ message: "Rate limit exceeded" });
+    });
 
-    const req: Request = {
-      headers: {
-        authorization: `Bearer `,
-      },
-    } as Request;
+    it("should error when trying to get client, and an unknown error occurs", async () => {
+      server.use(
+        http.delete(
+          AUTH0_CLIENTS_BY_ID,
+          () => new HttpResponse(null, { status: 500 }),
+        ),
+      );
 
-    await clientsDeleteV1(req, res);
+      const token = getTestToken();
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.send).toHaveBeenCalledWith("Unable to delete client");
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsDeleteV1(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Unable to delete client",
+      });
+    });
   });
 });

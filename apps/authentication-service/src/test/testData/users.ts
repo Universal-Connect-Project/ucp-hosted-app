@@ -23,7 +23,7 @@ export const exampleUserInfoResponse: UserInfoResponse = {
   email_verified: true,
 };
 
-export const exampleUser: User = {
+export const exampleUserWithoutClient: User = {
   created_at: "2024-05-13T17:22:15.504Z",
   email: "test.user@example.com",
   email_verified: true,
@@ -52,7 +52,7 @@ export const exampleUser: User = {
 };
 
 export const exampleUserWithClientId: User = {
-  ...exampleUser,
+  ...exampleUserWithoutClient,
   user_metadata: {
     client_id: "test-client-id",
   },

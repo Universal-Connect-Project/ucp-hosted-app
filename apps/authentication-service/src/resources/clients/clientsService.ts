@@ -50,6 +50,10 @@ export const getClient = async (userToken: string): Promise<Client> => {
   const token = await getAccessToken();
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
+  if (!clientId) {
+    return Promise.reject("Not Found");
+  }
+
   return await parseResponse<Client>(
     await fetch(
       `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}`,
@@ -69,6 +73,10 @@ export const deleteClient = async (userToken: string): Promise<string> => {
   const token = await getAccessToken();
   const userId = await getUserIdFromToken(userToken);
   const clientId = await getUserClientId(userId);
+
+  if (!clientId) {
+    return Promise.reject("Not Found");
+  }
 
   await parseResponse(
     await fetch(

@@ -3,7 +3,7 @@ import { http, HttpResponse } from "msw";
 
 import { AUTH0_USER_BY_ID } from "@/test/handlers";
 import {
-  exampleUser,
+  exampleUserWithoutClient,
   exampleApiToken,
   exampleUserAlreadyHasAClientResponseError,
   exampleUserInfoResponse,
@@ -28,7 +28,9 @@ describe("Clients Service", () => {
   describe("createClient", () => {
     it("creates a new client", async () => {
       server.use(
-        http.get(AUTH0_USER_BY_ID, () => HttpResponse.json(exampleUser)),
+        http.get(AUTH0_USER_BY_ID, () =>
+          HttpResponse.json(exampleUserWithoutClient),
+        ),
       );
       const client: Client = await createClient(exampleApiToken, {
         name: exampleClientName,

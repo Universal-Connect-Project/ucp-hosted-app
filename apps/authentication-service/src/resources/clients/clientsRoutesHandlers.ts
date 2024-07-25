@@ -21,11 +21,19 @@ export const clientsCreateV1 = async (req: Request, res: Response) => {
   try {
     const client: Client = await createClient(clientToken, clientBody);
     res.json(client);
-  } catch (reason) {
-    if (typeof reason === "string" && reason === "User already has a client") {
-      res.status(400).send("User already has a client");
+  } catch (error) {
+    if (
+      typeof error === "string" &&
+      error.toUpperCase() === "USER ALREADY HAS A CLIENT"
+    ) {
+      res.status(400).json({ message: "User already has a client" });
+    } else if (
+      error instanceof Error &&
+      error.message.toUpperCase().includes("TOO MANY REQUESTS")
+    ) {
+      res.status(429).json({ message: "Rate limit exceeded" });
     } else {
-      res.status(500).send("Unable to create client");
+      res.status(500).json({ message: "Unable to create client" });
     }
   }
 };
@@ -36,11 +44,19 @@ export const clientsGetV1 = async (req: Request, res: Response) => {
   try {
     const client: Client = await getClient(clientToken);
     res.json(client);
-  } catch (reason) {
-    if (reason instanceof Error && reason.message === "Not Found") {
-      res.status(404).send("Client not found");
+  } catch (error) {
+    if (
+      typeof error === "string" &&
+      error.toUpperCase().includes("NOT FOUND")
+    ) {
+      res.status(404).json({ message: "Client not found" });
+    } else if (
+      error instanceof Error &&
+      error.message.toUpperCase().includes("TOO MANY REQUESTS")
+    ) {
+      res.status(429).json({ message: "Rate limit exceeded" });
     } else {
-      res.status(500).send("Unable to get client");
+      res.status(500).json({ message: "Unable to get client" });
     }
   }
 };
@@ -51,7 +67,19 @@ export const clientsDeleteV1 = async (req: Request, res: Response) => {
   try {
     const response = await deleteClient(clientToken);
     res.send(response);
-  } catch (reason) {
-    res.status(500).send("Unable to delete client");
+  } catch (error) {
+    if (
+      typeof error === "string" &&
+      error.toUpperCase().includes("NOT FOUND")
+    ) {
+      res.status(404).json({ message: "Client not found" });
+    } else if (
+      error instanceof Error &&
+      error.message.toUpperCase().includes("TOO MANY REQUESTS")
+    ) {
+      res.status(429).json({ message: "Rate limit exceeded" });
+    } else {
+      res.status(500).json({ message: "Unable to delete client" });
+    }
   }
 };
