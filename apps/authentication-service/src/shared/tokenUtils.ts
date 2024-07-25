@@ -1,11 +1,11 @@
-import envs from "@/config";
-import { ConsoleColors } from "@/shared/enums";
 import fs from "fs";
 import { decode, JwtPayload } from "jsonwebtoken";
 import os from "os";
 import path from "path";
 
-let token: string;
+import { ConsoleColors } from "@/shared/enums";
+
+let token: string | undefined;
 const tokenFileName: string = "brkn-arrw.txt";
 
 export const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
@@ -15,14 +15,13 @@ export const getLocalToken = (): string | undefined => {
   return token;
 };
 
-export const setLocalToken = (newToken: string): void => {
+export const setLocalToken = (newToken: string | undefined): void => {
   token = newToken;
 };
 
 export const setCachedToken = (token: string): boolean => {
   try {
     fs.writeFileSync(tokenFile, token);
-    setLocalToken(token);
     return true;
   } catch (Error) {
     console.log("Unable to cache token", Error);
@@ -32,27 +31,38 @@ export const setCachedToken = (token: string): boolean => {
 
 export const getCachedToken = (): string | undefined => {
   if (fs.existsSync(tokenFile)) {
-    const token = fs.readFileSync(tokenFile, "utf8");
-    setLocalToken(token);
-    return token;
+    return fs.readFileSync(tokenFile, "utf8");
   } else {
     return undefined;
   }
 };
 
-export const getIsTokenExpired = (token: string): boolean => {
-  const { exp } = decode(token, { json: true }) as JwtPayload;
-  return !exp || Date.now() >= exp * 1000;
+export const getIsTokenExpired = (
+  token: string | undefined | null,
+): boolean => {
+  if (!token) {
+    return true;
+  }
+
+  try {
+    const { exp } = decode(token, { json: true }) as JwtPayload;
+    return !exp || Date.now() >= exp * 1000;
+  } catch (Error) {
+    return true;
+  }
 };
 
 export const logToken = (token: string | undefined) => {
-  if (!token || process.env.JEST_WORKER_ID !== undefined) {
+  if (
+    !token ||
+    (process.env.JEST_WORKER_ID !== undefined && !process.env.JEST_NO_SKIP)
+  ) {
     return;
   }
 
-  if (envs.ENV === "test") {
+  if (process.env.ENV === "test") {
     console.log(`\nToken: ${ConsoleColors.FgGray}${token}`);
-  } else if (envs.ENV === "dev") {
+  } else if (process.env.ENV === "dev") {
     console.log(
       `\nToken: ${ConsoleColors.FgGray}${token.slice(0, 10)}...${token.slice(-10)}}`,
     );

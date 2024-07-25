@@ -8,6 +8,7 @@ import {
   getLocalToken,
   logToken,
   setCachedToken,
+  setLocalToken,
 } from "@/shared/tokenUtils";
 
 const domain: string = envs.AUTH0_DOMAIN;
@@ -37,16 +38,23 @@ const fetchAccessToken = async (): Promise<string> => {
 
   if (token) {
     setCachedToken(token);
+    setLocalToken(token);
     logToken(token);
   }
   return Promise.resolve(token);
 };
 
 export const getAccessToken = async (): Promise<string | undefined> => {
-  const currentToken = getLocalToken() || getCachedToken();
+  let currentToken = getLocalToken();
+
+  if (!currentToken || getIsTokenExpired(currentToken)) {
+    currentToken = getCachedToken();
+  }
 
   if (!currentToken || getIsTokenExpired(currentToken)) {
     await fetchAccessToken();
+  } else {
+    setLocalToken(currentToken);
   }
 
   return Promise.resolve(getLocalToken());
