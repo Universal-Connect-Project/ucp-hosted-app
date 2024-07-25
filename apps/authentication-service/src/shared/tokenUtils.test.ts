@@ -23,6 +23,7 @@ describe("tokenUtils", () => {
     if (tokenBackup) {
       setCachedToken(tokenBackup);
     }
+    jest.clearAllMocks();
   });
 
   describe("setCachedToken", () => {
@@ -90,15 +91,13 @@ describe("tokenUtils", () => {
   });
 
   describe("logToken", () => {
-    // jest.mock("dotenv", () => ({ config: jest.fn() }), { virtual: true });
-    // const OLD_ENV = process.env;
+    jest.spyOn(console, "log").mockImplementation(() => {});
 
-    // afterEach(() => {
-    //   process.env = { ...OLD_ENV };
-    // });
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
 
     it("logs token with ENV=test", () => {
-      jest.spyOn(console, "log").mockImplementation(() => {});
       process.env.JEST_NO_SKIP = "true";
       process.env.ENV = "test";
 
@@ -109,7 +108,6 @@ describe("tokenUtils", () => {
     });
 
     it("logs token with ENV=dev", () => {
-      jest.spyOn(console, "log").mockImplementation(() => {});
       process.env.JEST_NO_SKIP = "true";
       process.env.ENV = "dev";
 
@@ -117,6 +115,21 @@ describe("tokenUtils", () => {
       expect(console.log).toHaveBeenCalledWith(
         expect.stringContaining(`${validTestToken.slice(0, 10)}...`),
       );
+    });
+
+    it("does not log token with ENV=prod", () => {
+      process.env.JEST_NO_SKIP = "true";
+      process.env.ENV = "prod";
+
+      logToken(validTestToken);
+      expect(console.log).not.toHaveBeenCalled();
+    });
+
+    it("does not log token with undefined token", () => {
+      process.env.JEST_NO_SKIP = "true";
+
+      logToken(undefined);
+      expect(console.log).not.toHaveBeenCalled();
     });
   });
 });
