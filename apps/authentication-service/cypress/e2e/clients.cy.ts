@@ -97,7 +97,9 @@ describe("Client API", () => {
       },
     }).then((response: Cypress.Response<never>) => {
       expect(response.status).to.eq(400);
-      expect(response).to.property("body", "User already has a client");
+      expect(response.body)
+        .property("message")
+        .to.eq("User already has a client");
     });
 
     cy.request({
@@ -120,7 +122,7 @@ describe("Client API", () => {
       },
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(404);
-      expect(response).to.property("body", "Client not found");
+      expect(response.body).property("message").to.eq("Client not found");
     });
   });
 });
