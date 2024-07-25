@@ -9,7 +9,6 @@ export class Institution extends Model<InferAttributes<Institution, {omit: 'prov
   declare logo: string;
   declare url: string;
   declare is_test_bank: boolean;
-  declare is_hidden: boolean;
   declare routing_numbers: string[];
 
   declare createdAt: CreationOptional<Date>;
@@ -39,10 +38,6 @@ Institution.init(
     logo: DataTypes.TEXT,
     url: DataTypes.TEXT,
     is_test_bank: DataTypes.BOOLEAN,
-    is_hidden: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
-    },
     routing_numbers: DataTypes.ARRAY(DataTypes.TEXT),
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,

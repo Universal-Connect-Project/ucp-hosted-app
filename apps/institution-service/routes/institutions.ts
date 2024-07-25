@@ -1,51 +1,45 @@
 import { Router } from "express";
 import { Institution } from "../models/institution";
-import { Provider, supportedProviders } from "../models/provider";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const inster = await Institution.findOne({
-    where: { ucp_id: "UCP-123456789" },
-  });
-  console.log("test", inster);
-  const providers = await inster?.getProviders();
-  console.log("providers", inster?.providers);
-  const ins = Institution.build({
-    ucp_id: "UCP-123",
-    name: "test bank",
-    logo: "nothing",
-    url: "nothing",
-    keywords: "hi",
-    is_test_bank: false,
-    is_hidden: false,
-    routing_numbers: [],
-  });
-  ins.save();
-  const prover = await Provider.create({
-    provider: supportedProviders.MX,
-    supports_oauth: false,
-    institution_id: "UCP-123",
-  });
-  console.log("hi");
-  res.send("this is GET /institutions");
+  const institutions = await Institution.findAll();
+  res.json(institutions);
 });
 
 router.get("/:id", async (req, res) => {
-  res.send(`this is GET /institutions/${req.params.id}`);
+  const institution = await Institution.findByPk(req.params.id, {
+    include: [Institution.associations.providers],
+  });
+  res.json(institution);
 });
 
 router.put("/:id", async (req, res) => {
-  res.send(`this is PUT /institutions/${req.params.id}`);
+  res.send(`TODO: build this PUT /institutions/${req.params.id} endpoint`);
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const institution = await Institution.create(req.body);
+
+    res.status(201).json(institution);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: "Failed to create institution" });
+  }
 });
 
 router.delete("/:id", async (req, res) => {
-  // try {
-  //   await Institution.findByIdAndDelete(req.params.id);
-  //   res.json({ message: 'Institution deleted' });
-  // } catch (err: any) {
-  //   res.status(500).json({ error: err?.message });
-  // }
+  const institution = await Institution.findByPk(req.params.id);
+
+  if (await institution?.destroy()) {
+    res.status(204);
+    res.json({ message: "Institution deleted" });
+  } else {
+    res.status(400);
+    res.send("Failure to delete");
+  }
 });
 
 export default router;

@@ -61,4 +61,4 @@ Provider.init(
   }
 );
 
-// Provider.belongsTo(Institution, { foreignKey: "institution_id" });
+// Provider.belongsTo(Institution, { targetKey: "institution_id" });

@@ -27,10 +27,6 @@ module.exports = {
       is_test_bank: {
         type: Sequelize.BOOLEAN,
       },
-      is_hidden: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true
-      },
       routing_numbers: {
         type: Sequelize.ARRAY(Sequelize.TEXT)
       },
