@@ -26,7 +26,7 @@ describe("Client API", () => {
     getTokens();
   });
 
-  it("creates a client key without access token", () => {
+  it("fails with unauthorized if there is no access token", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
@@ -68,8 +68,11 @@ describe("Client API", () => {
         Authorization: `Bearer ${accessToken}`,
       },
     }).then((response: Cypress.Response<{ body: Keys }>) => {
-      newClientId = (response.body as unknown as Keys).clientId;
+      const { body } = response;
+      newClientId = (body as unknown as Keys).clientId;
+
       expect(response.status).to.eq(200);
+      expect(Object.keys(body)).to.have.length(2);
     });
 
     cy.request({
@@ -80,8 +83,11 @@ describe("Client API", () => {
         Authorization: `Bearer ${accessToken}`,
       },
     }).then((response: Cypress.Response<{ message: string }>) => {
+      const { body } = response;
+
       expect(response.status).to.eq(200);
-      expect(response.body).property("clientId").to.eq(newClientId);
+      expect(Object.keys(body)).to.have.length(2);
+      expect(body).property("clientId").to.eq(newClientId);
     });
 
     cy.request({
