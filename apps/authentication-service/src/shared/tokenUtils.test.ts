@@ -42,9 +42,10 @@ describe("tokenUtils", () => {
     });
 
     it("returns the token from the file if there is one", () => {
+      const testToken = "getCachedTokenTestToken";
       jest.spyOn(fs, "existsSync").mockReturnValue(true);
-      jest.spyOn(fs, "readFileSync").mockReturnValue("tokenJustForThisTest");
-      expect(getCachedToken()).toBe("tokenJustForThisTest");
+      jest.spyOn(fs, "readFileSync").mockReturnValue(testToken);
+      expect(getCachedToken()).toBe(testToken);
     });
   });
 
