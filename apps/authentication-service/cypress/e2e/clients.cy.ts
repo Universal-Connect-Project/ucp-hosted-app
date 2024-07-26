@@ -73,6 +73,8 @@ describe("Client API", () => {
 
       expect(response.status).to.eq(200);
       expect(Object.keys(body)).to.have.length(2);
+      expect(Object.keys(body)).to.include("clientId");
+      expect(Object.keys(body)).to.include("clientSecret");
     });
 
     cy.request({
@@ -87,7 +89,9 @@ describe("Client API", () => {
 
       expect(response.status).to.eq(200);
       expect(Object.keys(body)).to.have.length(2);
-      expect(body).property("clientId").to.eq(newClientId);
+      expect(Object.keys(body)).to.include("clientId");
+      expect(Object.keys(body)).to.include("clientSecret");
+      expect(body).property("clientId").to.deep.eq(newClientId);
     });
 
     cy.request({
