@@ -1,12 +1,12 @@
+import { Request, Response } from "express";
+import { http, HttpResponse } from "msw";
+
 import {
   AUTH0_CLIENTS,
   AUTH0_CLIENTS_BY_ID,
   AUTH0_USER_BY_ID,
 } from "@/test/handlers";
 import { server } from "@/test/testServer";
-import { Request, Response } from "express";
-import { http, HttpResponse } from "msw";
-
 import {
   clientsCreateV1,
   clientsDeleteV1,
