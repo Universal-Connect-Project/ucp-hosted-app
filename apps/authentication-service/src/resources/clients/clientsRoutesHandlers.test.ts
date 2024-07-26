@@ -268,7 +268,7 @@ describe("clientsRoutesHandlers", () => {
       expect(res.send).toHaveBeenCalledWith("Client successfully deleted.");
     });
 
-    it("should error when trying to delete a client, and the client id is invalid", async () => {
+    it("should error when trying to delete a client, and the client id is missing", async () => {
       // Makes sure we get a User without a Client
       server.use(
         http.get(AUTH0_USER_BY_ID, () =>

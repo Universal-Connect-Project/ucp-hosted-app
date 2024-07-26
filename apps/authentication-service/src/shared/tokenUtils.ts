@@ -3,15 +3,12 @@ import { decode, JwtPayload } from "jsonwebtoken";
 import os from "os";
 import path from "path";
 
-import { ConsoleColors } from "@/shared/enums";
-
 let token: string | undefined;
 const tokenFileName: string = "brkn-arrw.txt";
 
 export const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
 
 export const getLocalToken = (): string | undefined => {
-  logToken(token);
   return token;
 };
 
@@ -20,20 +17,15 @@ export const setLocalToken = (newToken: string | undefined): void => {
 };
 
 export const setCachedToken = (token: string): boolean => {
-  try {
-    fs.writeFileSync(tokenFile, token);
-    return true;
-  } catch (error) {
-    return false;
-  }
+  fs.writeFileSync(tokenFile, token);
+  return true;
 };
 
 export const getCachedToken = (): string | undefined => {
   if (fs.existsSync(tokenFile)) {
     return fs.readFileSync(tokenFile, "utf8");
-  } else {
-    return undefined;
   }
+  return undefined;
 };
 
 export const getIsTokenExpired = (
@@ -48,22 +40,5 @@ export const getIsTokenExpired = (
     return !exp || Date.now() >= exp * 1000;
   } catch (Error) {
     return true;
-  }
-};
-
-export const logToken = (token: string | undefined) => {
-  if (
-    !token ||
-    (process.env.JEST_WORKER_ID !== undefined && !process.env.JEST_NO_SKIP)
-  ) {
-    return;
-  }
-
-  if (process.env.ENV === "test") {
-    console.log(`\nToken: ${ConsoleColors.FgGray}${token}`);
-  } else if (process.env.ENV === "dev") {
-    console.log(
-      `\nToken: ${ConsoleColors.FgGray}${token.slice(0, 10)}...${token.slice(-10)}}`,
-    );
   }
 };

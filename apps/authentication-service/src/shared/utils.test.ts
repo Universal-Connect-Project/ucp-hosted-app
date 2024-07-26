@@ -4,7 +4,7 @@ import { getClientTokenFromRequest, parseResponse } from "@/shared/utils";
 
 describe("utils", () => {
   describe("parseResponse", () => {
-    it("parseResponse when response is ok, and body is null", async () => {
+    it("returns the response if response is ok, and body is null", async () => {
       const response = {
         ok: true,
         status: 200,
@@ -19,7 +19,7 @@ describe("utils", () => {
       expect(result).toEqual(response);
     });
 
-    it("parseResponse when response is ok, and body is not null", async () => {
+    it("returns the json body if the response is ok and there is a body", async () => {
       const body = { key: "value" };
 
       const response = {
@@ -36,7 +36,7 @@ describe("utils", () => {
       expect(result).toEqual(body);
     });
 
-    it("parseResponse when response is not ok", async () => {
+    it("returns an error if the response is not ok", async () => {
       const response = {
         ok: false,
         status: 400,

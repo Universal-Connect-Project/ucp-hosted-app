@@ -5,9 +5,9 @@ import {
   getCachedToken,
   getIsTokenExpired,
   getLocalToken,
-  logToken,
   setCachedToken,
   setLocalToken,
+  tokenFile,
 } from "@/shared/tokenUtils";
 
 let tokenBackup: string;
@@ -27,46 +27,31 @@ describe("tokenUtils", () => {
   });
 
   describe("setCachedToken", () => {
-    it("sets token", () => {
-      jest.spyOn(fs, "existsSync").mockReturnValue(true);
-      jest.spyOn(fs, "writeFileSync").mockImplementation(() => {});
-      jest.spyOn(fs, "readFileSync").mockReturnValue(validTestToken);
-      setCachedToken(validTestToken);
-      expect(getCachedToken()).toBe(validTestToken);
-    });
-
-    it("throws an error when unable to cache token", () => {
-      jest.spyOn(fs, "writeFileSync").mockImplementation(() => {
-        throw new Error();
-      });
-
-      const result = setCachedToken(validTestToken);
-      expect(result).toBe(false);
+    it("sets token to the cache file", () => {
+      const testToken = "setCachedTokenTestToken";
+      jest.spyOn(fs, "writeFileSync");
+      setCachedToken(testToken);
+      expect(fs.writeFileSync).toHaveBeenCalledWith(tokenFile, testToken);
     });
   });
 
   describe("getCachedToken", () => {
-    it("returns undefined", () => {
+    it("returns undefined if there is no file", () => {
       jest.spyOn(fs, "existsSync").mockReturnValue(false);
       expect(getCachedToken()).toBeUndefined();
     });
 
-    it("returns token", () => {
+    it("returns the token from the file if there is one", () => {
       jest.spyOn(fs, "existsSync").mockReturnValue(true);
-      jest.spyOn(fs, "readFileSync").mockReturnValue(validTestToken);
-      expect(getCachedToken()).toBe(validTestToken);
+      jest.spyOn(fs, "readFileSync").mockReturnValue("tokenJustForThisTest");
+      expect(getCachedToken()).toBe("tokenJustForThisTest");
     });
   });
 
   describe("getLocalToken", () => {
-    it("returns undefined", () => {
-      setLocalToken(undefined);
-      expect(getLocalToken()).toBeUndefined();
-    });
-
-    it("returns token", () => {
-      setLocalToken(validTestToken);
-      expect(getLocalToken()).toBe(validTestToken);
+    it("returns token in local cache", () => {
+      setLocalToken("localTestToken");
+      expect(getLocalToken()).toBe("localTestToken");
     });
   });
 
@@ -96,49 +81,6 @@ describe("tokenUtils", () => {
 
     it("returns true if token is expired", () => {
       expect(getIsTokenExpired(expiredTestToken)).toBe(true);
-    });
-  });
-
-  describe("logToken", () => {
-    jest.spyOn(console, "log").mockImplementation(() => {});
-
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
-    it("logs token with ENV=test", () => {
-      process.env.JEST_NO_SKIP = "true";
-      process.env.ENV = "test";
-
-      logToken(validTestToken);
-      expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining(validTestToken),
-      );
-    });
-
-    it("logs token with ENV=dev", () => {
-      process.env.JEST_NO_SKIP = "true";
-      process.env.ENV = "dev";
-
-      logToken(validTestToken);
-      expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining(`${validTestToken.slice(0, 10)}...`),
-      );
-    });
-
-    it("does not log token with ENV=prod", () => {
-      process.env.JEST_NO_SKIP = "true";
-      process.env.ENV = "prod";
-
-      logToken(validTestToken);
-      expect(console.log).not.toHaveBeenCalled();
-    });
-
-    it("does not log token with undefined token", () => {
-      process.env.JEST_NO_SKIP = "true";
-
-      logToken(undefined);
-      expect(console.log).not.toHaveBeenCalled();
     });
   });
 });
