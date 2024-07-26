@@ -34,6 +34,15 @@ describe("tokenUtils", () => {
       setCachedToken(validTestToken);
       expect(getCachedToken()).toBe(validTestToken);
     });
+
+    it("throws an error when unable to cache token", () => {
+      jest.spyOn(fs, "writeFileSync").mockImplementation(() => {
+        throw new Error();
+      });
+
+      const result = setCachedToken(validTestToken);
+      expect(result).toBe(false);
+    });
   });
 
   describe("getCachedToken", () => {

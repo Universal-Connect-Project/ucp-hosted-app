@@ -23,8 +23,7 @@ export const setCachedToken = (token: string): boolean => {
   try {
     fs.writeFileSync(tokenFile, token);
     return true;
-  } catch (Error) {
-    console.log("Unable to cache token", Error);
+  } catch (error) {
     return false;
   }
 };
