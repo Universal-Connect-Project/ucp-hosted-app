@@ -10,9 +10,9 @@ import {
 } from "@/test/testData/users";
 import { server } from "@/test/testServer";
 import {
-  exampleClient,
   exampleClientDesc,
   exampleClientName,
+  exampleAuth0Client,
 } from "@/test/testData/clients";
 import { getClient, createClient, deleteClient } from "./clientsService";
 
@@ -37,7 +37,7 @@ describe("Clients Service", () => {
         description: exampleClientDesc,
       });
 
-      expect(client).toEqual(exampleClient);
+      expect(client).toEqual(exampleAuth0Client);
     });
     it("rejects when trying to create a new client when user already has one", async () => {
       await expect(
@@ -53,7 +53,7 @@ describe("Clients Service", () => {
     it("gets info for an existing client", async () => {
       const client: Client = await getClient(exampleApiToken);
 
-      expect(client).toEqual(exampleClient);
+      expect(client).toEqual(exampleAuth0Client);
     });
   });
 

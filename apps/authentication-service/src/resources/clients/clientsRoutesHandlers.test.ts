@@ -12,7 +12,7 @@ import {
   clientsDeleteV1,
   clientsGetV1,
 } from "@/resources/clients/clientsRoutesHandlers";
-import { exampleClient } from "@/test/testData/clients";
+import { exampleUCPClient } from "@/test/testData/clients";
 import {
   exampleUserWithoutClient,
   exampleUserInfoResponse,
@@ -51,7 +51,7 @@ describe("clientsRoutesHandlers", () => {
 
       await clientsCreateV1(req, res);
 
-      expect(res.json).toHaveBeenCalledWith(exampleClient);
+      expect(res.json).toHaveBeenCalledWith(exampleUCPClient);
     });
 
     it("should error when trying to create a new client, when user already has one", async () => {
@@ -159,7 +159,7 @@ describe("clientsRoutesHandlers", () => {
 
       await clientsGetV1(req, res);
 
-      expect(res.json).toHaveBeenCalledWith(exampleClient);
+      expect(res.json).toHaveBeenCalledWith(exampleUCPClient);
     });
 
     it("should error when trying to get client from a user who is not associated with a client", async () => {

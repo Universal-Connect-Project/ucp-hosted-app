@@ -8,7 +8,15 @@ import {
 } from "@/resources/clients/clientsRoutesHandlers";
 
 export const clientsRoutesV1 = (router: Router): void => {
-  router.post("/", [validateAccessToken], clientsCreateV1 as RequestHandler);
-  router.get("/", [validateAccessToken], clientsGetV1 as RequestHandler);
-  router.delete("/", [validateAccessToken], clientsDeleteV1 as RequestHandler);
+  router.post(
+    "/keys",
+    [validateAccessToken],
+    clientsCreateV1 as RequestHandler,
+  );
+  router.get("/keys", [validateAccessToken], clientsGetV1 as RequestHandler);
+  router.delete(
+    "/keys",
+    [validateAccessToken],
+    clientsDeleteV1 as RequestHandler,
+  );
 };

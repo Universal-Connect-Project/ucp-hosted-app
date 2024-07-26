@@ -20,7 +20,10 @@ export const clientsCreateV1 = async (req: Request, res: Response) => {
 
   try {
     const client: Client = await createClient(clientToken, clientBody);
-    res.json(client);
+    res.json({
+      clientId: client.client_id,
+      clientSecret: client.client_secret,
+    });
   } catch (error) {
     if (
       typeof error === "string" &&
@@ -43,7 +46,10 @@ export const clientsGetV1 = async (req: Request, res: Response) => {
 
   try {
     const client: Client = await getClient(clientToken);
-    res.json(client);
+    res.json({
+      clientId: client.client_id,
+      clientSecret: client.client_secret,
+    });
   } catch (error) {
     if (
       typeof error === "string" &&

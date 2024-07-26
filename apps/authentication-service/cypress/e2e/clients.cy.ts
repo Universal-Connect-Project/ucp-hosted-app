@@ -1,4 +1,4 @@
-import { Client } from "auth0";
+import { Keys } from "../../src/resources/clients/clientsModel";
 
 const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
 
@@ -26,15 +26,15 @@ describe("Client API", () => {
     getTokens();
   });
 
-  it("creates a client without access token", () => {
+  it("creates a client key without access token", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients`,
+      url: `http://localhost:${PORT}/v1/clients/keys`,
       headers: {
         ContentType: "application/json",
       },
-    }).then((response: Cypress.Response<{ body: Client }>) => {
+    }).then((response: Cypress.Response<{ body: Keys }>) => {
       expect(response.status).to.eq(401);
       expect(response.body)
         .property("message")
@@ -54,7 +54,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients`,
+      url: `http://localhost:${PORT}/v1/clients/keys`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -62,32 +62,32 @@ describe("Client API", () => {
 
     cy.request({
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients`,
+      url: `http://localhost:${PORT}/v1/clients/keys`,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then((response: Cypress.Response<{ body: Client }>) => {
-      newClientId = (response.body as unknown as Client).client_id;
+    }).then((response: Cypress.Response<{ body: Keys }>) => {
+      newClientId = (response.body as unknown as Keys).clientId;
       expect(response.status).to.eq(200);
     });
 
     cy.request({
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients`,
+      url: `http://localhost:${PORT}/v1/clients/keys`,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(200);
-      expect(response.body).property("client_id").to.eq(newClientId);
+      expect(response.body).property("clientId").to.eq(newClientId);
     });
 
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients`,
+      url: `http://localhost:${PORT}/v1/clients/keys`,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -104,7 +104,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients`,
+      url: `http://localhost:${PORT}/v1/clients/keys`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -115,7 +115,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients`,
+      url: `http://localhost:${PORT}/v1/clients/keys`,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
