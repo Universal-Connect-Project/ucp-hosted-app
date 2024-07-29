@@ -11,7 +11,7 @@ import {
   clientsCreateV1,
   clientsDeleteV1,
   clientsGetV1,
-} from "@/resources/clients/clientsRoutesHandlers";
+} from "@/resources/clients/clientsRoutesHandlersV1";
 import { exampleUCPClient } from "@/test/testData/clients";
 import {
   exampleUserWithoutClient,
@@ -27,7 +27,7 @@ jest.mock("auth0", () => ({
   },
 }));
 
-describe("clientsRoutesHandlers", () => {
+describe("clientsRoutesHandlersV1", () => {
   describe("clientsCreateV1", () => {
     it("should create a new client", async () => {
       // Makes sure we get a User without a Client
