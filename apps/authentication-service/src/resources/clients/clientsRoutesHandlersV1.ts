@@ -5,6 +5,7 @@ import {
   createClient,
   deleteClient,
   getClient,
+  rotateClientSecret,
 } from "@/resources/clients/clientsService";
 import { getClientTokenFromRequest } from "@/shared/utils";
 
@@ -86,6 +87,34 @@ export const clientsDeleteV1 = async (req: Request, res: Response) => {
       res.status(429).json({ message: "Rate limit exceeded" });
     } else {
       res.status(500).json({ message: "Unable to delete client" });
+    }
+  }
+};
+
+export const clientsRotateSecretsV1 = async (req: Request, res: Response) => {
+  const clientToken = getClientTokenFromRequest(req);
+
+  try {
+    const client: Client = await rotateClientSecret(clientToken);
+
+    res.send(
+      JSON.stringify({
+        ...client,
+      }),
+    );
+  } catch (error) {
+    if (
+      typeof error === "string" &&
+      error.toUpperCase().includes("NOT FOUND")
+    ) {
+      res.status(404).json({ message: "Client not found" });
+    } else if (
+      error instanceof Error &&
+      error.message.toUpperCase().includes("TOO MANY REQUESTS")
+    ) {
+      res.status(429).json({ message: "Rate limit exceeded" });
+    } else {
+      res.status(500).json({ message: "Unable to rotate client secret" });
     }
   }
 };

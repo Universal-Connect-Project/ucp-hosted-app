@@ -97,3 +97,24 @@ export const deleteClient = async (userToken: string): Promise<string> => {
 
   return "Client successfully deleted.";
 };
+
+export const rotateClientSecret = async (
+  userToken: string,
+): Promise<Client> => {
+  const token = await getAccessToken();
+  const clientId = await getUserClientId(await getUserIdFromToken(userToken));
+
+  return await parseResponse<Client>(
+    await fetch(
+      `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}/rotate-secret`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    ),
+  );
+};

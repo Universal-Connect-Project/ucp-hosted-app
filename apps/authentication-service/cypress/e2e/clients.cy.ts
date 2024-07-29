@@ -1,3 +1,4 @@
+import { Client } from "auth0";
 import { Keys } from "../../src/resources/clients/clientsModel";
 
 const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
@@ -6,6 +7,7 @@ describe("Client API", () => {
   const PORT: number = (Cypress.env("PORT") as number) || 8089;
   let accessToken: string;
   let newClientId: string;
+  let newClientSecret: string;
 
   const getTokens = () => {
     cy.window()
@@ -70,6 +72,7 @@ describe("Client API", () => {
     }).then((response: Cypress.Response<{ body: Keys }>) => {
       const { body } = response;
       newClientId = (body as unknown as Keys).clientId;
+      newClientSecret = (response.body as unknown as Client).client_secret;
 
       expect(response.status).to.eq(200);
       expect(Object.keys(body)).to.have.length(2);
@@ -113,6 +116,19 @@ describe("Client API", () => {
     });
 
     cy.request({
+      method: "POST",
+      url: `http://localhost:${PORT}/v1/clients/keys/rotate`,
+      headers: {
+        ContentType: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((response: Cypress.Response<{ body: Client }>) => {
+      expect((response.body as unknown as Client).client_secret).not.to.eq(
+        newClientSecret,
+      );
+    });
+
+    cy.request({
       method: "DELETE",
       url: `http://localhost:${PORT}/v1/clients/keys`,
       headers: {
@@ -133,6 +149,19 @@ describe("Client API", () => {
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(404);
       expect(response.body).property("message").to.eq("Client not found");
+    });
+
+    cy.request({
+      failOnStatusCode: false,
+      method: "POST",
+      url: `http://localhost:${PORT}/v1/clients/keys/rotate`,
+      headers: {
+        ContentType: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((response: Cypress.Response<{ message: string }>) => {
+      expect(response.status).to.eq(500);
+      expect(response).to.property("body", "Unable to rotate client secret");
     });
   });
 });

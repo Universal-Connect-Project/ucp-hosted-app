@@ -1,5 +1,9 @@
-import { exampleAuth0Client } from "@/test/testData/clients";
 import { http, HttpResponse } from "msw";
+
+import {
+  exampleAuth0Client,
+  exampleClientRotatedSecret,
+} from "@/test/testData/clients";
 import {
   exampleUserWithClientId,
   exampleApiToken,
@@ -28,4 +32,7 @@ export const handlers = [
   http.get(AUTH0_CLIENTS_BY_ID, () => HttpResponse.json(exampleAuth0Client)),
   http.post(AUTH0_CLIENTS, () => HttpResponse.json(exampleAuth0Client)),
   http.delete(AUTH0_CLIENTS_BY_ID, () => HttpResponse.json(null)),
+  http.post(`${AUTH0_CLIENTS_BY_ID}/rotate-secret`, () =>
+    HttpResponse.json(exampleClientRotatedSecret),
+  ),
 ];
