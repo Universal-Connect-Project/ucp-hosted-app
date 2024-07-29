@@ -1,12 +1,9 @@
 'use strict';
 
-const { v4: uuidv4 } = require('uuid');
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
     const wellsId = 'UCP-123456789'
-    const secondInst = uuidv4()
     // Add Institutions
     await queryInterface.bulkInsert('institutions', [
       {
@@ -20,7 +17,7 @@ module.exports = {
         createdAt: new Date(),
       },
       {
-        ucp_id: `UCP-${secondInst}`,
+        ucp_id: `UCP-9999`,
         name: 'Chase Bank',
         keywords: 'chase, bank',
         logo: 'https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-78c7b591-6512-9c17-b092-1cddbd3c85ba_100x100.png',

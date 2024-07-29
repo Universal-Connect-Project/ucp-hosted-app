@@ -5,6 +5,14 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
+    "db:setup": "npm run db:create && npm run db:migrate && npm run db:seed",
+    "db:create": "npx sequelize-cli db:create",
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "test:db:setup": "npm run test:db:create && npm run test:db:migrate && npm run test:db:seed",
+    "test:db:create": "npx sequelize-cli db:create --env test",
+    "test:db:migrate": "npx sequelize-cli db:migrate --env test",
+    "test:db:seed": "npx sequelize-cli db:seed:all --env test",
     "dev": "nodemon ./app.ts"
   },
   "dependencies": {

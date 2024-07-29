@@ -1,25 +1,19 @@
-import { Router } from "express";
+import { Request, Response } from "express";
 import { Institution } from "../models/institution";
 
-const router = Router();
-
-router.get("/", async (req, res) => {
+export const getAllInstitutions = async (req: Request, res: Response) => {
   const institutions = await Institution.findAll();
   res.json(institutions);
-});
+};
 
-router.get("/:id", async (req, res) => {
+export const getInstitutionById = async (req: Request, res: Response) => {
   const institution = await Institution.findByPk(req.params.id, {
     include: [Institution.associations.providers],
   });
   res.json(institution);
-});
+};
 
-router.put("/:id", async (req, res) => {
-  res.send(`TODO: build this PUT /institutions/${req.params.id} endpoint`);
-});
-
-router.post("/", async (req, res) => {
+export const createInstitution = async (req: Request, res: Response) => {
   try {
     const institution = await Institution.create(req.body);
 
@@ -28,9 +22,9 @@ router.post("/", async (req, res) => {
     console.error(error);
     res.status(400).json({ error: "Failed to create institution" });
   }
-});
+};
 
-router.delete("/:id", async (req, res) => {
+export const deleteInstitution = async (req: Request, res: Response) => {
   const institution = await Institution.findByPk(req.params.id);
 
   if (await institution?.destroy()) {
@@ -40,6 +34,4 @@ router.delete("/:id", async (req, res) => {
     res.status(400);
     res.send("Failure to delete");
   }
-});
-
-export default router;
+};
