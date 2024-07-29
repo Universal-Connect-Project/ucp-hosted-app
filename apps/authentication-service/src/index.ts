@@ -1,68 +1,38 @@
-import cors from "cors";
+import express from "express";
+
 import envs from "./config";
-import express, { Request, Response, NextFunction } from "express";
-import nocache from "nocache";
-import helmet from "helmet";
-import { errorHandler } from "./middleware/error.middleware";
-import { notFoundHandler } from "./middleware/not-found.middleware";
+import { initExpress } from "./init";
+import { getAccessToken } from "@/shared/auth/authService";
+import { ConsoleColors } from "@/shared/enums";
 
 export const SERVICE_NAME = "ucp-authentication-service";
 const PORT = parseInt(envs.PORT, 10);
-const CLIENT_ORIGIN_URL = envs.CLIENT_ORIGIN_URL;
 
 const app = express();
-const apiRouter = express.Router();
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.set("json spaces", 2);
-
-app.use(
-  helmet({
-    hsts: {
-      maxAge: 31536000,
-    },
-    contentSecurityPolicy: {
-      useDefaults: false,
-      directives: {
-        "default-src": ["'none'"],
-        "frame-ancestors": ["'none'"],
-      },
-    },
-    frameguard: {
-      action: "deny",
-    },
-  }),
-);
-
-app.use((_req: Request, res: Response, next: NextFunction) => {
-  res.contentType("application/json; charset=utf-8");
-  next();
-});
-app.use(nocache());
-
-app.use(
-  cors({
-    origin: CLIENT_ORIGIN_URL,
-    methods: ["GET"],
-    allowedHeaders: ["Authorization", "Content-Type"],
-    maxAge: 86400,
-  }),
-);
-
-app.use("/api", apiRouter);
-
-apiRouter.get("/ping", (_req: Request, res: Response) => {
-  res.send(
-    JSON.stringify({
-      message: "pong",
-    }),
-  );
-});
-
-app.use(errorHandler);
-app.use(notFoundHandler);
+initExpress(app);
 
 app.listen(PORT, () => {
-  console.log(`${SERVICE_NAME} is listening on port ${PORT}`);
+  void getAccessToken()
+    .then(() => {
+      console.log(
+        `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${PORT}; ENV=${envs.ENV}`,
+      );
+      console.log(
+        `${ConsoleColors.FgGreen}Service is initialized and ready to roll${ConsoleColors.Reset}`,
+      );
+    })
+    .catch(() => {
+      console.error(
+        `${ConsoleColors.FgRed}Could not initialize service. Unable to get access token. Exiting...${ConsoleColors.Reset}`,
+      );
+      process.exit(1);
+    });
+});
+
+process.on("SIGINT", () => {
+  console.log(
+    `\n${ConsoleColors.FgYellow}Gracefully shutting down from SIGINT (Ctrl-C)${ConsoleColors.Reset}`,
+  );
+  process.exit(0);
 });

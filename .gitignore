@@ -31,4 +31,6 @@ dist-ssr
 **/cypress/screenshots/
 **/cypress/videos/
 
+**/coverage/
+
 apps/ucp-ui/cypress.env.json

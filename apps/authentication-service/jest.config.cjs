@@ -2,4 +2,7 @@
 module.exports = {
   preset: "ts-jest",
   setupFilesAfterEnv: ["<rootDir>/jestSetup.js"],
+  moduleNameMapper: {
+    "@/(.*)": "<rootDir>/src/$1",
+  },
 };

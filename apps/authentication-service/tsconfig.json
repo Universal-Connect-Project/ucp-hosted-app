@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2022",
     "moduleResolution": "node",
     "outDir": "./dist",
     "strict": true,
@@ -8,7 +8,10 @@
     "typeRoots": [
       "../../node_modules/@types",
       "../../node_modules/@testing-library"
-    ]
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*"]
 }

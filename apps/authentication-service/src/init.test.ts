@@ -4,8 +4,8 @@ import {
   UnauthorizedError,
 } from "express-oauth2-jwt-bearer";
 
-import { errorHandler } from "./middleware/error.middleware";
-import { notFoundHandler } from "./middleware/not-found.middleware";
+import { errorHandler } from "@/middleware/errorMiddleware";
+import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 
 describe("Express test", () => {
   it("tests notFoundHandler", () => {
