@@ -1,8 +1,8 @@
+import { clientsRoutes } from "@/resources/clients/clientsRoutes";
 import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import nocache from "nocache";
-import { initRoutes } from "@/resources";
 import { errorHandler } from "@/middleware/errorMiddleware";
 import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 
@@ -54,7 +54,7 @@ export const initExpress = (app: Application): void => {
   );
 
   // Routes
-  initRoutes(app);
+  clientsRoutes(app);
 
   app.get("/ping", (_req: Request, res: Response) => {
     res.send(
