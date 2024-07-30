@@ -9,7 +9,7 @@
   },
   "test": {
     "username": "postgres",
-    "password": null,
+    "password": "postgres",
     "database": "institution_service_test",
     "host": "127.0.0.1",
     "dialect": "postgres",
