@@ -9,6 +9,11 @@ export const exampleUCPClient: Partial<Keys> = {
   clientSecret: "fake-secret",
 };
 
+export const exampleUCPClientRotatedSecret: Partial<Keys> = {
+  clientId: "ucp-test-client",
+  clientSecret: "fake-secret-rotated",
+};
+
 export const exampleAuth0Client: Partial<Client> = {
   tenant: "dev-ucp",
   global: false,
@@ -68,4 +73,9 @@ export const exampleAuth0Client: Partial<Client> = {
   ],
   web_origins: ["http://localhost:3000"],
   custom_login_page_on: true,
+};
+
+export const exampleClientRotatedSecret = {
+  ...exampleAuth0Client,
+  client_secret: "fake-secret-rotated",
 };

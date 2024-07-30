@@ -8,6 +8,7 @@ import {
   getUserIdFromToken,
   setUserClientId,
 } from "@/shared/users/usersService";
+import { ResponseMessage } from "@/resources/clients/clientsModel";
 
 const authDomain = envs.AUTH0_DOMAIN;
 
@@ -25,8 +26,7 @@ export const createClient = async (
     return Promise.reject("User already has a client");
   }
 
-  // Create new client
-  const newClient: Client = await parseResponse(
+  const newClient: Client = await parseResponse<Client>(
     await fetch(`https://${authDomain}/api/v2/clients`, {
       method: "POST",
       headers: {
@@ -69,7 +69,9 @@ export const getClient = async (userToken: string): Promise<Client> => {
   );
 };
 
-export const deleteClient = async (userToken: string): Promise<string> => {
+export const deleteClient = async (
+  userToken: string,
+): Promise<ResponseMessage> => {
   const token = await getAccessToken();
   const userId = await getUserIdFromToken(userToken);
   const clientId = await getUserClientId(userId);
@@ -95,5 +97,32 @@ export const deleteClient = async (userToken: string): Promise<string> => {
   // Remove client id from user
   await setUserClientId(userId, "");
 
-  return "Client successfully deleted.";
+  return {
+    message: "Client successfully deleted.",
+  };
+};
+
+export const rotateClientSecret = async (
+  userToken: string,
+): Promise<Client> => {
+  const token = await getAccessToken();
+  const clientId = await getUserClientId(await getUserIdFromToken(userToken));
+
+  if (!clientId) {
+    return Promise.reject("Not Found");
+  }
+
+  return await parseResponse<Client>(
+    await fetch(
+      `https://${authDomain}/api/v2/clients/${encodeURIComponent(clientId)}/rotate-secret`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    ),
+  );
 };
