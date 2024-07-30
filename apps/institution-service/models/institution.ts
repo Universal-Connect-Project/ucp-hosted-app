@@ -1,8 +1,20 @@
-import { Association, CreationOptional, DataTypes, HasManyGetAssociationsMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
-import sequelize from '../config/database';
+import {
+  Association,
+  CreationOptional,
+  DataTypes,
+  HasManyGetAssociationsMixin,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
+import sequelize from "../config/database";
 import { Provider } from "./provider";
 
-export class Institution extends Model<InferAttributes<Institution, {omit: 'providers'}>, InferCreationAttributes<Institution>> {
+export class Institution extends Model<
+  InferAttributes<Institution, { omit: "providers" }>,
+  InferCreationAttributes<Institution>
+> {
   declare ucp_id: string;
   declare name: string;
   declare keywords: string;
@@ -19,8 +31,8 @@ export class Institution extends Model<InferAttributes<Institution, {omit: 'prov
   declare providers?: NonAttribute<Provider[]>;
 
   declare static associations: {
-    providers: Association<Institution, Provider>
-  }
+    providers: Association<Institution, Provider>;
+  };
 }
 
 Institution.init(
@@ -43,17 +55,14 @@ Institution.init(
     updatedAt: DataTypes.DATE,
   },
   {
-    tableName: 'institutions',
-    modelName: 'Institution',
-    sequelize
+    tableName: "institutions",
+    modelName: "Institution",
+    sequelize,
   }
-)
+);
 
 Institution.hasMany(Provider, {
-  sourceKey: 'ucp_id',
-  foreignKey: 'institution_id',
-  as: 'providers'
-})
-// Provider.belongsTo(Institution, {
-//   foreignKey: 'institution_id'
-// })
+  sourceKey: "ucp_id",
+  foreignKey: "institution_id",
+  as: "providers",
+});

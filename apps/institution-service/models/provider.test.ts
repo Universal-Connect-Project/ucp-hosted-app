@@ -1,4 +1,3 @@
-// import { Institution } from "./institution";
 import { Provider } from "./provider";
 
 describe("Provider Model", () => {

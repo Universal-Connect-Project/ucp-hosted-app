@@ -13,5 +13,5 @@
       "../../node_modules/@testing-library"
     ]
   },
-  "include": ["./**/*", "example.test.ts", "app.ts"]
+  "include": ["./**/*", "app.ts"]
 }

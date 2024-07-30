@@ -60,5 +60,3 @@ Provider.init(
     sequelize,
   }
 );
-
-// Provider.belongsTo(Institution, { targetKey: "institution_id" });
