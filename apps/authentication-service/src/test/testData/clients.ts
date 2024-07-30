@@ -9,6 +9,11 @@ export const exampleUCPClient: Partial<Keys> = {
   clientSecret: "fake-secret",
 };
 
+export const exampleUCPClientRotatedSecret: Partial<Keys> = {
+  clientId: "ucp-test-client",
+  clientSecret: "fake-secret-rotated",
+};
+
 export const exampleAuth0Client: Partial<Client> = {
   tenant: "dev-ucp",
   global: false,

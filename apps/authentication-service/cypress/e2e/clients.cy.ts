@@ -159,10 +159,8 @@ describe("Client API", () => {
         Authorization: `Bearer ${accessToken}`,
       },
     }).then((response: Cypress.Response<{ message: string }>) => {
-      expect(response.status).to.eq(500);
-      expect(response.body)
-        .property("message")
-        .to.eq("Unable to rotate client secret");
+      expect(response.status).to.eq(404);
+      expect(response.body).property("message").to.eq("Client not found");
     });
   });
 });

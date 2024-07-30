@@ -26,8 +26,7 @@ export const createClient = async (
     return Promise.reject("User already has a client");
   }
 
-  // Create new client
-  const newClient: Client = await parseResponse(
+  const newClient: Client = await parseResponse<Client>(
     await fetch(`https://${authDomain}/api/v2/clients`, {
       method: "POST",
       headers: {
@@ -108,6 +107,10 @@ export const rotateClientSecret = async (
 ): Promise<Client> => {
   const token = await getAccessToken();
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
+
+  if (!clientId) {
+    return Promise.reject("Not Found");
+  }
 
   return await parseResponse<Client>(
     await fetch(

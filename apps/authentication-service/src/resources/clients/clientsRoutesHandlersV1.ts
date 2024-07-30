@@ -97,12 +97,10 @@ export const clientsRotateSecrets = async (req: Request, res: Response) => {
   try {
     const client: Client = await rotateClientSecret(clientToken);
 
-    res.send(
-      JSON.stringify({
-        clientId: client.client_id,
-        clientSecret: client.client_secret,
-      }),
-    );
+    res.json({
+      clientId: client.client_id,
+      clientSecret: client.client_secret,
+    });
   } catch (error) {
     if (
       typeof error === "string" &&
