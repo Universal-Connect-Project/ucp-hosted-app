@@ -7,12 +7,11 @@ brew install postgresql
 brew services start postgresql
 ```
 
-2. Prep the database
+2. Prep the development and test databases
 
 ```shell
-npx sequelize db:create # creates the database defined in you .env
-npx sequelize db:migrate # creates the database tables
-npx sequelize db:seed:all # adds some institutions and providers to the database
+npm run db:setup # creates the database defined in you .env
+npm run test:db:setup # creates the database defined in you .env
 ```
 
 3. Run it `npm run dev`

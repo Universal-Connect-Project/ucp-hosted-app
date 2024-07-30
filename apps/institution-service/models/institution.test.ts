@@ -1,22 +1,12 @@
-// import { Institution } from "./institution";
+import { testInstitution } from "../test/testData/institutions";
 import { Institution } from "./institution";
 import { Provider } from "./provider";
-
-const institutionAttributes = {
-  ucp_id: `UCP-123`,
-  name: "Test Bank #1",
-  keywords: "test, bank",
-  logo: "https://logo.com",
-  url: "https://url.com",
-  is_test_bank: true,
-  routing_numbers: ["123", "324"],
-};
 
 describe("Institution Model", () => {
   it("should create an institution", async () => {
     const randomString = Math.random().toString(36).slice(2, 7);
     const newInstitutionAttributes = {
-      ...institutionAttributes,
+      ...testInstitution,
       ucp_id: `UCP-${randomString}`,
     };
     const createdInstitution = await Institution.create(
@@ -40,7 +30,7 @@ describe("Institution Model", () => {
   it("should have associated providers", async () => {
     const randomString = Math.random().toString(36).slice(2, 7);
     const newInstitutionAttributes = {
-      ...institutionAttributes,
+      ...testInstitution,
       ucp_id: `UCP-${randomString}`,
     };
 

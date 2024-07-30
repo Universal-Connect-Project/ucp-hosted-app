@@ -9,10 +9,12 @@
     "db:create": "npx sequelize-cli db:create",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
+    "db:reset": "npx sequelize-cli db:drop && npm run db:setup",
     "test:db:setup": "npm run test:db:create && npm run test:db:migrate && npm run test:db:seed",
     "test:db:create": "npx sequelize-cli db:create --env test",
     "test:db:migrate": "npx sequelize-cli db:migrate --env test",
     "test:db:seed": "npx sequelize-cli db:seed:all --env test",
+    "test:db:reset": "npx sequelize-cli db:drop && npm run test:db:setup --env test",
     "dev": "nodemon ./app.ts"
   },
   "dependencies": {

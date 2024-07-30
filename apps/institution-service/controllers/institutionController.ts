@@ -1,16 +1,30 @@
 import { Request, Response } from "express";
+import { ValidationError } from "sequelize";
 import { Institution } from "../models/institution";
 
 export const getAllInstitutions = async (req: Request, res: Response) => {
-  const institutions = await Institution.findAll();
-  res.json(institutions);
+  try {
+    const institutions = await Institution.findAll();
+    res.status(200);
+    res.json(institutions);
+  } catch (error) {
+    res.status(400).json(error);
+  }
 };
 
 export const getInstitutionById = async (req: Request, res: Response) => {
-  const institution = await Institution.findByPk(req.params.id, {
-    include: [Institution.associations.providers],
-  });
-  res.json(institution);
+  try {
+    const institution = await Institution.findByPk(req.params.id, {
+      include: [Institution.associations.providers],
+    });
+    if (institution) {
+      res.status(200).json(institution);
+    } else {
+      res.status(404).json({ error: "Institution not found" });
+    }
+  } catch (error) {
+    res.status(400).json(error);
+  }
 };
 
 export const createInstitution = async (req: Request, res: Response) => {
@@ -19,8 +33,14 @@ export const createInstitution = async (req: Request, res: Response) => {
 
     res.status(201).json(institution);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: "Failed to create institution" });
+    if (error instanceof ValidationError) {
+      res.status(400).json({
+        error: "Invalid Institution Data",
+        message: error.errors[0]?.message,
+      });
+    } else {
+      res.status(400).json({ error: "Unexpected error" });
+    }
   }
 };
 
@@ -32,6 +52,6 @@ export const deleteInstitution = async (req: Request, res: Response) => {
     res.json({ message: "Institution deleted" });
   } else {
     res.status(400);
-    res.send("Failure to delete");
+    res.json({ message: "Failure to delete" });
   }
 };
