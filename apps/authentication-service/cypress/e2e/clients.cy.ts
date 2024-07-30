@@ -72,7 +72,7 @@ describe("Client API", () => {
     }).then((response: Cypress.Response<{ body: Keys }>) => {
       const { body } = response;
       newClientId = (body as unknown as Keys).clientId;
-      newClientSecret = (response.body as unknown as Client).client_secret;
+      newClientSecret = (response.body as unknown as Keys).clientSecret;
 
       expect(response.status).to.eq(200);
       expect(Object.keys(body)).to.have.length(2);
@@ -122,8 +122,8 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then((response: Cypress.Response<{ body: Client }>) => {
-      expect((response.body as unknown as Client).client_secret).not.to.eq(
+    }).then((response: Cypress.Response<{ body: Keys }>) => {
+      expect((response.body as unknown as Client).clientSecret).not.to.eq(
         newClientSecret,
       );
     });
