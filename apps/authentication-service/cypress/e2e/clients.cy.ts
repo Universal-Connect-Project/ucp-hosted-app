@@ -161,7 +161,9 @@ describe("Client API", () => {
       },
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(500);
-      expect(response).to.property("body", "Unable to rotate client secret");
+      expect(response.body)
+        .property("message")
+        .to.eq("Unable to rotate client secret");
     });
   });
 });
