@@ -13,8 +13,14 @@ import {
   exampleClientDesc,
   exampleClientName,
   exampleAuth0Client,
+  exampleClientRotatedSecret,
 } from "@/test/testData/clients";
-import { getClient, createClient, deleteClient } from "./clientsService";
+import {
+  getClient,
+  createClient,
+  deleteClient,
+  rotateClientSecret,
+} from "./clientsService";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 jest.mock("auth0", () => ({
@@ -62,7 +68,15 @@ describe("Clients Service", () => {
       await deleteClient(exampleApiToken);
 
       const response = await deleteClient(exampleApiToken);
-      expect(response).toBe("Client successfully deleted.");
+      expect(response.message).toBe("Client successfully deleted.");
+    });
+  });
+
+  describe("rotateClientSecret", () => {
+    it("rotate secret for existing client", async () => {
+      const client: Client = await rotateClientSecret(exampleApiToken);
+
+      expect(client).toEqual(exampleClientRotatedSecret);
     });
   });
 });

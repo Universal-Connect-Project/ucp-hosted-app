@@ -8,11 +8,15 @@ import {
 } from "@/test/handlers";
 import { server } from "@/test/testServer";
 import {
-  clientsCreateV1,
-  clientsDeleteV1,
-  clientsGetV1,
+  clientsCreate,
+  clientsDelete,
+  clientsGet,
+  clientsRotateSecrets,
 } from "@/resources/clients/clientsRoutesHandlersV1";
-import { exampleUCPClient } from "@/test/testData/clients";
+import {
+  exampleUCPClient,
+  exampleUCPClientRotatedSecret,
+} from "@/test/testData/clients";
 import {
   exampleUserWithoutClient,
   exampleUserInfoResponse,
@@ -28,7 +32,7 @@ jest.mock("auth0", () => ({
 }));
 
 describe("clientsRoutesHandlersV1", () => {
-  describe("clientsCreateV1", () => {
+  describe("clientsCreate", () => {
     it("should create a new client", async () => {
       // Makes sure we get a User without a Client
       server.use(
@@ -49,7 +53,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsCreateV1(req, res);
+      await clientsCreate(req, res);
 
       expect(res.json).toHaveBeenCalledWith(exampleUCPClient);
     });
@@ -68,7 +72,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsCreateV1(req, res);
+      await clientsCreate(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
@@ -101,7 +105,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsCreateV1(req, res);
+      await clientsCreate(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(429);
@@ -132,7 +136,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsCreateV1(req, res);
+      await clientsCreate(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
@@ -142,7 +146,7 @@ describe("clientsRoutesHandlersV1", () => {
     });
   });
 
-  describe("clientsGetV1", () => {
+  describe("clientsGet", () => {
     it("should get client from a user token where user already is associated with a client", async () => {
       const token = getTestToken();
 
@@ -157,7 +161,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsGetV1(req, res);
+      await clientsGet(req, res);
 
       expect(res.json).toHaveBeenCalledWith(exampleUCPClient);
     });
@@ -183,7 +187,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsGetV1(req, res);
+      await clientsGet(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
@@ -211,7 +215,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsGetV1(req, res);
+      await clientsGet(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(429);
@@ -239,7 +243,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsGetV1(req, res);
+      await clientsGet(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
@@ -249,7 +253,7 @@ describe("clientsRoutesHandlersV1", () => {
     });
   });
 
-  describe("clientsDeleteV1", () => {
+  describe("clientsDelete", () => {
     it("should delete a client, based on the user token", async () => {
       const token = getTestToken();
 
@@ -263,9 +267,11 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsDeleteV1(req, res);
+      await clientsDelete(req, res);
 
-      expect(res.send).toHaveBeenCalledWith("Client successfully deleted.");
+      expect(res.send).toHaveBeenCalledWith({
+        message: "Client successfully deleted.",
+      });
     });
 
     it("should error when trying to delete a client, and the client id is missing", async () => {
@@ -289,7 +295,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsDeleteV1(req, res);
+      await clientsDelete(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
@@ -317,7 +323,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsDeleteV1(req, res);
+      await clientsDelete(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(429);
@@ -345,12 +351,117 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsDeleteV1(req, res);
+      await clientsDelete(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         message: "Unable to delete client",
+      });
+    });
+  });
+
+  describe("clientsRotateSecrets", () => {
+    it("should rotate the client secret, based on the user token", async () => {
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsRotateSecrets(req, res);
+      expect(res.json).toHaveBeenCalledWith(exampleUCPClientRotatedSecret);
+    });
+
+    it("should error when trying to rotate a secret, and the client id is missing", async () => {
+      // Makes sure we get a User without a Client
+      server.use(
+        http.get(AUTH0_USER_BY_ID, () =>
+          HttpResponse.json(exampleUserWithoutClient),
+        ),
+      );
+
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsRotateSecrets(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "Client not found" });
+    });
+
+    it("should error when trying to rotate a secret, and the rate limit has been reached", async () => {
+      server.use(
+        http.post(
+          `${AUTH0_CLIENTS_BY_ID}/rotate-secret`,
+          () => new HttpResponse(null, { status: 429 }),
+        ),
+      );
+
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsRotateSecrets(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(429);
+      expect(res.json).toHaveBeenCalledWith({ message: "Rate limit exceeded" });
+    });
+
+    it("should error when trying to get client, and an unknown error occurs", async () => {
+      server.use(
+        http.post(
+          `${AUTH0_CLIENTS_BY_ID}/rotate-secret`,
+          () => new HttpResponse(null, { status: 500 }),
+        ),
+      );
+
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsRotateSecrets(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Unable to rotate client secret",
       });
     });
   });
