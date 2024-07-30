@@ -34,7 +34,7 @@
             "name": "Authorization",
             "schema": {
               "type": "string",
-              "examples": ["Bearer <token>"]
+              "example": "Bearer <token>"
             },
             "required": true
           }
@@ -142,9 +142,9 @@
         ],
         "parameters": [
           {
+            "name": "Authorization",
             "description": "Authorization header",
             "in": "header",
-            "name": "Authorization",
             "schema": {
               "type": "string",
               "example": "Bearer <token>"
@@ -255,9 +255,9 @@
         ],
         "parameters": [
           {
+            "name": "Authorization",
             "description": "Authorization header",
             "in": "header",
-            "name": "Authorization",
             "schema": {
               "type": "string",
               "example": "Bearer <token>"
@@ -365,9 +365,9 @@
         ],
         "parameters": [
           {
+            "name": "Authorization",
             "description": "Authorization header",
             "in": "header",
-            "name": "Authorization",
             "schema": {
               "type": "string",
               "example": "Bearer <token>"
