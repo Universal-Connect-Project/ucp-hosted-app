@@ -9,6 +9,31 @@ import {
 } from "@/resources/clients/clientsService";
 import { getClientTokenFromRequest } from "@/shared/utils";
 
+const handleError = (
+  res: Response,
+  error: Error | string,
+  resourceName: string = "Resource",
+  response500Message: string = "Internal server error",
+  errorMessageCheck: string = "",
+  response400Message: string = "Bad request",
+) => {
+  if (typeof error === "string" && error.toUpperCase() === errorMessageCheck) {
+    res.status(400).json({ message: response400Message });
+  } else if (
+    typeof error === "string" &&
+    error.toUpperCase().includes("NOT FOUND")
+  ) {
+    res.status(404).json({ message: `${resourceName} not found` });
+  } else if (
+    error instanceof Error &&
+    error.message.toUpperCase().includes("TOO MANY REQUESTS")
+  ) {
+    res.status(429).json({ message: "Rate limit exceeded" });
+  } else {
+    res.status(500).json({ message: response500Message });
+  }
+};
+
 export const clientsCreate = async (req: Request, res: Response) => {
   const clientToken = getClientTokenFromRequest(req);
 
@@ -26,19 +51,14 @@ export const clientsCreate = async (req: Request, res: Response) => {
       clientSecret: client.client_secret,
     });
   } catch (error) {
-    if (
-      typeof error === "string" &&
-      error.toUpperCase() === "USER ALREADY HAS A CLIENT"
-    ) {
-      res.status(400).json({ message: "User already has a client" });
-    } else if (
-      error instanceof Error &&
-      error.message.toUpperCase().includes("TOO MANY REQUESTS")
-    ) {
-      res.status(429).json({ message: "Rate limit exceeded" });
-    } else {
-      res.status(500).json({ message: "Unable to create client" });
-    }
+    handleError(
+      res,
+      error as Error,
+      "User",
+      "Unable to create client",
+      "USER ALREADY HAS A CLIENT",
+      "User already has a client",
+    );
   }
 };
 
@@ -52,19 +72,7 @@ export const clientsGet = async (req: Request, res: Response) => {
       clientSecret: client.client_secret,
     });
   } catch (error) {
-    if (
-      typeof error === "string" &&
-      error.toUpperCase().includes("NOT FOUND")
-    ) {
-      res.status(404).json({ message: "Client not found" });
-    } else if (
-      error instanceof Error &&
-      error.message.toUpperCase().includes("TOO MANY REQUESTS")
-    ) {
-      res.status(429).json({ message: "Rate limit exceeded" });
-    } else {
-      res.status(500).json({ message: "Unable to get client" });
-    }
+    handleError(res, error as Error, "Client", "Unable to get client");
   }
 };
 
@@ -75,19 +83,7 @@ export const clientsDelete = async (req: Request, res: Response) => {
     const response = await deleteClient(clientToken);
     res.send(response);
   } catch (error) {
-    if (
-      typeof error === "string" &&
-      error.toUpperCase().includes("NOT FOUND")
-    ) {
-      res.status(404).json({ message: "Client not found" });
-    } else if (
-      error instanceof Error &&
-      error.message.toUpperCase().includes("TOO MANY REQUESTS")
-    ) {
-      res.status(429).json({ message: "Rate limit exceeded" });
-    } else {
-      res.status(500).json({ message: "Unable to delete client" });
-    }
+    handleError(res, error as Error, "Client", "Unable to delete client");
   }
 };
 
@@ -102,18 +98,11 @@ export const clientsRotateSecrets = async (req: Request, res: Response) => {
       clientSecret: client.client_secret,
     });
   } catch (error) {
-    if (
-      typeof error === "string" &&
-      error.toUpperCase().includes("NOT FOUND")
-    ) {
-      res.status(404).json({ message: "Client not found" });
-    } else if (
-      error instanceof Error &&
-      error.message.toUpperCase().includes("TOO MANY REQUESTS")
-    ) {
-      res.status(429).json({ message: "Rate limit exceeded" });
-    } else {
-      res.status(500).json({ message: "Unable to rotate client secret" });
-    }
+    handleError(
+      res,
+      error as Error,
+      "Client",
+      "Unable to rotate client secret",
+    );
   }
 };
