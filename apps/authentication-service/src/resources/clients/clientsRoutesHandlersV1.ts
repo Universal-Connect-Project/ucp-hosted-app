@@ -17,7 +17,10 @@ const handleError = (
   errorMessageCheck: string = "",
   response400Message: string = "Bad request",
 ) => {
-  if (typeof error === "string" && error.toUpperCase() === errorMessageCheck) {
+  if (
+    typeof error === "string" &&
+    error.toUpperCase() === errorMessageCheck.toUpperCase()
+  ) {
     res.status(400).json({ message: response400Message });
   } else if (
     typeof error === "string" &&
@@ -56,7 +59,7 @@ export const clientsCreate = async (req: Request, res: Response) => {
       error as Error,
       "User",
       "Unable to create client",
-      "USER ALREADY HAS A CLIENT",
+      "user already has a client",
       "User already has a client",
     );
   }
