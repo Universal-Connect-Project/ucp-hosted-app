@@ -8,9 +8,9 @@ import {
 } from "@/test/handlers";
 import { server } from "@/test/testServer";
 import {
-  clientsCreateV1,
-  clientsDeleteV1,
-  clientsGetV1,
+  clientsCreate,
+  clientsDelete,
+  clientsGet,
 } from "@/resources/clients/clientsRoutesHandlersV1";
 import { exampleUCPClient } from "@/test/testData/clients";
 import {
@@ -49,7 +49,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsCreateV1(req, res);
+      await clientsCreate(req, res);
 
       expect(res.json).toHaveBeenCalledWith(exampleUCPClient);
     });
@@ -68,7 +68,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsCreateV1(req, res);
+      await clientsCreate(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
@@ -101,7 +101,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsCreateV1(req, res);
+      await clientsCreate(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(429);
@@ -132,7 +132,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsCreateV1(req, res);
+      await clientsCreate(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
@@ -157,7 +157,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsGetV1(req, res);
+      await clientsGet(req, res);
 
       expect(res.json).toHaveBeenCalledWith(exampleUCPClient);
     });
@@ -183,7 +183,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsGetV1(req, res);
+      await clientsGet(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
@@ -211,7 +211,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsGetV1(req, res);
+      await clientsGet(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(429);
@@ -239,7 +239,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsGetV1(req, res);
+      await clientsGet(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
@@ -263,7 +263,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsDeleteV1(req, res);
+      await clientsDelete(req, res);
 
       expect(res.send).toHaveBeenCalledWith({
         message: "Client successfully deleted.",
@@ -291,7 +291,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsDeleteV1(req, res);
+      await clientsDelete(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
@@ -319,7 +319,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsDeleteV1(req, res);
+      await clientsDelete(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(429);
@@ -347,7 +347,7 @@ describe("clientsRoutesHandlersV1", () => {
         },
       } as Request;
 
-      await clientsDeleteV1(req, res);
+      await clientsDelete(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);

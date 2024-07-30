@@ -1,4 +1,3 @@
-import { Client } from "auth0";
 import { Keys } from "../../src/resources/clients/clientsModel";
 
 const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
@@ -123,7 +122,7 @@ describe("Client API", () => {
         Authorization: `Bearer ${accessToken}`,
       },
     }).then((response: Cypress.Response<{ body: Keys }>) => {
-      expect((response.body as unknown as Client).clientSecret).not.to.eq(
+      expect((response.body as unknown as Keys).clientSecret).not.to.eq(
         newClientSecret,
       );
     });

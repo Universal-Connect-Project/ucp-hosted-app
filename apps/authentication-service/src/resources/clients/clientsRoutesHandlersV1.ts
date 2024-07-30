@@ -9,7 +9,7 @@ import {
 } from "@/resources/clients/clientsService";
 import { getClientTokenFromRequest } from "@/shared/utils";
 
-export const clientsCreateV1 = async (req: Request, res: Response) => {
+export const clientsCreate = async (req: Request, res: Response) => {
   const clientToken = getClientTokenFromRequest(req);
 
   const clientBody = {
@@ -42,7 +42,7 @@ export const clientsCreateV1 = async (req: Request, res: Response) => {
   }
 };
 
-export const clientsGetV1 = async (req: Request, res: Response) => {
+export const clientsGet = async (req: Request, res: Response) => {
   const clientToken = getClientTokenFromRequest(req);
 
   try {
@@ -68,7 +68,7 @@ export const clientsGetV1 = async (req: Request, res: Response) => {
   }
 };
 
-export const clientsDeleteV1 = async (req: Request, res: Response) => {
+export const clientsDelete = async (req: Request, res: Response) => {
   const clientToken = getClientTokenFromRequest(req);
 
   try {
@@ -91,7 +91,7 @@ export const clientsDeleteV1 = async (req: Request, res: Response) => {
   }
 };
 
-export const clientsRotateSecretsV1 = async (req: Request, res: Response) => {
+export const clientsRotateSecrets = async (req: Request, res: Response) => {
   const clientToken = getClientTokenFromRequest(req);
 
   try {
