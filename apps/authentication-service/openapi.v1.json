@@ -34,7 +34,7 @@
             "name": "Authorization",
             "schema": {
               "type": "string",
-              "example": "Bearer <token>"
+              "examples": ["Bearer <token>"]
             },
             "required": true
           }
@@ -47,7 +47,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "$ref": "#/components/schemas/Key"
+                  "clientId": "test-client-id",
+                  "clientSecret": "test-client-secret"
                 },
                 "schema": {
                   "type": "object",
@@ -158,6 +159,10 @@
             "description": "Successful response",
             "content": {
               "application/json": {
+                "example": {
+                  "clientId": "test-client-id",
+                  "clientSecret": "test-client-secret"
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -267,6 +272,9 @@
             "description": "Successful response",
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Successfully deleted keys"
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -374,6 +382,10 @@
             "description": "Successful response",
             "content": {
               "application/json": {
+                "example": {
+                  "clientId": "test-client-id",
+                  "clientSecret": "test-client-secret"
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
