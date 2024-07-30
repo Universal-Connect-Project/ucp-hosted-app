@@ -99,7 +99,8 @@ export const clientsRotateSecretsV1 = async (req: Request, res: Response) => {
 
     res.send(
       JSON.stringify({
-        ...client,
+        clientId: client.client_id,
+        clientSecret: client.client_secret,
       }),
     );
   } catch (error) {

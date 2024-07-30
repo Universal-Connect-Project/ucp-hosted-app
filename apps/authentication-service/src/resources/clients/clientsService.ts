@@ -8,6 +8,7 @@ import {
   getUserIdFromToken,
   setUserClientId,
 } from "@/shared/users/usersService";
+import { ResponseMessage } from "@/resources/clients/clientsModel";
 
 const authDomain = envs.AUTH0_DOMAIN;
 
@@ -69,7 +70,9 @@ export const getClient = async (userToken: string): Promise<Client> => {
   );
 };
 
-export const deleteClient = async (userToken: string): Promise<string> => {
+export const deleteClient = async (
+  userToken: string,
+): Promise<ResponseMessage> => {
   const token = await getAccessToken();
   const userId = await getUserIdFromToken(userToken);
   const clientId = await getUserClientId(userId);
@@ -95,7 +98,9 @@ export const deleteClient = async (userToken: string): Promise<string> => {
   // Remove client id from user
   await setUserClientId(userId, "");
 
-  return "Client successfully deleted.";
+  return {
+    message: "Client successfully deleted.",
+  };
 };
 
 export const rotateClientSecret = async (

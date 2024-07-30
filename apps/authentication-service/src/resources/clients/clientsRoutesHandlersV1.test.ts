@@ -265,7 +265,9 @@ describe("clientsRoutesHandlersV1", () => {
 
       await clientsDeleteV1(req, res);
 
-      expect(res.send).toHaveBeenCalledWith("Client successfully deleted.");
+      expect(res.send).toHaveBeenCalledWith({
+        message: "Client successfully deleted.",
+      });
     });
 
     it("should error when trying to delete a client, and the client id is missing", async () => {
