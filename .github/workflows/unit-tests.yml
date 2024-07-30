@@ -43,6 +43,7 @@ jobs:
 
       - name: Setup Postgres Database
         run: |
+          cd apps/institution-service
           npm run test:db:setup
 
       - name: "Create env file"
