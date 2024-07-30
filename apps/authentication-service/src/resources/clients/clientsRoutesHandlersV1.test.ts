@@ -435,34 +435,34 @@ describe("clientsRoutesHandlersV1", () => {
       expect(res.json).toHaveBeenCalledWith({ message: "Rate limit exceeded" });
     });
 
-    // it("should error when trying to get client, and an unknown error occurs", async () => {
-    //   server.use(
-    //     http.delete(
-    //       AUTH0_CLIENTS_BY_ID,
-    //       () => new HttpResponse(null, { status: 500 }),
-    //     ),
-    //   );
-    //
-    //   const token = getTestToken();
-    //
-    //   const res = {
-    //     json: jest.fn(),
-    //     status: jest.fn().mockReturnThis(),
-    //   } as unknown as Response;
-    //
-    //   const req: Request = {
-    //     headers: {
-    //       authorization: `Bearer ${token}`,
-    //     },
-    //   } as Request;
-    //
-    //   await clientsDelete(req, res);
-    //
-    //   // eslint-disable-next-line @typescript-eslint/unbound-method
-    //   expect(res.status).toHaveBeenCalledWith(500);
-    //   expect(res.json).toHaveBeenCalledWith({
-    //     message: "Unable to delete client",
-    //   });
-    // });
+    it("should error when trying to get client, and an unknown error occurs", async () => {
+      server.use(
+        http.post(
+          `${AUTH0_CLIENTS_BY_ID}/rotate-secret`,
+          () => new HttpResponse(null, { status: 500 }),
+        ),
+      );
+
+      const token = getTestToken();
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      await clientsRotateSecrets(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Unable to rotate client secret",
+      });
+    });
   });
 });
