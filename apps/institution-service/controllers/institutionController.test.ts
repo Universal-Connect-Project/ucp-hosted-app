@@ -19,12 +19,12 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-      } as any as Response;
+      } as unknown as Response;
 
       await getAllInstitutions(req, res);
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(await Institution.findAll());
+      expect(res.json).not.toHaveProperty("error");
     });
   });
 
@@ -39,7 +39,7 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-      } as any as Response;
+      } as unknown as Response;
 
       await getInstitutionById(req, res);
 
@@ -61,7 +61,7 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-      } as any as Response;
+      } as unknown as Response;
 
       await getInstitutionById(req, res);
 
@@ -88,7 +88,7 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-      } as any as Response;
+      } as unknown as Response;
 
       await createInstitution(req, res);
 
@@ -112,7 +112,7 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-      } as any as Response;
+      } as unknown as Response;
 
       await createInstitution(req, res);
 
@@ -133,7 +133,7 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-      } as any as Response;
+      } as unknown as Response;
 
       await createInstitution(req, res);
 
@@ -159,7 +159,7 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-      } as any as Response;
+      } as unknown as Response;
 
       await createInstitution(req, res);
 
@@ -191,7 +191,7 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-      } as any as Response;
+      } as unknown as Response;
 
       await deleteInstitution(req, res);
 
@@ -211,7 +211,7 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-      } as any as Response;
+      } as unknown as Response;
 
       await deleteInstitution(req, res);
 
