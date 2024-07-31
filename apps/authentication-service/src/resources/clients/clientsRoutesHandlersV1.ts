@@ -58,9 +58,9 @@ export const clientsCreate = async (req: Request, res: Response) => {
       res,
       error as Error,
       "User",
-      "Unable to create client",
-      "user already has a client",
-      "User already has a client",
+      "Unable to create keys",
+      "user already has a client", // <-- Must match Auth0's error message
+      "User already has keys",
     );
   }
 };
@@ -75,7 +75,7 @@ export const clientsGet = async (req: Request, res: Response) => {
       clientSecret: client.client_secret,
     });
   } catch (error) {
-    handleError(res, error as Error, "Client", "Unable to get client");
+    handleError(res, error as Error, "Keys", "Unable to get keys");
   }
 };
 
@@ -86,7 +86,7 @@ export const clientsDelete = async (req: Request, res: Response) => {
     const response = await deleteClient(clientToken);
     res.send(response);
   } catch (error) {
-    handleError(res, error as Error, "Client", "Unable to delete client");
+    handleError(res, error as Error, "Keys", "Unable to delete keys");
   }
 };
 
@@ -101,11 +101,6 @@ export const clientsRotateSecrets = async (req: Request, res: Response) => {
       clientSecret: client.client_secret,
     });
   } catch (error) {
-    handleError(
-      res,
-      error as Error,
-      "Client",
-      "Unable to rotate client secret",
-    );
+    handleError(res, error as Error, "Keys", "Unable to rotate keys");
   }
 };

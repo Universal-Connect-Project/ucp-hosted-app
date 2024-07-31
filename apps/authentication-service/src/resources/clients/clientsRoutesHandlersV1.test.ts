@@ -77,7 +77,7 @@ describe("clientsRoutesHandlersV1", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
-        message: "User already has a client",
+        message: "User already has keys",
       });
     });
 
@@ -141,7 +141,7 @@ describe("clientsRoutesHandlersV1", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Unable to create client",
+        message: "Unable to create keys",
       });
     });
   });
@@ -191,7 +191,7 @@ describe("clientsRoutesHandlersV1", () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "Client not found" });
+      expect(res.json).toHaveBeenCalledWith({ message: "Keys not found" });
     });
 
     it("should error when trying to get client, and the rate limit has been reached", async () => {
@@ -248,7 +248,7 @@ describe("clientsRoutesHandlersV1", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Unable to get client",
+        message: "Unable to get keys",
       });
     });
   });
@@ -270,7 +270,7 @@ describe("clientsRoutesHandlersV1", () => {
       await clientsDelete(req, res);
 
       expect(res.send).toHaveBeenCalledWith({
-        message: "Client successfully deleted.",
+        message: "Keys successfully deleted",
       });
     });
 
@@ -299,7 +299,7 @@ describe("clientsRoutesHandlersV1", () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "Client not found" });
+      expect(res.json).toHaveBeenCalledWith({ message: "Keys not found" });
     });
 
     it("should error when trying to delete a client, and the rate limit has been reached", async () => {
@@ -356,7 +356,7 @@ describe("clientsRoutesHandlersV1", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Unable to delete client",
+        message: "Unable to delete keys",
       });
     });
   });
@@ -404,7 +404,7 @@ describe("clientsRoutesHandlersV1", () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "Client not found" });
+      expect(res.json).toHaveBeenCalledWith({ message: "Keys not found" });
     });
 
     it("should error when trying to rotate a secret, and the rate limit has been reached", async () => {
@@ -461,7 +461,7 @@ describe("clientsRoutesHandlersV1", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Unable to rotate client secret",
+        message: "Unable to rotate keys",
       });
     });
   });
