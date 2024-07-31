@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
+    "rootDir": "./",
     "typeRoots": [
       "../../node_modules/@types",
       "../../node_modules/@testing-library"
     ]
   },
-  "include": ["src/**/*"]
+  "include": ["./**/*", "app.ts"]
 }
