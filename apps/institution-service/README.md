@@ -14,4 +14,4 @@ npm run db:setup --workspace apps/institution-service # creates the database def
 npm run test:db:setup --workspace apps/institution-service # creates the database defined in you .env
 ```
 
-3. Run it `npm run dev`
+3. Run it `npm run dev --workspace apps/institution-service`
