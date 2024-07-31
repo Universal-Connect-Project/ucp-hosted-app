@@ -1,13 +1,8 @@
-const randomPort = (min: number, max: number) => {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
-
 describe("Express", () => {
   const PORT: number = (Cypress.env("PORT") as number) || 8089;
 
   before(() => {
-    process.env.HTTP_PROXY = `http://127.0.0.1:${randomPort(1024, 65535)}`;
+    process.env.ENV = "test";
   });
 
   it("returns pong", () => {
