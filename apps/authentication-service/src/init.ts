@@ -1,10 +1,15 @@
-import { clientsRoutes } from "@/resources/clients/clientsRoutes";
 import cors from "cors";
-import express, { Application, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import nocache from "nocache";
+import RateLimit from "express-rate-limit";
+import express, { Application, NextFunction, Request, Response } from "express";
+
+import envs from "./config";
 import { errorHandler } from "@/middleware/errorMiddleware";
 import { notFoundHandler } from "@/middleware/notFoundMiddleware";
+import { clientsRoutes } from "@/resources/clients/clientsRoutes";
+
+const rateLimitWindowMinutes = 10;
 
 const initErrorHandling = (app: Application): void => {
   app.use(errorHandler);
@@ -15,6 +20,18 @@ export const initExpress = (app: Application): void => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.set("json spaces", 2);
+
+  const limiter = RateLimit({
+    windowMs: rateLimitWindowMinutes * 60 * 1000, // 10 minutes
+    limit: 5000, // max average 500 requests per windowMs (10 minutes)
+    message: `Too many requests from this IP, please try again after ${rateLimitWindowMinutes} minutes`,
+    handler: (req, res, next, options) =>
+      res
+        .status(options.statusCode)
+        .json({ message: options.message as string }),
+    skip: () => envs.ENV !== "production",
+  });
+  app.use(limiter);
 
   app.use(
     helmet({
