@@ -59,8 +59,8 @@ export const clientsCreate = async (req: Request, res: Response) => {
       error as Error,
       "User",
       "Unable to create keys",
-      "user already has a keys",
-      "User already has a keys",
+      "user already has a client", // <-- Must match Auth0's error message
+      "User already has keys",
     );
   }
 };

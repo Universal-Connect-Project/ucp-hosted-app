@@ -13,7 +13,11 @@
   ],
   "servers": [
     {
-      "description": "Local Development Server",
+      "description": "UCP-hosted Instance",
+      "url": "https://api.universalconnectproject.com"
+    },
+    {
+      "description": "Local Development Instance",
       "url": "http://localhost:8089"
     }
   ],
