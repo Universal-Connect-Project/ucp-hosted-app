@@ -68,7 +68,7 @@ describe("Clients Service", () => {
       await deleteClient(exampleApiToken);
 
       const response = await deleteClient(exampleApiToken);
-      expect(response.message).toBe("Keys successfully deleted.");
+      expect(response.message).toBe("Keys successfully deleted");
     });
   });
 

@@ -98,7 +98,7 @@ export const deleteClient = async (
   await setUserClientId(userId, "");
 
   return {
-    message: "Keys successfully deleted.",
+    message: "Keys successfully deleted",
   };
 };
 

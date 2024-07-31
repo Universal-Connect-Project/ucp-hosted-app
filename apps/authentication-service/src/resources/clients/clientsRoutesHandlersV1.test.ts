@@ -270,7 +270,7 @@ describe("clientsRoutesHandlersV1", () => {
       await clientsDelete(req, res);
 
       expect(res.send).toHaveBeenCalledWith({
-        message: "Keys successfully deleted.",
+        message: "Keys successfully deleted",
       });
     });
 
