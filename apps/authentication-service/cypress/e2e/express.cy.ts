@@ -5,6 +5,10 @@ describe("Express", () => {
     process.env.ENV = "test";
   });
 
+  after(() => {
+    process.env.ENV = "prod";
+  });
+
   it("returns pong", () => {
     cy.request(`http://localhost:${PORT}/ping`).then(
       (response: Cypress.Response<{ message: string }>) => {
