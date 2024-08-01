@@ -35,10 +35,6 @@ export const init = (path = ".env") => {
     AUTH0_DOMAIN: envs?.AUTH0_DOMAIN,
     AUTH0_CLIENT_ID: envs?.AUTH0_CLIENT_ID,
     AUTH0_CLIENT_SECRET: envs?.AUTH0_CLIENT_SECRET,
-    E2E_USERNAME: envs?.E2E_USERNAME,
-    E2E_PASSWORD: envs?.E2E_PASSWORD,
-    E2E_CLIENT_ID: envs?.E2E_CLIENT_ID,
-    E2E_CLIENT_SECRET: envs?.E2E_CLIENT_SECRET,
   };
 };
 
