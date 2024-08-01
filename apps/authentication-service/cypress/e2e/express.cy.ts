@@ -20,9 +20,11 @@ describe("Express", () => {
   });
 
   it("tests rate limiting middleware", () => {
+    // Wait for the rate limiter windowMs to lapse
+    cy.wait(2000);
+
     for (let i = 0; i < 8; i++) {
-      // This is set to 3, because the previous two tests (above) also contribute to the limit of 5 requests
-      if (i < 3) {
+      if (i < 5) {
         cy.request({
           url: `http://localhost:${PORT}/ping`,
         })
