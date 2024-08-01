@@ -21,8 +21,8 @@ describe("Express", () => {
 
   it("tests rate limiting middleware", () => {
     for (let i = 0; i < 8; i++) {
+      // This is set to 3, because the previous two tests (above) also contribute to the limit of 5 requests
       if (i < 3) {
-        // <-- This is set to 3, because the previous two tests (above) also contribute to the limit of 5 requests
         cy.request({
           url: `http://localhost:${PORT}/ping`,
         })
