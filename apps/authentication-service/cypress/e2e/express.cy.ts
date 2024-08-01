@@ -1,14 +1,6 @@
 describe("Express", () => {
   const PORT: number = (Cypress.env("PORT") as number) || 8089;
 
-  before(() => {
-    process.env.ENV = "test";
-  });
-
-  after(() => {
-    process.env.ENV = "prod";
-  });
-
   it("returns pong", () => {
     cy.request(`http://localhost:${PORT}/ping`).then(
       (response: Cypress.Response<{ message: string }>) => {
