@@ -17,11 +17,11 @@ export class Institution extends Model<
 > {
   declare ucp_id: string;
   declare name: string;
-  declare keywords: string;
+  declare keywords: string | null;
   declare logo: string;
   declare url: string;
   declare is_test_bank: boolean;
-  declare routing_numbers: string[];
+  declare routing_numbers: string[] | null;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -44,7 +44,6 @@ Institution.init(
     },
     name: {
       type: DataTypes.TEXT,
-      unique: true,
     },
     keywords: DataTypes.TEXT,
     logo: DataTypes.TEXT,

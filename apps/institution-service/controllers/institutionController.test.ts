@@ -144,7 +144,7 @@ describe("institutionController", () => {
       });
     });
 
-    it("response with an error when an institution with the same name already exists", async () => {
+    it("response with success when an institution with the same name already exists", async () => {
       const randomString = Math.random().toString(36).slice(2, 9);
       const newInstitutionId = `UCP-${randomString}`;
 
@@ -163,11 +163,7 @@ describe("institutionController", () => {
 
       await createInstitution(req, res);
 
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({
-        error: "Invalid Institution Data",
-        message: "name must be unique",
-      });
+      expect(res.status).toHaveBeenCalledWith(201);
     });
   });
 
