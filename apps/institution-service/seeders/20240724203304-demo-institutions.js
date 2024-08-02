@@ -32,6 +32,7 @@ module.exports = {
     await queryInterface.bulkInsert("providers", [
       {
         name: "mx",
+        provider_institution_id: "mx_bank",
         supports_oauth: true,
         supports_identification: true,
         supports_verification: true,
@@ -42,6 +43,7 @@ module.exports = {
       },
       {
         name: "sophtron",
+        provider_institution_id: "sophtron_bank",
         supports_oauth: true,
         supports_identification: true,
         supports_verification: true,

@@ -44,11 +44,13 @@ describe("Institution Model", () => {
       name: "mx",
       supports_oauth: true,
       institution_id: createdInstitution.ucp_id,
+      provider_institution_id: "mx_oauth_bank",
     };
     const sophtronProviderAttributes = {
       name: "sophtron",
       supports_oauth: true,
       institution_id: createdInstitution.ucp_id,
+      provider_institution_id: "sophtron-1234",
     };
 
     const provider1 = await Provider.create(mxProviderAttributes);

@@ -7,6 +7,7 @@ describe("Provider Model", () => {
       supports_oauth: true,
       supports_history: true,
       institution_id: "123",
+      provider_institution_id: "mx_oauth_bank",
     };
 
     const createdProvider = await Provider.create(providerAttributes);

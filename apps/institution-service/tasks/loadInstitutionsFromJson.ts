@@ -31,132 +31,78 @@ async function loadInstitutionData() {
   await db.authenticate();
   const institutions = JSON.parse(
     fs.readFileSync(
-      path.join(__dirname, "../test/institutionsMappingTest.json"),
+      path.join(__dirname, "../config/ucwInstitutionsMapping.json"),
       "utf8"
     )
   );
 
-  // Institution.create(
-  //   {
-  //     ucp_id: "test",
-  //     name: "name",
-  //     keywords: "institution.keywords",
-  //     url: "institution.url",
-  //     logo: "institution.logo",
-  //     is_test_bank: false,
-  //     routing_numbers: [],
-  //     providers: [{}],
-  //   },
-  //   {
-  //     include: [
-  //       {
-  //         association: Provider.associations.
-  //         include: [Institution.associations.providers],
-  //       },
-  //     ],
-  //   }
-  // );
-
-  // const institutionPromises: Promise<Institution>[] = [];
-  // const providerPromises: Promise<Provider>[] = [];
-
-  const institutionsTransaction = await db.transaction();
-  const providerTransaction = await db.transaction();
-
-  // db.transaction(institutionsTransaction => {
+  const institutionsList: any[] = [];
+  const providerList: any[] = [];
 
   institutions.forEach((institution: CachedInstitution) => {
-    // institutionPromises.push(
-    Institution.create(
-      {
-        ucp_id: institution.ucp_id,
-        name: institution.name,
-        keywords: institution.keywords,
-        url: institution.url,
-        logo: institution.logo,
-        is_test_bank: institution.is_test_bank,
-        routing_numbers: institution.routing_numbers,
-      },
-      { transaction: institutionsTransaction }
-    );
-    // );
+    institutionsList.push({
+      ucp_id: institution.ucp_id,
+      name: institution.name,
+      keywords: institution.keywords,
+      url: institution.url,
+      logo: institution.logo,
+      is_test_bank: institution.is_test_bank,
+      routing_numbers: institution.routing_numbers,
+    });
 
     if (institution.mx.id) {
       const mx = institution.mx;
-      // providerPromises.push(
-      Provider.create(
-        {
-          name: "mx",
-          provider_institution_id: mx.id!,
-          institution_id: institution.ucp_id,
-          supports_oauth: mx.supports_oauth,
-          supports_identification: mx.supports_identification,
-          supports_verification: mx.supports_verification,
-          supports_history: mx.supports_history,
-          supports_account_statement: mx.supports_account_statement,
-        },
-        { transaction: providerTransaction }
-      );
-      // );
+      providerList.push({
+        name: "mx",
+        provider_institution_id: mx.id!,
+        institution_id: institution.ucp_id,
+        supports_oauth: mx.supports_oauth,
+        supports_identification: mx.supports_identification,
+        supports_verification: mx.supports_verification,
+        supports_history: mx.supports_history,
+        supports_account_statement: mx.supports_account_statement,
+      });
     }
 
     if (institution.sophtron.id) {
       const sophtron = institution.sophtron;
-      // providerPromises.push(
-      Provider.create(
-        {
-          name: "sophtron",
-          provider_institution_id: sophtron.id!,
-          institution_id: institution.ucp_id,
-          supports_oauth: sophtron.supports_oauth,
-          supports_identification: sophtron.supports_identification,
-          supports_verification: sophtron.supports_verification,
-          supports_history: sophtron.supports_history,
-          supports_account_statement: sophtron.supports_account_statement,
-        },
-        { transaction: providerTransaction }
-      );
-      // );
+      providerList.push({
+        name: "sophtron",
+        provider_institution_id: sophtron.id!,
+        institution_id: institution.ucp_id,
+        supports_oauth: sophtron.supports_oauth,
+        supports_identification: sophtron.supports_identification,
+        supports_verification: sophtron.supports_verification,
+        supports_history: sophtron.supports_history,
+        supports_account_statement: sophtron.supports_account_statement,
+      });
     }
 
     if (institution.finicity.id) {
       const finicity = institution.finicity;
-      // providerPromises.push(
-      Provider.create(
-        {
-          name: "finicity",
-          provider_institution_id: finicity.id!,
-          institution_id: institution.ucp_id,
-          supports_oauth: finicity.supports_oauth,
-          supports_identification: finicity.supports_identification,
-          supports_verification: finicity.supports_verification,
-          supports_history: finicity.supports_history,
-          supports_account_statement: finicity.supports_account_statement,
-        },
-        { transaction: providerTransaction }
-      );
-      // );
+      providerList.push({
+        name: "finicity",
+        provider_institution_id: finicity.id!,
+        institution_id: institution.ucp_id,
+        supports_oauth: finicity.supports_oauth,
+        supports_identification: finicity.supports_identification,
+        supports_verification: finicity.supports_verification,
+        supports_history: finicity.supports_history,
+        supports_account_statement: finicity.supports_account_statement,
+      });
     }
   });
 
-  //   return Promise.all(institutionPromises)
-  // })
-
   try {
-    // await Promise.all(institutionPromises);
-    await institutionsTransaction.commit();
-    await institutionsTransaction.afterCommit(async () => {
-      console.log("Transaction successful");
-    });
-    await providerTransaction.commit();
+    await Institution.bulkCreate(institutionsList);
+    console.log("Institution successful");
+
+    await Provider.bulkCreate(providerList);
     console.log("provider transaction successful");
-    // await Promise.all(providerPromises);
-    // await providerTransaction.commit();
-    // console.log("provider transaction successful");
   } catch (error) {
     console.error("Error loading data", error);
-    // await institutionsTransaction.rollback();
-    // await providerTransaction.rollback();
+  } finally {
+    process.exit(0);
   }
 }
 
