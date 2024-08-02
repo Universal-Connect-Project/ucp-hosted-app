@@ -1,4 +1,4 @@
-name: Auth Service E2E Tests
+name: Auth E2E g(Service tests)
 
 on: pull_request
 
