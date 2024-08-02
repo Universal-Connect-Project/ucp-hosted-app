@@ -9,7 +9,7 @@ jobs:
     secrets: inherit
 
   e2e-tests:
-    name: Auth Cypress
+    name: Auth Cypress (ExpressJS tests)
     runs-on: ubuntu-latest
     needs: [setup-env]
 
