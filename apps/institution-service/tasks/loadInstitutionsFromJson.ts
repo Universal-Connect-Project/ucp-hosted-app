@@ -6,11 +6,11 @@ import { Provider } from "../models/provider";
 
 export interface CachedInstitution {
   name: string;
-  keywords: string | null;
+  keywords: string;
   logo: string;
   url: string;
   ucp_id: string;
-  is_test_bank: boolean | false;
+  is_test_bank: boolean;
   routing_numbers: string[];
   mx: InstitutionProvider;
   sophtron: InstitutionProvider;
@@ -19,12 +19,12 @@ export interface CachedInstitution {
 }
 
 export interface InstitutionProvider {
-  id: string | null;
-  supports_oauth: boolean | false;
-  supports_identification: boolean | false;
-  supports_verification: boolean | false;
-  supports_account_statement: boolean | false;
-  supports_history: boolean | false;
+  id: string;
+  supports_oauth: boolean;
+  supports_identification: boolean;
+  supports_verification: boolean;
+  supports_account_statement: boolean;
+  supports_history: boolean;
 }
 
 async function loadInstitutionData() {
