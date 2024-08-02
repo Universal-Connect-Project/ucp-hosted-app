@@ -1,3 +1,5 @@
+const testLimit: number = 30;
+
 describe("Express", () => {
   const PORT: number = (Cypress.env("PORT") as number) || 8089;
 
@@ -19,12 +21,12 @@ describe("Express", () => {
       .should("eq", 404);
   });
 
-  it("tests the rate limiting middleware by sending 25 requests, 20 succeeding, and 5 failing", () => {
+  it("tests the rate limiting middleware by sending 35 requests, 30 succeeding, and 5 failing", () => {
     // Wait for the rate limiter windowMs to reset
     cy.wait(2000);
 
-    for (let i = 0; i < 25; i++) {
-      if (i < 30) {
+    for (let i = 0; i < testLimit - 5; i++) {
+      if (i < testLimit) {
         cy.request({
           url: `http://localhost:${PORT}/ping`,
         })
