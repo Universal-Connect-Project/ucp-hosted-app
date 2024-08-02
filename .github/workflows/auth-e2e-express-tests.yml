@@ -44,6 +44,7 @@ jobs:
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
+          spec: apps/authentication-service/cypress/e2e/**/express.cy.ts
           wait-on: "http://localhost:${{ vars.PORT }}/ping"
 
       - name: Upload screenshots
