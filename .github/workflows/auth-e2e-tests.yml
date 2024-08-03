@@ -44,17 +44,16 @@ jobs:
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
-          spec: apps/authentication-service/cypress/e2e/**/*.cy.ts:not(apps/authentication-service/cypress/e2e/rateLimiting.cy.ts)
           wait-on: "http://localhost:${{ vars.PORT }}/ping"
+          spec: apps/authentication-service/cypress/e2e/**/!(rateLimiting.cy.ts)
 
       - name: Cypress run (Rate-limiting)
         uses: cypress-io/github-action@v6
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
-          spec: |
-            apps/authentication-service/cypress/e2e/rateLimiting.cy.ts
           wait-on: "http://localhost:${{ vars.PORT }}/ping"
+          spec: apps/authentication-service/cypress/e2e/**/rateLimiting.cy.ts
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
