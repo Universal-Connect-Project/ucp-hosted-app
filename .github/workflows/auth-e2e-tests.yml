@@ -39,13 +39,21 @@ jobs:
 
           cat ${ENV_FILE_PATH}
 
-      - name: Cypress run
+      - name: Cypress run (Standard suite)
+        uses: cypress-io/github-action@v6
+        with:
+          project: apps/authentication-service
+          start: npm run dev --workspace apps/authentication-service
+          spec: apps/authentication-service/cypress/e2e/**/*.cy.ts:not(apps/authentication-service/cypress/e2e/rateLimiting.cy.ts)
+          wait-on: "http://localhost:${{ vars.PORT }}/ping"
+
+      - name: Cypress run (Rate-limiting)
         uses: cypress-io/github-action@v6
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
           spec: |
-            apps/authentication-service/cypress/e2e/clients.cy.ts
+            apps/authentication-service/cypress/e2e/rateLimiting.cy.ts
           wait-on: "http://localhost:${{ vars.PORT }}/ping"
 
       - name: Upload screenshots
