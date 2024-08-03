@@ -51,8 +51,6 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           project: apps/authentication-service
-          start: npm run dev --workspace apps/authentication-service
-          wait-on: "http://localhost:${{ vars.PORT }}/ping"
           spec: apps/authentication-service/cypress/e2e/**/rateLimiting.cy.ts
 
       - name: Upload screenshots
