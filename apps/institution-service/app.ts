@@ -5,7 +5,7 @@ import institutionRoutes from "./routes/institutionRoutes";
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 8088;
 
 app.use(express.json()); // http://expressjs.com/en/api.html#express.json
 app.use(express.urlencoded({ extended: false })); // http://expressjs.com/en/5x/api.html#express.urlencoded
