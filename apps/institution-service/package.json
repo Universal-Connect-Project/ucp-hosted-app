@@ -5,6 +5,8 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
     "db:setup": "npm run db:create && npm run db:migrate && npm run db:seed",
     "db:create": "npx sequelize-cli db:create",
     "db:migrate": "npx sequelize-cli db:migrate",
