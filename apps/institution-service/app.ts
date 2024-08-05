@@ -1,9 +1,7 @@
-import dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import logger from "morgan";
 import institutionRoutes from "./routes/institutionRoutes";
 
-dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8088;
 
