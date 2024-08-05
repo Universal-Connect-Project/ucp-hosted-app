@@ -1,7 +1,7 @@
 const testLimit: number = 30;
 
 describe("Express", () => {
-  const PORT: number = (Cypress.env("PORT") as number) || 8089;
+  const PORT: number = (Cypress.env("PORT") as number) || 8088;
 
   it("returns pong", () => {
     cy.request(`http://localhost:${PORT}/ping`).then(
