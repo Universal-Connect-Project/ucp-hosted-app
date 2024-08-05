@@ -1,0 +1,52 @@
+name: Institution E2E
+
+on: pull_request
+
+jobs:
+  setup-env:
+    name: 'Load ENV Vars'
+    uses: ./.github/workflows/setup-env.yml
+    secrets: inherit
+
+  e2e-tests:
+    name: Cypress
+    runs-on: ubuntu-latest
+    needs: [setup-env]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          check-latest: true
+      - run: npm ci
+
+      - name: 'Create env file'
+        run: |
+          ENV_FILE_PATH=./apps/institution-service/.env
+          touch ${ENV_FILE_PATH}
+          
+          # Vars
+          echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
+          echo PORT="8088" >> ${ENV_FILE_PATH}
+          
+          # Secrets (can't load these from another job, due to GH security features)
+          
+          cat ${ENV_FILE_PATH}
+
+      - name: Cypress run (Standard suite)
+        uses: cypress-io/github-action@v6
+        with:
+          project: apps/institution-service
+          start: npm run dev --workspace apps/institution-service
+          wait-on: "http://localhost:${{ vars.PORT }}/ping"
+          spec: apps/institution-service/cypress/e2e/**/*.cy.ts
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: apps/institution-service/cypress/screenshots
