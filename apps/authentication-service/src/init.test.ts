@@ -8,76 +8,83 @@ import { errorHandler } from "@/middleware/errorMiddleware";
 import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 
 describe("Express test", () => {
-  it("tests notFoundHandler", () => {
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
+  describe("middleware tests", () => {
+    it("tests notFoundHandler", () => {
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
 
-    const req: Request = {} as Request;
-    const next: jest.Mock = jest.fn();
+      const req: Request = {} as Request;
+      const next: jest.Mock = jest.fn();
 
-    notFoundHandler(req, res, next);
+      notFoundHandler(req, res, next);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ message: "Not Found" });
-  });
-  it("tests errorHandler", () => {
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "Not Found" });
+    });
 
-    const req: Request = {} as Request;
-    const next = jest.fn();
+    it("tests errorHandler", () => {
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
 
-    errorHandler(new Error("Test Error"), req, res, next);
+      const req: Request = {} as Request;
+      const next = jest.fn();
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Internal Server Error" });
-  });
-  it("tests errorHandler InvalidToken", () => {
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
+      errorHandler(new Error("Test Error"), req, res, next);
 
-    const req: Request = {} as Request;
-    const next = jest.fn();
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Internal Server Error",
+      });
+    });
 
-    errorHandler(
-      new InvalidTokenError("Test InvalidTokenError"),
-      req,
-      res,
-      next,
-    );
+    it("tests errorHandler InvalidToken", () => {
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ message: "Invalid Token" });
-  });
-  it("tests errorHandler UnauthorizedError", () => {
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
+      const req: Request = {} as Request;
+      const next = jest.fn();
 
-    const req: Request = {} as Request;
-    const next = jest.fn();
+      errorHandler(
+        new InvalidTokenError("Test InvalidTokenError"),
+        req,
+        res,
+        next,
+      );
 
-    errorHandler(
-      new UnauthorizedError("Test UnauthorizedError"),
-      req,
-      res,
-      next,
-    );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ message: "Invalid Token" });
+    });
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      message: "Requires Authentication",
+    it("tests errorHandler UnauthorizedError", () => {
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const req: Request = {} as Request;
+      const next = jest.fn();
+
+      errorHandler(
+        new UnauthorizedError("Test UnauthorizedError"),
+        req,
+        res,
+        next,
+      );
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Requires Authentication",
+      });
     });
   });
 });

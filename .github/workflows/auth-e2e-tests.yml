@@ -1,4 +1,4 @@
-name: Auth Service E2E Tests
+name: Auth E2E (Service)
 
 on: pull_request
 
@@ -9,7 +9,7 @@ jobs:
     secrets: inherit
 
   e2e-tests:
-    name: Auth Cypress
+    name: Cypress
     runs-on: ubuntu-latest
     needs: [setup-env]
 
@@ -39,12 +39,19 @@ jobs:
 
           cat ${ENV_FILE_PATH}
 
-      - name: Cypress run
+      - name: Cypress run (Standard suite)
         uses: cypress-io/github-action@v6
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
           wait-on: "http://localhost:${{ vars.PORT }}/ping"
+          spec: apps/authentication-service/cypress/e2e/**/!(rateLimiting.cy.ts)
+
+      - name: Cypress run (Rate-limiting)
+        uses: cypress-io/github-action@v6
+        with:
+          project: apps/authentication-service
+          spec: apps/authentication-service/cypress/e2e/**/rateLimiting.cy.ts
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4

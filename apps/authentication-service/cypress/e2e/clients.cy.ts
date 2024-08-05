@@ -1,4 +1,4 @@
-import { Keys } from "../../src/resources/clients/clientsModel";
+import { Keys } from "@/resources/clients/clientsModel";
 
 const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
 
