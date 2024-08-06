@@ -3,7 +3,7 @@ import logger from "morgan";
 import institutionRoutes from "./routes/institutionRoutes";
 
 const app = express();
-const PORT = process.env.PORT || 8088;
+const PORT = 8088;
 
 app.use(express.json()); // http://expressjs.com/en/api.html#express.json
 app.use(express.urlencoded({ extended: false })); // http://expressjs.com/en/5x/api.html#express.urlencoded
