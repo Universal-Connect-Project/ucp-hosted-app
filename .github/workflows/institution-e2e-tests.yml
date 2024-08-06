@@ -1,0 +1,33 @@
+name: Institution E2E
+
+on: pull_request
+
+jobs:
+  e2e-tests:
+    name: Cypress (Institutions)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          check-latest: true
+      - run: npm ci
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          project: apps/institution-service
+          start: npm run dev --workspace apps/institution-service
+          wait-on: "http://localhost:8088/ping"
+          spec: apps/institution-service/cypress/e2e/**/*.cy.ts
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: apps/institution-service/cypress/screenshots
