@@ -1,8 +1,8 @@
-const testLimit: number = 30;
+import { PORT } from "./../../shared/const";
 
 describe("Express", () => {
   it("returns pong", () => {
-    cy.request(`http://localhost:8088/ping`).then(
+    cy.request(`http://localhost:${PORT}/ping`).then(
       (response: Cypress.Response<{ message: string }>) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.eq("Greetings.");
