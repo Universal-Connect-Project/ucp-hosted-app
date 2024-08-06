@@ -123,8 +123,8 @@ export const getTestToken = (isExpired = false): string => {
     },
     algorithm: "RS256" as Algorithm,
     audience: [
-      `https://${envs.AUTH0_AUDIENCE}/api/v2/`,
-      `https://${envs.AUTH0_AUDIENCE}/userinfo`,
+      `https://${envs.AUTH0_DOMAIN}/api/v2/`,
+      `https://${envs.AUTH0_DOMAIN}/userinfo`,
     ],
     issuer: `https://${envs.AUTH0_DOMAIN}/`,
   };

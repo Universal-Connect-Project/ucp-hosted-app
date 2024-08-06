@@ -1,9 +1,9 @@
 import { Keys } from "@/resources/clients/clientsModel";
+import { PORT } from "@/shared/consts";
 
 const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
 
 describe("Client API", () => {
-  const PORT: number = (Cypress.env("PORT") as number) || 8089;
   let accessToken: string;
   let newClientId: string;
   let newClientSecret: string;

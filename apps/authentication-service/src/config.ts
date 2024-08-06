@@ -13,7 +13,6 @@ export const init = (path = ".env") => {
 
   if (
     !(
-      envs?.PORT &&
       envs?.ENV &&
       envs?.CLIENT_ORIGIN_URL &&
       envs?.AUTH0_AUDIENCE &&
@@ -28,7 +27,6 @@ export const init = (path = ".env") => {
   }
 
   return {
-    PORT: envs?.PORT,
     ENV: envs?.ENV,
     CLIENT_ORIGIN_URL: envs?.CLIENT_ORIGIN_URL,
     AUTH0_AUDIENCE: envs?.AUTH0_AUDIENCE,

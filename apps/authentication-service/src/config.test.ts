@@ -7,7 +7,6 @@ describe("config", () => {
   });
 
   it("has required envs", () => {
-    expect(envs.PORT).toBeDefined();
     expect(envs.ENV).toBeDefined();
     expect(envs.CLIENT_ORIGIN_URL).toBeDefined();
     expect(envs.AUTH0_AUDIENCE).toBeDefined();

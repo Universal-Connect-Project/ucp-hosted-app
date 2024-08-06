@@ -8,7 +8,7 @@ const App: React.FC = () => {
       domain="dev-d23wau8o0uc5hw8n.us.auth0.com"
       clientId="osS8CuafkPsJlfz5mfKRgYH942Pmwpxd"
       authorizationParams={{
-        audience: "https://dev-d23wau8o0uc5hw8n.us.auth0.com/api/v2/",
+        audience: "ucp-hosted-apps",
         redirect_uri: window.location.origin,
       }}
     >
