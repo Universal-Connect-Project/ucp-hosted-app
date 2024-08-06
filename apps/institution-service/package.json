@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "express": "^4.19.2",
+    "express-oauth2-jwt-bearer": "^1.6.0",
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
     "reflect-metadata": "^0.2.2",

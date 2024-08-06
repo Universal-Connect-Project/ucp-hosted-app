@@ -13,7 +13,7 @@ import { Provider } from "./provider";
 
 export class Institution extends Model<
   InferAttributes<Institution, { omit: "providers" }>,
-  InferCreationAttributes<Institution>
+  InferCreationAttributes<Institution, { omit: "providers" }>
 > {
   declare ucp_id: string;
   declare name: string;
