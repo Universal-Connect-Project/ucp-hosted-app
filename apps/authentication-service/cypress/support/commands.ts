@@ -39,21 +39,23 @@ import { JwtPayload } from "jsonwebtoken";
 //   }
 // }
 
-Cypress.Commands.add("loginClientAuth0", () => {
+Cypress.Commands.add("loginClientAuth0", (doUseRoleUser: boolean = true) => {
   const username = Cypress.env("E2E_USERNAME") as string;
   const password = Cypress.env("E2E_PASSWORD") as string;
+  const usernameBasic = Cypress.env("E2E_USERNAME_BASIC") as string;
+  const passwordBasic = Cypress.env("E2E_PASSWORD_BASIC") as string;
   const client_id = Cypress.env("E2E_CLIENT_ID") as string;
   const client_secret = Cypress.env("E2E_CLIENT_SECRET") as string;
-  const audience = Cypress.env("AUTH0_AUDIENCE") as string;
+  const audience = Cypress.env("AUTH0_CLIENT_AUDIENCE") as string;
 
   cy.request({
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
     body: {
       grant_type: "password",
-      scope: "openid offline_access profile email",
-      username,
-      password,
+      scope: "openid profile email",
+      username: doUseRoleUser ? username : usernameBasic,
+      password: doUseRoleUser ? password : passwordBasic,
       audience,
       client_id,
       client_secret,
@@ -61,7 +63,7 @@ Cypress.Commands.add("loginClientAuth0", () => {
   }).then((response: Cypress.Response<JwtPayload>) => {
     cy.window().then((win: Cypress.AUTWindow) =>
       win.localStorage.setItem(
-        "jwt-client",
+        doUseRoleUser ? "jwt-client" : "jwt-client-basic",
         response.body.access_token as string,
       ),
     );
@@ -72,7 +74,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
-      loginClientAuth0(): void;
+      loginClientAuth0(doAddRole?: boolean): void;
     }
   }
 }

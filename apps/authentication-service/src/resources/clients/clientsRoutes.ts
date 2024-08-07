@@ -1,6 +1,10 @@
+import { WidgetHostPermissions } from "@/shared/enums";
 import express, { Application, RequestHandler } from "express";
 
-import { validateAccessToken } from "@/middleware/authMiddleware";
+import {
+  checkPermission,
+  validateAccessToken,
+} from "@/middleware/authMiddleware";
 import {
   clientsCreate,
   clientsDelete,
@@ -15,23 +19,23 @@ export const clientsRoutes = (app: Application): void => {
 
   clientsRouterV1.post(
     "/keys",
-    [validateAccessToken],
+    [validateAccessToken, checkPermission(WidgetHostPermissions.CREATE_KEYS)],
     clientsCreate as RequestHandler,
   );
   clientsRouterV1.get(
     "/keys",
-    [validateAccessToken],
+    [validateAccessToken, checkPermission(WidgetHostPermissions.READ_KEYS)],
     clientsGet as RequestHandler,
   );
   clientsRouterV1.delete(
     "/keys",
-    [validateAccessToken],
+    [validateAccessToken, checkPermission(WidgetHostPermissions.DELETE_KEYS)],
     clientsDelete as RequestHandler,
   );
 
   clientsRouterV1.post(
     "/keys/rotate",
-    [validateAccessToken],
+    [validateAccessToken, checkPermission(WidgetHostPermissions.ROTATE_KEYS)],
     clientsRotateSecrets as RequestHandler,
   );
 };
