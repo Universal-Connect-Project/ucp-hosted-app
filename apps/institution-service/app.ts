@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import "dotenv/config";
 import express, { Request, Response } from "express";
 import logger from "morgan";
 
@@ -6,7 +6,6 @@ import institutionRoutes from "./routes/institutionRoutes";
 import { PORT } from "./shared/const";
 
 const app = express();
-dotenv.config();
 
 app.use(express.json()); // http://expressjs.com/en/api.html#express.json
 app.use(express.urlencoded({ extended: false })); // http://expressjs.com/en/5x/api.html#express.urlencoded
