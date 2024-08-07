@@ -3,9 +3,15 @@ name: Institution E2E
 on: pull_request
 
 jobs:
+  setup-env:
+    name: "Load ENV Vars"
+    uses: ./.github/workflows/setup-env.yml
+    secrets: inherit
+
   e2e-tests:
     name: Cypress (Institutions)
     runs-on: ubuntu-latest
+    needs: [setup-env]
 
     steps:
       - name: Checkout
@@ -16,6 +22,20 @@ jobs:
           node-version: "lts/*"
           check-latest: true
       - run: npm ci
+
+      - name: "Create env file"
+        run: |
+          ENV_FILE_PATH=./apps/authentication-service/.env
+          touch ${ENV_FILE_PATH}
+
+          # Vars
+          echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
+
+          # Secrets (can't load these from another job, due to GH security features)
+          echo E2E_CLIENT_SECRET=${{ secrets.E2E_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
+          echo E2E_PASSWORD=${{ secrets.E2E_PASSWORD }} >> ${ENV_FILE_PATH}
+
+          cat ${ENV_FILE_PATH}
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
