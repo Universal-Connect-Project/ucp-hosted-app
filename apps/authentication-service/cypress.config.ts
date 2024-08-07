@@ -13,6 +13,8 @@ export default defineConfig({
     E2E_CLIENT_SECRET: process.env.E2E_CLIENT_SECRET,
     E2E_USERNAME: process.env.E2E_USERNAME,
     E2E_PASSWORD: process.env.E2E_PASSWORD,
+    E2E_USERNAME_BASIC: process.env.E2E_USERNAME_BASIC,
+    E2E_PASSWORD_BASIC: process.env.E2E_PASSWORD_BASIC,
   },
   e2e: {
     setupNodeEvents(on, config) {
