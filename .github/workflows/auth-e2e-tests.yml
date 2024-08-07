@@ -1,4 +1,4 @@
-name: Auth E2E (Service)
+name: Auth E2E
 
 on: pull_request
 
@@ -46,7 +46,7 @@ jobs:
           wait-on: "http://localhost:8089/ping"
           spec: apps/authentication-service/cypress/e2e/**/!(rateLimiting.cy.ts)
 
-      - name: Kill server
+      - name: Kill server # In order to reset rate-limiting
         run: kill $(lsof -t -i:8089)
 
       - name: Cypress run (Rate-limiting)
