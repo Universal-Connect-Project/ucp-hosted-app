@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "postgres",
-    "password": null,
+    "password": "",
     "database": "institution_service_development",
     "host": "127.0.0.1",
     "dialect": "postgres",
@@ -17,7 +17,7 @@
   },
   "production": {
     "username": "postgres",
-    "password": null,
+    "password": "",
     "database": "institution_service_production",
     "host": "127.0.0.1",
     "dialect": "postgres",
