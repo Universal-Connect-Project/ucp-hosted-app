@@ -14,4 +14,29 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import { JwtPayload } from "jsonwebtoken";
 import "./commands";
+
+before(() => {
+  const username = Cypress.env("E2E_USERNAME") as string;
+  const password = Cypress.env("E2E_PASSWORD") as string;
+  const client_id = Cypress.env("E2E_CLIENT_ID") as string;
+  const client_secret = Cypress.env("E2E_CLIENT_SECRET") as string;
+  const audience = Cypress.env("AUTH0_AUDIENCE") as string;
+
+  cy.request({
+    method: "POST",
+    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
+    body: {
+      grant_type: "password",
+      scope: "openid offline_access profile email",
+      username,
+      password,
+      audience,
+      client_id,
+      client_secret,
+    },
+  }).then((response: Cypress.Response<JwtPayload>) => {
+    Cypress.env("ACCESS_TOKEN", response.body.access_token);
+  });
+});
