@@ -16,6 +16,8 @@ jobs:
     services:
       postgres:
         image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -40,7 +42,7 @@ jobs:
 
       - name: Setup Postgres Database
         run: |
-          npm run db:setup --workspace apps/institution-service
+          npm run test:db:setup --workspace apps/institution-service
 
       - name: "Create env file"
         run: |
@@ -60,7 +62,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           project: apps/institution-service
-          start: npm run dev --workspace apps/institution-service
+          start: npm run dev --workspace apps/institution-service --env test
           wait-on: "http://localhost:8088/ping"
           spec: apps/institution-service/cypress/e2e/**/*.cy.ts
 
