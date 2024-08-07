@@ -37,6 +37,10 @@ jobs:
           check-latest: true
       - run: npm ci
 
+      - name: Setup Postgres Database
+        run: |
+          npm run db:setup --workspace apps/institution-service
+
       - name: "Create env file"
         run: |
           ENV_FILE_PATH=./apps/institution-service/.env
