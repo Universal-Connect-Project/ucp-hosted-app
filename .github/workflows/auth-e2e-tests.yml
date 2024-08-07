@@ -30,7 +30,6 @@ jobs:
           
           # Vars
           echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
-          echo PORT="8089" >> ${ENV_FILE_PATH}
           
           # Secrets (can't load these from another job, due to GH security features)
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
@@ -44,7 +43,7 @@ jobs:
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
-          wait-on: "http://localhost:${{ vars.PORT }}/ping"
+          wait-on: "http://localhost:8089/ping"
           spec: apps/authentication-service/cypress/e2e/**/!(rateLimiting.cy.ts)
 
       - name: Cypress run (Rate-limiting)
