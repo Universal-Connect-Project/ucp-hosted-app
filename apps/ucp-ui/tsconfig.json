@@ -4,6 +4,7 @@
     "jsx": "react",
     "moduleResolution": "node",
     "outDir": "./dist",
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "strict": true,
     "esModuleInterop": true,
     "typeRoots": [
