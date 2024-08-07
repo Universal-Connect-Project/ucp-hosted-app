@@ -63,7 +63,7 @@ Cypress.Commands.add("loginClientAuth0", (doAddRole: boolean = true) => {
   }).then((response: Cypress.Response<JwtPayload>) => {
     cy.window().then((win: Cypress.AUTWindow) =>
       win.localStorage.setItem(
-        "jwt-client",
+        doAddRole ? "jwt-client" : "jwt-client-basic",
         response.body.access_token as string,
       ),
     );
@@ -74,7 +74,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
-      loginClientAuth0(): void;
+      loginClientAuth0(doAddRole?: boolean): void;
     }
   }
 }

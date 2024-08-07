@@ -465,6 +465,6 @@ describe("clientsRoutesHandlersV1", () => {
       });
     });
 
-    it("should error when trying to create client, if token is missing the proper permissions", async () => {});
+    // it("should error when trying to create client, if token is missing the proper permissions", async () => {});
   });
 });
