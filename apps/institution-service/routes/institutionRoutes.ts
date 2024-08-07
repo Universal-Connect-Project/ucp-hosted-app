@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { Router } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import {
