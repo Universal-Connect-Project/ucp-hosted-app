@@ -44,14 +44,6 @@ describe("Client API", () => {
   });
 
   it("clears the client_id from user metadata, tries creating a client without access token, creates a client, fails if another client request is made, gets the newly created client, and deletes the client", () => {
-    // 0. Remove the client_id from the user??? Maybe?
-    // 1. Delete the Client
-    // 2. Create a new Client
-    // 3. Get the client
-    // 4. Try to create again, make sure error is returned
-    // 5. Delete the Client
-    // 6. Get the client, to make sure it's deleted
-
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",

@@ -39,9 +39,11 @@ import { JwtPayload } from "jsonwebtoken";
 //   }
 // }
 
-Cypress.Commands.add("loginClientAuth0", () => {
+Cypress.Commands.add("loginClientAuth0", (doAddRole: boolean = true) => {
   const username = Cypress.env("E2E_USERNAME") as string;
   const password = Cypress.env("E2E_PASSWORD") as string;
+  const usernameBasic = Cypress.env("E2E_USERNAME_BASIC") as string;
+  const passwordBasic = Cypress.env("E2E_PASSWORD_BASIC") as string;
   const client_id = Cypress.env("E2E_CLIENT_ID") as string;
   const client_secret = Cypress.env("E2E_CLIENT_SECRET") as string;
   const audience = Cypress.env("AUTH0_CLIENT_AUDIENCE") as string;
@@ -52,8 +54,8 @@ Cypress.Commands.add("loginClientAuth0", () => {
     body: {
       grant_type: "password",
       scope: "openid profile email",
-      username,
-      password,
+      username: doAddRole ? username : usernameBasic,
+      password: doAddRole ? password : passwordBasic,
       audience,
       client_id,
       client_secret,
