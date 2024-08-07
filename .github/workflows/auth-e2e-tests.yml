@@ -35,6 +35,7 @@ jobs:
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
           echo E2E_CLIENT_SECRET=${{ secrets.E2E_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
           echo E2E_PASSWORD=${{ secrets.E2E_PASSWORD }} >> ${ENV_FILE_PATH}
+          echo E2E_PASSWORD_BASIC=${{ secrets.E2E_PASSWORD_BASIC }} >> ${ENV_FILE_PATH}
 
           cat ${ENV_FILE_PATH}
 
