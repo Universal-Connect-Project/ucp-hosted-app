@@ -22,6 +22,10 @@ export default {
         use: "babel-loader",
       },
       {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        use: ["file-loader"],
+      },
+      {
         test: /\.css$/i,
         use: [
           "style-loader",
