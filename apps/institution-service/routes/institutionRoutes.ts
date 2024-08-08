@@ -1,9 +1,6 @@
 import { Router } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
-import {
-  getAllInstitutions,
-  getInstitutionCachedList,
-} from "../controllers/institutionController";
+import { getInstitutionCachedList } from "../controllers/institutionController";
 
 const validateAccessToken = auth({
   audience: process.env.AUTH0_AUDIENCE,
@@ -12,8 +9,6 @@ const validateAccessToken = auth({
 });
 
 const router = Router();
-
-router.get("/", getAllInstitutions);
 
 router.get("/cacheList", [validateAccessToken], getInstitutionCachedList);
 

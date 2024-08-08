@@ -16,8 +16,8 @@
   },
   "servers": [
     {
-      "description": "Local development widget",
-      "url": "http://localhost:3030"
+      "description": "Institution Service",
+      "url": "http://localhost:8088"
     }
   ],
   "paths": {
