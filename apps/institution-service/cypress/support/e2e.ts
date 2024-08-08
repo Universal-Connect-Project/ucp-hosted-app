@@ -14,4 +14,46 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import { JwtPayload } from "jsonwebtoken";
 import "./commands";
+
+before(() => {
+  const client_id = Cypress.env("WIDGET_CLIENT_ID") as string;
+  const client_secret = Cypress.env("WIDGET_CLIENT_SECRET") as string;
+  const audience = Cypress.env("AUTH0_WIDGET_AUDIENCE") as string;
+
+  cy.request({
+    method: "POST",
+    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
+    body: {
+      grant_type: "client_credentials",
+      audience,
+      client_id,
+      client_secret,
+    },
+  }).then((response: Cypress.Response<JwtPayload>) => {
+    Cypress.env("ACCESS_TOKEN", response.body.access_token);
+  });
+
+  const username = Cypress.env("E2E_USERNAME") as string;
+  const password = Cypress.env("E2E_PASSWORD") as string;
+  const noAccessClientId = Cypress.env("E2E_CLIENT_ID") as string;
+  const noAccessClientSecret = Cypress.env("E2E_CLIENT_SECRET") as string;
+  const userAudience = Cypress.env("AUTH0_AUDIENCE") as string;
+
+  cy.request({
+    method: "POST",
+    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
+    body: {
+      grant_type: "password",
+      scope: "openid offline_access profile email",
+      username,
+      password,
+      audience: userAudience,
+      client_id: noAccessClientId,
+      client_secret: noAccessClientSecret,
+    },
+  }).then((response: Cypress.Response<JwtPayload>) => {
+    Cypress.env("USER_ACCESS_TOKEN", response.body.access_token);
+  });
+});
