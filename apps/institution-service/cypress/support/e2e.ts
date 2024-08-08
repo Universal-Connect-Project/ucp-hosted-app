@@ -18,8 +18,8 @@ import { JwtPayload } from "jsonwebtoken";
 import "./commands";
 
 before(() => {
-  const client_id = Cypress.env("AUTH0_CLIENT_ID") as string;
-  const client_secret = Cypress.env("AUTH0_CLIENT_SECRET") as string;
+  const client_id = Cypress.env("WIDGET_CLIENT_ID") as string;
+  const client_secret = Cypress.env("WIDGET_CLIENT_SECRET") as string;
   const audience = Cypress.env("AUTH0_WIDGET_AUDIENCE") as string;
 
   cy.request({

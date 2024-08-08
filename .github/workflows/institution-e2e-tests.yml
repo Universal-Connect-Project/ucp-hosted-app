@@ -53,7 +53,7 @@ jobs:
           echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
 
           # Secrets (can't load these from another job, due to GH security features)
-          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
+          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
           echo E2E_CLIENT_SECRET=${{ secrets.E2E_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
           echo E2E_PASSWORD=${{ secrets.E2E_PASSWORD }} >> ${ENV_FILE_PATH}
 
