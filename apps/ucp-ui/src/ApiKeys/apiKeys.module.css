@@ -1,0 +1,11 @@
+.secondaryColor {
+  color: var(--mui-palette-text-secondary);
+}
+
+.apiKeysCard {
+  max-width: 744px;
+}
+
+.pageContainer {
+  margin-left: 60px;
+}

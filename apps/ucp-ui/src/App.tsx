@@ -6,12 +6,12 @@ import "@fontsource/work-sans/300.css";
 import "@fontsource/work-sans/400.css";
 import "@fontsource/work-sans/500.css";
 import "@fontsource/work-sans/700.css";
-import { ThemeProvider } from "@mui/material";
+import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material";
 import { muiTheme } from "./theme";
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider theme={muiTheme}>
+    <CssVarsProvider theme={muiTheme}>
       <Auth0Provider
         domain="dev-d23wau8o0uc5hw8n.us.auth0.com"
         clientId="osS8CuafkPsJlfz5mfKRgYH942Pmwpxd"
@@ -22,7 +22,7 @@ const App: React.FC = () => {
       >
         <Routes />
       </Auth0Provider>
-    </ThemeProvider>
+    </CssVarsProvider>
   );
 };
 
