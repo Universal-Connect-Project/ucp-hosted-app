@@ -10,8 +10,8 @@ export default defineConfig({
     WIDGET_CLIENT_SECRET: process.env.WIDGET_CLIENT_SECRET,
     WEB_UI_CLIENT_ID: process.env.WEB_UI_CLIENT_ID,
     WEB_UI_CLIENT_SECRET: process.env.WEB_UI_CLIENT_SECRET,
-    E2E_USERNAME: process.env.E2E_USERNAME,
-    E2E_PASSWORD: process.env.E2E_PASSWORD,
+    E2E_INSTITUTION_USERNAME: process.env.E2E_INSTITUTION_USERNAME,
+    E2E_INSTITUTION_PASSWORD: process.env.E2E_INSTITUTION_PASSWORD,
   },
   e2e: {
     setupNodeEvents(on, config) {

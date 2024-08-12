@@ -13,7 +13,7 @@ const router = Router();
 router.get(
   "/cacheList",
   [validateAccessToken],
-  requiredScopes("read:institutionCacheList"),
+  requiredScopes("read:widget-endpoints"),
   getInstitutionCachedList
 );
 

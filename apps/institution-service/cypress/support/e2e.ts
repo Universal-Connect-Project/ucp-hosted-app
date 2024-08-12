@@ -35,8 +35,8 @@ before(() => {
     Cypress.env("ACCESS_TOKEN", response.body.access_token);
   });
 
-  const username = Cypress.env("E2E_USERNAME") as string;
-  const password = Cypress.env("E2E_PASSWORD") as string;
+  const username = Cypress.env("E2E_INSTITUTION_USERNAME") as string;
+  const password = Cypress.env("E2E_INSTITUTION_PASSWORD") as string;
   const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
   const ucpWebUiClientSecret = Cypress.env("WEB_UI_CLIENT_SECRET") as string;
 
