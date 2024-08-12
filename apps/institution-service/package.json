@@ -18,7 +18,7 @@
     "test:db:migrate": "npx sequelize-cli db:migrate --env test",
     "test:db:seed": "npx sequelize-cli db:seed:all --env test",
     "test:db:reset": "npx sequelize-cli db:drop && npm run test:db:setup --env test",
-    "dev": "nodemon ./app.ts"
+    "dev": "nodemon ./src/app.ts"
   },
   "dependencies": {
     "express": "^4.19.2",
