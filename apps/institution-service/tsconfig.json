@@ -13,5 +13,5 @@
       "../../node_modules/@testing-library"
     ]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "config"]
 }

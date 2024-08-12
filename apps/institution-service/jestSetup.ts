@@ -1,4 +1,4 @@
-import db from "./src/config/database";
+import db from "./config/database";
 
 beforeAll(async () => {});
 

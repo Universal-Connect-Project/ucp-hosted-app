@@ -12,7 +12,7 @@
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
     "db:reset": "npx sequelize-cli db:drop && npm run db:setup",
-    "db:load": "ts-node ./tasks/loadInstitutionsFromJson.ts",
+    "db:load": "ts-node ./src/tasks/loadInstitutionsFromJson.ts",
     "test:db:setup": "npm run test:db:create && npm run test:db:migrate && npm run test:db:seed",
     "test:db:create": "npx sequelize-cli db:create --env test",
     "test:db:migrate": "npx sequelize-cli db:migrate --env test",
