@@ -37,9 +37,9 @@ import "@testing-library/cypress/add-commands";
 //   }
 // }
 
-Cypress.Commands.add("login", () => {
-  const username = Cypress.env("auth_username") as string;
-  const password = Cypress.env("auth_password") as string;
+const login = (usernameEnvKey: string, passwordEnvKey: string) => {
+  const username = Cypress.env(usernameEnvKey) as string;
+  const password = Cypress.env(passwordEnvKey) as string;
 
   cy.visit("/");
 
@@ -54,13 +54,25 @@ Cypress.Commands.add("login", () => {
   );
 
   cy.url().should("equal", Cypress.config("baseUrl"));
-});
+};
+
+Cypress.Commands.add("loginWithWidgetRole", () =>
+  login("auth_username_with_widget_role", "auth_password_with_widget_role"),
+);
+
+Cypress.Commands.add("loginWithoutWidgetRole", () =>
+  login(
+    "auth_username_without_widget_role",
+    "auth_password_without_widget_role",
+  ),
+);
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
-      login(): Chainable<void>;
+      loginWithWidgetRole(): Chainable<void>;
+      loginWithoutWidgetRole(): Chainable<void>;
     }
   }
 }
