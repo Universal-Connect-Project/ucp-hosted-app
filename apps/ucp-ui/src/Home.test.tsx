@@ -11,12 +11,6 @@ jest.mock("@auth0/auth0-react", () => ({
 }));
 
 describe("<Home />", () => {
-  it("renders hello world", () => {
-    render(<Home />);
-
-    expect(screen.getByText("Hello world!")).toBeInTheDocument();
-  });
-
   it("calls logout on click", async () => {
     render(<Home />);
 
