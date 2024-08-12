@@ -37,9 +37,8 @@ before(() => {
 
   const username = Cypress.env("E2E_USERNAME") as string;
   const password = Cypress.env("E2E_PASSWORD") as string;
-  const noAccessClientId = Cypress.env("E2E_CLIENT_ID") as string;
-  const noAccessClientSecret = Cypress.env("E2E_CLIENT_SECRET") as string;
-  const userAudience = Cypress.env("AUTH0_AUDIENCE") as string;
+  const ucpWebUiClientId = Cypress.env("E2E_CLIENT_ID") as string;
+  const ucpWebUiClientSecret = Cypress.env("E2E_CLIENT_SECRET") as string;
 
   cy.request({
     method: "POST",
@@ -49,9 +48,9 @@ before(() => {
       scope: "openid offline_access profile email",
       username,
       password,
-      audience: userAudience,
-      client_id: noAccessClientId,
-      client_secret: noAccessClientSecret,
+      audience: audience,
+      client_id: ucpWebUiClientId,
+      client_secret: ucpWebUiClientSecret,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
     Cypress.env("USER_ACCESS_TOKEN", response.body.access_token);

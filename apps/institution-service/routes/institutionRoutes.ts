@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { auth } from "express-oauth2-jwt-bearer";
+import { auth, requiredScopes } from "express-oauth2-jwt-bearer";
 import { getInstitutionCachedList } from "../controllers/institutionController";
 
 const validateAccessToken = auth({
@@ -10,6 +10,11 @@ const validateAccessToken = auth({
 
 const router = Router();
 
-router.get("/cacheList", [validateAccessToken], getInstitutionCachedList);
+router.get(
+  "/cacheList",
+  [validateAccessToken],
+  requiredScopes("read:institutionCacheList"),
+  getInstitutionCachedList
+);
 
 export default router;

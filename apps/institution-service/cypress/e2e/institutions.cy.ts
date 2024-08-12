@@ -28,7 +28,7 @@ describe("Institution endpoints", () => {
       });
     });
 
-    it("gets 401 when token doesnt have proper access", () => {
+    it("gets 403 when token doesnt have permission", () => {
       cy.request({
         url: `http://localhost:${PORT}/institutions/cacheList`,
         failOnStatusCode: false,
@@ -37,7 +37,7 @@ describe("Institution endpoints", () => {
           Authorization: `Bearer ${Cypress.env("USER_ACCESS_TOKEN")}`,
         },
       }).then((response: Cypress.Response<{ message: string }>) => {
-        expect(response.status).to.eq(401);
+        expect(response.status).to.eq(403);
       });
     });
   });
