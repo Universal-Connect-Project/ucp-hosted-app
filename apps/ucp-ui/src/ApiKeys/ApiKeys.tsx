@@ -42,7 +42,7 @@ const ApiKeys = () => {
   return (
     <Stack className={styles.pageContainer} spacing={3.5}>
       <Typography variant="h3">Account</Typography>
-      <Card className={styles.apiKeysCard}>
+      <Card className={styles.apiKeysCard} variant="outlined">
         <CardHeader
           title={
             <Stack alignItems="center" direction="row">
@@ -67,7 +67,7 @@ const ApiKeys = () => {
         <Divider />
         <CardContent>
           {!hasApiKeyAccess && (
-            <>
+            <Stack spacing={0.5}>
               <Typography variant="h5">
                 {API_KEYS_REQUEST_ACCESS_TITLE_TEXT}
               </Typography>
@@ -78,10 +78,10 @@ const ApiKeys = () => {
                 here to generate your keys. If you have already submitted a
                 request, please check back later.
               </Typography>
-            </>
+            </Stack>
           )}
         </CardContent>
-        <CardActions>
+        <CardActions className={styles.cardActions}>
           {!hasApiKeyAccess ? (
             <Button
               href={`mailto:${SUPPORT_EMAIL}?subject=API Keys Request for ${user?.email}&body=${newLine}${newLine}----------Do not edit anything below this line----------${newLine}User Email: ${user?.email}`}
