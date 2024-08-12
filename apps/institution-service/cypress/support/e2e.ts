@@ -37,8 +37,8 @@ before(() => {
 
   const username = Cypress.env("E2E_USERNAME") as string;
   const password = Cypress.env("E2E_PASSWORD") as string;
-  const ucpWebUiClientId = Cypress.env("E2E_CLIENT_ID") as string;
-  const ucpWebUiClientSecret = Cypress.env("E2E_CLIENT_SECRET") as string;
+  const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
+  const ucpWebUiClientSecret = Cypress.env("WEB_UI_CLIENT_SECRET") as string;
 
   cy.request({
     method: "POST",
