@@ -56,7 +56,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("institutions", null, {});
-    await queryInterface.bulkDelete("providers", null, {});
+    await queryInterface.bulkDelete("institutions", {ucp_id: {[Sequelize.Op.in]: ['UCP-123456789', 'UCP-9999']}});
   },
 };
