@@ -3,6 +3,7 @@
   "globalDependencies": [],
   "pipeline": {
     "build": {
+      "cache": false,
       "dependsOn": ["^build"],
       "outputs": ["dist"]
     },
@@ -18,7 +19,8 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["^build"]
     },
     "dev:e2e": {
       "cache": false,
