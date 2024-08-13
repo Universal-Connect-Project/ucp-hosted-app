@@ -105,14 +105,16 @@ export const getTestToken = (
   const payload: JwtPayload = {
     sub: exampleUserID,
     scope: "openid profile email",
+    azp: "osS8CuafkPsJlfz5mfKRgYH942Pmwpxd",
   };
 
   if (doAddWidgetRolePermissions) {
+    payload["ucw/roles"] = ["WidgetHost"];
     payload["permissions"] = [
       WidgetHostPermissions.CREATE_KEYS,
+      WidgetHostPermissions.DELETE_KEYS,
       WidgetHostPermissions.READ_KEYS,
       WidgetHostPermissions.ROTATE_KEYS,
-      WidgetHostPermissions.DELETE_KEYS,
     ];
   }
 
@@ -123,7 +125,8 @@ export const getTestToken = (
     },
     algorithm: "RS256" as Algorithm,
     audience: [
-      `https://${envs.AUTH0_DOMAIN}/api/v2/`,
+      doAddWidgetRolePermissions ? envs.AUTH0_CLIENT_AUDIENCE : "",
+      doAddWidgetRolePermissions ? "" : `https://${envs.AUTH0_DOMAIN}/api/v2/`,
       `https://${envs.AUTH0_DOMAIN}/userinfo`,
     ],
     issuer: `https://${envs.AUTH0_DOMAIN}/`,

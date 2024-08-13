@@ -1,4 +1,7 @@
-import { Request, Response } from "express";
+import { checkPermission } from "@/middleware/authMiddleware";
+import { WidgetHostPermissions } from "@/shared/enums";
+import { getTestToken } from "@/test/testData/users";
+import { Request, RequestHandler, Response } from "express";
 import {
   InvalidTokenError,
   UnauthorizedError,
@@ -61,7 +64,9 @@ describe("Express test", () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({ message: "Invalid Token" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Test InvalidTokenError",
+      });
     });
 
     it("tests errorHandler UnauthorizedError", () => {
@@ -83,8 +88,52 @@ describe("Express test", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Requires Authentication",
+        message: "Test UnauthorizedError",
       });
+    });
+
+    it("tests checkPermission when token has insufficient permissions", () => {
+      const token = getTestToken(false, false);
+
+      const next = jest.fn();
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      const handler: RequestHandler = checkPermission(
+        WidgetHostPermissions.CREATE_KEYS,
+      );
+
+      handler(req, res, next);
+      expect(next).toHaveBeenCalledWith(new UnauthorizedError());
+    });
+
+    it("tests checkPermission when token has correct permissions", () => {
+      const token = getTestToken(false, true);
+
+      console.log("----> token", token);
+
+      const next = jest.fn();
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const req: Request = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      } as Request;
+
+      checkPermission(WidgetHostPermissions.CREATE_KEYS)(req, res, next);
+      expect(next).toHaveBeenCalledWith(200);
     });
   });
 });

@@ -13,13 +13,13 @@ export const errorHandler = (
   let message: string = "Internal Server Error";
 
   if (error instanceof InvalidTokenError) {
-    message = "Invalid Token";
+    message = error.message;
     response.status(error.status).json({ message });
     return;
   }
 
   if (error instanceof UnauthorizedError) {
-    message = "Requires Authentication";
+    message = error.message;
     response.status(error.status).json({ message });
     return;
   }

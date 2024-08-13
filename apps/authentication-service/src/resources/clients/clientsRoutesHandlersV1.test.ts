@@ -435,7 +435,7 @@ describe("clientsRoutesHandlersV1", () => {
       expect(res.json).toHaveBeenCalledWith({ message: "Rate limit exceeded" });
     });
 
-    it("should error when trying to get client, and an unknown error occurs", async () => {
+    it("should error when trying to rotate a secret, and an unknown error occurs", async () => {
       server.use(
         http.post(
           `${AUTH0_CLIENTS_BY_ID}/rotate-secret`,
@@ -465,6 +465,6 @@ describe("clientsRoutesHandlersV1", () => {
       });
     });
 
-    // it("should error when trying to create client, if token is missing the proper permissions", async () => {});
+    it("should error when trying to create client, if token is missing the proper permissions", async () => {});
   });
 });
