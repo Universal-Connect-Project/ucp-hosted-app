@@ -1,0 +1,14 @@
+{
+  "name": "@repo/shared-utils",
+  "version": "0.0.1",
+  "main": "dist/enums.js",
+  "types": "dist/enums.d.ts",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc --build",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

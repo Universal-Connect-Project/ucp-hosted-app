@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
-import { DefaultPermissions, WidgetHostPermissions } from "@/shared/enums";
+import { DefaultPermissions, WidgetHostPermissions } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
 
 // ***********************************************

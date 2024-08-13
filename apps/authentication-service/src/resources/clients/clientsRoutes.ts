@@ -1,5 +1,5 @@
-import { WidgetHostPermissions } from "@/shared/enums";
 import express, { Application, RequestHandler } from "express";
+import { WidgetHostPermissions } from "@repo/shared-utils";
 
 import { validateAccessToken } from "@/middleware/authMiddleware";
 import {
