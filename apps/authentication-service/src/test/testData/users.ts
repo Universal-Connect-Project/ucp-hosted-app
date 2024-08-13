@@ -105,19 +105,14 @@ export const getTestToken = (
   const payload: JwtPayload = {
     sub: exampleUserID,
     scope: doAddWidgetRolePermissions
-      ? `openid userinfo ${WidgetHostPermissions.READ_KEYS} ${WidgetHostPermissions.ROTATE_KEYS} ${WidgetHostPermissions.CREATE_KEYS} ${WidgetHostPermissions.DELETE_KEYS}`
+      ? `openid userinfo ${Object.values(WidgetHostPermissions).join(" ")}`
       : "openid userinfo",
     azp: "osS8CuafkPsJlfz5mfKRgYH942Pmwpxd",
   };
 
   if (doAddWidgetRolePermissions) {
     payload["ucw/roles"] = ["WidgetHost"];
-    payload["permissions"] = [
-      WidgetHostPermissions.CREATE_KEYS,
-      WidgetHostPermissions.DELETE_KEYS,
-      WidgetHostPermissions.READ_KEYS,
-      WidgetHostPermissions.ROTATE_KEYS,
-    ];
+    payload["permissions"] = Object.values(WidgetHostPermissions);
   }
 
   const options: SignOptions = {
