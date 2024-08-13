@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import db from "../config/database";
+import db from "../database";
 import { Institution } from "../models/institution";
 import { Provider } from "../models/provider";
 
@@ -31,7 +31,7 @@ async function loadInstitutionData() {
   await db.authenticate();
   const institutions = JSON.parse(
     fs.readFileSync(
-      path.join(__dirname, "../config/ucwInstitutionsMapping.json"),
+      path.join(__dirname, "../../config/ucwInstitutionsMapping.json"),
       "utf8"
     )
   );
