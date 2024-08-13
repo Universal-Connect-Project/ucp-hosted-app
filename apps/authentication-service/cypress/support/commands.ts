@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
-import { WidgetHostPermissions } from "@/shared/enums";
+import { DefaultPermissions, WidgetHostPermissions } from "@/shared/enums";
 import { JwtPayload } from "jsonwebtoken";
 
 // ***********************************************
@@ -50,8 +50,8 @@ Cypress.Commands.add("loginClientAuth0", (doUseRoleUser: boolean = true) => {
   const audience = Cypress.env("AUTH0_CLIENT_AUDIENCE") as string;
 
   const scope = doUseRoleUser
-    ? `openid userinfo ${Object.values(WidgetHostPermissions).join(" ")}`
-    : "openid userinfo";
+    ? `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`
+    : `${Object.values(DefaultPermissions).join(" ")}`;
 
   cy.request({
     method: "POST",

@@ -1,5 +1,5 @@
 import envs from "@/config";
-import { WidgetHostPermissions } from "@/shared/enums";
+import { DefaultPermissions, WidgetHostPermissions } from "@/shared/enums";
 import { sign, Algorithm, JwtPayload, SignOptions } from "jsonwebtoken";
 import { UserInfoResponse } from "auth0";
 import { User } from "@/shared/users/usersModel";
@@ -105,8 +105,8 @@ export const getTestToken = (
   const payload: JwtPayload = {
     sub: exampleUserID,
     scope: doAddWidgetRolePermissions
-      ? `openid userinfo ${Object.values(WidgetHostPermissions).join(" ")}`
-      : "openid userinfo",
+      ? `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`
+      : `${Object.values(DefaultPermissions).join(" ")}`,
     azp: "osS8CuafkPsJlfz5mfKRgYH942Pmwpxd",
   };
 

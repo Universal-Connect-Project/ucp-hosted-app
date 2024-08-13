@@ -26,6 +26,11 @@ export enum ConsoleColors {
   BgGray = "\x1b[100m",
 }
 
+export enum DefaultPermissions {
+  OPENID = "openid",
+  USERINFO = "userinfo",
+}
+
 export enum WidgetHostPermissions {
   READ_KEYS = "read:keys",
   CREATE_KEYS = "create:keys",
