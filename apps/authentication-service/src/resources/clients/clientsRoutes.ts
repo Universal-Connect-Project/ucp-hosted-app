@@ -1,16 +1,14 @@
 import { WidgetHostPermissions } from "@/shared/enums";
 import express, { Application, RequestHandler } from "express";
 
-import {
-  checkPermission,
-  validateAccessToken,
-} from "@/middleware/authMiddleware";
+import { validateAccessToken } from "@/middleware/authMiddleware";
 import {
   clientsCreate,
   clientsDelete,
   clientsGet,
   clientsRotateSecrets,
 } from "@/resources/clients/clientsRoutesHandlersV1";
+import { requiredScopes } from "express-oauth2-jwt-bearer";
 
 const clientsRouterV1 = express.Router();
 
@@ -19,23 +17,22 @@ export const clientsRoutes = (app: Application): void => {
 
   clientsRouterV1.post(
     "/keys",
-    [validateAccessToken, checkPermission(WidgetHostPermissions.CREATE_KEYS)],
+    [validateAccessToken, requiredScopes(WidgetHostPermissions.CREATE_KEYS)],
     clientsCreate as RequestHandler,
   );
   clientsRouterV1.get(
     "/keys",
-    [validateAccessToken, checkPermission(WidgetHostPermissions.READ_KEYS)],
+    [validateAccessToken, requiredScopes(WidgetHostPermissions.READ_KEYS)],
     clientsGet as RequestHandler,
   );
   clientsRouterV1.delete(
     "/keys",
-    [validateAccessToken, checkPermission(WidgetHostPermissions.DELETE_KEYS)],
+    [validateAccessToken, requiredScopes(WidgetHostPermissions.DELETE_KEYS)],
     clientsDelete as RequestHandler,
   );
-
   clientsRouterV1.post(
     "/keys/rotate",
-    [validateAccessToken, checkPermission(WidgetHostPermissions.ROTATE_KEYS)],
+    [validateAccessToken, requiredScopes(WidgetHostPermissions.ROTATE_KEYS)],
     clientsRotateSecrets as RequestHandler,
   );
 };

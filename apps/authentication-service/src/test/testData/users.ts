@@ -104,7 +104,9 @@ export const getTestToken = (
 
   const payload: JwtPayload = {
     sub: exampleUserID,
-    scope: "openid profile email",
+    scope: doAddWidgetRolePermissions
+      ? `openid userinfo ${WidgetHostPermissions.READ_KEYS} ${WidgetHostPermissions.ROTATE_KEYS} ${WidgetHostPermissions.CREATE_KEYS} ${WidgetHostPermissions.DELETE_KEYS}`
+      : "openid userinfo",
     azp: "osS8CuafkPsJlfz5mfKRgYH942Pmwpxd",
   };
 

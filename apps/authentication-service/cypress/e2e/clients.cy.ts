@@ -172,7 +172,7 @@ describe("Client API", () => {
         Authorization: `Bearer ${accessTokenBasic}`,
       },
     }).then((response: Cypress.Response<{ body: Keys }>) => {
-      expect(response.status).to.eq(401);
+      expect(response.status).to.eq(403);
     });
   });
 
@@ -186,7 +186,7 @@ describe("Client API", () => {
         Authorization: `Bearer ${accessTokenBasic}`,
       },
     }).then((response: Cypress.Response<{ body: Keys }>) => {
-      expect(response.status).to.eq(401);
+      expect(response.status).to.eq(403);
     });
   });
 
@@ -200,7 +200,7 @@ describe("Client API", () => {
         Authorization: `Bearer ${accessTokenBasic}`,
       },
     }).then((response: Cypress.Response<{ body: Keys }>) => {
-      expect(response.status).to.eq(401);
+      expect(response.status).to.eq(403);
     });
   });
 
@@ -214,7 +214,7 @@ describe("Client API", () => {
         Authorization: `Bearer ${accessTokenBasic}`,
       },
     }).then((response: Cypress.Response<{ body: Keys }>) => {
-      expect(response.status).to.eq(401);
+      expect(response.status).to.eq(403);
     });
   });
 });

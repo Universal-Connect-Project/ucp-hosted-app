@@ -1,5 +1,6 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
+import { WidgetHostPermissions } from "@/shared/enums";
 import { JwtPayload } from "jsonwebtoken";
 
 // ***********************************************
@@ -48,12 +49,16 @@ Cypress.Commands.add("loginClientAuth0", (doUseRoleUser: boolean = true) => {
   const client_secret = Cypress.env("E2E_CLIENT_SECRET") as string;
   const audience = Cypress.env("AUTH0_CLIENT_AUDIENCE") as string;
 
+  const scope = doUseRoleUser
+    ? `openid userinfo ${Object.values(WidgetHostPermissions).join(" ")}`
+    : "openid userinfo";
+
   cy.request({
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
     body: {
       grant_type: "password",
-      scope: "openid profile email",
+      scope,
       username: doUseRoleUser ? username : usernameBasic,
       password: doUseRoleUser ? password : passwordBasic,
       audience,
@@ -61,6 +66,7 @@ Cypress.Commands.add("loginClientAuth0", (doUseRoleUser: boolean = true) => {
       client_secret,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
+    cy.log("TOKEN:", response.body.access_token);
     cy.window().then((win: Cypress.AUTWindow) =>
       win.localStorage.setItem(
         doUseRoleUser ? "jwt-client" : "jwt-client-basic",
