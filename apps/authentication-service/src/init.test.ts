@@ -132,7 +132,11 @@ describe("Express test", () => {
         },
       } as Request;
 
-      checkPermission(WidgetHostPermissions.CREATE_KEYS)(req, res, next);
+      const handler: RequestHandler = checkPermission(
+        WidgetHostPermissions.CREATE_KEYS,
+      );
+
+      handler(req, res, next);
       expect(next).toHaveBeenCalledWith(200);
     });
   });
