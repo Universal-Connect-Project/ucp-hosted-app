@@ -19,8 +19,10 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
-          CYPRESS_auth_username: ${{ secrets.AUTH_USERNAME }}
-          CYPRESS_auth_password: ${{ secrets.AUTH_PASSWORD }}
+          CYPRESS_auth_username_with_widget_role: ${{ secrets.AUTH_USERNAME_WITH_WIDGET_ROLE }}
+          CYPRESS_auth_password_with_widget_role: ${{ secrets.AUTH_PASSWORD_WITH_WIDGET_ROLE }}
+          CYPRESS_auth_username_without_widget_role: ${{ secrets.AUTH_USERNAME_WITHOUT_WIDGET_ROLE }}
+          CYPRESS_auth_password_without_widget_role: ${{ secrets.AUTH_PASSWORD_WITHOUT_WIDGET_ROLE }}
 
         with:
           project: apps/ucp-ui
