@@ -1,0 +1,18 @@
+.secondaryColor {
+  color: var(--mui-palette-text-secondary);
+}
+
+.apiKeysCard {
+  max-width: 744px;
+}
+
+.pageContainer {
+  margin-left: 60px;
+}
+
+.cardActions {
+  &:global(.MuiCardActions-root) {
+    padding-left: 16px;
+    padding-bottom: 20px;
+  }
+}

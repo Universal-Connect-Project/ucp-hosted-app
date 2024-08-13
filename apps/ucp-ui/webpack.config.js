@@ -21,6 +21,17 @@ export default {
         exclude: /node_modules/,
         use: "babel-loader",
       },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        use: ["file-loader"],
+      },
+      {
+        test: /\.css$/i,
+        use: [
+          "style-loader",
+          { loader: "css-loader", options: { esModule: false, modules: true } },
+        ],
+      },
     ],
   },
   plugins: [
