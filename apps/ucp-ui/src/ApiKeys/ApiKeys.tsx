@@ -24,20 +24,34 @@ import {
   REQUEST_API_KEY_ACCESS_BUTTON_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
+import { useGetApiKeysQuery } from "./api";
 
 const newLine = "%0D%0A";
 
 const ApiKeys = () => {
   const { user } = useAuth0();
 
+  const userRoles = user?.["ucw/roles"] as Array<string>;
+
+  const hasApiKeyAccess = userRoles?.includes(UserRoles.WidgetHost);
+
+  const {
+    //data,
+    error,
+    isError,
+    //  isLoading
+  } = useGetApiKeysQuery(undefined, {
+    skip: !hasApiKeyAccess,
+  });
+
+  const isUserMissingApiKeys = isError && (error as number) === 404;
+
+  const canUserGenerateApiKeys = isUserMissingApiKeys && hasApiKeyAccess;
+
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const handleOpenTooltip = () => setIsTooltipOpen(true);
   const handleCloseTooltip = () => setIsTooltipOpen(false);
-
-  const userRoles = user?.["ucw/roles"] as Array<string>;
-
-  const hasApiKeyAccess = userRoles?.includes(UserRoles.WidgetHost);
 
   return (
     <Stack className={styles.pageContainer} spacing={3.5}>
@@ -80,9 +94,19 @@ const ApiKeys = () => {
               </Typography>
             </Stack>
           )}
+          {canUserGenerateApiKeys && (
+            <Stack spacing={0.5}>
+              <Typography variant="h5">
+                Your API keys are ready to be generated
+              </Typography>
+              <Typography className={styles.secondaryColor} variant="body1">
+                Generate your Client ID and Client Secret below.
+              </Typography>
+            </Stack>
+          )}
         </CardContent>
         <CardActions className={styles.cardActions}>
-          {!hasApiKeyAccess ? (
+          {!hasApiKeyAccess && (
             <Button
               href={`mailto:${SUPPORT_EMAIL}?subject=API Keys Request for ${user?.email}&body=${newLine}${newLine}----------Do not edit anything below this line----------${newLine}User Email: ${user?.email}`}
               size="large"
@@ -91,7 +115,12 @@ const ApiKeys = () => {
             >
               {REQUEST_API_KEY_ACCESS_BUTTON_TEXT}
             </Button>
-          ) : null}
+          )}
+          {canUserGenerateApiKeys && (
+            <Button size="large" variant="contained">
+              GENERATE API KEYS
+            </Button>
+          )}
         </CardActions>
       </Card>
     </Stack>

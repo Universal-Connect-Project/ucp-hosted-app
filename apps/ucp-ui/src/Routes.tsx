@@ -3,8 +3,11 @@ import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ApiKeys from "./ApiKeys/ApiKeys";
 import Layout from "./Layout";
+import useSetToken from "./Token/useSetToken";
 
 const Routes = () => {
+  const { isTokenReady } = useSetToken();
+
   const router = createBrowserRouter([
     {
       path: "*",
@@ -15,6 +18,10 @@ const Routes = () => {
       element: <ApiKeys />,
     },
   ]);
+
+  if (!isTokenReady) {
+    return null;
+  }
 
   return (
     <Layout>
