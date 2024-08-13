@@ -464,7 +464,5 @@ describe("clientsRoutesHandlersV1", () => {
         message: "Unable to rotate keys",
       });
     });
-
-    it("should error when trying to create client, if token is missing the proper permissions", async () => {});
   });
 });
