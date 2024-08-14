@@ -12,7 +12,7 @@ export const apiKeysApi = api.injectEndpoints({
         method: HttpMethods.POST,
         url: `${AUTHENTICATION_SERVICE_BASE_URL}/v1/clients/keys`,
       }),
-      invalidatesTags: [TagTypes.API_KEYS],
+      invalidatesTags: (result, error) => (!error ? [TagTypes.API_KEYS] : []),
     }),
     getApiKeys: builder.query<ApiKeys, void>({
       query: () => `${AUTHENTICATION_SERVICE_BASE_URL}/v1/clients/keys`,

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { InfoOutlined, MailOutline } from "@mui/icons-material";
+import { InfoOutlined } from "@mui/icons-material";
 import { useAuth0 } from "@auth0/auth0-react";
 import { UserRoles } from "../shared/constants/roles";
 import { LoadingButton } from "@mui/lab";
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -16,19 +15,15 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { SUPPORT_EMAIL } from "../shared/constants/support";
 import {
   API_KEY_TOOLTIP_TEST_ID,
   API_KEY_TOOLTIP_TEXT,
   API_KEYS_CARD_TITLE_TEXT,
-  API_KEYS_REQUEST_ACCESS_TITLE_TEXT,
-  REQUEST_API_KEY_ACCESS_BUTTON_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
 import { useCreateApiKeysMutation, useGetApiKeysQuery } from "./api";
 import FormSubmissionErrorAlert from "../shared/components/FormSubmissionErrorAlert";
-
-const newLine = "%0D%0A";
+import RequestAPIKeyAccess from "./RequestAPIKeyAccess";
 
 const generateKeysFormId = "generateKeys";
 
@@ -88,72 +83,49 @@ const ApiKeys = () => {
           }}
         />
         <Divider />
-        <CardContent>
-          {!hasApiKeyAccess && (
-            <Stack spacing={0.5}>
-              <Typography variant="h5">
-                {API_KEYS_REQUEST_ACCESS_TITLE_TEXT}
-              </Typography>
-              <Typography className={styles.secondaryColor} variant="body1">
-                To access UCP services, you will need API keys. To request your
-                keys, please email us at {SUPPORT_EMAIL}. We will process your
-                request promptly. Once your access is approved, you can return
-                here to generate your keys. If you have already submitted a
-                request, please check back later.
-              </Typography>
-            </Stack>
-          )}
-          {canUserGenerateApiKeys && (
-            <Stack spacing={1.5}>
-              <Stack spacing={0.5}>
-                <Typography variant="h5">
-                  Your API keys are ready to be generated
-                </Typography>
-                <Typography className={styles.secondaryColor} variant="body1">
-                  Generate your Client ID and Client Secret below.
-                </Typography>
-              </Stack>
-              {isCreateApiKeysError && (
-                <FormSubmissionErrorAlert
-                  description="We couldn’t load your API keys. Please try again in a few
+        {!hasApiKeyAccess && <RequestAPIKeyAccess />}
+        {canUserGenerateApiKeys && (
+          <>
+            <CardContent>
+              <Stack spacing={1.5}>
+                <Stack spacing={0.5}>
+                  <Typography variant="h5">
+                    Your API keys are ready to be generated
+                  </Typography>
+                  <Typography className={styles.secondaryColor} variant="body1">
+                    Generate your Client ID and Client Secret below.
+                  </Typography>
+                </Stack>
+                {isCreateApiKeysError && (
+                  <FormSubmissionErrorAlert
+                    description="We couldn’t load your API keys. Please try again in a few
                   moments. If the problem persists, contact us for support."
-                  formId={generateKeysFormId}
-                  title="Something went wrong"
-                />
-              )}
-            </Stack>
-          )}
-        </CardContent>
-        <CardActions className={styles.cardActions}>
-          {!hasApiKeyAccess && (
-            <Button
-              href={`mailto:${SUPPORT_EMAIL}?subject=API Keys Request for ${user?.email}&body=${newLine}${newLine}----------Do not edit anything below this line----------${newLine}User Email: ${user?.email}`}
-              size="large"
-              startIcon={<MailOutline />}
-              variant="contained"
-            >
-              {REQUEST_API_KEY_ACCESS_BUTTON_TEXT}
-            </Button>
-          )}
-          {canUserGenerateApiKeys && (
-            <form
-              id={generateKeysFormId}
-              onSubmit={(event) => {
-                event.preventDefault();
-                void createApiKeys();
-              }}
-            >
-              <LoadingButton
-                loading={isCreateApiKeysLoading}
-                size="large"
-                type="submit"
-                variant="contained"
+                    formId={generateKeysFormId}
+                    title="Something went wrong"
+                  />
+                )}
+              </Stack>
+            </CardContent>
+            <CardActions className={styles.cardActions}>
+              <form
+                id={generateKeysFormId}
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void createApiKeys();
+                }}
               >
-                GENERATE API KEYS
-              </LoadingButton>
-            </form>
-          )}
-        </CardActions>
+                <LoadingButton
+                  loading={isCreateApiKeysLoading}
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                >
+                  GENERATE API KEYS
+                </LoadingButton>
+              </form>
+            </CardActions>
+          </>
+        )}
       </Card>
     </Stack>
   );
