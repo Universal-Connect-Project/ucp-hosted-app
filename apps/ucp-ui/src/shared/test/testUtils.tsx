@@ -13,6 +13,9 @@ const customRender = (
   options?: Omit<RenderOptions, "wrapper">,
 ) => render(ui, { wrapper: AllTheProviders, ...options });
 
+export const wait = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 export * from "@testing-library/react";
 export { customRender as render };
 export { userEvent };

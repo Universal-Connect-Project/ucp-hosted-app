@@ -4,7 +4,10 @@ import React, { ReactNode, useEffect } from "react";
 import styles from "./authenticationWrapper.module.css";
 import { useAppDispatch, useAppSelector } from "./shared/utils/redux";
 import { getAccessToken, setAccessToken } from "./shared/reducers/token";
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "./shared/constants/authentication";
+import {
+  ACCESS_TOKEN_LOCAL_STORAGE_KEY,
+  AUTH0_LOADING_TEST_ID,
+} from "./shared/constants/authentication";
 
 const AuthenticationWrapper = ({ children }: { children: ReactNode }) => {
   const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
@@ -34,7 +37,7 @@ const AuthenticationWrapper = ({ children }: { children: ReactNode }) => {
   if (isLoading || (isAuthenticated && !isTokenReady)) {
     return (
       <div className={styles.loadingWrapper}>
-        <CircularProgress size={100} />
+        <CircularProgress data-testid={AUTH0_LOADING_TEST_ID} size={100} />
       </div>
     );
   }
