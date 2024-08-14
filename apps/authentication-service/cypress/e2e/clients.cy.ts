@@ -8,6 +8,7 @@ describe("Client API", () => {
   let accessTokenBasic: string;
   let newClientId: string;
   let newClientSecret: string;
+  const keysUrl = `http://localhost:${PORT}/v1/clients/keys`;
 
   const getTokens = () => {
     cy.window()
@@ -41,7 +42,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
       },
@@ -55,7 +56,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -63,7 +64,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -81,7 +82,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -99,7 +100,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -127,7 +128,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -138,7 +139,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -166,7 +167,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
@@ -180,7 +181,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
@@ -194,7 +195,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
