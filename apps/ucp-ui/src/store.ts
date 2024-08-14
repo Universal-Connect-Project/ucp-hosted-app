@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { api } from "./baseApi";
-import { tokenSlice } from "./Token/token";
+import { tokenSlice } from "./shared/reducers/token";
 
 export const store = configureStore({
   middleware: (getDefaultMiddleware) =>

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { createAppSelector } from "../shared/utils/redux";
+import { createAppSelector } from "../utils/redux";
 
 interface TokenState {
   token: string | undefined;

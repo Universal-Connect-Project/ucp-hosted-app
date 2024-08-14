@@ -10,6 +10,7 @@ import "@fontsource/work-sans/700.css";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material";
 import { muiTheme } from "./theme";
 import { store } from "./store";
+import AuthenticationWrapper from "./AuthenticationWrapper";
 
 const App: React.FC = () => {
   return (
@@ -23,7 +24,9 @@ const App: React.FC = () => {
             redirect_uri: window.location.origin,
           }}
         >
-          <Routes />
+          <AuthenticationWrapper>
+            <Routes />
+          </AuthenticationWrapper>
         </Auth0Provider>
       </ReduxProvider>
     </CssVarsProvider>

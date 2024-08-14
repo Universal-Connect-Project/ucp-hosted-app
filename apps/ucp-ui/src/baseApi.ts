@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { getAccessToken } from "./Token/token";
+import { getAccessToken } from "./shared/reducers/token";
 import { RootState } from "./store";
 
 export enum TagTypes {
