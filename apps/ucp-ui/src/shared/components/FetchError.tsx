@@ -5,15 +5,15 @@ import styles from "./errorAlert.module.css";
 
 interface Props {
   description: string;
-  formId: string;
+  refetch: VoidFunction;
   title: string;
 }
 
-const FormSubmissionErrorAlert = ({ description, formId, title }: Props) => {
+const FetchError = ({ description, refetch, title }: Props) => {
   return (
     <Alert
       action={
-        <Button color="inherit" form={formId} type="submit">
+        <Button color="inherit" onClick={refetch}>
           {TRY_AGAIN_BUTTON_TEXT}
         </Button>
       }
@@ -26,4 +26,4 @@ const FormSubmissionErrorAlert = ({ description, formId, title }: Props) => {
   );
 };
 
-export default FormSubmissionErrorAlert;
+export default FetchError;

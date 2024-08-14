@@ -24,6 +24,7 @@ import styles from "./apiKeys.module.css";
 import { useCreateApiKeysMutation, useGetApiKeysQuery } from "./api";
 import FormSubmissionErrorAlert from "../shared/components/FormSubmissionErrorAlert";
 import RequestAPIKeyAccess from "./RequestAPIKeyAccess";
+import FetchError from "../shared/components/FetchError";
 
 const generateKeysFormId = "generateKeys";
 
@@ -40,15 +41,18 @@ const ApiKeys = () => {
   ] = useCreateApiKeysMutation();
 
   const {
-    //data,
-    error,
-    isError,
-    //  isLoading
+    error: apiKeysError,
+    isError: isGetApiKeysError,
+    // isLoading: isGetApiKeysLoading,
+    refetch: refetchApiKeys,
   } = useGetApiKeysQuery(undefined, {
     skip: !hasApiKeyAccess,
   });
 
-  const isUserMissingApiKeys = isError && (error as number) === 404;
+  const isUserMissingApiKeys =
+    isGetApiKeysError && (apiKeysError as number) === 404;
+
+  const shouldShowGetApiKeysError = isGetApiKeysError && !isUserMissingApiKeys;
 
   const canUserGenerateApiKeys = isUserMissingApiKeys && hasApiKeyAccess;
 
@@ -84,6 +88,15 @@ const ApiKeys = () => {
         />
         <Divider />
         {!hasApiKeyAccess && <RequestAPIKeyAccess />}
+        {shouldShowGetApiKeysError && (
+          <CardContent>
+            <FetchError
+              description="We couldn’t load your API keys. Please try again in a few moments. If the problem persists, contact us for support."
+              refetch={() => void refetchApiKeys()}
+              title="Something went wrong"
+            />
+          </CardContent>
+        )}
         {canUserGenerateApiKeys && (
           <>
             <CardContent>
