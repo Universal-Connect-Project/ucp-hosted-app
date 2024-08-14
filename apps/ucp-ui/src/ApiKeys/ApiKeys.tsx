@@ -11,6 +11,7 @@ import {
   ClickAwayListener,
   Divider,
   IconButton,
+  Snackbar,
   Stack,
   TextField,
   Tooltip,
@@ -22,12 +23,14 @@ import {
   API_KEYS_CARD_TITLE_TEXT,
   API_KEYS_CLIENT_ID_LABEL_TEXT,
   API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
+  API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
 import { useCreateApiKeysMutation, useGetApiKeysQuery } from "./api";
 import FormSubmissionErrorAlert from "../shared/components/FormSubmissionErrorAlert";
 import RequestAPIKeyAccess from "./RequestAPIKeyAccess";
 import FetchError from "../shared/components/FetchError";
+import useSuccessSnackbar from "../shared/hooks/useSuccessSnackbar";
 
 const generateKeysFormId = "generateKeys";
 
@@ -39,9 +42,22 @@ const ApiKeys = () => {
   const hasApiKeyAccess = userRoles?.includes(UserRoles.WidgetHost);
 
   const [
-    createApiKeys,
+    mutateCreateApiKeys,
     { isError: isCreateApiKeysError, isLoading: isCreateApiKeysLoading },
   ] = useCreateApiKeysMutation();
+
+  const { handleOpenSuccessSnackbarWithMessage, successSnackbarProps } =
+    useSuccessSnackbar();
+
+  const createApiKeys = () => {
+    mutateCreateApiKeys()
+      .then(() => {
+        handleOpenSuccessSnackbarWithMessage(
+          API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT,
+        );
+      })
+      .catch(() => {});
+  };
 
   const {
     data: keysData,
@@ -71,6 +87,7 @@ const ApiKeys = () => {
 
   return (
     <Stack className={styles.pageContainer} spacing={3.5}>
+      <Snackbar {...successSnackbarProps} />
       <Typography variant="h3">Account</Typography>
       <Card className={styles.apiKeysCard} variant="outlined">
         <CardHeader

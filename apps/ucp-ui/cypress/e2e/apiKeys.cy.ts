@@ -1,6 +1,7 @@
 import {
   API_KEYS_CLIENT_ID_LABEL_TEXT,
   API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
+  API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT,
   REQUEST_API_KEY_ACCESS_BUTTON_TEXT,
 } from "../../src/ApiKeys/constants";
 
@@ -33,6 +34,8 @@ describe("apiKeys", () => {
       cy.findByText(API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT).click();
 
       cy.findByLabelText(API_KEYS_CLIENT_ID_LABEL_TEXT).should("exist");
+
+      cy.findByText(API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT).should("exist");
     });
   });
 });
