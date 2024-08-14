@@ -16,6 +16,9 @@ jobs:
           check-latest: true
       - run: npm ci
 
+      - name: Build shared-utils
+        run: npm run build --workspace packages/shared-utils
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
