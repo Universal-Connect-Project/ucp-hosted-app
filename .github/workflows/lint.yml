@@ -20,7 +20,7 @@ jobs:
         run: npm ci
 
       - name: Run eslint
-        run: npm run lint
+        run: turbo lint
 
       - name: Run prettier
-        run: npm run prettier
+        run: turbo prettier
