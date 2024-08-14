@@ -41,10 +41,14 @@ import { JwtPayload } from "jsonwebtoken";
 // }
 
 Cypress.Commands.add("loginClientAuth0", (doUseRoleUser: boolean = true) => {
-  const username = Cypress.env("E2E_USERNAME_WITH_KEY_ROLES") as string;
-  const password = Cypress.env("E2E_PASSWORD") as string;
-  const usernameBasic = Cypress.env("E2E_USERNAME_WITHOUT_KEY_ROLES") as string;
-  const passwordBasic = Cypress.env("E2E_PASSWORD_WITHOUT_KEY_ROLES") as string;
+  const username = Cypress.env("AUTH_USERNAME_WITH_KEY_ROLES") as string;
+  const password = Cypress.env("AUTH_PASSWORD_WITH_KEY_ROLES") as string;
+  const usernameBasic = Cypress.env(
+    "AUTH_USERNAME_WITHOUT_KEY_ROLES",
+  ) as string;
+  const passwordBasic = Cypress.env(
+    "AUTH_PASSWORD_WITHOUT_KEY_ROLES",
+  ) as string;
   const client_id = Cypress.env("E2E_CLIENT_ID") as string;
   const client_secret = Cypress.env("E2E_CLIENT_SECRET") as string;
   const audience = Cypress.env("AUTH0_CLIENT_AUDIENCE") as string;
