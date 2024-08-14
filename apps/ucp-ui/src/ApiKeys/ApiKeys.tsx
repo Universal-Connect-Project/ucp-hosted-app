@@ -111,7 +111,7 @@ const ApiKeys = () => {
                 </Stack>
                 {isCreateApiKeysError && (
                   <FormSubmissionErrorAlert
-                    description="We couldn’t load your API keys. Please try again in a few
+                    description="We couldn’t generate your API keys. Please try again in a few
                   moments. If the problem persists, contact us for support."
                     formId={generateKeysFormId}
                     title="Something went wrong"

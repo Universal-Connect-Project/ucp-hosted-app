@@ -28,7 +28,7 @@ const AuthenticationWrapper = ({ children }: { children: ReactNode }) => {
     [isAuthenticated],
   );
 
-  if (isLoading || !isTokenReady) {
+  if (isLoading || (isAuthenticated && !isTokenReady)) {
     return (
       <div className={styles.loadingWrapper}>
         <CircularProgress size={100} />
