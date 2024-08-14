@@ -9,7 +9,7 @@ interface Props {
   title: string;
 }
 
-const FormSubmissionErrorAlert = ({ description, formId, title }: Props) => {
+const FormSubmissionError = ({ description, formId, title }: Props) => {
   return (
     <Alert
       action={
@@ -26,4 +26,4 @@ const FormSubmissionErrorAlert = ({ description, formId, title }: Props) => {
   );
 };
 
-export default FormSubmissionErrorAlert;
+export default FormSubmissionError;

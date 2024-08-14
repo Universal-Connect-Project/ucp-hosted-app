@@ -29,7 +29,7 @@ import {
 } from "./constants";
 import styles from "./apiKeys.module.css";
 import { useCreateApiKeysMutation, useGetApiKeysQuery } from "./api";
-import FormSubmissionErrorAlert from "../shared/components/FormSubmissionErrorAlert";
+import FormSubmissionError from "../shared/components/FormSubmissionError";
 import RequestAPIKeyAccess from "./RequestAPIKeyAccess";
 import FetchError from "../shared/components/FetchError";
 import useSuccessSnackbar from "../shared/hooks/useSuccessSnackbar";
@@ -150,7 +150,7 @@ const ApiKeys = () => {
                   </Typography>
                 </Stack>
                 {isCreateApiKeysError && (
-                  <FormSubmissionErrorAlert
+                  <FormSubmissionError
                     description={API_KEYS_GENERATE_API_KEYS_FAILURE_TEXT}
                     formId={generateKeysFormId}
                     title="Something went wrong"

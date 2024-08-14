@@ -3,7 +3,7 @@ import { render, screen, userEvent } from "../test/testUtils";
 import FetchError from "./FetchError";
 import { TRY_AGAIN_BUTTON_TEXT } from "./constants";
 
-describe("FetchError", () => {
+describe("<FetchError />", () => {
   it("shows the description, title, and refetches on click", async () => {
     const description = "testDescription";
     const title = "testTitle";
