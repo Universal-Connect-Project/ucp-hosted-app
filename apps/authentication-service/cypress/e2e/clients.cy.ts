@@ -13,7 +13,7 @@ describe("Client API", () => {
   const getTokens = () => {
     cy.window()
       .its("localStorage")
-      .invoke("getItem", "jwt-client")
+      .invoke("getItem", "jwt-with-key-roles")
       .then((token: string) => {
         if (token) {
           accessToken = token;
@@ -21,7 +21,7 @@ describe("Client API", () => {
       });
     cy.window()
       .its("localStorage")
-      .invoke("getItem", "jwt-client-basic")
+      .invoke("getItem", "jwt-without-key-roles")
       .then((token: string) => {
         if (token) {
           accessTokenBasic = token;
@@ -32,8 +32,8 @@ describe("Client API", () => {
   before(() => {
     getTokens();
     if (!accessToken) {
-      cy.loginClientAuth0();
-      cy.loginClientAuth0(false);
+      cy.loginWithKeyRoles();
+      cy.loginWithoutKeyRoles();
     }
     getTokens();
   });

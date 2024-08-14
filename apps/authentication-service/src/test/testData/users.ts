@@ -122,8 +122,7 @@ export const getTestToken = (
     },
     algorithm: "RS256" as Algorithm,
     audience: [
-      doAddWidgetRolePermissions ? envs.AUTH0_CLIENT_AUDIENCE : "",
-      doAddWidgetRolePermissions ? "" : `https://${envs.AUTH0_DOMAIN}/api/v2/`,
+      envs.AUTH0_CLIENT_AUDIENCE,
       `https://${envs.AUTH0_DOMAIN}/userinfo`,
     ],
     issuer: `https://${envs.AUTH0_DOMAIN}/`,
