@@ -13,10 +13,10 @@ export const init = (path = ".env") => {
 
   if (
     !(
-      envs?.PORT &&
       envs?.ENV &&
       envs?.CLIENT_ORIGIN_URL &&
-      envs?.AUTH0_AUDIENCE &&
+      envs?.AUTH0_M2M_AUDIENCE &&
+      envs?.AUTH0_CLIENT_AUDIENCE &&
       envs?.AUTH0_DOMAIN &&
       envs?.AUTH0_CLIENT_ID &&
       envs?.AUTH0_CLIENT_SECRET
@@ -28,10 +28,10 @@ export const init = (path = ".env") => {
   }
 
   return {
-    PORT: envs?.PORT,
     ENV: envs?.ENV,
     CLIENT_ORIGIN_URL: envs?.CLIENT_ORIGIN_URL,
-    AUTH0_AUDIENCE: envs?.AUTH0_AUDIENCE,
+    AUTH0_M2M_AUDIENCE: envs?.AUTH0_M2M_AUDIENCE,
+    AUTH0_CLIENT_AUDIENCE: envs?.AUTH0_CLIENT_AUDIENCE,
     AUTH0_DOMAIN: envs?.AUTH0_DOMAIN,
     AUTH0_CLIENT_ID: envs?.AUTH0_CLIENT_ID,
     AUTH0_CLIENT_SECRET: envs?.AUTH0_CLIENT_SECRET,

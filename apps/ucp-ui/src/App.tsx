@@ -8,16 +8,23 @@ import "@fontsource/work-sans/500.css";
 import "@fontsource/work-sans/700.css";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material";
 import { muiTheme } from "./theme";
+import {
+  DefaultPermissions,
+  WidgetHostPermissions,
+} from "./shared/constants/roles";
 
 const App: React.FC = () => {
+  const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`;
+
   return (
     <CssVarsProvider theme={muiTheme}>
       <Auth0Provider
         domain="dev-d23wau8o0uc5hw8n.us.auth0.com"
         clientId="osS8CuafkPsJlfz5mfKRgYH942Pmwpxd"
         authorizationParams={{
-          audience: "https://dev-d23wau8o0uc5hw8n.us.auth0.com/api/v2/",
+          audience: "ucp-hosted-apps",
           redirect_uri: window.location.origin,
+          scope,
         }}
       >
         <Routes />

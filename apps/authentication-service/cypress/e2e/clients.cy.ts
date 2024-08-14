@@ -1,20 +1,30 @@
 import { Keys } from "@/resources/clients/clientsModel";
+import { PORT } from "@/shared/consts";
 
 const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
 
 describe("Client API", () => {
-  const PORT: number = (Cypress.env("PORT") as number) || 8089;
   let accessToken: string;
+  let accessTokenBasic: string;
   let newClientId: string;
   let newClientSecret: string;
+  const keysUrl = `http://localhost:${PORT}/v1/clients/keys`;
 
   const getTokens = () => {
     cy.window()
       .its("localStorage")
-      .invoke("getItem", "jwt-client")
+      .invoke("getItem", "jwt-with-key-roles")
       .then((token: string) => {
         if (token) {
           accessToken = token;
+        }
+      });
+    cy.window()
+      .its("localStorage")
+      .invoke("getItem", "jwt-without-key-roles")
+      .then((token: string) => {
+        if (token) {
+          accessTokenBasic = token;
         }
       });
   };
@@ -22,7 +32,8 @@ describe("Client API", () => {
   before(() => {
     getTokens();
     if (!accessToken) {
-      cy.loginClientAuth0();
+      cy.loginWithKeyRoles();
+      cy.loginWithoutKeyRoles();
     }
     getTokens();
   });
@@ -31,31 +42,21 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
       },
     }).then((response: Cypress.Response<{ body: Keys }>) => {
       expect(response.status).to.eq(401);
-      expect(response.body)
-        .property("message")
-        .to.eq("Requires Authentication");
+      expect(response.body).property("message").to.eq("Unauthorized");
     });
   });
 
   it("clears the client_id from user metadata, tries creating a client without access token, creates a client, fails if another client request is made, gets the newly created client, and deletes the client", () => {
-    // 0. Remove the client_id from the user??? Maybe?
-    // 1. Delete the Client
-    // 2. Create a new Client
-    // 3. Get the client
-    // 4. Try to create again, make sure error is returned
-    // 5. Delete the Client
-    // 6. Get the client, to make sure it's deleted
-
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -63,7 +64,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -81,7 +82,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -99,7 +100,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -111,6 +112,8 @@ describe("Client API", () => {
       expect(response.status).to.eq(400);
       expect(response.body).property("message").to.eq("User already has keys");
     });
+
+    cy.wait(2000); // Because sometimes we hit the shortened rate limit
 
     cy.request({
       method: "POST",
@@ -127,7 +130,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -138,7 +141,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -159,6 +162,62 @@ describe("Client API", () => {
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(404);
       expect(response.body).property("message").to.eq("Keys not found");
+    });
+  });
+
+  it("responds with a 403 when CREATING api keys without the proper permissions", () => {
+    cy.request({
+      failOnStatusCode: false,
+      method: "POST",
+      url: keysUrl,
+      headers: {
+        ContentType: "application/json",
+        Authorization: `Bearer ${accessTokenBasic}`,
+      },
+    }).then((response: Cypress.Response<{ body: Keys }>) => {
+      expect(response.status).to.eq(403);
+    });
+  });
+
+  it("responds with a 403 when GETTING api keys without the proper permissions", () => {
+    cy.request({
+      failOnStatusCode: false,
+      method: "GET",
+      url: keysUrl,
+      headers: {
+        ContentType: "application/json",
+        Authorization: `Bearer ${accessTokenBasic}`,
+      },
+    }).then((response: Cypress.Response<{ body: Keys }>) => {
+      expect(response.status).to.eq(403);
+    });
+  });
+
+  it("responds with a 403 when DELETING api keys without the proper permissions", () => {
+    cy.request({
+      failOnStatusCode: false,
+      method: "DELETE",
+      url: keysUrl,
+      headers: {
+        ContentType: "application/json",
+        Authorization: `Bearer ${accessTokenBasic}`,
+      },
+    }).then((response: Cypress.Response<{ body: Keys }>) => {
+      expect(response.status).to.eq(403);
+    });
+  });
+
+  it("responds with a 403 when ROTATING api keys without the proper permissions", () => {
+    cy.request({
+      failOnStatusCode: false,
+      method: "POST",
+      url: `http://localhost:${PORT}/v1/clients/keys/rotate`,
+      headers: {
+        ContentType: "application/json",
+        Authorization: `Bearer ${accessTokenBasic}`,
+      },
+    }).then((response: Cypress.Response<{ body: Keys }>) => {
+      expect(response.status).to.eq(403);
     });
   });
 });

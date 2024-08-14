@@ -1,4 +1,4 @@
-name: Auth E2E (Service)
+name: Auth E2E
 
 on: pull_request
 
@@ -30,12 +30,12 @@ jobs:
           
           # Vars
           echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
-          echo PORT="8089" >> ${ENV_FILE_PATH}
           
           # Secrets (can't load these from another job, due to GH security features)
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
           echo E2E_CLIENT_SECRET=${{ secrets.E2E_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
-          echo E2E_PASSWORD=${{ secrets.E2E_PASSWORD }} >> ${ENV_FILE_PATH}
+          echo AUTH_PASSWORD_WITH_KEY_ROLES=${{ secrets.AUTH_PASSWORD_WITH_KEY_ROLES }} >> ${ENV_FILE_PATH}
+          echo AUTH_PASSWORD_WITHOUT_KEY_ROLES=${{ secrets.AUTH_PASSWORD_WITHOUT_KEY_ROLES }} >> ${ENV_FILE_PATH}
 
           cat ${ENV_FILE_PATH}
 
@@ -44,13 +44,18 @@ jobs:
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
-          wait-on: "http://localhost:${{ vars.PORT }}/ping"
+          wait-on: "http://localhost:8089/ping"
           spec: apps/authentication-service/cypress/e2e/**/!(rateLimiting.cy.ts)
+
+      - name: Kill server # In order to reset rate-limiting
+        run: kill $(lsof -t -i:8089)
 
       - name: Cypress run (Rate-limiting)
         uses: cypress-io/github-action@v6
         with:
           project: apps/authentication-service
+          start: npm run dev --workspace apps/authentication-service
+          wait-on: "http://localhost:8089/ping"
           spec: apps/authentication-service/cypress/e2e/**/rateLimiting.cy.ts
 
       - name: Upload screenshots

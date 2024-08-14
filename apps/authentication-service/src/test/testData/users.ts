@@ -1,4 +1,5 @@
 import envs from "@/config";
+import { DefaultPermissions, WidgetHostPermissions } from "@/shared/enums";
 import { sign, Algorithm, JwtPayload, SignOptions } from "jsonwebtoken";
 import { UserInfoResponse } from "auth0";
 import { User } from "@/shared/users/usersModel";
@@ -67,20 +68,10 @@ export const exampleUserAlreadyHasAClientError = {
 export const exampleUserAlreadyHasAClientResponseError =
   exampleUserAlreadyHasAClientError.error.message;
 
-export const mockReply = {
-  keys: [
-    {
-      alg: "RS256",
-      kty: "RSA",
-      use: "sig",
-      n: "lUSoj0fix14FWMlIeBQg3C-3ck6fl7sBa7GufQwK1zHgdi74emGmM4NTLOwVQbV8k4cqrYv9yQ-eE_Kc-kbFRrocAfdNprCjYWXFa_-xladlm4SWZ2ZrmWovCxQF_M8av6i_LBpeMSjcHkbT7hJm3hV3Jqic5bzsAgtucIxRb5B6e1FuBqj5-Q8yEm5vzWWGMFskMq5xY14j14EdMm8MXHK0G2EisQkupg1cXHzWMZVjKyvw9uLxb_hrSbxu56ue2HGJ14XnASxOm7lRDERP8sSrLUEP444IQQOY1z1kN9cbiCauO1BjhukfUBKuWIZ1yS0-zIxSHHQPaNTr1vlJ3w",
-      e: "AQAB",
-      kid: "0",
-    },
-  ],
-};
-
-export const getTestToken = (isExpired = false): string => {
+export const getTestToken = (
+  isExpired: boolean = false,
+  shouldAddKeyRoles: boolean = true,
+): string => {
   let token: string;
   const testKey =
     "-----BEGIN RSA PRIVATE KEY-----\n" +
@@ -113,8 +104,16 @@ export const getTestToken = (isExpired = false): string => {
 
   const payload: JwtPayload = {
     sub: exampleUserID,
-    scope: "openid profile email",
+    scope: shouldAddKeyRoles
+      ? `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`
+      : `${Object.values(DefaultPermissions).join(" ")}`,
+    azp: "osS8CuafkPsJlfz5mfKRgYH942Pmwpxd",
   };
+
+  if (shouldAddKeyRoles) {
+    payload["ucw/roles"] = ["WidgetHost"];
+    payload["permissions"] = Object.values(WidgetHostPermissions);
+  }
 
   const options: SignOptions = {
     header: {
@@ -123,8 +122,8 @@ export const getTestToken = (isExpired = false): string => {
     },
     algorithm: "RS256" as Algorithm,
     audience: [
-      `https://${envs.AUTH0_AUDIENCE}/api/v2/`,
-      `https://${envs.AUTH0_AUDIENCE}/userinfo`,
+      envs.AUTH0_CLIENT_AUDIENCE,
+      `https://${envs.AUTH0_DOMAIN}/userinfo`,
     ],
     issuer: `https://${envs.AUTH0_DOMAIN}/`,
   };
