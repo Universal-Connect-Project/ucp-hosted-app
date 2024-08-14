@@ -70,7 +70,7 @@ export const exampleUserAlreadyHasAClientResponseError =
 
 export const getTestToken = (
   isExpired: boolean = false,
-  doAddWidgetRolePermissions: boolean = true,
+  shouldAddKeyRoles: boolean = true,
 ): string => {
   let token: string;
   const testKey =
@@ -104,13 +104,13 @@ export const getTestToken = (
 
   const payload: JwtPayload = {
     sub: exampleUserID,
-    scope: doAddWidgetRolePermissions
+    scope: shouldAddKeyRoles
       ? `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`
       : `${Object.values(DefaultPermissions).join(" ")}`,
     azp: "osS8CuafkPsJlfz5mfKRgYH942Pmwpxd",
   };
 
-  if (doAddWidgetRolePermissions) {
+  if (shouldAddKeyRoles) {
     payload["ucw/roles"] = ["WidgetHost"];
     payload["permissions"] = Object.values(WidgetHostPermissions);
   }
