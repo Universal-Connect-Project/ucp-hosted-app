@@ -1,8 +1,7 @@
 import envs from "@/config";
+import { DefaultPermissions, WidgetHostPermissions } from "@/shared/enums";
 import { sign, Algorithm, JwtPayload, SignOptions } from "jsonwebtoken";
 import { UserInfoResponse } from "auth0";
-
-import { DefaultPermissions, WidgetHostPermissions } from "@repo/shared-utils";
 import { User } from "@/shared/users/usersModel";
 
 export const exampleUserID = "google-oauth2|0000000000000000000000000000000";
@@ -71,7 +70,7 @@ export const exampleUserAlreadyHasAClientResponseError =
 
 export const getTestToken = (
   isExpired: boolean = false,
-  doAddWidgetRolePermissions: boolean = true,
+  shouldAddKeyRoles: boolean = true,
 ): string => {
   let token: string;
   const testKey =
@@ -105,13 +104,13 @@ export const getTestToken = (
 
   const payload: JwtPayload = {
     sub: exampleUserID,
-    scope: doAddWidgetRolePermissions
+    scope: shouldAddKeyRoles
       ? `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`
       : `${Object.values(DefaultPermissions).join(" ")}`,
     azp: "osS8CuafkPsJlfz5mfKRgYH942Pmwpxd",
   };
 
-  if (doAddWidgetRolePermissions) {
+  if (shouldAddKeyRoles) {
     payload["ucw/roles"] = ["WidgetHost"];
     payload["permissions"] = Object.values(WidgetHostPermissions);
   }
@@ -123,8 +122,7 @@ export const getTestToken = (
     },
     algorithm: "RS256" as Algorithm,
     audience: [
-      doAddWidgetRolePermissions ? envs.AUTH0_CLIENT_AUDIENCE : "",
-      doAddWidgetRolePermissions ? "" : `https://${envs.AUTH0_DOMAIN}/api/v2/`,
+      envs.AUTH0_CLIENT_AUDIENCE,
       `https://${envs.AUTH0_DOMAIN}/userinfo`,
     ],
     issuer: `https://${envs.AUTH0_DOMAIN}/`,

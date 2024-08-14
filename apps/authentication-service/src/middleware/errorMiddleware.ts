@@ -12,13 +12,10 @@ export const errorHandler = (
 ) => {
   let message: string = "Internal Server Error";
 
-  if (error instanceof InvalidTokenError) {
-    message = error.message;
-    response.status(error.status).json({ message });
-    return;
-  }
-
-  if (error instanceof UnauthorizedError) {
+  if (
+    error instanceof InvalidTokenError ||
+    error instanceof UnauthorizedError
+  ) {
     message = error.message;
     response.status(error.status).json({ message });
     return;

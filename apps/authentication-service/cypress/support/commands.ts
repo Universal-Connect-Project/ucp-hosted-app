@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
-import { DefaultPermissions, WidgetHostPermissions } from "@repo/shared-utils";
+import { DefaultPermissions, WidgetHostPermissions } from "@/shared/enums";
 import { JwtPayload } from "jsonwebtoken";
 
 // ***********************************************
@@ -40,18 +40,21 @@ import { JwtPayload } from "jsonwebtoken";
 //   }
 // }
 
-Cypress.Commands.add("loginClientAuth0", (doUseRoleUser: boolean = true) => {
-  const username = Cypress.env("E2E_USERNAME") as string;
-  const password = Cypress.env("E2E_PASSWORD") as string;
-  const usernameBasic = Cypress.env("E2E_USERNAME_BASIC") as string;
-  const passwordBasic = Cypress.env("E2E_PASSWORD_BASIC") as string;
+type LoginArgs = {
+  usernameEnvKey: string;
+  passwordEnvKey: string;
+  scope: string;
+  storageKey: string;
+};
+
+const login = (args: LoginArgs) => {
+  const { usernameEnvKey, passwordEnvKey, scope, storageKey } = args;
+
+  const username = Cypress.env(usernameEnvKey) as string;
+  const password = Cypress.env(passwordEnvKey) as string;
   const client_id = Cypress.env("E2E_CLIENT_ID") as string;
   const client_secret = Cypress.env("E2E_CLIENT_SECRET") as string;
   const audience = Cypress.env("AUTH0_CLIENT_AUDIENCE") as string;
-
-  const scope = doUseRoleUser
-    ? `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`
-    : `${Object.values(DefaultPermissions).join(" ")}`;
 
   cy.request({
     method: "POST",
@@ -59,20 +62,37 @@ Cypress.Commands.add("loginClientAuth0", (doUseRoleUser: boolean = true) => {
     body: {
       grant_type: "password",
       scope,
-      username: doUseRoleUser ? username : usernameBasic,
-      password: doUseRoleUser ? password : passwordBasic,
+      username,
+      password,
       audience,
       client_id,
       client_secret,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
-    cy.log("TOKEN:", response.body.access_token);
     cy.window().then((win: Cypress.AUTWindow) =>
       win.localStorage.setItem(
-        doUseRoleUser ? "jwt-client" : "jwt-client-basic",
+        storageKey,
         response.body.access_token as string,
       ),
     );
+  });
+};
+
+Cypress.Commands.add("loginWithKeyRoles", () => {
+  login({
+    usernameEnvKey: "AUTH_USERNAME_WITH_KEY_ROLES",
+    passwordEnvKey: "AUTH_PASSWORD_WITH_KEY_ROLES",
+    scope: `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`,
+    storageKey: "jwt-with-key-roles",
+  });
+});
+
+Cypress.Commands.add("loginWithoutKeyRoles", () => {
+  login({
+    usernameEnvKey: "AUTH_USERNAME_WITHOUT_KEY_ROLES",
+    passwordEnvKey: "AUTH_PASSWORD_WITHOUT_KEY_ROLES",
+    scope: `${Object.values(DefaultPermissions).join(" ")}`,
+    storageKey: "jwt-without-key-roles",
   });
 });
 
@@ -80,7 +100,8 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
-      loginClientAuth0(doAddRole?: boolean): void;
+      loginWithKeyRoles(): void;
+      loginWithoutKeyRoles(): void;
     }
   }
 }

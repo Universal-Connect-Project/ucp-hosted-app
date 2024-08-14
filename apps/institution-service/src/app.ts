@@ -7,6 +7,7 @@ import { PORT } from "./shared/const";
 
 const app = express();
 
+app.set("etag", "strong");
 app.use(express.json()); // http://expressjs.com/en/api.html#express.json
 app.use(express.urlencoded({ extended: false })); // http://expressjs.com/en/5x/api.html#express.urlencoded
 app.use(logger("dev"));

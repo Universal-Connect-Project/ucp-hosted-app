@@ -8,7 +8,7 @@ import {
   Model,
   NonAttribute,
 } from "sequelize";
-import sequelize from "../config/database";
+import sequelize from "../database";
 import { Provider } from "./provider";
 
 export class Institution extends Model<

@@ -8,11 +8,12 @@ describe("Client API", () => {
   let accessTokenBasic: string;
   let newClientId: string;
   let newClientSecret: string;
+  const keysUrl = `http://localhost:${PORT}/v1/clients/keys`;
 
   const getTokens = () => {
     cy.window()
       .its("localStorage")
-      .invoke("getItem", "jwt-client")
+      .invoke("getItem", "jwt-with-key-roles")
       .then((token: string) => {
         if (token) {
           accessToken = token;
@@ -20,7 +21,7 @@ describe("Client API", () => {
       });
     cy.window()
       .its("localStorage")
-      .invoke("getItem", "jwt-client-basic")
+      .invoke("getItem", "jwt-without-key-roles")
       .then((token: string) => {
         if (token) {
           accessTokenBasic = token;
@@ -31,8 +32,8 @@ describe("Client API", () => {
   before(() => {
     getTokens();
     if (!accessToken) {
-      cy.loginClientAuth0();
-      cy.loginClientAuth0(false);
+      cy.loginWithKeyRoles();
+      cy.loginWithoutKeyRoles();
     }
     getTokens();
   });
@@ -41,7 +42,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
       },
@@ -55,7 +56,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -63,7 +64,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -81,7 +82,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -99,7 +100,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -111,6 +112,8 @@ describe("Client API", () => {
       expect(response.status).to.eq(400);
       expect(response.body).property("message").to.eq("User already has keys");
     });
+
+    cy.wait(2000); // Because sometimes we hit the shortened rate limit
 
     cy.request({
       method: "POST",
@@ -127,7 +130,7 @@ describe("Client API", () => {
 
     cy.request({
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -138,7 +141,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -162,11 +165,11 @@ describe("Client API", () => {
     });
   });
 
-  it("tries CREATING a client with a token that does not have the proper permissions", () => {
+  it("responds with a 403 when CREATING api keys without the proper permissions", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
@@ -176,11 +179,11 @@ describe("Client API", () => {
     });
   });
 
-  it("tries GETTING a client with a token that does not have the proper permissions", () => {
+  it("responds with a 403 when GETTING api keys without the proper permissions", () => {
     cy.request({
       failOnStatusCode: false,
       method: "GET",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
@@ -190,11 +193,11 @@ describe("Client API", () => {
     });
   });
 
-  it("tries DELETING a client with a token that does not have the proper permissions", () => {
+  it("responds with a 403 when DELETING api keys without the proper permissions", () => {
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",
-      url: `http://localhost:${PORT}/v1/clients/keys`,
+      url: keysUrl,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
@@ -204,7 +207,7 @@ describe("Client API", () => {
     });
   });
 
-  it("tries ROTATING a client with a token that does not have the proper permissions", () => {
+  it("responds with a 403 when ROTATING api keys without the proper permissions", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",

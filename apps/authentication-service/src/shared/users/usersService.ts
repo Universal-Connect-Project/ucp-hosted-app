@@ -1,4 +1,4 @@
-import { DefaultPermissions } from "@repo/shared-utils";
+import { DefaultPermissions } from "@/shared/enums";
 import { JSONApiResponse, UserInfoClient, UserInfoResponse } from "auth0";
 
 import envs from "@/config";

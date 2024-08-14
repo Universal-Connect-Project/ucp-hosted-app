@@ -8,10 +8,13 @@ import "@fontsource/work-sans/500.css";
 import "@fontsource/work-sans/700.css";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material";
 import { muiTheme } from "./theme";
-import { DefaultPermissions, WidgetHostPermissions } from "@repo/shared-utils";
+import {
+  DefaultPermissions,
+  WidgetHostPermissions,
+} from "./shared/constants/roles";
 
 const App: React.FC = () => {
-  const scope = `${Object.values(DefaultPermissions as object).join(" ")} ${Object.values(WidgetHostPermissions as object).join(" ")}`;
+  const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`;
 
   return (
     <CssVarsProvider theme={muiTheme}>
