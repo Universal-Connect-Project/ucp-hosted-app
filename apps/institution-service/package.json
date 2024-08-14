@@ -12,13 +12,13 @@
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
     "db:reset": "npx sequelize-cli db:drop && npm run db:setup",
-    "db:load": "ts-node ./tasks/loadInstitutionsFromJson.ts",
+    "db:load": "ts-node ./src/tasks/loadInstitutionsFromJson.ts",
     "test:db:setup": "npm run test:db:create && npm run test:db:migrate && npm run test:db:seed",
     "test:db:create": "npx sequelize-cli db:create --env test",
     "test:db:migrate": "npx sequelize-cli db:migrate --env test",
     "test:db:seed": "npx sequelize-cli db:seed:all --env test",
     "test:db:reset": "npx sequelize-cli db:drop && npm run test:db:setup --env test",
-    "dev": "nodemon ./app.ts"
+    "dev": "nodemon ./src/app.ts"
   },
   "dependencies": {
     "express": "^4.19.2",

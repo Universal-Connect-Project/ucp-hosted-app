@@ -7,7 +7,7 @@ import {
   Model,
   NonAttribute,
 } from "sequelize";
-import sequelize from "../config/database";
+import sequelize from "../database";
 import { Institution } from "./institution";
 
 export enum supportedProviders {

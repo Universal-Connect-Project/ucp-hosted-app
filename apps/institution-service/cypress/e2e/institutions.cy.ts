@@ -1,4 +1,4 @@
-import { PORT } from "../../shared/const";
+import { PORT } from "../../src/shared/const";
 
 describe("Institution endpoints", () => {
   describe("/institutions/cacheList", () => {
