@@ -163,7 +163,7 @@ describe("Client API", () => {
     });
   });
 
-  it("tries CREATING a client with a token that does not have the proper permissions", () => {
+  it("responds with a 403 when CREATING api keys without the proper permissions", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
@@ -177,7 +177,7 @@ describe("Client API", () => {
     });
   });
 
-  it("tries GETTING a client with a token that does not have the proper permissions", () => {
+  it("responds with a 403 when GETTING api keys without the proper permissions", () => {
     cy.request({
       failOnStatusCode: false,
       method: "GET",
@@ -191,7 +191,7 @@ describe("Client API", () => {
     });
   });
 
-  it("tries DELETING a client with a token that does not have the proper permissions", () => {
+  it("responds with a 403 when DELETING api keys without the proper permissions", () => {
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",
@@ -205,7 +205,7 @@ describe("Client API", () => {
     });
   });
 
-  it("tries ROTATING a client with a token that does not have the proper permissions", () => {
+  it("responds with a 403 when ROTATING api keys without the proper permissions", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
