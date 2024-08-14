@@ -1,3 +1,4 @@
+import { DefaultPermissions } from "@/shared/enums";
 import { JSONApiResponse, UserInfoClient, UserInfoResponse } from "auth0";
 
 import envs from "@/config";
@@ -9,7 +10,7 @@ const authDomain = envs.AUTH0_DOMAIN;
 const userInfo: UserInfoClient = new UserInfoClient({
   domain: envs.AUTH0_DOMAIN,
   clientInfo: {
-    scopes: ["openid", "profile", "email", "offline_access"],
+    scopes: [Object.values(DefaultPermissions).join(" ")],
     name: envs.AUTH0_CLIENT_ID,
   },
 });

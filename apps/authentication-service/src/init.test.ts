@@ -61,7 +61,9 @@ describe("Express test", () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({ message: "Invalid Token" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Test InvalidTokenError",
+      });
     });
 
     it("tests errorHandler UnauthorizedError", () => {
@@ -83,7 +85,7 @@ describe("Express test", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Requires Authentication",
+        message: "Test UnauthorizedError",
       });
     });
   });
