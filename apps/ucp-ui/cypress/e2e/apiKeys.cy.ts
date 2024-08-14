@@ -1,7 +1,10 @@
 import {
-  API_KEYS_CARD_TITLE_TEXT,
+  API_KEYS_CLIENT_ID_LABEL_TEXT,
+  API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
   REQUEST_API_KEY_ACCESS_BUTTON_TEXT,
 } from "../../src/ApiKeys/constants";
+
+const deleteKeysUrl = `http://localhost:8089/v1/clients/keys`;
 
 describe("apiKeys", () => {
   it("renders the request api keys screen for a user without the widget role and without keys", () => {
@@ -10,10 +13,26 @@ describe("apiKeys", () => {
     cy.findByText(REQUEST_API_KEY_ACCESS_BUTTON_TEXT).should("exist");
   });
 
-  it("doesnt render the request api keys screen for a user with the widget role", () => {
-    cy.loginWithWidgetRole();
+  describe("generate api keys", () => {
+    afterEach(() => {
+      cy.getAccessToken().then((token) =>
+        cy.request({
+          failOnStatusCode: false,
+          method: "DELETE",
+          url: deleteKeysUrl,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+      );
+    });
 
-    cy.findByText(API_KEYS_CARD_TITLE_TEXT).should("exist");
-    cy.findByText(REQUEST_API_KEY_ACCESS_BUTTON_TEXT).should("not.exist");
+    it("generates an api key for a user with the widget role", () => {
+      cy.loginWithWidgetRole();
+
+      cy.findByText(API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT).click();
+
+      cy.findByLabelText(API_KEYS_CLIENT_ID_LABEL_TEXT).should("exist");
+    });
   });
 });

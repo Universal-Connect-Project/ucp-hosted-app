@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect } from "react";
 import styles from "./authenticationWrapper.module.css";
 import { useAppDispatch, useAppSelector } from "./shared/utils/redux";
 import { getAccessToken, setAccessToken } from "./shared/reducers/token";
+import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "./shared/constants/authentication";
 
 const AuthenticationWrapper = ({ children }: { children: ReactNode }) => {
   const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
@@ -18,6 +19,8 @@ const AuthenticationWrapper = ({ children }: { children: ReactNode }) => {
         const token = await getAccessTokenSilently();
 
         dispatch(setAccessToken(token));
+
+        window.localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, token);
       };
 
       if (isAuthenticated) {

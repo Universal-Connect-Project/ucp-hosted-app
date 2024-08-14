@@ -1,5 +1,6 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
+import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "../../src/shared/constants/authentication";
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -67,10 +68,15 @@ Cypress.Commands.add("loginWithoutWidgetRole", () =>
   ),
 );
 
+Cypress.Commands.add("getAccessToken", () =>
+  cy.wrap(localStorage).invoke("getItem", ACCESS_TOKEN_LOCAL_STORAGE_KEY),
+);
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
+      getAccessToken(): Chainable<string>;
       loginWithWidgetRole(): Chainable<void>;
       loginWithoutWidgetRole(): Chainable<void>;
     }

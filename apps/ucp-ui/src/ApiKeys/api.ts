@@ -1,7 +1,10 @@
 import { api, TagTypes } from "../baseApi";
 import { HttpMethods } from "../shared/constants/http";
 
-interface ApiKeys {}
+interface ApiKeys {
+  clientId: string;
+  clientSecret: string;
+}
 
 const AUTHENTICATION_SERVICE_BASE_URL = `http://localhost:8089`;
 

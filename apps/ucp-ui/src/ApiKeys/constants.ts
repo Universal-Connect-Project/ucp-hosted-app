@@ -9,3 +9,7 @@ export const API_KEYS_REQUEST_ACCESS_TITLE_TEXT =
 
 export const API_KEY_TOOLTIP_TEXT =
   "To enable communication with UCP services, you must configure these API keys in your Universal Connect Widget.";
+
+export const API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT = "GENERATE API KEYS";
+
+export const API_KEYS_CLIENT_ID_LABEL_TEXT = "Client ID";

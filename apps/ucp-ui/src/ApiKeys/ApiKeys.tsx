@@ -12,6 +12,7 @@ import {
   Divider,
   IconButton,
   Stack,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -19,6 +20,8 @@ import {
   API_KEY_TOOLTIP_TEST_ID,
   API_KEY_TOOLTIP_TEXT,
   API_KEYS_CARD_TITLE_TEXT,
+  API_KEYS_CLIENT_ID_LABEL_TEXT,
+  API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
 import { useCreateApiKeysMutation, useGetApiKeysQuery } from "./api";
@@ -41,6 +44,7 @@ const ApiKeys = () => {
   ] = useCreateApiKeysMutation();
 
   const {
+    data: keysData,
     error: apiKeysError,
     isError: isGetApiKeysError,
     // isLoading: isGetApiKeysLoading,
@@ -55,6 +59,10 @@ const ApiKeys = () => {
   const shouldShowGetApiKeysError = isGetApiKeysError && !isUserMissingApiKeys;
 
   const canUserGenerateApiKeys = isUserMissingApiKeys && hasApiKeyAccess;
+
+  const hasKeys = !!keysData;
+
+  const { clientId } = keysData || {};
 
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
@@ -97,6 +105,18 @@ const ApiKeys = () => {
             />
           </CardContent>
         )}
+        {hasKeys && (
+          <CardContent>
+            <TextField
+              InputProps={{
+                readOnly: true,
+              }}
+              label={API_KEYS_CLIENT_ID_LABEL_TEXT}
+              type="password"
+              value={clientId}
+            />
+          </CardContent>
+        )}
         {canUserGenerateApiKeys && (
           <>
             <CardContent>
@@ -133,7 +153,7 @@ const ApiKeys = () => {
                   type="submit"
                   variant="contained"
                 >
-                  GENERATE API KEYS
+                  {API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT}
                 </LoadingButton>
               </form>
             </CardActions>
