@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { InfoOutlined, MailOutline } from "@mui/icons-material";
 import { useAuth0 } from "@auth0/auth0-react";
 import { UserRoles } from "../shared/constants/roles";
+import { LoadingButton } from "@mui/lab";
 import {
   Button,
   Card,
@@ -24,9 +25,12 @@ import {
   REQUEST_API_KEY_ACCESS_BUTTON_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
-import { useGetApiKeysQuery } from "./api";
+import { useCreateApiKeysMutation, useGetApiKeysQuery } from "./api";
+import FormSubmissionErrorAlert from "../shared/components/FormSubmissionErrorAlert";
 
 const newLine = "%0D%0A";
+
+const generateKeysFormId = "generateKeys";
 
 const ApiKeys = () => {
   const { user } = useAuth0();
@@ -34,6 +38,11 @@ const ApiKeys = () => {
   const userRoles = user?.["ucw/roles"] as Array<string>;
 
   const hasApiKeyAccess = userRoles?.includes(UserRoles.WidgetHost);
+
+  const [
+    createApiKeys,
+    { isError: isCreateApiKeysError, isLoading: isCreateApiKeysLoading },
+  ] = useCreateApiKeysMutation();
 
   const {
     //data,
@@ -95,13 +104,23 @@ const ApiKeys = () => {
             </Stack>
           )}
           {canUserGenerateApiKeys && (
-            <Stack spacing={0.5}>
-              <Typography variant="h5">
-                Your API keys are ready to be generated
-              </Typography>
-              <Typography className={styles.secondaryColor} variant="body1">
-                Generate your Client ID and Client Secret below.
-              </Typography>
+            <Stack spacing={1.5}>
+              <Stack spacing={0.5}>
+                <Typography variant="h5">
+                  Your API keys are ready to be generated
+                </Typography>
+                <Typography className={styles.secondaryColor} variant="body1">
+                  Generate your Client ID and Client Secret below.
+                </Typography>
+              </Stack>
+              {isCreateApiKeysError && (
+                <FormSubmissionErrorAlert
+                  description="We couldn’t load your API keys. Please try again in a few
+                  moments. If the problem persists, contact us for support."
+                  formId={generateKeysFormId}
+                  title="Something went wrong"
+                />
+              )}
             </Stack>
           )}
         </CardContent>
@@ -117,9 +136,22 @@ const ApiKeys = () => {
             </Button>
           )}
           {canUserGenerateApiKeys && (
-            <Button size="large" variant="contained">
-              GENERATE API KEYS
-            </Button>
+            <form
+              id={generateKeysFormId}
+              onSubmit={(event) => {
+                event.preventDefault();
+                void createApiKeys();
+              }}
+            >
+              <LoadingButton
+                loading={isCreateApiKeysLoading}
+                size="large"
+                type="submit"
+                variant="contained"
+              >
+                GENERATE API KEYS
+              </LoadingButton>
+            </form>
           )}
         </CardActions>
       </Card>
