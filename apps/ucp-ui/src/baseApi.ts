@@ -18,5 +18,5 @@ export const api = createApi({
   }),
   endpoints: () => ({}),
   reducerPath: "api",
-  tagTypes: Object.keys(TagTypes),
+  tagTypes: Object.values(TagTypes),
 });

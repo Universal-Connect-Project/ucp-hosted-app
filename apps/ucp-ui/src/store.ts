@@ -3,14 +3,17 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { api } from "./baseApi";
 import { tokenSlice } from "./shared/reducers/token";
 
-export const store = configureStore({
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
-  reducer: {
-    [api.reducerPath]: api.reducer,
-    [tokenSlice.reducerPath]: tokenSlice.reducer,
-  },
-});
+export const createStore = () =>
+  configureStore({
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(api.middleware),
+    reducer: {
+      [api.reducerPath]: api.reducer,
+      [tokenSlice.reducerPath]: tokenSlice.reducer,
+    },
+  });
+
+export const store = createStore();
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
