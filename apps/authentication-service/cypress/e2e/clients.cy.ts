@@ -113,6 +113,8 @@ describe("Client API", () => {
       expect(response.body).property("message").to.eq("User already has keys");
     });
 
+    cy.wait(2000); // Because sometimes we hit the shortened rate limit
+
     cy.request({
       method: "POST",
       url: `http://localhost:${PORT}/v1/clients/keys/rotate`,

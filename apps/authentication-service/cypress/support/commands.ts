@@ -40,12 +40,16 @@ import { JwtPayload } from "jsonwebtoken";
 //   }
 // }
 
-const login = (
-  usernameEnvKey: string,
-  passwordEnvKey: string,
-  scope: string,
-  storageKey: string,
-) => {
+type LoginArgs = {
+  usernameEnvKey: string;
+  passwordEnvKey: string;
+  scope: string;
+  storageKey: string;
+};
+
+const login = (args: LoginArgs) => {
+  const { usernameEnvKey, passwordEnvKey, scope, storageKey } = args;
+
   const username = Cypress.env(usernameEnvKey) as string;
   const password = Cypress.env(passwordEnvKey) as string;
   const client_id = Cypress.env("E2E_CLIENT_ID") as string;
@@ -75,21 +79,21 @@ const login = (
 };
 
 Cypress.Commands.add("loginWithKeyRoles", () => {
-  login(
-    "AUTH_USERNAME_WITH_KEY_ROLES",
-    "AUTH_PASSWORD_WITH_KEY_ROLES",
-    `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`,
-    "jwt-with-key-roles",
-  );
+  login({
+    usernameEnvKey: "AUTH_USERNAME_WITH_KEY_ROLES",
+    passwordEnvKey: "AUTH_PASSWORD_WITH_KEY_ROLES",
+    scope: `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`,
+    storageKey: "jwt-with-key-roles",
+  });
 });
 
 Cypress.Commands.add("loginWithoutKeyRoles", () => {
-  login(
-    "AUTH_USERNAME_WITHOUT_KEY_ROLES",
-    "AUTH_PASSWORD_WITHOUT_KEY_ROLES",
-    `${Object.values(DefaultPermissions).join(" ")}`,
-    "jwt-without-key-roles",
-  );
+  login({
+    usernameEnvKey: "AUTH_USERNAME_WITHOUT_KEY_ROLES",
+    passwordEnvKey: "AUTH_PASSWORD_WITHOUT_KEY_ROLES",
+    scope: `${Object.values(DefaultPermissions).join(" ")}`,
+    storageKey: "jwt-without-key-roles",
+  });
 });
 
 declare global {
