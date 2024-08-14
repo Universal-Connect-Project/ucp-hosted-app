@@ -23,7 +23,9 @@ import {
   API_KEYS_CARD_TITLE_TEXT,
   API_KEYS_CLIENT_ID_LABEL_TEXT,
   API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
+  API_KEYS_GENERATE_API_KEYS_FAILURE_TEXT,
   API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT,
+  API_KEYS_GET_KEYS_FAILURE_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
 import { useCreateApiKeysMutation, useGetApiKeysQuery } from "./api";
@@ -51,6 +53,7 @@ const ApiKeys = () => {
 
   const createApiKeys = () => {
     mutateCreateApiKeys()
+      .unwrap()
       .then(() => {
         handleOpenSuccessSnackbarWithMessage(
           API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT,
@@ -116,7 +119,7 @@ const ApiKeys = () => {
         {shouldShowGetApiKeysError && (
           <CardContent>
             <FetchError
-              description="We couldn’t load your API keys. Please try again in a few moments. If the problem persists, contact us for support."
+              description={API_KEYS_GET_KEYS_FAILURE_TEXT}
               refetch={() => void refetchApiKeys()}
               title="Something went wrong"
             />
@@ -148,8 +151,7 @@ const ApiKeys = () => {
                 </Stack>
                 {isCreateApiKeysError && (
                   <FormSubmissionErrorAlert
-                    description="We couldn’t generate your API keys. Please try again in a few
-                  moments. If the problem persists, contact us for support."
+                    description={API_KEYS_GENERATE_API_KEYS_FAILURE_TEXT}
                     formId={generateKeysFormId}
                     title="Something went wrong"
                   />
