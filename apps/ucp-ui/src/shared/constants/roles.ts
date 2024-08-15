@@ -3,6 +3,7 @@ export enum UserRoles {
 }
 
 export enum DefaultPermissions {
+  EMAIL = "email",
   OPENID = "openid",
   USERINFO = "userinfo",
 }

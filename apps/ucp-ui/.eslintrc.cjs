@@ -21,6 +21,7 @@ module.exports = {
     "cypress.config.ts",
     "jest.config.cjs",
     "jestSetup.js",
+    "jest.polyfills.js",
   ],
   overrides: [
     {

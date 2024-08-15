@@ -1,43 +1,64 @@
 import React, { useState } from "react";
-import { InfoOutlined, MailOutline } from "@mui/icons-material";
+import { InfoOutlined } from "@mui/icons-material";
 import { useAuth0 } from "@auth0/auth0-react";
 import { UserRoles } from "../shared/constants/roles";
 import {
-  Button,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
   ClickAwayListener,
   Divider,
   IconButton,
   Stack,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { SUPPORT_EMAIL } from "../shared/constants/support";
 import {
   API_KEY_TOOLTIP_TEST_ID,
   API_KEY_TOOLTIP_TEXT,
   API_KEYS_CARD_TITLE_TEXT,
-  API_KEYS_REQUEST_ACCESS_TITLE_TEXT,
-  REQUEST_API_KEY_ACCESS_BUTTON_TEXT,
+  API_KEYS_CLIENT_ID_LABEL_TEXT,
+  API_KEYS_GET_KEYS_FAILURE_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
-
-const newLine = "%0D%0A";
+import { useGetApiKeysQuery } from "./api";
+import RequestAPIKeyAccess from "./RequestAPIKeyAccess";
+import FetchError from "../shared/components/FetchError";
+import GenerateKeys from "./GenerateKeys";
 
 const ApiKeys = () => {
   const { user } = useAuth0();
+
+  const userRoles = user?.["ucw/roles"] as Array<string>;
+
+  const hasApiKeyAccess = userRoles?.includes(UserRoles.WidgetHost);
+
+  const {
+    data: keysData,
+    error: apiKeysError,
+    isError: isGetApiKeysError,
+    // isLoading: isGetApiKeysLoading,
+    refetch: refetchApiKeys,
+  } = useGetApiKeysQuery(undefined, {
+    skip: !hasApiKeyAccess,
+  });
+
+  const isUserMissingApiKeys =
+    isGetApiKeysError && (apiKeysError as number) === 404;
+
+  const shouldShowGetApiKeysError = isGetApiKeysError && !isUserMissingApiKeys;
+
+  const canUserGenerateApiKeys = isUserMissingApiKeys && hasApiKeyAccess;
+
+  const hasKeys = !!keysData;
+
+  const { clientId } = keysData || {};
 
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const handleOpenTooltip = () => setIsTooltipOpen(true);
   const handleCloseTooltip = () => setIsTooltipOpen(false);
-
-  const userRoles = user?.["ucw/roles"] as Array<string>;
-
-  const hasApiKeyAccess = userRoles?.includes(UserRoles.WidgetHost);
 
   return (
     <Stack className={styles.pageContainer} spacing={3.5}>
@@ -65,34 +86,29 @@ const ApiKeys = () => {
           }}
         />
         <Divider />
-        <CardContent>
-          {!hasApiKeyAccess && (
-            <Stack spacing={0.5}>
-              <Typography variant="h5">
-                {API_KEYS_REQUEST_ACCESS_TITLE_TEXT}
-              </Typography>
-              <Typography className={styles.secondaryColor} variant="body1">
-                To access UCP services, you will need API keys. To request your
-                keys, please email us at {SUPPORT_EMAIL}. We will process your
-                request promptly. Once your access is approved, you can return
-                here to generate your keys. If you have already submitted a
-                request, please check back later.
-              </Typography>
-            </Stack>
-          )}
-        </CardContent>
-        <CardActions className={styles.cardActions}>
-          {!hasApiKeyAccess ? (
-            <Button
-              href={`mailto:${SUPPORT_EMAIL}?subject=API Keys Request for ${user?.email}&body=${newLine}${newLine}----------Do not edit anything below this line----------${newLine}User Email: ${user?.email}`}
-              size="large"
-              startIcon={<MailOutline />}
-              variant="contained"
-            >
-              {REQUEST_API_KEY_ACCESS_BUTTON_TEXT}
-            </Button>
-          ) : null}
-        </CardActions>
+        {!hasApiKeyAccess && <RequestAPIKeyAccess />}
+        {canUserGenerateApiKeys && <GenerateKeys />}
+        {shouldShowGetApiKeysError && (
+          <CardContent>
+            <FetchError
+              description={API_KEYS_GET_KEYS_FAILURE_TEXT}
+              refetch={() => void refetchApiKeys()}
+              title="Something went wrong"
+            />
+          </CardContent>
+        )}
+        {hasKeys && (
+          <CardContent>
+            <TextField
+              InputProps={{
+                readOnly: true,
+              }}
+              label={API_KEYS_CLIENT_ID_LABEL_TEXT}
+              type="password"
+              value={clientId}
+            />
+          </CardContent>
+        )}
       </Card>
     </Stack>
   );
