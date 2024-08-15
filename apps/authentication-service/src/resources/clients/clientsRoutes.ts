@@ -17,12 +17,7 @@ export const clientsRoutes = (app: Application): void => {
 
   clientsRouterV1.post(
     "/keys",
-    [
-      validateAccessToken,
-      requiredScopes(
-        (WidgetHostPermissions as Record<string, string>).CREATE_KEYS,
-      ),
-    ],
+    [validateAccessToken, requiredScopes(WidgetHostPermissions.CREATE_KEYS)],
     clientsCreate as RequestHandler,
   );
   clientsRouterV1.get(
