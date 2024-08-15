@@ -1,0 +1,1 @@
+export const TRY_AGAIN_BUTTON_TEXT = "TRY AGAIN";

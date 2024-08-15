@@ -1,0 +1,5 @@
+.dontWrapAlertAction {
+  :global(.MuiAlert-action) {
+    flex: none;
+  }
+}
