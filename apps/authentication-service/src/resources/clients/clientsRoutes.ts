@@ -17,26 +17,17 @@ export const clientsRoutes = (app: Application): void => {
 
   clientsRouterV1.post(
     "/keys",
-    [
-      validateAccessToken,
-      requiredScopes(WidgetHostPermissions.CREATE_KEYS as string),
-    ],
+    [validateAccessToken, requiredScopes(WidgetHostPermissions.CREATE_KEYS)],
     clientsCreate as RequestHandler,
   );
   clientsRouterV1.get(
     "/keys",
-    [
-      validateAccessToken,
-      requiredScopes(WidgetHostPermissions.READ_KEYS as string),
-    ],
+    [validateAccessToken, requiredScopes(WidgetHostPermissions.READ_KEYS)],
     clientsGet as RequestHandler,
   );
   clientsRouterV1.delete(
     "/keys",
-    [
-      validateAccessToken,
-      requiredScopes(WidgetHostPermissions.DELETE_KEYS as string),
-    ],
+    [validateAccessToken, requiredScopes(WidgetHostPermissions.DELETE_KEYS)],
     clientsDelete as RequestHandler,
   );
   clientsRouterV1.post(
