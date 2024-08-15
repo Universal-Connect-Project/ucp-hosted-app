@@ -19,3 +19,11 @@ Object.defineProperties(globalThis, {
   Request: { value: Request },
   Response: { value: Response },
 });
+
+const { randomUUID } = require("node:crypto");
+
+Object.defineProperty(globalThis, "crypto", {
+  value: {
+    randomUUID,
+  },
+});

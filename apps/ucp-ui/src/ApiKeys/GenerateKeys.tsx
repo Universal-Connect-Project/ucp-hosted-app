@@ -1,10 +1,4 @@
-import {
-  CardActions,
-  CardContent,
-  Snackbar,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { CardActions, CardContent, Stack, Typography } from "@mui/material";
 import React from "react";
 import styles from "./apiKeys.module.css";
 import FormSubmissionError from "../shared/components/FormSubmissionError";
@@ -15,33 +9,30 @@ import {
 } from "./constants";
 import { LoadingButton } from "@mui/lab";
 import { useCreateApiKeysMutation } from "./api";
-import useSuccessSnackbar from "../shared/hooks/useSuccessSnackbar";
+import { useAppDispatch } from "../shared/utils/redux";
+import { displaySnackbar } from "../shared/reducers/snackbar";
 
 const GenerateKeys = () => {
   const generateKeysFormId = "generateKeys";
+
+  const dispatch = useAppDispatch();
 
   const [
     mutateCreateApiKeys,
     { isError: isCreateApiKeysError, isLoading: isCreateApiKeysLoading },
   ] = useCreateApiKeysMutation();
 
-  const { handleOpenSuccessSnackbarWithMessage, successSnackbarProps } =
-    useSuccessSnackbar();
-
   const createApiKeys = () => {
     mutateCreateApiKeys()
       .unwrap()
       .then(() => {
-        handleOpenSuccessSnackbarWithMessage(
-          API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT,
-        );
+        dispatch(displaySnackbar(API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT));
       })
       .catch(() => {});
   };
 
   return (
     <>
-      <Snackbar {...successSnackbarProps} />
       <CardContent>
         <Stack spacing={1.5}>
           <Stack spacing={0.5}>

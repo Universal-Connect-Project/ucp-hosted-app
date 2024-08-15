@@ -2,7 +2,7 @@ import React from "react";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ApiKeys from "./ApiKeys/ApiKeys";
-import Layout from "./Layout";
+import Layout from "./Layout/Layout";
 
 const Routes = () => {
   const router = createBrowserRouter([
