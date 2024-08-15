@@ -19,7 +19,7 @@ export const clientsRoutes = (app: Application): void => {
     "/keys",
     [
       validateAccessToken,
-      requiredScopes(WidgetHostPermissions.CREATE_KEYS.toString()),
+      requiredScopes(WidgetHostPermissions.CREATE_KEYS as string),
     ],
     clientsCreate as RequestHandler,
   );
@@ -27,7 +27,7 @@ export const clientsRoutes = (app: Application): void => {
     "/keys",
     [
       validateAccessToken,
-      requiredScopes(WidgetHostPermissions.READ_KEYS.toString()),
+      requiredScopes(WidgetHostPermissions.READ_KEYS as string),
     ],
     clientsGet as RequestHandler,
   );
@@ -35,7 +35,7 @@ export const clientsRoutes = (app: Application): void => {
     "/keys",
     [
       validateAccessToken,
-      requiredScopes(WidgetHostPermissions.DELETE_KEYS.toString()),
+      requiredScopes(WidgetHostPermissions.DELETE_KEYS as string),
     ],
     clientsDelete as RequestHandler,
   );
@@ -43,7 +43,7 @@ export const clientsRoutes = (app: Application): void => {
     "/keys/rotate",
     [
       validateAccessToken,
-      requiredScopes(WidgetHostPermissions.ROTATE_KEYS.toString()),
+      requiredScopes(WidgetHostPermissions.ROTATE_KEYS as string),
     ],
     clientsRotateSecrets as RequestHandler,
   );
