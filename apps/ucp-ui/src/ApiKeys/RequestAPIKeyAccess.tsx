@@ -28,11 +28,10 @@ const RequestAPIKeyAccess = () => {
             {API_KEYS_REQUEST_ACCESS_TITLE_TEXT}
           </Typography>
           <Typography className={styles.secondaryColor} variant="body1">
-            To access UCP services, you will need API keys. To request your
-            keys, please email us at {SUPPORT_EMAIL}. We will process your
-            request promptly. Once your access is approved, you can return here
-            to generate your keys. If you have already submitted a request,
-            please check back later.
+            To access UCP services, you will need API keys. Please email us to
+            request your keys and we will process your request promptly. Once
+            your access is approved, you can return here to generate your keys.
+            If you have already submitted a request, please check back later.
           </Typography>
         </Stack>
       </CardContent>
