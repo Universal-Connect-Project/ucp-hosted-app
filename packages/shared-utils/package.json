@@ -5,7 +5,9 @@
   "types": "dist/enums.d.ts",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "prettier": "prettier . --check"
   },
   "devDependencies": {
     "typescript": "^5.5.4"
