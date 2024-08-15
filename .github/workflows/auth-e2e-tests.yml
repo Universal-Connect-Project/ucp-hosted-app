@@ -39,6 +39,9 @@ jobs:
 
           cat ${ENV_FILE_PATH}
 
+      - name: Build shared-utils
+        run: npm run build --workspace packages/shared-utils
+
       - name: Cypress run (Standard suite)
         uses: cypress-io/github-action@v6
         with:
