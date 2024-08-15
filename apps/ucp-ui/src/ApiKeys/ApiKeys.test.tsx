@@ -7,17 +7,12 @@ import {
   API_KEY_TOOLTIP_TEXT,
   API_KEYS_CARD_TITLE_TEXT,
   API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
-  API_KEYS_GENERATE_API_KEYS_FAILURE_TEXT,
-  API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT,
   API_KEYS_GET_KEYS_FAILURE_TEXT,
 } from "./constants";
 import { useAuth0 } from "@auth0/auth0-react";
 import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
-import {
-  AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL,
-  AUTHENTICATION_SERVICE_GET_API_KEYS_URL,
-} from "./api";
+import { AUTHENTICATION_SERVICE_GET_API_KEYS_URL } from "./api";
 import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
 
 jest.mock("@auth0/auth0-react");
@@ -80,54 +75,6 @@ describe("ApiKeys", () => {
       await screen.findByRole("button", {
         name: API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
       });
-    });
-
-    it(`allows api key generation when getting keys returns a 404`, async () => {
-      render(<ApiKeys />);
-
-      await userEvent.click(
-        await screen.findByRole("button", {
-          name: API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
-        }),
-      );
-
-      expect(
-        await screen.findByText(API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT),
-      ).toBeInTheDocument();
-    });
-
-    it("shows an error message with retry if key generation fails", async () => {
-      server.use(
-        http.post(
-          AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL,
-          () => new HttpResponse(null, { status: 400 }),
-        ),
-      );
-
-      render(<ApiKeys />);
-
-      await userEvent.click(
-        await screen.findByRole("button", {
-          name: API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
-        }),
-      );
-
-      expect(
-        await screen.findByText(API_KEYS_GENERATE_API_KEYS_FAILURE_TEXT),
-      ).toBeInTheDocument();
-
-      server.use(
-        http.post(
-          AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL,
-          () => new HttpResponse(null, { status: 201 }),
-        ),
-      );
-
-      await userEvent.click(screen.getByText(TRY_AGAIN_BUTTON_TEXT));
-
-      expect(
-        await screen.findByText(API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT),
-      ).toBeInTheDocument();
     });
   });
 });

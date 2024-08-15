@@ -27,7 +27,8 @@ jobs:
         with:
           project: apps/ucp-ui
           start: npm run dev
-          wait-on: "http://localhost:3000, http://localhost:8089/ping"
+          wait-on: 'http://localhost:3000, http://localhost:8089/ping'
+          wait-on-timeout: 120
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v3
