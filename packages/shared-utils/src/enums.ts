@@ -17,4 +17,4 @@ export const WidgetHostPermissions = {
   ROTATE_KEYS: "rotate:keys",
 } as const;
 
-type WidgetHostPermissions = keyof typeof WidgetHostPermissions;
+export type WidgetHostPermissions = keyof typeof WidgetHostPermissions;

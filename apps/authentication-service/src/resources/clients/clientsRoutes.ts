@@ -19,7 +19,9 @@ export const clientsRoutes = (app: Application): void => {
     "/keys",
     [
       validateAccessToken,
-      requiredScopes(WidgetHostPermissions.CREATE_KEYS as string),
+      requiredScopes(
+        (WidgetHostPermissions as Record<string, string>).CREATE_KEYS,
+      ),
     ],
     clientsCreate as RequestHandler,
   );
