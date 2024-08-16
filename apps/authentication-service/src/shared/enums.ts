@@ -29,6 +29,7 @@ export enum ConsoleColors {
 export enum DefaultPermissions {
   OPENID = "openid",
   USERINFO = "userinfo",
+  EMAIL = "email",
 }
 
 export enum WidgetHostPermissions {
