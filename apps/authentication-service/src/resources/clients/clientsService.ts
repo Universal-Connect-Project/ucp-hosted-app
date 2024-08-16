@@ -1,4 +1,5 @@
-import { Client, ClientCreate } from "auth0";
+import { WidgetHostPermissions } from "@/shared/enums";
+import { Client, ClientCreate, ClientGrant, ClientGrantCreate } from "auth0";
 
 import envs from "@/config";
 import { getAccessToken } from "@/shared/auth/authService";
@@ -11,6 +12,7 @@ import {
 import { ResponseMessage } from "@/resources/clients/clientsModel";
 
 const authDomain = envs.AUTH0_DOMAIN;
+const widgetAudience = "ucp-widget-interactions";
 
 export const createClient = async (
   userToken: string,
@@ -37,11 +39,20 @@ export const createClient = async (
       body: JSON.stringify({
         ...client,
         app_type: "non_interactive",
-      }),
+      } as ClientCreate),
     }),
   );
 
   await setUserClientId(userId, newClient.client_id);
+  await setClientGrant({
+    client_id: newClient.client_id,
+    audience: widgetAudience,
+    scope: [
+      WidgetHostPermissions.CREATE_KEYS,
+      WidgetHostPermissions.READ_KEYS,
+      WidgetHostPermissions.ROTATE_KEYS,
+    ],
+  } as ClientGrantCreate);
 
   return newClient;
 };
@@ -124,5 +135,23 @@ export const rotateClientSecret = async (
         },
       },
     ),
+  );
+};
+
+export const setClientGrant = async (
+  clientGrant: ClientGrantCreate,
+): Promise<ClientGrant> => {
+  const token = await getAccessToken();
+
+  return await parseResponse<ClientGrant>(
+    await fetch(`https://${authDomain}/api/v2/client-grants`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(clientGrant),
+    }),
   );
 };
