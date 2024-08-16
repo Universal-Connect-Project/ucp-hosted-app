@@ -17,7 +17,7 @@ describe("Provider Model", () => {
     expect(createdProvider.supports_oauth).toBeTruthy();
     expect(createdProvider.supports_identification).toBeFalsy();
     expect(createdProvider.supports_verification).toBeFalsy();
-    expect(createdProvider.supports_account_statement).toBeFalsy();
+    expect(createdProvider.supports_aggregation).toBeTruthy();
     expect(createdProvider.supports_history).toBeTruthy();
     expect(createdProvider.institution_id).toBeUndefined();
 

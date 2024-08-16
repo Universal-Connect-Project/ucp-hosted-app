@@ -50,7 +50,7 @@
                         "supports_oauth": false,
                         "supports_identification": true,
                         "supports_verification": true,
-                        "supports_account_statement": true,
+                        "supports_aggregation": true,
                         "supports_history": false
                       }
                     },
@@ -67,7 +67,7 @@
                         "supports_oauth": true,
                         "supports_identification": true,
                         "supports_verification": true,
-                        "supports_account_statement": false,
+                        "supports_aggregation": false,
                         "supports_history": false
                       }
                     },
@@ -84,7 +84,7 @@
                         "supports_oauth": false,
                         "supports_identification": true,
                         "supports_verification": true,
-                        "supports_account_statement": true,
+                        "supports_aggregation": true,
                         "supports_history": true
                       },
                       "sophtron": {
@@ -92,7 +92,7 @@
                         "supports_oauth": false,
                         "supports_identification": true,
                         "supports_verification": true,
-                        "supports_account_statement": false,
+                        "supports_aggregation": false,
                         "supports_history": false
                       },
                       "finicity": {
@@ -100,7 +100,7 @@
                         "supports_oauth": false,
                         "supports_identification": true,
                         "supports_verification": false,
-                        "supports_account_statement": true,
+                        "supports_aggregation": true,
                         "supports_history": false
                       }
                     }

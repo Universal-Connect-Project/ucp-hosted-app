@@ -23,7 +23,7 @@ export interface InstitutionProvider {
   supports_oauth: boolean;
   supports_identification: boolean;
   supports_verification: boolean;
-  supports_account_statement: boolean;
+  supports_aggregation: boolean;
   supports_history: boolean;
 }
 
@@ -60,7 +60,7 @@ async function loadInstitutionData() {
         supports_identification: mx.supports_identification,
         supports_verification: mx.supports_verification,
         supports_history: mx.supports_history,
-        supports_account_statement: mx.supports_account_statement,
+        supports_aggregation: mx.supports_aggregation,
       } as Provider);
     }
 
@@ -74,7 +74,7 @@ async function loadInstitutionData() {
         supports_identification: sophtron.supports_identification,
         supports_verification: sophtron.supports_verification,
         supports_history: sophtron.supports_history,
-        supports_account_statement: sophtron.supports_account_statement,
+        supports_aggregation: sophtron.supports_aggregation,
       } as Provider);
     }
 
@@ -88,7 +88,7 @@ async function loadInstitutionData() {
         supports_identification: finicity.supports_identification,
         supports_verification: finicity.supports_verification,
         supports_history: finicity.supports_history,
-        supports_account_statement: finicity.supports_account_statement,
+        supports_aggregation: finicity.supports_aggregation,
       } as Provider);
     }
   });
