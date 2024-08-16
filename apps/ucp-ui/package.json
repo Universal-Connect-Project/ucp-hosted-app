@@ -22,7 +22,7 @@
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.16.6",
     "@reduxjs/toolkit": "^2.2.7",
-    "@repo/shared-utils": "^0.0.1",
+    "@repo/shared-utils": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.2",
