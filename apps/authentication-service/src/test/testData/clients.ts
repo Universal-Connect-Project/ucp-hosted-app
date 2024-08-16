@@ -1,5 +1,6 @@
 import { Client } from "auth0";
 import { Keys } from "@/resources/clients/clientsModel";
+import { WidgetHostPermissions } from "@/shared/enums";
 
 export const exampleClientName = "UCP Test Client";
 export const exampleClientDesc = "For unit testing";
@@ -78,4 +79,14 @@ export const exampleAuth0Client: Partial<Client> = {
 export const exampleClientRotatedSecret = {
   ...exampleAuth0Client,
   client_secret: "fake-secret-rotated",
+};
+
+export const exampleClientGrant = {
+  client_id: "ucp-test-client",
+  audience: "ucp-widget-interactions",
+  scope: [
+    WidgetHostPermissions.CREATE_KEYS,
+    WidgetHostPermissions.READ_KEYS,
+    WidgetHostPermissions.ROTATE_KEYS,
+  ],
 };

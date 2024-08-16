@@ -8,7 +8,10 @@ describe("Client API", () => {
   let accessTokenBasic: string;
   let newClientId: string;
   let newClientSecret: string;
+
   const keysUrl = `http://localhost:${PORT}/v1/clients/keys`;
+  // const auth0BaseUrl = Cypress.env("AUTH0_DOMAIN") as string;
+  // const auth0ClientGrantsUrl = `${auth0BaseUrl}api/v2/client-grants`;
 
   const getTokens = () => {
     cy.window()
@@ -79,6 +82,27 @@ describe("Client API", () => {
       expect(Object.keys(body)).to.include("clientId");
       expect(Object.keys(body)).to.include("clientSecret");
     });
+
+    // Do we need this? We would need to hit Auth0's api to
+    // confirm proper grant was created
+    // cy.request({
+    //   method: "POST",
+    //   url: auth0ClientGrantsUrl,
+    //   headers: {
+    //     ContentType: "application/json",
+    //     Authorization: `Bearer ${accessToken}`,
+    //   },
+    // }).then((response: Cypress.Response<{ body: Keys }>) => {
+    //   const { body } = response;
+    //
+    //   expect(response.status).to.eq(200);
+    //   expect(Object.keys(body)).to.have.length(4);
+    //   expect(Object.keys(body)).to.include("id");
+    //   expect(Object.keys(body)).to.include("client_id");
+    //   expect(Object.keys(body)).to.include("audience");
+    //   expect(Object.keys(body)).to.include("scope");
+
+    // });
 
     cy.request({
       method: "GET",
@@ -211,7 +235,7 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys/rotate`,
+      url: `${keysUrl}/rotate`,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
