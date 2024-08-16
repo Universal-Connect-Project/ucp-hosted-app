@@ -6,9 +6,9 @@ import { transformInstitutionToCachedInstitution } from "./institutionService";
 
 describe("institutionService", () => {
   describe("transformInstitutionToCachedInstitution", () => {
-    it("transforms database objects", async () => {
+    it("transforms database objects", () => {
       const cachedInstitutionList = transformInstitutionToCachedInstitution(
-        institutionWithProviderQueryObj
+        institutionWithProviderQueryObj,
       );
       expect(cachedInstitutionList).toEqual(cachedInstitutionFromSeed);
     });

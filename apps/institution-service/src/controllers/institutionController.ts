@@ -32,7 +32,7 @@ export const getInstitutionCachedList = async (req: Request, res: Response) => {
     });
 
     const cachedInstitutionList = institutions.map(
-      transformInstitutionToCachedInstitution
+      transformInstitutionToCachedInstitution,
     );
 
     res.status(200);

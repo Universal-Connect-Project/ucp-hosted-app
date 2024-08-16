@@ -62,5 +62,5 @@ Provider.init(
     tableName: "providers",
     modelName: "Provider",
     sequelize,
-  }
+  },
 );

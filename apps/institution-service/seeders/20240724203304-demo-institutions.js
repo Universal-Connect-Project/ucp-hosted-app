@@ -4,7 +4,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     // Add Institutions
-    const seedInstitutionId = "UCP-123456789"
+    const seedInstitutionId = "UCP-123456789";
     await queryInterface.bulkInsert("institutions", [
       {
         ucp_id: seedInstitutionId,
@@ -56,6 +56,8 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("institutions", {ucp_id: {[Sequelize.Op.in]: ['UCP-123456789', 'UCP-9999']}});
+    await queryInterface.bulkDelete("institutions", {
+      ucp_id: { [Sequelize.Op.in]: ["UCP-123456789", "UCP-9999"] },
+    });
   },
 };

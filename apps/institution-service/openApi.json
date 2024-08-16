@@ -36,75 +36,75 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "example": [{
-                    "ucp_id": "UCP-finbank-profile-a",
-                    "name": "FinBank Profiles - A",
-                    "keywords": "finbank, finicity",
-                    "logo": "https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/102105/icon.svg",
-                    "url": "http://www.finbank.com",
-                    "is_test_bank": true,
-                    "routing_numbers": [],
-                    "finicity": {
+                  "example": [
+                    {
+                      "ucp_id": "UCP-finbank-profile-a",
+                      "name": "FinBank Profiles - A",
+                      "keywords": "finbank, finicity",
+                      "logo": "https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/102105/icon.svg",
+                      "url": "http://www.finbank.com",
+                      "is_test_bank": true,
+                      "routing_numbers": [],
+                      "finicity": {
                         "id": "102105",
                         "supports_oauth": false,
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_account_statement": true,
                         "supports_history": false
-                    }
-                },
-                {
-                    "ucp_id": "UCP-da107e6d0da7779",
-                    "name": "MX Bank (Oauth)",
-                    "keywords": "Gringotts, MX Bank, oauth",
-                    "logo": "https://s3.amazonaws.com/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
-                    "url": "https://mx.com",
-                    "is_test_bank": true,
-                    "routing_numbers": [],
-                    "mx": {
+                      }
+                    },
+                    {
+                      "ucp_id": "UCP-da107e6d0da7779",
+                      "name": "MX Bank (Oauth)",
+                      "keywords": "Gringotts, MX Bank, oauth",
+                      "logo": "https://s3.amazonaws.com/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
+                      "url": "https://mx.com",
+                      "is_test_bank": true,
+                      "routing_numbers": [],
+                      "mx": {
                         "id": "mx_bank_oauth",
                         "supports_oauth": true,
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_account_statement": false,
                         "supports_history": false
-                    }
-                },
-                {
-                    "ucp_id": "UCP-024b97a3cd4d4df",
-                    "name": "Alabama Credit Union",
-                    "keywords": "ACU, Alabama CU, Alabama Credit Union",
-                    "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-c4d51160-465e-1d78-4a50-fd6836684c3a_100x100.png",
-                    "url": "https://www.alabamacu.com/",
-                    "is_test_bank": false,
-                    "routing_numbers": [
-                        "262277419"
-                    ],
-                    "mx": {
+                      }
+                    },
+                    {
+                      "ucp_id": "UCP-024b97a3cd4d4df",
+                      "name": "Alabama Credit Union",
+                      "keywords": "ACU, Alabama CU, Alabama Credit Union",
+                      "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-c4d51160-465e-1d78-4a50-fd6836684c3a_100x100.png",
+                      "url": "https://www.alabamacu.com/",
+                      "is_test_bank": false,
+                      "routing_numbers": ["262277419"],
+                      "mx": {
                         "id": "alabamacreditunion",
                         "supports_oauth": false,
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_account_statement": true,
                         "supports_history": true
-                    },
-                    "sophtron": {
+                      },
+                      "sophtron": {
                         "id": "4D1C263B-D291-4DF7-9F22-79E445E59526",
                         "supports_oauth": false,
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_account_statement": false,
                         "supports_history": false
-                    },
-                    "finicity": {
+                      },
+                      "finicity": {
                         "id": "5411",
                         "supports_oauth": false,
                         "supports_identification": true,
                         "supports_verification": false,
                         "supports_account_statement": true,
                         "supports_history": false
+                      }
                     }
-                }]
+                  ]
                 }
               }
             }

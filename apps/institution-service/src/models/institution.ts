@@ -57,7 +57,7 @@ Institution.init(
     tableName: "institutions",
     modelName: "Institution",
     sequelize,
-  }
+  },
 );
 
 Institution.hasMany(Provider, {

@@ -17,6 +17,7 @@ describe("institutionController", () => {
 
       await getAllInstitutions(req, res);
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).not.toHaveProperty("error");
     });
@@ -32,11 +33,12 @@ describe("institutionController", () => {
 
       await getInstitutionCachedList(req, res);
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining(cachedInstitutionFromSeed),
-        ])
+        ]),
       );
     });
 
@@ -53,6 +55,7 @@ describe("institutionController", () => {
 
       await getInstitutionCachedList(req, res);
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: "Error getting all Institutions",
