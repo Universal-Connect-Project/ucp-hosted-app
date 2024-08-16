@@ -25,7 +25,7 @@ const TestComponent = () => {
 };
 
 describe("<Snackbars />", () => {
-  it("displays a snackbar, closes it when clicking elsewhere, and displays it again even if the same message is dispatched", async () => {
+  it("displays a snackbar and closes it when clicking elsewhere", async () => {
     render(
       <Layout>
         <TestComponent />
@@ -44,6 +44,21 @@ describe("<Snackbars />", () => {
     await waitFor(() =>
       expect(screen.queryByText(message)).not.toBeInTheDocument(),
     );
+  });
+
+  it("clicking on the same snackbar triggering button after its open keeps it open", async () => {
+    render(
+      <Layout>
+        <TestComponent />
+      </Layout>,
+      {
+        shouldRenderSnackbars: false,
+      },
+    );
+
+    await userEvent.click(screen.getByText(buttonText));
+
+    expect(await screen.findByText(message)).toBeInTheDocument();
 
     await userEvent.click(screen.getByText(buttonText));
 
