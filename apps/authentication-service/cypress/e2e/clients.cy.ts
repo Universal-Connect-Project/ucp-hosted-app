@@ -17,31 +17,41 @@ describe("Client API", () => {
   const auth0ClientGrantsUrl = `${auth0BaseUrl}/api/v2/client-grants`;
   const clientScope = `${Object.values(WidgetHostPermissions).join(" ")}`;
 
+  const getLocalStorage = (args: {
+    storageKey: string;
+    callback: (token: string) => void;
+  }) => {
+    const { storageKey, callback } = args;
+
+    cy.window()
+      .its("localStorage")
+      .invoke("getItem", storageKey)
+      .then((token: string) => {
+        if (token) {
+          callback(token);
+        }
+      });
+  };
+
   const getTokens = () => {
-    cy.window()
-      .its("localStorage")
-      .invoke("getItem", "jwt-with-key-roles")
-      .then((token: string) => {
-        if (token) {
-          accessToken = token;
-        }
-      });
-    cy.window()
-      .its("localStorage")
-      .invoke("getItem", "jwt-without-key-roles")
-      .then((token: string) => {
-        if (token) {
-          accessTokenBasic = token;
-        }
-      });
-    cy.window()
-      .its("localStorage")
-      .invoke("getItem", "jwt-m2m")
-      .then((token: string) => {
-        if (token) {
-          accessTokenM2M = token;
-        }
-      });
+    getLocalStorage({
+      storageKey: "jwt-with-key-roles",
+      callback: (token: string) => {
+        accessToken = token;
+      },
+    });
+    getLocalStorage({
+      storageKey: "jwt-without-key-roles",
+      callback: (token: string) => {
+        accessTokenBasic = token;
+      },
+    });
+    getLocalStorage({
+      storageKey: "jwt-m2m",
+      callback: (token: string) => {
+        accessTokenM2M = token;
+      },
+    });
   };
 
   before(() => {
