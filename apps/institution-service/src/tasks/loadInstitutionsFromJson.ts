@@ -50,7 +50,7 @@ async function loadInstitutionData() {
       routing_numbers: institution.routing_numbers,
     } as Institution);
 
-    if (institution.mx.id) {
+    if (institution?.mx?.id) {
       const mx = institution.mx;
       providerList.push({
         name: "mx",
@@ -64,7 +64,7 @@ async function loadInstitutionData() {
       } as Provider);
     }
 
-    if (institution.sophtron.id) {
+    if (institution?.sophtron?.id) {
       const sophtron = institution.sophtron;
       providerList.push({
         name: "sophtron",
@@ -78,7 +78,7 @@ async function loadInstitutionData() {
       } as Provider);
     }
 
-    if (institution.finicity.id) {
+    if (institution?.finicity?.id) {
       const finicity = institution.finicity;
       providerList.push({
         name: "finicity",
