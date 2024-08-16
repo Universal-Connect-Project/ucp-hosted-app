@@ -1,5 +1,7 @@
 import { Keys } from "@/resources/clients/clientsModel";
 import { PORT } from "@/shared/consts";
+import { WidgetHostPermissions } from "@/shared/enums";
+import { ClientGrant } from "auth0";
 
 const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
 
@@ -13,6 +15,7 @@ describe("Client API", () => {
   const keysUrl = `http://localhost:${PORT}/v1/clients/keys`;
   const auth0BaseUrl = Cypress.env("AUTH0_DOMAIN") as string;
   const auth0ClientGrantsUrl = `${auth0BaseUrl}/api/v2/client-grants`;
+  const clientScope = `${Object.values(WidgetHostPermissions).join(" ")}`;
 
   const getTokens = () => {
     cy.window()
@@ -84,39 +87,48 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
-      const { body } = response;
-      newClientId = (body as unknown as Keys).clientId;
-      newClientSecret = (response.body as unknown as Keys).clientSecret;
+    })
+      .then((response: Cypress.Response<{ body: Keys }>) => {
+        const { body } = response;
+        newClientId = (body as unknown as Keys).clientId;
+        newClientSecret = (response.body as unknown as Keys).clientSecret;
 
-      expect(response.status).to.eq(200);
-      expect(Object.keys(body)).to.have.length(2);
-      expect(Object.keys(body)).to.include("clientId");
-      expect(Object.keys(body)).to.include("clientSecret");
-    });
+        expect(response.status).to.eq(200);
+        expect(Object.keys(body)).to.have.length(2);
+        expect(Object.keys(body)).to.include("clientId");
+        expect(Object.keys(body)).to.include("clientSecret");
 
-    cy.wait(1000);
+        return newClientId;
+      })
+      .then((newClientId) => {
+        cy.request({
+          method: "POST",
+          url: auth0ClientGrantsUrl,
+          qs: {
+            client_id: newClientId,
+          },
+          headers: {
+            ContentType: "application/json",
+            Authorization: `Bearer ${accessTokenM2M}`,
+          },
+        }).then((response: Cypress.Response<{ body: ClientGrant[] }>) => {
+          const { body } = response;
 
-    cy.request({
-      method: "POST",
-      url: auth0ClientGrantsUrl,
-      qs: {
-        client_id: newClientId,
-      },
-      headers: {
-        ContentType: "application/json",
-        Authorization: `Bearer ${accessTokenM2M}`,
-      },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
-      const { body } = response;
+          expect(response.status).to.eq(200);
+          expect(body).to.have.length(1);
 
-      expect(response.status).to.eq(200);
-      expect(Object.keys(body)).to.have.length(4);
-      expect(Object.keys(body)).to.include("id");
-      expect(Object.keys(body)).to.include("client_id");
-      expect(Object.keys(body)).to.include("audience");
-      expect(Object.keys(body)).to.include("scope");
-    });
+          const clientGrant: ClientGrant = body[0] as ClientGrant;
+
+          expect(Object.keys(Object.keys(clientGrant))).to.have.length(4);
+          expect(Object.keys(clientGrant)).to.include("id");
+          expect(Object.keys(clientGrant)).to.include("client_id");
+          expect(Object.keys(clientGrant)).to.include("audience");
+          expect(Object.keys(clientGrant)).to.include("scope");
+
+          expect(clientGrant.client_id).to.eq(newClientId);
+          expect(clientGrant.scope.join(" ")).to.eq(clientScope);
+        });
+      });
 
     cy.request({
       method: "GET",

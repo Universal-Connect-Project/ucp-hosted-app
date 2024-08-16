@@ -48,9 +48,8 @@ export const createClient = async (
     client_id: newClient.client_id,
     audience: widgetAudience,
     scope: [
-      WidgetHostPermissions.CREATE_KEYS,
-      WidgetHostPermissions.READ_KEYS,
-      WidgetHostPermissions.ROTATE_KEYS,
+      WidgetHostPermissions.READ_WIDGET_ENDPOINTS,
+      WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS,
     ],
   } as ClientGrantCreate);
 

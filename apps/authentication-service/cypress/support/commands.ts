@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
-import { DefaultPermissions, WidgetHostPermissions } from "@/shared/enums";
+import { DefaultPermissions, UiClientPermissions } from "@/shared/enums";
 import { JwtPayload } from "jsonwebtoken";
 
 // ***********************************************
@@ -114,7 +114,7 @@ Cypress.Commands.add("loginWithKeyRoles", () => {
   login({
     ...clientLoginArgs,
     storageKey: "jwt-with-key-roles",
-    scope: `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`,
+    scope: `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`,
   });
 });
 
