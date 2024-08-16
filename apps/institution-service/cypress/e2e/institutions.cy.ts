@@ -12,7 +12,8 @@ describe("Institution endpoints", () => {
         },
       }).then((response: Cypress.Response<CachedInstitution[]>) => {
         const institution = response.body[1];
-        const provider = institution.mx ?? institution.sophtron;
+        const provider =
+          institution.mx ?? institution.sophtron ?? institution.finicity;
 
         expect(response.status).to.eq(200);
 

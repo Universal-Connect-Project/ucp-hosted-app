@@ -44,9 +44,6 @@ jobs:
         run: |
           npm run db:setup --workspace apps/institution-service
 
-      - name: Load Institution Data
-        run: npm run db:load --workspace apps/institution-service
-
       - name: "Create env file"
         run: |
           ENV_FILE_PATH=./apps/institution-service/.env
