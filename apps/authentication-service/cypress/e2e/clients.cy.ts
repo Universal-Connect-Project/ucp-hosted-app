@@ -43,13 +43,13 @@ describe("Client API", () => {
       },
     });
     getLocalStorage({
-      storageKey: "jwt-m2m",
+      storageKey: "jwt-auth-m2m",
       callback: (token: string) => {
         accessTokenM2M = token;
       },
     });
     getLocalStorage({
-      storageKey: "jwt-widget",
+      storageKey: "jwt-widget-m2m",
       callback: (token: string) => {
         accessTokenWidget = token;
       },
@@ -58,7 +58,12 @@ describe("Client API", () => {
 
   before(() => {
     getTokens();
-    if (!accessToken || !accessTokenBasic || !accessTokenM2M) {
+    if (
+      !accessToken ||
+      !accessTokenBasic ||
+      !accessTokenM2M ||
+      !accessTokenWidget
+    ) {
       cy.loginWithKeyRoles();
       cy.loginWithoutKeyRoles();
       cy.loginM2M();

@@ -128,7 +128,7 @@ Cypress.Commands.add("loginWithoutKeyRoles", () => {
 
 Cypress.Commands.add("loginM2M", () => {
   login({
-    storageKey: "jwt-m2m",
+    storageKey: "jwt-auth-m2m",
     grantType: "client_credentials",
     audience: Cypress.env("AUTH0_M2M_AUDIENCE") as string,
     clientId: Cypress.env("AUTH0_CLIENT_ID") as string,
@@ -138,7 +138,7 @@ Cypress.Commands.add("loginM2M", () => {
 
 Cypress.Commands.add("loginWidgetHost", () => {
   login({
-    storageKey: "jwt-widget",
+    storageKey: "jwt-widget-m2m",
     grantType: "client_credentials",
     audience: Cypress.env("WIDGET_AUDIENCE") as string,
     clientId: Cypress.env("WIDGET_CLIENT_ID") as string,
