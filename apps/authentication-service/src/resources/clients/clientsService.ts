@@ -1,4 +1,3 @@
-import { WidgetHostPermissions } from "@/shared/enums";
 import { Client, ClientCreate, ClientGrant, ClientGrantCreate } from "auth0";
 
 import envs from "@/config";
@@ -10,6 +9,7 @@ import {
   setUserClientId,
 } from "@/shared/users/usersService";
 import { ResponseMessage } from "@/resources/clients/clientsModel";
+import { WidgetHostPermissions } from "@/shared/enums";
 
 const authDomain = envs.AUTH0_DOMAIN;
 const widgetAudience = "ucp-widget-interactions";
