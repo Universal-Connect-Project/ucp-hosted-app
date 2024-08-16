@@ -136,6 +136,16 @@ Cypress.Commands.add("loginM2M", () => {
   });
 });
 
+Cypress.Commands.add("loginWidgetHost", () => {
+  login({
+    storageKey: "jwt-widget",
+    grantType: "client_credentials",
+    audience: Cypress.env("WIDGET_AUDIENCE") as string,
+    clientId: Cypress.env("WIDGET_CLIENT_ID") as string,
+    clientSecret: Cypress.env("WIDGET_CLIENT_SECRET") as string,
+  });
+});
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
@@ -143,6 +153,7 @@ declare global {
       loginWithKeyRoles(): void;
       loginWithoutKeyRoles(): void;
       loginM2M(): void;
+      loginWidgetHost(): void;
     }
   }
 }
