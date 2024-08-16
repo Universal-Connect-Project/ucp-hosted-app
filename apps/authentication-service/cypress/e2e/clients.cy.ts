@@ -55,6 +55,8 @@ describe("Client API", () => {
     });
   });
 
+  cy.wait(2000); // Because sometimes we hit the shortened rate limit
+
   it("clears the client_id from user metadata, tries creating a client without access token, creates a client, fails if another client request is made, gets the newly created client, and deletes the client", () => {
     cy.request({
       failOnStatusCode: false,
