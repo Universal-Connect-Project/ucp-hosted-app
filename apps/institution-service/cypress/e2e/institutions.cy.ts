@@ -1,17 +1,44 @@
 import { PORT } from "../../src/shared/const";
+import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
 
 describe("Institution endpoints", () => {
   describe("/institutions/cacheList", () => {
-    it("gets 200 with valid token", () => {
+    it("gets 200 with valid token and has expected attributes", () => {
       cy.request({
         url: `http://localhost:${PORT}/institutions/cacheList`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${Cypress.env("ACCESS_TOKEN")}`,
         },
-      }).then((response: Cypress.Response<{ message: string }>) => {
+      }).then((response: Cypress.Response<CachedInstitution[]>) => {
+        const institution = response.body[1];
+        const provider = institution.mx ?? institution.sophtron;
+
         expect(response.status).to.eq(200);
-        expect(response.body).length.above(1);
+
+        // Institution Attributes
+        [
+          "name",
+          "keywords",
+          "logo",
+          "url",
+          "ucp_id",
+          "is_test_bank",
+          "routing_numbers",
+        ].forEach((attribute) => {
+          expect(institution).to.haveOwnProperty(attribute);
+        });
+
+        // Provider Attributes
+        [
+          "id",
+          "supports_oauth",
+          "supports_identification",
+          "supports_aggregation",
+          "supports_history",
+        ].forEach((attribute) => {
+          expect(provider).to.haveOwnProperty(attribute);
+        });
       });
     });
 
