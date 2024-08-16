@@ -7,10 +7,10 @@ import {
 type providerKey = "mx" | "sophtron" | "finicity";
 
 export function transformInstitutionToCachedInstitution(
-  institution: Institution
+  institution: Institution,
 ) {
   const { providers, dataValues } = institution;
-  let { ucp_id, name, keywords, logo, url, is_test_bank, routing_numbers } =
+  const { ucp_id, name, keywords, logo, url, is_test_bank, routing_numbers } =
     dataValues;
   const institutionObj = {
     ucp_id,

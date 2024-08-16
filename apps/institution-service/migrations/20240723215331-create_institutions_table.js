@@ -1,21 +1,21 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('institutions', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("institutions", {
       ucp_id: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       keywords: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       logo: {
         type: Sequelize.TEXT,
@@ -27,7 +27,7 @@ module.exports = {
         type: Sequelize.BOOLEAN,
       },
       routing_numbers: {
-        type: Sequelize.ARRAY(Sequelize.TEXT)
+        type: Sequelize.ARRAY(Sequelize.TEXT),
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -38,11 +38,11 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
         defaultValue: Sequelize.NOW,
-      }
+      },
     });
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('institutions');
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("institutions");
+  },
 };

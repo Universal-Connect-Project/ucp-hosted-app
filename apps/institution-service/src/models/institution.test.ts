@@ -10,7 +10,7 @@ describe("Institution Model", () => {
       ucp_id: `UCP-${randomString}`,
     };
     const createdInstitution = await Institution.create(
-      newInstitutionAttributes
+      newInstitutionAttributes,
     );
 
     expect(createdInstitution).toHaveProperty("ucp_id");
@@ -20,7 +20,7 @@ describe("Institution Model", () => {
     expect(createdInstitution.url).toBe(newInstitutionAttributes.url);
     expect(createdInstitution.is_test_bank).toBeTruthy();
     expect(createdInstitution.routing_numbers).toStrictEqual(
-      newInstitutionAttributes.routing_numbers
+      newInstitutionAttributes.routing_numbers,
     );
 
     // db cleanup
@@ -35,7 +35,7 @@ describe("Institution Model", () => {
     };
 
     const createdInstitution = await Institution.create(
-      newInstitutionAttributes
+      newInstitutionAttributes,
     );
 
     expect(createdInstitution).toHaveProperty("ucp_id");
