@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import { auth, requiredScopes } from "express-oauth2-jwt-bearer";
 import { getInstitutionCachedList } from "../controllers/institutionController";
 
@@ -14,7 +14,7 @@ router.get(
   "/cacheList",
   [validateAccessToken],
   requiredScopes("read:widget-endpoints"),
-  getInstitutionCachedList
+  getInstitutionCachedList as RequestHandler,
 );
 
 export default router;

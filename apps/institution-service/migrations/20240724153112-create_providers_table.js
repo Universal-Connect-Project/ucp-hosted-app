@@ -1,23 +1,22 @@
-'use strict';
-
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('providers', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("providers", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       provider_institution_id: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       supports_oauth: {
         type: Sequelize.BOOLEAN,
@@ -43,11 +42,11 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
         defaultValue: Sequelize.NOW,
-      }
+      },
     });
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('providers');
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("providers");
+  },
 };
