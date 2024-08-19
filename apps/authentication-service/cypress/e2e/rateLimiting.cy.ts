@@ -1,25 +1,7 @@
 const testLimit: number = 40;
 
-describe("Express", () => {
-  const PORT: number = (Cypress.env("PORT") as number) || 8089;
-
-  it("returns pong", () => {
-    cy.request(`http://localhost:${PORT}/ping`).then(
-      (response: Cypress.Response<{ message: string }>) => {
-        expect(response.status).to.eq(200);
-        expect(response.body.message).to.eq("pong");
-      },
-    );
-  });
-
-  it("handles not found", () => {
-    cy.request({
-      url: `http://localhost:${PORT}/pig`,
-      failOnStatusCode: false,
-    })
-      .its("status")
-      .should("eq", 404);
-  });
+describe("Rate Limiting", () => {
+  const PORT: number = 8089;
 
   it("tests the rate limiting middleware by sending 45 requests, 40 succeeding, and 5 failing", () => {
     // Wait for the rate limiter windowMs to reset

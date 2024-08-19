@@ -4,12 +4,12 @@ import nocache from "nocache";
 import { rateLimit } from "express-rate-limit";
 import express, { Application, NextFunction, Request, Response } from "express";
 
-import envs from "./config";
 import { errorHandler } from "@/middleware/errorMiddleware";
 import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 import { clientsRoutes } from "@/resources/clients/clientsRoutes";
 
 const rateLimitWindowMinutes = 10;
+const rateLimitTest = process.env.RATE_LIMIT_TEST === "true";
 
 const initErrorHandling = (app: Application): void => {
   app.use(errorHandler);
@@ -22,9 +22,8 @@ export const initExpress = (app: Application): void => {
   app.set("json spaces", 2);
 
   const limiter = rateLimit({
-    windowMs:
-      envs.ENV === "test" ? 2 * 1000 : rateLimitWindowMinutes * 60 * 1000, // (2 seconds for testing) or 10 minutes for production
-    limit: envs.ENV === "test" ? 40 : 500, // max average 5/500 requests per windowMs (2 seconds/10 minutes)
+    windowMs: rateLimitTest ? 2 * 1000 : rateLimitWindowMinutes * 60 * 1000, // (2 seconds for testing) or 10 minutes for production
+    limit: rateLimitTest ? 10 : 500, // max average 5/500 requests per windowMs (2 seconds/10 minutes)
     message: `Too many requests from this IP, please try again after ${rateLimitWindowMinutes} minutes`,
     handler: (_req, res, _next, options) =>
       res
