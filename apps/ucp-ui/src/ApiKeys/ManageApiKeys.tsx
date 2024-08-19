@@ -15,9 +15,19 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { API_KEYS_MANAGE_BUTTON_TEXT } from "./constants";
+import {
+  API_KEYS_MANAGE_BUTTON_TEXT,
+  API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT,
+} from "./constants";
 import styles from "./apiKeys.module.css";
 import { SkeletonIfLoading } from "../shared/components/Skeleton";
+import { useAppDispatch } from "../shared/utils/redux";
+import { useRotateApiKeysMutation } from "./api";
+import { displaySnackbar } from "../shared/reducers/snackbar";
+import { LoadingButton } from "@mui/lab";
+import FormSubmissionError from "../shared/components/FormSubmissionError";
+
+const rotateFormId = "rotateForm";
 
 const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
   const [isManageDrawerOpen, setIsManageDrawerOpen] = useState(false);
@@ -35,6 +45,24 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
   const handleCloseDrawer = () => {
     setIsManageDrawerOpen(false);
     setShouldShowConfirmRotateSecret(false);
+  };
+
+  const dispatch = useAppDispatch();
+
+  const [
+    mutateRotateApiKeys,
+    { isError: isRotateApiKeysError, isLoading: isRotateApiKeysLoading },
+  ] = useRotateApiKeysMutation();
+
+  const rotateApiKeys = () => {
+    mutateRotateApiKeys()
+      .unwrap()
+      .then(() => {
+        dispatch(displaySnackbar(API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT));
+        handleCloseDrawer();
+        handleHideConfirmRotateSecret();
+      })
+      .catch(() => {});
   };
 
   return (
@@ -56,6 +84,13 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
             </Button>
             {shouldShowConfirmRotateSecret ? (
               <>
+                {isRotateApiKeysError && (
+                  <FormSubmissionError
+                    description="We couldn't rotate your Client Secret at this time. Please try again in a few moments. If the problem persists, contact us for support."
+                    formId={rotateFormId}
+                    title="Something went wrong"
+                  />
+                )}
                 <Typography variant="h5">
                   Are you sure you want to rotate your Client Secret?
                 </Typography>
@@ -66,9 +101,23 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
                   Secret.
                 </Typography>
                 <DialogActions className={styles.dialogActions}>
-                  <Button color="error" variant="contained">
-                    YES, ROTATE SECRET
-                  </Button>
+                  <form
+                    id={rotateFormId}
+                    onSubmit={(event) => {
+                      event.preventDefault();
+
+                      rotateApiKeys();
+                    }}
+                  >
+                    <LoadingButton
+                      color="error"
+                      loading={isRotateApiKeysLoading}
+                      type="submit"
+                      variant="contained"
+                    >
+                      YES, ROTATE SECRET
+                    </LoadingButton>
+                  </form>
                   <Button
                     color="inherit"
                     onClick={handleHideConfirmRotateSecret}
