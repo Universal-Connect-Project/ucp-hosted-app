@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import {
   InputSkeletonIfLoading,
   TextSkeletonIfLoading,
-} from "../shared/components/SkeletonIfLoading";
+} from "../shared/components/Skeleton";
 import {
   ContentCopyOutlined,
   VisibilityOffOutlined,
