@@ -9,7 +9,7 @@ import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 import { clientsRoutes } from "@/resources/clients/clientsRoutes";
 
 const rateLimitWindowMinutes = 10;
-const rateLimitTest = process.env.RATE_LIMIT_TEST === "true";
+const rateLimitTest = process.env.RATE_LIMIT_TEST === "true" || false;
 
 const initErrorHandling = (app: Application): void => {
   app.use(errorHandler);

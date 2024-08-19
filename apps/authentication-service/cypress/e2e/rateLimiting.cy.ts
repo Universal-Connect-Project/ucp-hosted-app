@@ -1,4 +1,4 @@
-const testLimit: number = 40;
+const testLimit: number = 10;
 
 describe("Rate Limiting", () => {
   const PORT: number = 8089;
