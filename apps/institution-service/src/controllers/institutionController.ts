@@ -24,7 +24,7 @@ export const getInstitutionCachedList = async (req: Request, res: Response) => {
             "supports_oauth",
             "supports_identification",
             "supports_verification",
-            "supports_account_statement",
+            "supports_aggregation",
             "supports_history",
           ],
         },

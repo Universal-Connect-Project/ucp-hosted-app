@@ -1,25 +1,32 @@
-import React, { useEffect } from "react";
-import { useAppSelector } from "../shared/utils/redux";
-import { getSnackbarSlice } from "../shared/reducers/snackbar";
-import useSuccessSnackbar from "../shared/hooks/useSuccessSnackbar";
+import React from "react";
+import { useAppDispatch, useAppSelector } from "../shared/utils/redux";
+import {
+  closeSnackbar,
+  getIsSnackbarOpen,
+  getSnackbarMessage,
+} from "../shared/reducers/snackbar";
 import { Snackbar } from "@mui/material";
 
 const Snackbars = () => {
-  const { message, messageId } = useAppSelector(getSnackbarSlice);
+  const dispatch = useAppDispatch();
 
-  const { handleOpenSuccessSnackbarWithMessage, successSnackbarProps } =
-    useSuccessSnackbar();
+  const message = useAppSelector(getSnackbarMessage);
+  const isOpen = useAppSelector(getIsSnackbarOpen);
 
-  useEffect(() => {
-    successSnackbarProps.onClose();
+  const handleClose = () => {
+    dispatch(closeSnackbar());
+  };
 
-    if (message) {
-      handleOpenSuccessSnackbarWithMessage(message);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [message, messageId]);
-
-  return <Snackbar {...successSnackbarProps} />;
+  return (
+    <Snackbar
+      ClickAwayListenerProps={{
+        mouseEvent: "onMouseDown",
+      }}
+      message={message}
+      onClose={handleClose}
+      open={isOpen}
+    />
+  );
 };
 
 export default Snackbars;

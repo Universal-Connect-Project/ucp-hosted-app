@@ -10,7 +10,6 @@ import {
   Divider,
   IconButton,
   Stack,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -19,6 +18,7 @@ import {
   API_KEY_TOOLTIP_TEXT,
   API_KEYS_CARD_TITLE_TEXT,
   API_KEYS_CLIENT_ID_LABEL_TEXT,
+  API_KEYS_CLIENT_SECRET_LABEL_TEXT,
   API_KEYS_GET_KEYS_FAILURE_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
@@ -26,6 +26,7 @@ import { useGetApiKeysQuery } from "./api";
 import RequestAPIKeyAccess from "./RequestAPIKeyAccess";
 import FetchError from "../shared/components/FetchError";
 import GenerateKeys from "./GenerateKeys";
+import ApiKey from "./ApiKey";
 
 const ApiKeys = () => {
   const { user } = useAuth0();
@@ -38,7 +39,7 @@ const ApiKeys = () => {
     data: keysData,
     error: apiKeysError,
     isError: isGetApiKeysError,
-    // isLoading: isGetApiKeysLoading,
+    isFetching: isGetApiKeysFetching,
     refetch: refetchApiKeys,
   } = useGetApiKeysQuery(undefined, {
     skip: !hasApiKeyAccess,
@@ -51,14 +52,47 @@ const ApiKeys = () => {
 
   const canUserGenerateApiKeys = isUserMissingApiKeys && hasApiKeyAccess;
 
-  const hasKeys = !!keysData;
-
-  const { clientId } = keysData || {};
+  const { clientId, clientSecret } = keysData || {};
 
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const handleOpenTooltip = () => setIsTooltipOpen(true);
   const handleCloseTooltip = () => setIsTooltipOpen(false);
+
+  let cardBody;
+
+  if (!hasApiKeyAccess) {
+    cardBody = <RequestAPIKeyAccess />;
+  } else if (canUserGenerateApiKeys) {
+    cardBody = <GenerateKeys />;
+  } else if (shouldShowGetApiKeysError) {
+    cardBody = (
+      <CardContent>
+        <FetchError
+          description={API_KEYS_GET_KEYS_FAILURE_TEXT}
+          refetch={() => void refetchApiKeys()}
+          title="Something went wrong"
+        />
+      </CardContent>
+    );
+  } else {
+    cardBody = (
+      <CardContent>
+        <Stack spacing={1.5}>
+          <ApiKey
+            isLoading={isGetApiKeysFetching}
+            label={API_KEYS_CLIENT_ID_LABEL_TEXT}
+            value={clientId}
+          />
+          <ApiKey
+            isLoading={isGetApiKeysFetching}
+            label={API_KEYS_CLIENT_SECRET_LABEL_TEXT}
+            value={clientSecret}
+          />
+        </Stack>
+      </CardContent>
+    );
+  }
 
   return (
     <Stack className={styles.pageContainer} spacing={3.5}>
@@ -86,29 +120,7 @@ const ApiKeys = () => {
           }}
         />
         <Divider />
-        {!hasApiKeyAccess && <RequestAPIKeyAccess />}
-        {canUserGenerateApiKeys && <GenerateKeys />}
-        {shouldShowGetApiKeysError && (
-          <CardContent>
-            <FetchError
-              description={API_KEYS_GET_KEYS_FAILURE_TEXT}
-              refetch={() => void refetchApiKeys()}
-              title="Something went wrong"
-            />
-          </CardContent>
-        )}
-        {hasKeys && (
-          <CardContent>
-            <TextField
-              InputProps={{
-                readOnly: true,
-              }}
-              label={API_KEYS_CLIENT_ID_LABEL_TEXT}
-              type="password"
-              value={clientId}
-            />
-          </CardContent>
-        )}
+        {cardBody}
       </Card>
     </Stack>
   );

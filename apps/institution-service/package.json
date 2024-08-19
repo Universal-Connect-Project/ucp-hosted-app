@@ -7,7 +7,7 @@
     "test:watch": "jest --watch",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "db:setup": "npm run db:create && npm run db:migrate && npm run db:seed",
+    "db:setup": "npm run db:create && npm run db:migrate && npm run db:load",
     "db:create": "npx sequelize-cli db:create",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
