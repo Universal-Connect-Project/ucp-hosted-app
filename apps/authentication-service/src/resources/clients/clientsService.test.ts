@@ -1,4 +1,4 @@
-import { Client } from "auth0";
+import { Client, ClientGrant } from "auth0";
 import { http, HttpResponse } from "msw";
 
 import { AUTH0_USER_BY_ID } from "@/test/handlers";
@@ -14,12 +14,14 @@ import {
   exampleClientName,
   exampleAuth0Client,
   exampleClientRotatedSecret,
+  exampleClientGrant,
 } from "@/test/testData/clients";
 import {
   getClient,
   createClient,
   deleteClient,
   rotateClientSecret,
+  setClientGrant,
 } from "./clientsService";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -77,6 +79,14 @@ describe("Clients Service", () => {
       const client: Client = await rotateClientSecret(exampleApiToken);
 
       expect(client).toEqual(exampleClientRotatedSecret);
+    });
+  });
+
+  describe("setClientGrant", () => {
+    it("grant client access to widget api", async () => {
+      const clientGrant: ClientGrant = await setClientGrant(exampleClientGrant);
+
+      expect(clientGrant).toEqual(exampleClientGrant);
     });
   });
 });

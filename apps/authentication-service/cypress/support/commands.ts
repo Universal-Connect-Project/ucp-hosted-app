@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
-import { DefaultPermissions, WidgetHostPermissions } from "@/shared/enums";
+import { DefaultPermissions, UiClientPermissions } from "@/shared/enums";
 import { JwtPayload } from "jsonwebtoken";
 
 // ***********************************************
@@ -41,33 +41,54 @@ import { JwtPayload } from "jsonwebtoken";
 // }
 
 type LoginArgs = {
-  usernameEnvKey: string;
-  passwordEnvKey: string;
-  scope: string;
   storageKey: string;
+  grantType: "password" | "client_credentials";
+  audience: string;
+  clientId: string;
+  clientSecret: string;
+  scope?: string;
+  usernameEnvKey?: string;
+  passwordEnvKey?: string;
 };
 
 const login = (args: LoginArgs) => {
-  const { usernameEnvKey, passwordEnvKey, scope, storageKey } = args;
+  const {
+    usernameEnvKey,
+    passwordEnvKey,
+    scope,
+    storageKey,
+    grantType,
+    audience,
+    clientId,
+    clientSecret,
+  } = args;
 
   const username = Cypress.env(usernameEnvKey) as string;
   const password = Cypress.env(passwordEnvKey) as string;
-  const client_id = Cypress.env("E2E_CLIENT_ID") as string;
-  const client_secret = Cypress.env("E2E_CLIENT_SECRET") as string;
-  const audience = Cypress.env("AUTH0_CLIENT_AUDIENCE") as string;
+
+  const body =
+    grantType === "password"
+      ? {
+          username,
+          password,
+          grant_type: grantType,
+          scope,
+          audience,
+          client_id: clientId,
+          client_secret: clientSecret,
+        }
+      : {
+          grant_type: grantType,
+          scope,
+          audience,
+          client_id: clientId,
+          client_secret: clientSecret,
+        };
 
   cy.request({
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
-    body: {
-      grant_type: "password",
-      scope,
-      username,
-      password,
-      audience,
-      client_id,
-      client_secret,
-    },
+    body,
   }).then((response: Cypress.Response<JwtPayload>) => {
     cy.window().then((win: Cypress.AUTWindow) =>
       win.localStorage.setItem(
@@ -78,21 +99,54 @@ const login = (args: LoginArgs) => {
   });
 };
 
+const clientLoginArgs: LoginArgs = {
+  usernameEnvKey: "AUTH_USERNAME_WITH_KEY_ROLES",
+  passwordEnvKey: "AUTH_PASSWORD_WITH_KEY_ROLES",
+  grantType: "password",
+  audience: Cypress.env("AUTH0_CLIENT_AUDIENCE") as string,
+  clientId: Cypress.env("E2E_CLIENT_ID") as string,
+  clientSecret: Cypress.env("E2E_CLIENT_SECRET") as string,
+  scope: "",
+  storageKey: "",
+};
+
 Cypress.Commands.add("loginWithKeyRoles", () => {
   login({
-    usernameEnvKey: "AUTH_USERNAME_WITH_KEY_ROLES",
-    passwordEnvKey: "AUTH_PASSWORD_WITH_KEY_ROLES",
-    scope: `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`,
+    ...clientLoginArgs,
     storageKey: "jwt-with-key-roles",
+    scope: `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`,
   });
 });
 
 Cypress.Commands.add("loginWithoutKeyRoles", () => {
   login({
-    usernameEnvKey: "AUTH_USERNAME_WITHOUT_KEY_ROLES",
-    passwordEnvKey: "AUTH_PASSWORD_WITHOUT_KEY_ROLES",
-    scope: `${Object.values(DefaultPermissions).join(" ")}`,
+    ...clientLoginArgs,
     storageKey: "jwt-without-key-roles",
+    scope: `${Object.values(DefaultPermissions).join(" ")}`,
+  });
+});
+
+Cypress.Commands.add("loginM2M", () => {
+  login({
+    storageKey: "jwt-auth-m2m",
+    grantType: "client_credentials",
+    audience: Cypress.env("AUTH0_M2M_AUDIENCE") as string,
+    clientId: Cypress.env("AUTH0_CLIENT_ID") as string,
+    clientSecret: Cypress.env("AUTH0_CLIENT_SECRET") as string,
+  });
+});
+
+type ClientKeys = { clientId: string; clientSecret: string };
+
+Cypress.Commands.add("loginWidgetHost", (clientKeys: ClientKeys) => {
+  const { clientId, clientSecret } = clientKeys;
+
+  login({
+    storageKey: "jwt-widget-m2m",
+    grantType: "client_credentials",
+    audience: Cypress.env("WIDGET_AUDIENCE") as string,
+    clientId: clientId,
+    clientSecret: clientSecret,
   });
 });
 
@@ -102,6 +156,8 @@ declare global {
     interface Chainable {
       loginWithKeyRoles(): void;
       loginWithoutKeyRoles(): void;
+      loginM2M(): void;
+      loginWidgetHost(clientKeys: ClientKeys): string;
     }
   }
 }

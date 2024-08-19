@@ -1,6 +1,7 @@
 import { Client } from "auth0";
 import { Request, Response } from "express";
 
+import envs from "@/config";
 import {
   createClient,
   deleteClient,
@@ -41,7 +42,7 @@ export const clientsCreate = async (req: Request, res: Response) => {
   const clientToken = getClientTokenFromRequest(req);
 
   const clientBody = {
-    name: `ucp-${crypto.randomUUID()}`,
+    name: `${envs.ENV === "test" ? "_test" : "ucp"}-${crypto.randomUUID()}`,
     client_metadata: {
       created_via: `ucp-api-v1`,
     },

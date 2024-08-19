@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 
 import {
   exampleAuth0Client,
+  exampleClientGrant,
   exampleClientRotatedSecret,
 } from "@/test/testData/clients";
 import {
@@ -17,6 +18,7 @@ export const AUTH0_USER_BY_ID = `${AUTH0_BASE_URL}api/v2/users/:id`;
 export const AUTH0_AUTH_TOKEN = `${AUTH0_BASE_URL}oauth/token`;
 export const AUTH0_CLIENTS = `${AUTH0_BASE_URL}api/v2/clients`;
 export const AUTH0_CLIENTS_BY_ID = `${AUTH0_BASE_URL}api/v2/clients/:id`;
+export const AUTH0_CLIENT_GRANTS = `${AUTH0_BASE_URL}api/v2/client-grants`;
 
 export const handlers = [
   http.get(AUTH0_USER_BY_ID, () => HttpResponse.json(exampleUserWithClientId)),
@@ -34,4 +36,5 @@ export const handlers = [
   http.post(`${AUTH0_CLIENTS_BY_ID}/rotate-secret`, () =>
     HttpResponse.json(exampleClientRotatedSecret),
   ),
+  http.post(AUTH0_CLIENT_GRANTS, () => HttpResponse.json(exampleClientGrant)),
 ];

@@ -39,12 +39,15 @@ jobs:
 
           cat ${ENV_FILE_PATH}
 
+      - name: Start Institution Service
+        run: npm run dev --workspace apps/institution-service
+
       - name: Cypress run (Standard suite)
         uses: cypress-io/github-action@v6
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
-          wait-on: "http://localhost:8089/ping"
+          wait-on: "http://localhost:8089/ping", "http://localhost:8088/ping"
           spec: apps/authentication-service/cypress/e2e/**/!(rateLimiting.cy.ts)
 
       - name: Kill server # In order to reset rate-limiting
