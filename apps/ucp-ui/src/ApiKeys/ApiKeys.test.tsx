@@ -78,28 +78,29 @@ describe("ApiKeys", () => {
         name: API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
       });
     });
-  });
 
-  it("renders the api keys", async () => {
-    const clientId = "testClientId";
-    const clientSecret = "testClientSecret";
+    it("renders the api keys", async () => {
+      const clientId = "testClientId";
+      const clientSecret = "testClientSecret";
 
-    server.use(
-      http.get(AUTHENTICATION_SERVICE_GET_API_KEYS_URL, () =>
-        HttpResponse.json({
-          clientId,
-          clientSecret,
-        }),
-      ),
-    );
+      server.use(
+        http.get(AUTHENTICATION_SERVICE_GET_API_KEYS_URL, () =>
+          HttpResponse.json({
+            clientId,
+            clientSecret,
+          }),
+        ),
+      );
 
-    render(<ApiKeys />);
+      render(<ApiKeys />);
 
-    expect(
-      await screen.findByLabelText(API_KEYS_CLIENT_ID_LABEL_TEXT),
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByLabelText(API_KEYS_CLIENT_SECRET_LABEL_TEXT),
-    ).toBeInTheDocument();
+      expect(
+        await screen.findByLabelText(API_KEYS_CLIENT_ID_LABEL_TEXT),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByLabelText(API_KEYS_CLIENT_SECRET_LABEL_TEXT),
+      ).toBeInTheDocument();
+    });
   });
 });

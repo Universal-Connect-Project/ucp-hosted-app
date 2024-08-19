@@ -17,6 +17,11 @@ import {
 } from "@mui/icons-material";
 import { useAppDispatch } from "../shared/utils/redux";
 import { displaySnackbar } from "../shared/reducers/snackbar";
+import {
+  API_KEYS_COPY_BUTTON_TEST_ID,
+  API_KEYS_HIDE_KEY_BUTTON_TEST_ID,
+  API_KEYS_SHOW_KEY_BUTTON_TEST_ID,
+} from "./constants";
 
 const ApiKey = ({
   isLoading,
@@ -49,9 +54,20 @@ const ApiKey = ({
           endAdornment={
             <InputAdornment position="end">
               <IconButton onClick={() => setShowValue(!showValue)}>
-                {showValue ? <VisibilityOffOutlined /> : <VisibilityOutlined />}
+                {showValue ? (
+                  <VisibilityOffOutlined
+                    data-testid={`${API_KEYS_HIDE_KEY_BUTTON_TEST_ID}-${label}`}
+                  />
+                ) : (
+                  <VisibilityOutlined
+                    data-testid={`${API_KEYS_SHOW_KEY_BUTTON_TEST_ID}-${label}`}
+                  />
+                )}
               </IconButton>
-              <IconButton onClick={handleCopyToClipboard}>
+              <IconButton
+                data-testid={`${API_KEYS_COPY_BUTTON_TEST_ID}-${label}`}
+                onClick={handleCopyToClipboard}
+              >
                 <ContentCopyOutlined />
               </IconButton>
             </InputAdornment>

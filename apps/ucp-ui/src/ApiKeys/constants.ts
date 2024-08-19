@@ -22,3 +22,7 @@ export const API_KEYS_GET_KEYS_FAILURE_TEXT =
 
 export const API_KEYS_GENERATE_API_KEYS_FAILURE_TEXT =
   "We couldn’t generate your API keys. Please try again in a few moments. If the problem persists, contact us for support.";
+
+export const API_KEYS_COPY_BUTTON_TEST_ID = "apiKeyCopyButton";
+export const API_KEYS_SHOW_KEY_BUTTON_TEST_ID = "apiKeyShowButton";
+export const API_KEYS_HIDE_KEY_BUTTON_TEST_ID = "apiKeyHideButton";

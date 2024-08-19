@@ -27,3 +27,9 @@ Object.defineProperty(globalThis, "crypto", {
     randomUUID,
   },
 });
+
+Object.defineProperty(navigator, "clipboard", {
+  value: {
+    writeText: async () => {},
+  },
+});
