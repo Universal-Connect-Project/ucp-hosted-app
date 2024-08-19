@@ -62,7 +62,8 @@ jobs:
           echo WEB_UI_CLIENT_SECRET=${{ secrets.WEB_UI_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
           echo E2E_INSTITUTION_PASSWORD=${{ secrets.E2E_INSTITUTION_PASSWORD }} >> ${ENV_FILE_PATH}
 
-          echo ${ENV_FILE_PATH} >> ${INST_ENV_FILE_PATH} 
+          # Copy the env file to the institution service
+          cp ${ENV_FILE_PATH} ${INST_ENV_FILE_PATH} 
 
       - name: Start Institution Service
         run: npm run dev --workspace apps/institution-service
