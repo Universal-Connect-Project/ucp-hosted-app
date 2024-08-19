@@ -144,7 +144,7 @@ Cypress.Commands.add("loginWidgetHost", (clientKeys: ClientKeys) => {
   login({
     storageKey: "jwt-widget-m2m",
     grantType: "client_credentials",
-    audience: Cypress.env("WIDGET_AUDIENCE") as string,
+    audience: Cypress.env("AUTH0_WIDGET_AUDIENCE") as string,
     clientId: clientId,
     clientSecret: clientSecret,
   });

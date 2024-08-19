@@ -1,11 +1,6 @@
 name: Auth E2E (Rate-limit)
 
-#on: pull_request
-# for testing
-on:
-  push:
-    branches:
-      - '**'
+on: pull_request
 
 jobs:
   setup-env:
