@@ -26,3 +26,5 @@ export const API_KEYS_GENERATE_API_KEYS_FAILURE_TEXT =
 export const API_KEYS_COPY_BUTTON_TEST_ID = "apiKeyCopyButton";
 export const API_KEYS_SHOW_KEY_BUTTON_TEST_ID = "apiKeyShowButton";
 export const API_KEYS_HIDE_KEY_BUTTON_TEST_ID = "apiKeyHideButton";
+
+export const API_KEYS_MANAGE_BUTTON_TEXT = "MANAGE";
