@@ -1,7 +1,8 @@
 name: Auth E2E (Rate-limit)
 
 #on: pull_request
-on: # for testing
+# for testing
+on:
   push:
     branches:
       - '**'
@@ -12,8 +13,8 @@ jobs:
     uses: ./.github/workflows/setup-env.yml
     secrets: inherit
 
-  e2e-rate-limit-tests:
-    name: Cypress (Rate-limiting)
+  e2e-tests:
+    name: "Cypress (Rate-limiting)"
     runs-on: ubuntu-latest
     needs: [setup-env]
 
