@@ -6,6 +6,8 @@ import {
   API_KEY_TOOLTIP_TEST_ID,
   API_KEY_TOOLTIP_TEXT,
   API_KEYS_CARD_TITLE_TEXT,
+  API_KEYS_CLIENT_ID_LABEL_TEXT,
+  API_KEYS_CLIENT_SECRET_LABEL_TEXT,
   API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
   API_KEYS_GET_KEYS_FAILURE_TEXT,
 } from "./constants";
@@ -75,6 +77,30 @@ describe("ApiKeys", () => {
       await screen.findByRole("button", {
         name: API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
       });
+    });
+
+    it("renders the api keys", async () => {
+      const clientId = "testClientId";
+      const clientSecret = "testClientSecret";
+
+      server.use(
+        http.get(AUTHENTICATION_SERVICE_GET_API_KEYS_URL, () =>
+          HttpResponse.json({
+            clientId,
+            clientSecret,
+          }),
+        ),
+      );
+
+      render(<ApiKeys />);
+
+      expect(
+        await screen.findByLabelText(API_KEYS_CLIENT_ID_LABEL_TEXT),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByLabelText(API_KEYS_CLIENT_SECRET_LABEL_TEXT),
+      ).toBeInTheDocument();
     });
   });
 });
