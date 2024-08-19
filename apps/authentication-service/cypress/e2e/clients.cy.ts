@@ -7,7 +7,6 @@ describe("Client API", () => {
   let accessToken: string;
   let accessTokenBasic: string;
   let accessTokenM2M: string;
-  let accessTokenWidget: string;
   let newClientId: string;
   let newClientSecret: string;
 
@@ -48,26 +47,14 @@ describe("Client API", () => {
         accessTokenM2M = token;
       },
     });
-    getLocalStorage({
-      storageKey: "jwt-widget-m2m",
-      callback: (token: string) => {
-        accessTokenWidget = token;
-      },
-    });
   };
 
   before(() => {
     getTokens();
-    if (
-      !accessToken ||
-      !accessTokenBasic ||
-      !accessTokenM2M ||
-      !accessTokenWidget
-    ) {
+    if (!accessToken || !accessTokenBasic || !accessTokenM2M) {
       cy.loginWithKeyRoles();
       cy.loginWithoutKeyRoles();
       cy.loginM2M();
-      cy.loginWidgetHost();
     }
     getTokens();
   });
@@ -105,7 +92,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       const { body } = response;
       newClientId = (body as unknown as Keys).clientId;
       newClientSecret = (response.body as unknown as Keys).clientSecret;
@@ -160,7 +147,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect((response.body as unknown as Keys).clientSecret).not.to.eq(
         newClientSecret,
       );
@@ -212,7 +199,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect(response.status).to.eq(403);
     });
   });
@@ -226,7 +213,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect(response.status).to.eq(403);
     });
   });
@@ -240,7 +227,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect(response.status).to.eq(403);
     });
   });
@@ -254,7 +241,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect(response.status).to.eq(403);
     });
   });
@@ -267,29 +254,41 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then(() => {
-      cy.request({
-        url: `http://localhost:8088/institutions/cacheList`,
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessTokenWidget}`,
-        },
-      })
-        .then((response: Cypress.Response<{ message: string }>) => {
-          expect(response.status).to.eq(200);
-          expect(response.body).length.above(1);
-        })
-        .then(() => {
+    }).then((response: Cypress.Response<Keys>) => {
+      const client = response.body;
+
+      cy.loginWidgetHost({
+        clientId: client.clientId,
+        clientSecret: client.clientSecret,
+      });
+
+      getLocalStorage({
+        storageKey: "jwt-widget-m2m",
+        callback: (token: string) => {
           cy.request({
-            method: "DELETE",
-            url: keysUrl,
+            url: `http://localhost:8088/institutions/cacheList`,
+            method: "GET",
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
-          }).then((response) => {
-            expect(response.status).to.eq(200);
-          });
-        });
+          })
+            .then((response: Cypress.Response<{ message: string }>) => {
+              expect(response.status).to.eq(200);
+              expect(response.body).length.above(1);
+            })
+            .then(() => {
+              cy.request({
+                method: "DELETE",
+                url: keysUrl,
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }).then((response) => {
+                expect(response.status).to.eq(200);
+              });
+            });
+        },
+      });
     });
   });
 });

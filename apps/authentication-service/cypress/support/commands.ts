@@ -136,13 +136,17 @@ Cypress.Commands.add("loginM2M", () => {
   });
 });
 
-Cypress.Commands.add("loginWidgetHost", () => {
+type ClientKeys = { clientId: string; clientSecret: string };
+
+Cypress.Commands.add("loginWidgetHost", (clientKeys: ClientKeys) => {
+  const { clientId, clientSecret } = clientKeys;
+
   login({
     storageKey: "jwt-widget-m2m",
     grantType: "client_credentials",
     audience: Cypress.env("WIDGET_AUDIENCE") as string,
-    clientId: Cypress.env("WIDGET_CLIENT_ID") as string,
-    clientSecret: Cypress.env("WIDGET_CLIENT_SECRET") as string,
+    clientId: clientId,
+    clientSecret: clientSecret,
   });
 });
 
@@ -153,7 +157,7 @@ declare global {
       loginWithKeyRoles(): void;
       loginWithoutKeyRoles(): void;
       loginM2M(): void;
-      loginWidgetHost(): void;
+      loginWidgetHost(clientKeys: ClientKeys): string;
     }
   }
 }
