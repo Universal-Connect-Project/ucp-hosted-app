@@ -10,6 +10,7 @@ const AUTHENTICATION_SERVICE_BASE_URL = `http://localhost:8089`;
 
 export const AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL = `${AUTHENTICATION_SERVICE_BASE_URL}/v1/clients/keys`;
 export const AUTHENTICATION_SERVICE_GET_API_KEYS_URL = `${AUTHENTICATION_SERVICE_BASE_URL}/v1/clients/keys`;
+export const AUTHENTICATION_SERVICE_ROTATE_API_KEYS_URL = `${AUTHENTICATION_SERVICE_BASE_URL}/v1/clients/keys/rotate`;
 
 export const apiKeysApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -26,8 +27,19 @@ export const apiKeysApi = api.injectEndpoints({
       transformErrorResponse: (response: { status: string | number }) =>
         response.status,
     }),
+    rotateApiKeys: builder.mutation<ApiKeys, void>({
+      query: () => ({
+        method: HttpMethods.POST,
+        url: AUTHENTICATION_SERVICE_ROTATE_API_KEYS_URL,
+      }),
+      invalidatesTags: (result, error) => (!error ? [TagTypes.API_KEYS] : []),
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useCreateApiKeysMutation, useGetApiKeysQuery } = apiKeysApi;
+export const {
+  useCreateApiKeysMutation,
+  useGetApiKeysQuery,
+  useRotateApiKeysMutation,
+} = apiKeysApi;

@@ -16,3 +16,28 @@
     padding-bottom: 20px;
   }
 }
+
+.cardTitle {
+  flex: 1;
+}
+
+.manageDrawer {
+  padding: 32px 16px;
+  width: 400px;
+}
+
+.manageKeysIconButton {
+  &:global(.MuiListItemIcon-root) {
+    color: var(--mui-palette-common-black);
+  }
+}
+
+.listItemButton {
+  width: 100%;
+}
+
+.dialogActions {
+  &:global(.MuiDialogActions-root) {
+    padding-top: 40px;
+  }
+}

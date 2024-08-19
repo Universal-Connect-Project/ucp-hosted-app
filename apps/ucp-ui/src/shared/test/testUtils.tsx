@@ -1,10 +1,11 @@
 import React, { ReactElement } from "react";
-import { render } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider as ReduxProvider } from "react-redux";
 import { createStore } from "../../store";
 import Snackbars from "../../Layout/Snackbars";
 import { Store } from "@reduxjs/toolkit";
+import { SKELETON_LOADER_TEST_ID } from "../components/constants";
 
 const AllTheProviders = ({
   children,
@@ -42,6 +43,11 @@ const customRender = (
 
 export const wait = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export const waitForLoad = async () =>
+  waitFor(() =>
+    expect(screen.queryAllByTestId(SKELETON_LOADER_TEST_ID)).toHaveLength(0),
+  );
 
 export * from "@testing-library/react";
 export { customRender as render };

@@ -1,8 +1,12 @@
 import {
   API_KEYS_CLIENT_ID_LABEL_TEXT,
   API_KEYS_CLIENT_SECRET_LABEL_TEXT,
+  API_KEYS_CONFIRM_ROTATE_SECRET_BUTTON_TEXT,
   API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT,
   API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT,
+  API_KEYS_MANAGE_BUTTON_TEXT,
+  API_KEYS_MANAGE_LIST_ROTATE_TEXT,
+  API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT,
   REQUEST_API_KEY_ACCESS_BUTTON_TEXT,
 } from "../../src/ApiKeys/constants";
 
@@ -29,7 +33,7 @@ describe("apiKeys", () => {
       );
     });
 
-    it("generates api keys for a user with the widget role", () => {
+    it("generates and rotates api keys for a user with the widget role", () => {
       cy.loginWithWidgetRole();
 
       cy.findByText(API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT).click();
@@ -38,6 +42,16 @@ describe("apiKeys", () => {
       cy.findByLabelText(API_KEYS_CLIENT_SECRET_LABEL_TEXT).should("exist");
 
       cy.findByText(API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT).should("exist");
+
+      cy.findByRole("button", { name: API_KEYS_MANAGE_BUTTON_TEXT }).click();
+
+      cy.findByText(API_KEYS_MANAGE_LIST_ROTATE_TEXT).click();
+
+      cy.findByRole("button", {
+        name: API_KEYS_CONFIRM_ROTATE_SECRET_BUTTON_TEXT,
+      }).click();
+
+      cy.findByText(API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT).should("exist");
     });
   });
 });
