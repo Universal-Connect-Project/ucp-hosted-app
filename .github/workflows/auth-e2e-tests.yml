@@ -13,6 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: [setup-env]
 
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,6 +36,10 @@ jobs:
           node-version: "lts/*"
           check-latest: true
       - run: npm ci
+
+      - name: Setup Postgres Database
+        run: |
+          npm run db:setup --workspace apps/institution-service
 
       - name: "Create env file"
         run: |
@@ -36,6 +54,11 @@ jobs:
           echo E2E_CLIENT_SECRET=${{ secrets.E2E_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
           echo AUTH_PASSWORD_WITH_KEY_ROLES=${{ secrets.AUTH_PASSWORD_WITH_KEY_ROLES }} >> ${ENV_FILE_PATH}
           echo AUTH_PASSWORD_WITHOUT_KEY_ROLES=${{ secrets.AUTH_PASSWORD_WITHOUT_KEY_ROLES }} >> ${ENV_FILE_PATH}
+
+          # Secrets for institution list
+          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
+          echo WEB_UI_CLIENT_SECRET=${{ secrets.WEB_UI_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
+          echo E2E_INSTITUTION_PASSWORD=${{ secrets.E2E_INSTITUTION_PASSWORD }} >> ${ENV_FILE_PATH}
 
           cat ${ENV_FILE_PATH}
 
