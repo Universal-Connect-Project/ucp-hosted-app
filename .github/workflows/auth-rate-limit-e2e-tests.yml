@@ -8,7 +8,7 @@ jobs:
     uses: ./.github/workflows/setup-env.yml
     secrets: inherit
 
-  e2e-tests:
+  e2e-rate-limit-tests:
     name: Cypress (Rate-limiting)
     runs-on: ubuntu-latest
     needs: [setup-env]
