@@ -35,3 +35,10 @@ export const API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT =
 export const API_KEYS_MANAGE_LIST_ROTATE_TEXT = "Rotate Client Secret";
 
 export const API_KEYS_CONFIRM_ROTATE_SECRET_BUTTON_TEXT = "YES, ROTATE SECRET";
+
+export const API_KEYS_ROTATE_API_KEYS_ERROR_TEXT =
+  "We couldn't rotate your Client Secret at this time. Please try again in a few moments. If the problem persists, contact us for support.";
+
+export const API_KEYS_MANAGE_CLOSE_DRAWER_BUTTON_TEXT = "CLOSE";
+
+export const API_KEYS_CANCEL_ROTATE_SECRET_BUTTON_TEXT = "CANCEL";

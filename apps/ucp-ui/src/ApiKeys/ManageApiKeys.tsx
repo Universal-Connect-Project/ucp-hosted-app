@@ -16,9 +16,12 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import {
+  API_KEYS_CANCEL_ROTATE_SECRET_BUTTON_TEXT,
   API_KEYS_CONFIRM_ROTATE_SECRET_BUTTON_TEXT,
   API_KEYS_MANAGE_BUTTON_TEXT,
+  API_KEYS_MANAGE_CLOSE_DRAWER_BUTTON_TEXT,
   API_KEYS_MANAGE_LIST_ROTATE_TEXT,
+  API_KEYS_ROTATE_API_KEYS_ERROR_TEXT,
   API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
@@ -82,13 +85,13 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
               startIcon={<Close />}
               variant="text"
             >
-              CLOSE
+              {API_KEYS_MANAGE_CLOSE_DRAWER_BUTTON_TEXT}
             </Button>
             {shouldShowConfirmRotateSecret ? (
               <>
                 {isRotateApiKeysError && (
                   <FormSubmissionError
-                    description="We couldn't rotate your Client Secret at this time. Please try again in a few moments. If the problem persists, contact us for support."
+                    description={API_KEYS_ROTATE_API_KEYS_ERROR_TEXT}
                     formId={rotateFormId}
                     title="Something went wrong"
                   />
@@ -124,7 +127,7 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
                     color="inherit"
                     onClick={handleHideConfirmRotateSecret}
                   >
-                    CANCEL
+                    {API_KEYS_CANCEL_ROTATE_SECRET_BUTTON_TEXT}
                   </Button>
                 </DialogActions>
               </>
