@@ -16,7 +16,9 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import {
+  API_KEYS_CONFIRM_ROTATE_SECRET_BUTTON_TEXT,
   API_KEYS_MANAGE_BUTTON_TEXT,
+  API_KEYS_MANAGE_LIST_ROTATE_TEXT,
   API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
@@ -115,7 +117,7 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
                       type="submit"
                       variant="contained"
                     >
-                      YES, ROTATE SECRET
+                      {API_KEYS_CONFIRM_ROTATE_SECRET_BUTTON_TEXT}
                     </LoadingButton>
                   </form>
                   <Button
@@ -140,7 +142,7 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
                     <RotateRightOutlined />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Rotate Client Secret"
+                    primary={API_KEYS_MANAGE_LIST_ROTATE_TEXT}
                     secondary="Get a new secret"
                   />
                   <ListItemIcon

@@ -31,3 +31,7 @@ export const API_KEYS_MANAGE_BUTTON_TEXT = "MANAGE";
 
 export const API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT =
   "Your Client Secret has been rotated. Be sure to update your widget with your new secret.";
+
+export const API_KEYS_MANAGE_LIST_ROTATE_TEXT = "Rotate Client Secret";
+
+export const API_KEYS_CONFIRM_ROTATE_SECRET_BUTTON_TEXT = "YES, ROTATE SECRET";
