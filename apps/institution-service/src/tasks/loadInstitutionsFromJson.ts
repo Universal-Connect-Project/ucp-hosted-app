@@ -23,7 +23,7 @@ export interface InstitutionProvider {
   supports_oauth: boolean;
   supports_identification: boolean;
   supports_verification: boolean;
-  supports_account_statement: boolean;
+  supports_aggregation: boolean;
   supports_history: boolean;
 }
 
@@ -50,7 +50,7 @@ async function loadInstitutionData() {
       routing_numbers: institution.routing_numbers,
     } as Institution);
 
-    if (institution.mx.id) {
+    if (institution?.mx?.id) {
       const mx = institution.mx;
       providerList.push({
         name: "mx",
@@ -60,11 +60,11 @@ async function loadInstitutionData() {
         supports_identification: mx.supports_identification,
         supports_verification: mx.supports_verification,
         supports_history: mx.supports_history,
-        supports_account_statement: mx.supports_account_statement,
+        supports_aggregation: mx.supports_aggregation,
       } as Provider);
     }
 
-    if (institution.sophtron.id) {
+    if (institution?.sophtron?.id) {
       const sophtron = institution.sophtron;
       providerList.push({
         name: "sophtron",
@@ -74,11 +74,11 @@ async function loadInstitutionData() {
         supports_identification: sophtron.supports_identification,
         supports_verification: sophtron.supports_verification,
         supports_history: sophtron.supports_history,
-        supports_account_statement: sophtron.supports_account_statement,
+        supports_aggregation: sophtron.supports_aggregation,
       } as Provider);
     }
 
-    if (institution.finicity.id) {
+    if (institution?.finicity?.id) {
       const finicity = institution.finicity;
       providerList.push({
         name: "finicity",
@@ -88,7 +88,7 @@ async function loadInstitutionData() {
         supports_identification: finicity.supports_identification,
         supports_verification: finicity.supports_verification,
         supports_history: finicity.supports_history,
-        supports_account_statement: finicity.supports_account_statement,
+        supports_aggregation: finicity.supports_aggregation,
       } as Provider);
     }
   });
