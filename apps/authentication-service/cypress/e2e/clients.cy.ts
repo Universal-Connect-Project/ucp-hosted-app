@@ -74,8 +74,6 @@ describe("Client API", () => {
   });
 
   it("clears the client_id from user metadata, tries creating a client without access token, creates a client, fails if another client request is made, gets the newly created client, and deletes the client", () => {
-    cy.wait(2000); // Because sometimes we hit the shortened rate limit
-
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",
@@ -137,8 +135,6 @@ describe("Client API", () => {
       expect(response.status).to.eq(400);
       expect(response.body).property("message").to.eq("User already has keys");
     });
-
-    cy.wait(2000); // Because sometimes we hit the shortened rate limit
 
     cy.request({
       method: "POST",

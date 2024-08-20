@@ -1,3 +1,4 @@
+import { ConsoleColors } from "@/shared/enums";
 import cors from "cors";
 import helmet from "helmet";
 import nocache from "nocache";
@@ -8,8 +9,9 @@ import { errorHandler } from "@/middleware/errorMiddleware";
 import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 import { clientsRoutes } from "@/resources/clients/clientsRoutes";
 
-const rateLimitWindowMinutes = 10;
-const rateLimitTest = process.env.RATE_LIMIT_TEST === "true" || false;
+const shouldDoRateLimitTest = process.env.RATE_LIMIT_TEST === "true" || false;
+const rateLimitWindow = shouldDoRateLimitTest ? 0.05 : 2; // 3 seconds (test) / 2 minutes (production) minutes
+const rateLimitCount = shouldDoRateLimitTest ? 5 : 100; // 5 (test) / 100 (production) requests per minute
 
 const initErrorHandling = (app: Application): void => {
   app.use(errorHandler);
@@ -21,10 +23,16 @@ export const initExpress = (app: Application): void => {
   app.use(express.json());
   app.set("json spaces", 2);
 
+  if (shouldDoRateLimitTest) {
+    console.log(
+      `${ConsoleColors.FgRed}Rate limit set to ${rateLimitCount} requests in ${rateLimitWindow * 60} seconds for testing purposes${ConsoleColors.Reset}`,
+    );
+  }
+
   const limiter = rateLimit({
-    windowMs: rateLimitTest ? 2 * 1000 : rateLimitWindowMinutes * 60 * 1000, // (2 seconds for testing) or 10 minutes for production
-    limit: rateLimitTest ? 5 : 500, // max average 5/500 requests per windowMs (2 seconds/10 minutes)
-    message: `Too many requests from this IP, please try again after ${rateLimitWindowMinutes} minutes`,
+    windowMs: rateLimitWindow * 60 * 1000,
+    limit: rateLimitCount,
+    message: `Too many requests from this IP, please try again after ${rateLimitWindow} minutes`,
     handler: (_req, res, _next, options) =>
       res
         .status(options.statusCode)
