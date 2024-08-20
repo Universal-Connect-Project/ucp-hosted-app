@@ -1,7 +1,7 @@
 import { UiClientPermissions } from "@/shared/enums";
 import express, { Application, RequestHandler } from "express";
 
-import { WidgetHostPermissions } from "@repo/shared-utils";
+// import { WidgetHostPermissions } from "@repo/shared-utils";
 import { validateAccessToken } from "@/middleware/authMiddleware";
 import {
   clientsCreate,
@@ -22,7 +22,7 @@ export const clientsRoutes = (app: Application): void => {
     [
       validateAccessToken,
       requiredScopes(
-        (WidgetHostPermissions as Record<string, string>).CREATE_KEYS,
+        (UiClientPermissions as Record<string, string>).CREATE_KEYS,
       ),
     ],
     clientsCreate as RequestHandler,
@@ -31,9 +31,7 @@ export const clientsRoutes = (app: Application): void => {
     "/keys",
     [
       validateAccessToken,
-      requiredScopes(
-        (WidgetHostPermissions as Record<string, string>).READ_KEYS,
-      ),
+      requiredScopes((UiClientPermissions as Record<string, string>).READ_KEYS),
     ],
     clientsGet as RequestHandler,
   );
@@ -42,7 +40,7 @@ export const clientsRoutes = (app: Application): void => {
     [
       validateAccessToken,
       requiredScopes(
-        (WidgetHostPermissions as Record<string, string>).DELETE_KEYS,
+        (UiClientPermissions as Record<string, string>).DELETE_KEYS,
       ),
     ],
     clientsDelete as RequestHandler,
@@ -52,7 +50,7 @@ export const clientsRoutes = (app: Application): void => {
     [
       validateAccessToken,
       requiredScopes(
-        (WidgetHostPermissions as Record<string, string>).ROTATE_KEYS,
+        (UiClientPermissions as Record<string, string>).ROTATE_KEYS,
       ),
     ],
     clientsRotateSecrets as RequestHandler,
