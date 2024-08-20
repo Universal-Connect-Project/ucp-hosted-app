@@ -1,10 +1,10 @@
-import { ConsoleColors } from "@/shared/enums";
 import cors from "cors";
 import helmet from "helmet";
 import nocache from "nocache";
 import { rateLimit } from "express-rate-limit";
 import express, { Application, NextFunction, Request, Response } from "express";
 
+import { ConsoleColors } from "@/shared/enums";
 import { errorHandler } from "@/middleware/errorMiddleware";
 import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 import { clientsRoutes } from "@/resources/clients/clientsRoutes";
