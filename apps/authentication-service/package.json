@@ -4,7 +4,7 @@
   "description": "UCP Authentication Service",
   "scripts": {
     "dev": "npx -y nodemon -r tsconfig-paths/register ./src/index.ts",
-    "dev:test": "RATE_LIMIT_TEST=true npm run dev",
+    "dev:rate-limit": "RATE_LIMIT_TEST=true npm run dev",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
