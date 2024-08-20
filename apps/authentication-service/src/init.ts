@@ -23,7 +23,7 @@ export const initExpress = (app: Application): void => {
 
   const limiter = rateLimit({
     windowMs: rateLimitTest ? 2 * 1000 : rateLimitWindowMinutes * 60 * 1000, // (2 seconds for testing) or 10 minutes for production
-    limit: rateLimitTest ? 10 : 500, // max average 5/500 requests per windowMs (2 seconds/10 minutes)
+    limit: rateLimitTest ? 5 : 500, // max average 5/500 requests per windowMs (2 seconds/10 minutes)
     message: `Too many requests from this IP, please try again after ${rateLimitWindowMinutes} minutes`,
     handler: (_req, res, _next, options) =>
       res

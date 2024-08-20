@@ -4,8 +4,8 @@ describe("Rate Limiting", () => {
   const PORT: number = 8089;
 
   it("tests the rate limiting middleware by sending 10 requests, 5 succeeding, and 5 failing", () => {
-    for (let i = 0; i < testLimit - 5; i++) {
-      if (i < testLimit) {
+    for (let i = 0; i < testLimit; i++) {
+      if (i < testLimit / 2) {
         cy.request({
           url: `http://localhost:${PORT}/ping`,
         })
