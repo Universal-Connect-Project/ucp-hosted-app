@@ -1,5 +1,5 @@
 import envs from "@/config";
-import { DefaultPermissions, WidgetHostPermissions } from "@/shared/enums";
+import { DefaultPermissions, UiClientPermissions } from "@/shared/enums";
 import { sign, Algorithm, JwtPayload, SignOptions } from "jsonwebtoken";
 import { UserInfoResponse } from "auth0";
 import { User } from "@/shared/users/usersModel";
@@ -105,14 +105,14 @@ export const getTestToken = (
   const payload: JwtPayload = {
     sub: exampleUserID,
     scope: shouldAddKeyRoles
-      ? `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`
+      ? `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`
       : `${Object.values(DefaultPermissions).join(" ")}`,
     azp: "osS8CuafkPsJlfz5mfKRgYH942Pmwpxd",
   };
 
   if (shouldAddKeyRoles) {
     payload["ucw/roles"] = ["WidgetHost"];
-    payload["permissions"] = Object.values(WidgetHostPermissions);
+    payload["permissions"] = Object.values(UiClientPermissions);
   }
 
   const options: SignOptions = {

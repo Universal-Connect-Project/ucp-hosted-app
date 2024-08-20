@@ -1,27 +1,26 @@
 import { createStore } from "../../store";
-import { displaySnackbar, getSnackbarSlice } from "./snackbar";
+import {
+  closeSnackbar,
+  displaySnackbar,
+  getIsSnackbarOpen,
+  getSnackbarMessage,
+} from "./snackbar";
 
 describe("snackbar reducer", () => {
-  describe("setAccessSnackbar and getAccessSnackbar", () => {
-    it("sets and gets the snackbar, and updates the id every time display is called", () => {
+  describe("displaySnackbar and closeSnackbar", () => {
+    it("sets the message and opens it on display snackbar, closes it with closeSnackbar", () => {
       const store = createStore();
 
-      const snackbar = "testSnackbar";
+      const message = "testSnackbar";
 
-      store.dispatch(displaySnackbar(snackbar));
+      store.dispatch(displaySnackbar(message));
 
-      const slice = getSnackbarSlice(store.getState());
+      expect(getIsSnackbarOpen(store.getState())).toBe(true);
+      expect(getSnackbarMessage(store.getState())).toBe(message);
 
-      const firstMessageId = slice.messageId;
+      store.dispatch(closeSnackbar());
 
-      expect(slice.message).toEqual(snackbar);
-      expect(firstMessageId).toBeDefined();
-
-      store.dispatch(displaySnackbar(snackbar));
-
-      expect(getSnackbarSlice(store.getState()).messageId).not.toEqual(
-        firstMessageId,
-      );
+      expect(getIsSnackbarOpen(store.getState())).toBe(false);
     });
   });
 });

@@ -39,6 +39,9 @@ jobs:
 
           cat ${ENV_FILE_PATH}
 
+      - name: Start Institution Service
+        run: npm run dev --workspace apps/institution-service
+
       - name: Build shared-utils
         run: npm run build --workspace packages/shared-utils
 

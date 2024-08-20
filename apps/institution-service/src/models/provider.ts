@@ -24,7 +24,7 @@ export class Provider extends Model<
   declare supports_oauth: CreationOptional<boolean>;
   declare supports_identification: CreationOptional<boolean>;
   declare supports_verification: CreationOptional<boolean>;
-  declare supports_account_statement: CreationOptional<boolean>;
+  declare supports_aggregation: CreationOptional<boolean>;
   declare supports_history: CreationOptional<boolean>;
   declare institution_id: ForeignKey<Institution["ucp_id"]>;
 
@@ -50,9 +50,9 @@ Provider.init(
     supports_oauth: { type: DataTypes.BOOLEAN, defaultValue: false },
     supports_identification: { type: DataTypes.BOOLEAN, defaultValue: false },
     supports_verification: { type: DataTypes.BOOLEAN, defaultValue: false },
-    supports_account_statement: {
+    supports_aggregation: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: true,
     },
     supports_history: { type: DataTypes.BOOLEAN, defaultValue: false },
     createdAt: { type: DataTypes.DATE, defaultValue: new Date() },

@@ -6,34 +6,55 @@ const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
 describe("Client API", () => {
   let accessToken: string;
   let accessTokenBasic: string;
+  let accessTokenM2M: string;
   let newClientId: string;
   let newClientSecret: string;
+
   const keysUrl = `http://localhost:${PORT}/v1/clients/keys`;
 
-  const getTokens = () => {
+  const getLocalStorage = (args: {
+    storageKey: string;
+    callback: (token: string) => void;
+  }) => {
+    const { storageKey, callback } = args;
+
     cy.window()
       .its("localStorage")
-      .invoke("getItem", "jwt-with-key-roles")
+      .invoke("getItem", storageKey)
       .then((token: string) => {
         if (token) {
-          accessToken = token;
-        }
-      });
-    cy.window()
-      .its("localStorage")
-      .invoke("getItem", "jwt-without-key-roles")
-      .then((token: string) => {
-        if (token) {
-          accessTokenBasic = token;
+          callback(token);
         }
       });
   };
 
+  const getTokens = () => {
+    getLocalStorage({
+      storageKey: "jwt-with-key-roles",
+      callback: (token: string) => {
+        accessToken = token;
+      },
+    });
+    getLocalStorage({
+      storageKey: "jwt-without-key-roles",
+      callback: (token: string) => {
+        accessTokenBasic = token;
+      },
+    });
+    getLocalStorage({
+      storageKey: "jwt-auth-m2m",
+      callback: (token: string) => {
+        accessTokenM2M = token;
+      },
+    });
+  };
+
   before(() => {
     getTokens();
-    if (!accessToken) {
+    if (!accessToken || !accessTokenBasic || !accessTokenM2M) {
       cy.loginWithKeyRoles();
       cy.loginWithoutKeyRoles();
+      cy.loginM2M();
     }
     getTokens();
   });
@@ -53,6 +74,8 @@ describe("Client API", () => {
   });
 
   it("clears the client_id from user metadata, tries creating a client without access token, creates a client, fails if another client request is made, gets the newly created client, and deletes the client", () => {
+    cy.wait(2000); // Because sometimes we hit the shortened rate limit
+
     cy.request({
       failOnStatusCode: false,
       method: "DELETE",
@@ -69,7 +92,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       const { body } = response;
       newClientId = (body as unknown as Keys).clientId;
       newClientSecret = (response.body as unknown as Keys).clientSecret;
@@ -78,6 +101,8 @@ describe("Client API", () => {
       expect(Object.keys(body)).to.have.length(2);
       expect(Object.keys(body)).to.include("clientId");
       expect(Object.keys(body)).to.include("clientSecret");
+
+      return newClientId;
     });
 
     cy.request({
@@ -122,7 +147,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect((response.body as unknown as Keys).clientSecret).not.to.eq(
         newClientSecret,
       );
@@ -174,7 +199,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect(response.status).to.eq(403);
     });
   });
@@ -188,7 +213,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect(response.status).to.eq(403);
     });
   });
@@ -202,7 +227,7 @@ describe("Client API", () => {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect(response.status).to.eq(403);
     });
   });
@@ -211,13 +236,59 @@ describe("Client API", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
-      url: `http://localhost:${PORT}/v1/clients/keys/rotate`,
+      url: `${keysUrl}/rotate`,
       headers: {
         ContentType: "application/json",
         Authorization: `Bearer ${accessTokenBasic}`,
       },
-    }).then((response: Cypress.Response<{ body: Keys }>) => {
+    }).then((response: Cypress.Response<Keys>) => {
       expect(response.status).to.eq(403);
+    });
+  });
+
+  it("creates a new client, accesses institution cache endpoint, and deletes the client", () => {
+    cy.request({
+      method: "POST",
+      url: keysUrl,
+      headers: {
+        ContentType: "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((response: Cypress.Response<Keys>) => {
+      const client = response.body;
+
+      cy.loginWidgetHost({
+        clientId: client.clientId,
+        clientSecret: client.clientSecret,
+      });
+
+      getLocalStorage({
+        storageKey: "jwt-widget-m2m",
+        callback: (token: string) => {
+          cy.request({
+            url: `http://localhost:8088/institutions/cacheList`,
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((response: Cypress.Response<{ message: string }>) => {
+              expect(response.status).to.eq(200);
+              expect(response.body).length.above(1);
+            })
+            .then(() => {
+              cy.request({
+                method: "DELETE",
+                url: keysUrl,
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }).then((response) => {
+                expect(response.status).to.eq(200);
+              });
+            });
+        },
+      });
     });
   });
 });

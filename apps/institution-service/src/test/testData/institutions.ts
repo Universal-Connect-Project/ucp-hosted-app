@@ -22,7 +22,7 @@ export const cachedInstitutionFromSeed = {
   routing_numbers: ["123", "456"],
   mx: {
     id: "mx_bank",
-    supports_account_statement: false,
+    supports_aggregation: true,
     supports_history: true,
     supports_identification: true,
     supports_oauth: true,
@@ -30,7 +30,7 @@ export const cachedInstitutionFromSeed = {
   },
   sophtron: {
     id: "sophtron_bank",
-    supports_account_statement: false,
+    supports_aggregation: true,
     supports_history: true,
     supports_identification: true,
     supports_oauth: true,
@@ -51,7 +51,7 @@ export const institutionWithProviderQueryObj = {
       dataValues: {
         name: "mx",
         id: "mx_bank",
-        supports_account_statement: false,
+        supports_aggregation: true,
         supports_history: true,
         supports_identification: true,
         supports_oauth: true,
@@ -62,7 +62,7 @@ export const institutionWithProviderQueryObj = {
       dataValues: {
         name: "sophtron",
         id: "sophtron_bank",
-        supports_account_statement: false,
+        supports_aggregation: true,
         supports_history: true,
         supports_identification: true,
         supports_oauth: true,

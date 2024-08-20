@@ -1,3 +1,4 @@
+import { UiClientPermissions } from "@/shared/enums";
 import express, { Application, RequestHandler } from "express";
 
 import { WidgetHostPermissions } from "@repo/shared-utils";
@@ -17,6 +18,7 @@ export const clientsRoutes = (app: Application): void => {
 
   clientsRouterV1.post(
     "/keys",
+    [validateAccessToken, requiredScopes(UiClientPermissions.CREATE_KEYS)],
     [
       validateAccessToken,
       requiredScopes(
