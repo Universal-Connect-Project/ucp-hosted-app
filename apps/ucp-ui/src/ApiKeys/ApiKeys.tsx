@@ -27,6 +27,7 @@ import RequestAPIKeyAccess from "./RequestAPIKeyAccess";
 import FetchError from "../shared/components/FetchError";
 import GenerateKeys from "./GenerateKeys";
 import ApiKey from "./ApiKey";
+import ManageApiKeys from "./ManageApiKeys";
 
 const ApiKeys = () => {
   const { user } = useAuth0();
@@ -53,6 +54,9 @@ const ApiKeys = () => {
   const canUserGenerateApiKeys = isUserMissingApiKeys && hasApiKeyAccess;
 
   const { clientId, clientSecret } = keysData || {};
+
+  const shouldShowManageButton =
+    isGetApiKeysFetching || (clientId && clientSecret);
 
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
@@ -100,7 +104,7 @@ const ApiKeys = () => {
       <Card className={styles.apiKeysCard} variant="outlined">
         <CardHeader
           title={
-            <Stack alignItems="center" direction="row">
+            <Stack alignItems="center" direction="row" spacing={0.5}>
               <ClickAwayListener onClickAway={handleCloseTooltip}>
                 <Tooltip open={isTooltipOpen} title={API_KEY_TOOLTIP_TEXT}>
                   <IconButton
@@ -112,7 +116,10 @@ const ApiKeys = () => {
                   </IconButton>
                 </Tooltip>
               </ClickAwayListener>
-              {API_KEYS_CARD_TITLE_TEXT}
+              <div className={styles.cardTitle}>{API_KEYS_CARD_TITLE_TEXT}</div>
+              {shouldShowManageButton && (
+                <ManageApiKeys isLoading={isGetApiKeysFetching} />
+              )}
             </Stack>
           }
           titleTypographyProps={{
