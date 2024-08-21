@@ -65,9 +65,6 @@ jobs:
           # Copy the env file to the institution service
           cp ${ENV_FILE_PATH} ${INST_ENV_FILE_PATH} 
 
-#      - name: Start Institution Service
-#        run: npm run dev --workspace apps/institution-service &
-
       - name: Cypress run (Standard suite)
         uses: cypress-io/github-action@v6
         with:
