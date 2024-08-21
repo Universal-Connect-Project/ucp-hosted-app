@@ -63,10 +63,6 @@ const login = (args: LoginArgs) => {
     clientSecret,
   } = args;
 
-  cy.log(
-    `Logging in with '${grantType}' grant type, and '${storageKey}' storage key`,
-  );
-
   const username = Cypress.env(usernameEnvKey) as string;
   const password = Cypress.env(passwordEnvKey) as string;
 
