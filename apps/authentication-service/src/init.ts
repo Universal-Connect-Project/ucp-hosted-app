@@ -4,7 +4,6 @@ import nocache from "nocache";
 import { rateLimit } from "express-rate-limit";
 import express, { Application, NextFunction, Request, Response } from "express";
 
-import { ConsoleColors } from "@/shared/enums";
 import { errorHandler } from "@/middleware/errorMiddleware";
 import { notFoundHandler } from "@/middleware/notFoundMiddleware";
 import { clientsRoutes } from "@/resources/clients/clientsRoutes";
@@ -22,12 +21,6 @@ export const initExpress = (app: Application): void => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.set("json spaces", 2);
-
-  if (shouldDoRateLimitTest) {
-    console.log(
-      `${ConsoleColors.FgRed}Rate limit set to ${rateLimitCount} requests in ${rateLimitWindow * 60} seconds for testing purposes${ConsoleColors.Reset}`,
-    );
-  }
 
   const limiter = rateLimit({
     windowMs: rateLimitWindow * 60 * 1000,
