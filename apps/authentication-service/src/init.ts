@@ -29,7 +29,7 @@ export const initExpress = (app: Application): void => {
     );
   }
 
-  const _limiter = rateLimit({
+  const limiter = rateLimit({
     windowMs: rateLimitWindow * 60 * 1000,
     limit: rateLimitCount,
     message: `Too many requests from this IP, please try again after ${rateLimitWindow} minutes`,
@@ -38,7 +38,7 @@ export const initExpress = (app: Application): void => {
         .status(options.statusCode)
         .json({ message: options.message as string }),
   });
-  // app.use(limiter);
+  app.use(limiter);
 
   app.use(
     helmet({
