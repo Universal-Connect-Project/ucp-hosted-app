@@ -87,6 +87,26 @@ const login = (args: LoginArgs) => {
           client_secret: clientSecret,
         };
 
+  const getAuthToken = () =>
+    cy
+      .request({
+        method: "POST",
+        url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
+        body,
+      })
+      .then((response: Cypress.Response<JwtPayload>) => {
+        if (storageKey === "jwt-auth-m2m") {
+          M2MToken = response.body.access_token as string;
+        }
+
+        cy.window().then((win: Cypress.AUTWindow) =>
+          win.localStorage.setItem(
+            storageKey,
+            response.body.access_token as string,
+          ),
+        );
+      });
+
   if (M2MToken) {
     cy.exec("curl -4 icanhazip.com")
       .its("stdout")
@@ -100,25 +120,13 @@ const login = (args: LoginArgs) => {
             Authorization: `Bearer ${M2MToken}`,
           },
         });
+      })
+      .then(() => {
+        getAuthToken();
       });
+  } else {
+    getAuthToken();
   }
-
-  cy.request({
-    method: "POST",
-    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
-    body,
-  }).then((response: Cypress.Response<JwtPayload>) => {
-    if (storageKey === "jwt-auth-m2m") {
-      M2MToken = response.body.access_token as string;
-    }
-
-    cy.window().then((win: Cypress.AUTWindow) =>
-      win.localStorage.setItem(
-        storageKey,
-        response.body.access_token as string,
-      ),
-    );
-  });
 };
 
 const clientLoginArgs: LoginArgs = {
