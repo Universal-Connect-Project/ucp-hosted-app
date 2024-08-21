@@ -6,7 +6,6 @@ const USER_ID: string = "auth0|667c3d0c90b963e3671f411e";
 describe("Client API", () => {
   let accessToken: string;
   let accessTokenBasic: string;
-  let accessTokenM2M: string;
   let newClientId: string;
   let newClientSecret: string;
 
@@ -41,17 +40,13 @@ describe("Client API", () => {
         accessTokenBasic = token;
       },
     });
-    getLocalStorage({
-      storageKey: "jwt-auth-m2m",
-      callback: (token: string) => {
-        accessTokenM2M = token;
-      },
-    });
   };
 
   before(() => {
+    cy.wait(61000);
+
     getTokens();
-    if (!accessToken || !accessTokenBasic || !accessTokenM2M) {
+    if (!accessToken || !accessTokenBasic) {
       cy.loginWithKeyRoles();
       cy.loginWithoutKeyRoles();
       cy.loginM2M();
@@ -83,6 +78,8 @@ describe("Client API", () => {
       },
     });
 
+    cy.wait(1200);
+
     cy.request({
       method: "POST",
       url: keysUrl,
@@ -103,6 +100,8 @@ describe("Client API", () => {
       return newClientId;
     });
 
+    cy.wait(1200);
+
     cy.request({
       method: "GET",
       url: keysUrl,
@@ -120,6 +119,8 @@ describe("Client API", () => {
       expect(body).property("clientId").to.deep.eq(newClientId);
     });
 
+    cy.wait(1200);
+
     cy.request({
       failOnStatusCode: false,
       method: "POST",
@@ -136,6 +137,8 @@ describe("Client API", () => {
       expect(response.body).property("message").to.eq("User already has keys");
     });
 
+    cy.wait(1200);
+
     cy.request({
       method: "POST",
       url: `http://localhost:${PORT}/v1/clients/keys/rotate`,
@@ -149,6 +152,8 @@ describe("Client API", () => {
       );
     });
 
+    cy.wait(1200);
+
     cy.request({
       method: "DELETE",
       url: keysUrl,
@@ -158,6 +163,8 @@ describe("Client API", () => {
     }).then((response) => {
       expect(response.status).to.eq(200);
     });
+
+    cy.wait(1200);
 
     cy.request({
       failOnStatusCode: false,
@@ -171,6 +178,8 @@ describe("Client API", () => {
       expect(response.status).to.eq(404);
       expect(response.body).property("message").to.eq("Keys not found");
     });
+
+    cy.wait(1200);
 
     cy.request({
       failOnStatusCode: false,
@@ -243,6 +252,8 @@ describe("Client API", () => {
   });
 
   it("creates a new client, accesses institution cache endpoint, and deletes the client", () => {
+    cy.wait(10000);
+
     cy.request({
       method: "POST",
       url: keysUrl,
@@ -273,6 +284,8 @@ describe("Client API", () => {
               expect(response.body).length.above(1);
             })
             .then(() => {
+              cy.wait(1200);
+
               cy.request({
                 method: "DELETE",
                 url: keysUrl,
