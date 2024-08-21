@@ -51,6 +51,8 @@ type LoginArgs = {
   passwordEnvKey?: string;
 };
 
+let M2MToken: string | undefined;
+
 const login = (args: LoginArgs) => {
   const {
     usernameEnvKey,
@@ -85,11 +87,31 @@ const login = (args: LoginArgs) => {
           client_secret: clientSecret,
         };
 
+  if (M2MToken) {
+    cy.exec("curl -4 icanhazip.com")
+      .its("stdout")
+      .then((ip) => {
+        cy.request({
+          method: "DELETE",
+          url: `https://${Cypress.env(
+            "AUTH0_DOMAIN",
+          )}/api/v2/anomaly/blocks/ips/${ip}`,
+          headers: {
+            Authorization: `Bearer ${M2MToken}`,
+          },
+        });
+      });
+  }
+
   cy.request({
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
     body,
   }).then((response: Cypress.Response<JwtPayload>) => {
+    if (storageKey === "jwt-auth-m2m") {
+      M2MToken = response.body.access_token as string;
+    }
+
     cy.window().then((win: Cypress.AUTWindow) =>
       win.localStorage.setItem(
         storageKey,
