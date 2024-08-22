@@ -1,4 +1,4 @@
-name: Auth E2E (Standard)
+name: Auth E2E (Clients)
 
 on: pull_request
 
