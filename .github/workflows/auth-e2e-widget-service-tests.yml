@@ -1,0 +1,83 @@
+name: Auth E2E (Standard)
+
+on: pull_request
+
+jobs:
+  setup-env:
+    name: "Load ENV Vars"
+    uses: ./.github/workflows/setup-env.yml
+    secrets: inherit
+
+  e2e-tests:
+    name: "Cypress (Widget Auth)"
+    runs-on: ubuntu-latest
+    needs: [setup-env]
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          check-latest: true
+      - run: npm ci
+
+      - name: Setup Postgres Database
+        run: |
+          npm run db:setup --workspace apps/institution-service
+
+      - name: "Create env file"
+        run: |
+          ENV_FILE_PATH=./apps/authentication-service/.env
+          INST_ENV_FILE_PATH=./apps/institution-service/.env
+          touch ${ENV_FILE_PATH}
+          touch ${INST_ENV_FILE_PATH}
+
+          # Vars
+          echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
+
+          # Secrets (can't load these from another job, due to GH security features)
+          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
+          echo E2E_CLIENT_SECRET=${{ secrets.E2E_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
+          echo AUTH_PASSWORD_WITH_KEY_ROLES=${{ secrets.AUTH_PASSWORD_WITH_KEY_ROLES }} >> ${ENV_FILE_PATH}
+          echo AUTH_PASSWORD_WITHOUT_KEY_ROLES=${{ secrets.AUTH_PASSWORD_WITHOUT_KEY_ROLES }} >> ${ENV_FILE_PATH}
+
+          # Secrets for institution list
+          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
+          echo WEB_UI_CLIENT_SECRET=${{ secrets.WEB_UI_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
+          echo E2E_INSTITUTION_PASSWORD=${{ secrets.E2E_INSTITUTION_PASSWORD }} >> ${ENV_FILE_PATH}
+
+          # Copy the env file to the institution service
+          cp ${ENV_FILE_PATH} ${INST_ENV_FILE_PATH} 
+
+      - name: Cypress run (Standard suite)
+        uses: cypress-io/github-action@v6
+        with:
+          project: apps/authentication-service
+          start: |
+            npm run dev --workspace apps/institution-service
+            npm run dev --workspace apps/authentication-service
+          wait-on: "http://localhost:8089/ping, http://localhost:8088/ping"
+          spec: apps/authentication-service/cypress/e2e/institutionCrud.cy.ts
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: apps/authentication-service/cypress/screenshots
