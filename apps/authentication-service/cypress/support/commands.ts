@@ -126,16 +126,6 @@ Cypress.Commands.add("loginWithoutKeyRoles", () => {
   });
 });
 
-Cypress.Commands.add("loginM2M", () => {
-  login({
-    storageKey: "jwt-auth-m2m",
-    grantType: "client_credentials",
-    audience: Cypress.env("AUTH0_M2M_AUDIENCE") as string,
-    clientId: Cypress.env("AUTH0_CLIENT_ID") as string,
-    clientSecret: Cypress.env("AUTH0_CLIENT_SECRET") as string,
-  });
-});
-
 type ClientKeys = { clientId: string; clientSecret: string };
 
 Cypress.Commands.add("loginWidgetHost", (clientKeys: ClientKeys) => {
@@ -144,7 +134,7 @@ Cypress.Commands.add("loginWidgetHost", (clientKeys: ClientKeys) => {
   login({
     storageKey: "jwt-widget-m2m",
     grantType: "client_credentials",
-    audience: Cypress.env("WIDGET_AUDIENCE") as string,
+    audience: Cypress.env("AUTH0_WIDGET_AUDIENCE") as string,
     clientId: clientId,
     clientSecret: clientSecret,
   });
@@ -156,7 +146,6 @@ declare global {
     interface Chainable {
       loginWithKeyRoles(): void;
       loginWithoutKeyRoles(): void;
-      loginM2M(): void;
       loginWidgetHost(clientKeys: ClientKeys): string;
     }
   }

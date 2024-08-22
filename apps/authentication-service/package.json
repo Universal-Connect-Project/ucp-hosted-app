@@ -4,8 +4,11 @@
   "description": "UCP Authentication Service",
   "scripts": {
     "dev": "npx -y nodemon -r tsconfig-paths/register ./src/index.ts",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
+    "dev:rate-limit": "RATE_LIMIT_TEST=true npm run dev",
+    "cypress:open": "cypress open --config specPattern='cypress/e2e/**/!(rateLimiting.cy.ts)'",
+    "cypress:run": "cypress run --config specPattern='cypress/e2e/**/!(rateLimiting.cy.ts)'",
+    "cypress:open:rate-limit": "cypress open --config specPattern='cypress/e2e/rateLimiting.cy.ts'",
+    "cypress:run:rate-limit": "cypress run --config specPattern='cypress/e2e/rateLimiting.cy.ts'",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier . --check",
     "test": "jest",
