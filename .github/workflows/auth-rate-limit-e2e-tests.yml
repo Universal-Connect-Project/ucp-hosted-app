@@ -9,7 +9,7 @@ jobs:
     secrets: inherit
 
   e2e-tests:
-    name: "Cypress (Rate-limiting)"
+    name: "Cypress (Rate Limit)"
     runs-on: ubuntu-latest
     needs: [setup-env]
 

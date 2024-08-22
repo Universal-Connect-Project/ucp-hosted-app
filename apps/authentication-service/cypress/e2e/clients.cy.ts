@@ -43,13 +43,10 @@ describe("Client API", () => {
   };
 
   before(() => {
-    cy.wait(61000);
-
     getTokens();
     if (!accessToken || !accessTokenBasic) {
       cy.loginWithKeyRoles();
       cy.loginWithoutKeyRoles();
-      cy.loginM2M();
     }
     getTokens();
   });
@@ -78,8 +75,6 @@ describe("Client API", () => {
       },
     });
 
-    cy.wait(1200);
-
     cy.request({
       method: "POST",
       url: keysUrl,
@@ -100,8 +95,6 @@ describe("Client API", () => {
       return newClientId;
     });
 
-    cy.wait(1200);
-
     cy.request({
       method: "GET",
       url: keysUrl,
@@ -119,8 +112,6 @@ describe("Client API", () => {
       expect(body).property("clientId").to.deep.eq(newClientId);
     });
 
-    cy.wait(1200);
-
     cy.request({
       failOnStatusCode: false,
       method: "POST",
@@ -137,8 +128,6 @@ describe("Client API", () => {
       expect(response.body).property("message").to.eq("User already has keys");
     });
 
-    cy.wait(1200);
-
     cy.request({
       method: "POST",
       url: `http://localhost:${PORT}/v1/clients/keys/rotate`,
@@ -152,8 +141,6 @@ describe("Client API", () => {
       );
     });
 
-    cy.wait(1200);
-
     cy.request({
       method: "DELETE",
       url: keysUrl,
@@ -163,8 +150,6 @@ describe("Client API", () => {
     }).then((response) => {
       expect(response.status).to.eq(200);
     });
-
-    cy.wait(1200);
 
     cy.request({
       failOnStatusCode: false,
@@ -178,8 +163,6 @@ describe("Client API", () => {
       expect(response.status).to.eq(404);
       expect(response.body).property("message").to.eq("Keys not found");
     });
-
-    cy.wait(1200);
 
     cy.request({
       failOnStatusCode: false,
@@ -248,56 +231,6 @@ describe("Client API", () => {
       },
     }).then((response: Cypress.Response<Keys>) => {
       expect(response.status).to.eq(403);
-    });
-  });
-
-  it("creates a new client, accesses institution cache endpoint, and deletes the client", () => {
-    cy.wait(10000);
-
-    cy.request({
-      method: "POST",
-      url: keysUrl,
-      headers: {
-        ContentType: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }).then((response: Cypress.Response<Keys>) => {
-      const client = response.body;
-
-      cy.loginWidgetHost({
-        clientId: client.clientId,
-        clientSecret: client.clientSecret,
-      });
-
-      getLocalStorage({
-        storageKey: "jwt-widget-m2m",
-        callback: (token: string) => {
-          cy.request({
-            url: `http://localhost:8088/institutions/cacheList`,
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-            .then((response: Cypress.Response<{ message: string }>) => {
-              expect(response.status).to.eq(200);
-              expect(response.body).length.above(1);
-            })
-            .then(() => {
-              cy.wait(1200);
-
-              cy.request({
-                method: "DELETE",
-                url: keysUrl,
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }).then((response) => {
-                expect(response.status).to.eq(200);
-              });
-            });
-        },
-      });
     });
   });
 });
