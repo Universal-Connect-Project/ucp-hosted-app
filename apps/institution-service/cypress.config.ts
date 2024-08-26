@@ -10,7 +10,6 @@ export default defineConfig({
     WIDGET_CLIENT_ID: process.env.WIDGET_CLIENT_ID,
     WIDGET_CLIENT_SECRET: process.env.WIDGET_CLIENT_SECRET,
     WEB_UI_CLIENT_ID: process.env.WEB_UI_CLIENT_ID,
-    WEB_UI_CLIENT_SECRET: process.env.WEB_UI_CLIENT_SECRET,
   },
   e2e: {
     setupNodeEvents(on, config) {

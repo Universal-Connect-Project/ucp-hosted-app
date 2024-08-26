@@ -30,7 +30,6 @@ before(() => {
   const password = Cypress.env("E2E_INSTITUTION_PASSWORD") as string;
 
   const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
-  const ucpWebUiClientSecret = Cypress.env("WEB_UI_CLIENT_SECRET") as string;
 
   const client_id = Cypress.env("WIDGET_CLIENT_ID") as string;
   const client_secret = Cypress.env("WIDGET_CLIENT_SECRET") as string;
@@ -45,8 +44,8 @@ before(() => {
       client_id: ucpWebUiClientId,
       grant_type: "password",
       password,
-      scope,
       username,
+      scope,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
     Cypress.env("USER_ACCESS_TOKEN", response.body.access_token);
@@ -71,11 +70,10 @@ before(() => {
     body: {
       grant_type: "password",
       scope: "openid offline_access profile email",
-      username,
-      password,
       audience: widgetAudience,
       client_id: ucpWebUiClientId,
-      client_secret: ucpWebUiClientSecret,
+      username,
+      password,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
     Cypress.env("NO_KEYS_USER_ACCESS_TOKEN", response.body.access_token);
