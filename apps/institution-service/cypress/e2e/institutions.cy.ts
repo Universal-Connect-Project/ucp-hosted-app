@@ -108,71 +108,8 @@ describe("Institution endpoints", () => {
               });
           },
         });
-
-        // cy.request({
-        //   url: `http://localhost:8088/institutions/cacheList`,
-        //   method: "GET",
-        //   headers: {
-        //     Authorization: `Bearer ${Cypress.env("WIDGET_ACCESS_TOKEN")}`,
-        //   },
-        // })
-        //   .then((response: Cypress.Response<{ message: string }>) => {
-        //     expect(response.status).to.eq(200);
-        //     expect(response.body).length.above(1);
-        //   })
-        //   .then(() => {
-        //     cy.request({
-        //       method: "DELETE",
-        //       url: keysUrl,
-        //       headers: {
-        //         Authorization: `Bearer ${Cypress.env("USER_ACCESS_TOKEN")}`,
-        //       },
-        //     }).then((response) => {
-        //       expect(response.status).to.eq(200);
-        //     });
-        //   });
       });
     });
-
-    // it("gets 200 with valid token and has expected attributes", () => {
-    //   cy.request({
-    //     url: `http://localhost:${PORT}/institutions/cacheList`,
-    //     method: "GET",
-    //     headers: {
-    //       Authorization: `Bearer ${Cypress.env("ACCESS_TOKEN")}`,
-    //     },
-    //   }).then((response: Cypress.Response<CachedInstitution[]>) => {
-    //     const institution = response.body[1];
-    //     const provider =
-    //       institution.mx ?? institution.sophtron ?? institution.finicity;
-    //
-    //     expect(response.status).to.eq(200);
-    //
-    //     // Institution Attributes
-    //     [
-    //       "name",
-    //       "keywords",
-    //       "logo",
-    //       "url",
-    //       "ucp_id",
-    //       "is_test_bank",
-    //       "routing_numbers",
-    //     ].forEach((attribute) => {
-    //       expect(institution).to.haveOwnProperty(attribute);
-    //     });
-    //
-    //     // Provider Attributes
-    //     [
-    //       "id",
-    //       "supports_oauth",
-    //       "supports_identification",
-    //       "supports_aggregation",
-    //       "supports_history",
-    //     ].forEach((attribute) => {
-    //       expect(provider).to.haveOwnProperty(attribute);
-    //     });
-    //   });
-    // });
 
     it("gets 401 when token is invalid", () => {
       cy.request({
