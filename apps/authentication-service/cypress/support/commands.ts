@@ -75,7 +75,6 @@ const login = (args: LoginArgs) => {
           scope,
           audience,
           client_id: clientId,
-          client_secret: clientSecret,
         }
       : {
           grant_type: grantType,

@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 // ***********************************************************
 // This example support/e2e.ts is processed and
 // loaded automatically before your test files.
@@ -16,29 +17,56 @@
 // Import commands.js using ES2015 syntax:
 import { JwtPayload } from "jsonwebtoken";
 import "./commands";
+import {
+  DefaultPermissions,
+  UiClientPermissions,
+} from "../../src/shared/enums";
 
 before(() => {
+  const widgetAudience = Cypress.env("AUTH0_WIDGET_AUDIENCE") as string;
+  const clientAudience = "ucp-hosted-apps";
+
+  const widgetUsername = Cypress.env("E2E_INSTITUTION_USERNAME") as string;
+  const widgetPassword = Cypress.env("E2E_INSTITUTION_PASSWORD") as string;
+
+  const username = Cypress.env("E2E_INSTITUTION_USERNAME") as string;
+  const password = Cypress.env("E2E_INSTITUTION_PASSWORD") as string;
+
+  const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
+  const ucpWebUiClientSecret = Cypress.env("WEB_UI_CLIENT_SECRET") as string;
+
   const client_id = Cypress.env("WIDGET_CLIENT_ID") as string;
   const client_secret = Cypress.env("WIDGET_CLIENT_SECRET") as string;
-  const audience = Cypress.env("AUTH0_WIDGET_AUDIENCE") as string;
+
+  const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`;
+
+  cy.request({
+    method: "POST",
+    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
+    body: {
+      audience: clientAudience,
+      client_id: ucpWebUiClientId,
+      grant_type: "password",
+      password: widgetPassword,
+      scope,
+      username: widgetUsername,
+    },
+  }).then((response: Cypress.Response<JwtPayload>) => {
+    Cypress.env("USER_ACCESS_TOKEN", response.body.access_token);
+  });
 
   cy.request({
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
     body: {
       grant_type: "client_credentials",
-      audience,
+      audience: widgetAudience,
       client_id,
       client_secret,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
     Cypress.env("ACCESS_TOKEN", response.body.access_token);
   });
-
-  const username = Cypress.env("E2E_INSTITUTION_USERNAME") as string;
-  const password = Cypress.env("E2E_INSTITUTION_PASSWORD") as string;
-  const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
-  const ucpWebUiClientSecret = Cypress.env("WEB_UI_CLIENT_SECRET") as string;
 
   cy.request({
     method: "POST",
@@ -48,11 +76,11 @@ before(() => {
       scope: "openid offline_access profile email",
       username,
       password,
-      audience: audience,
+      audience: widgetAudience,
       client_id: ucpWebUiClientId,
       client_secret: ucpWebUiClientSecret,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
-    Cypress.env("USER_ACCESS_TOKEN", response.body.access_token);
+    Cypress.env("NO_KEYS_USER_ACCESS_TOKEN", response.body.access_token);
   });
 });
