@@ -6,7 +6,6 @@ type ClientKeys = { clientId: string; clientSecret: string };
 
 type LoginArgs = {
   storageKey: string;
-  grantType: "password" | "client_credentials";
   audience: string;
   clientId: string;
   clientSecret: string;
@@ -16,38 +15,15 @@ type LoginArgs = {
 };
 
 const login = (args: LoginArgs) => {
-  const {
-    usernameEnvKey,
-    passwordEnvKey,
+  const { scope, storageKey, audience, clientId, clientSecret } = args;
+
+  const body = {
+    grant_type: "client_credentials",
     scope,
-    storageKey,
-    grantType,
     audience,
-    clientId,
-    clientSecret,
-  } = args;
-
-  const username = Cypress.env(usernameEnvKey) as string;
-  const password = Cypress.env(passwordEnvKey) as string;
-
-  const body =
-    grantType === "password"
-      ? {
-          username,
-          password,
-          grant_type: grantType,
-          scope,
-          audience,
-          client_id: clientId,
-          client_secret: clientSecret,
-        }
-      : {
-          grant_type: grantType,
-          scope,
-          audience,
-          client_id: clientId,
-          client_secret: clientSecret,
-        };
+    client_id: clientId,
+    client_secret: clientSecret,
+  };
 
   cy.request({
     method: "POST",
@@ -69,7 +45,6 @@ Cypress.Commands.add("loginWidgetHost", (clientKeys: ClientKeys) => {
 
   login({
     storageKey: "jwt-widget-m2m",
-    grantType: "client_credentials",
     audience: Cypress.env("AUTH0_WIDGET_AUDIENCE") as string,
     clientId: clientId,
     clientSecret: clientSecret,
