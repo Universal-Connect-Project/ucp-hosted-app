@@ -51,7 +51,6 @@ describe("Institution endpoints", () => {
           clientSecret: client.clientSecret,
         });
 
-        cy.log(`TOKEN: ${Cypress.env("WIDGET_ACCESS_TOKEN")}`);
         getLocalStorage({
           storageKey: "jwt-widget-m2m",
           callback: (token: string) => {
@@ -69,7 +68,6 @@ describe("Institution endpoints", () => {
                   institution.sophtron ??
                   institution.finicity ??
                   {};
-                cy.log("institution", institution);
 
                 expect(response.status).to.eq(200);
 

@@ -26,9 +26,6 @@ before(() => {
   const widgetAudience = Cypress.env("AUTH0_WIDGET_AUDIENCE") as string;
   const clientAudience = "ucp-hosted-apps";
 
-  const widgetUsername = Cypress.env("E2E_INSTITUTION_USERNAME") as string;
-  const widgetPassword = Cypress.env("E2E_INSTITUTION_PASSWORD") as string;
-
   const username = Cypress.env("E2E_INSTITUTION_USERNAME") as string;
   const password = Cypress.env("E2E_INSTITUTION_PASSWORD") as string;
 
@@ -47,9 +44,9 @@ before(() => {
       audience: clientAudience,
       client_id: ucpWebUiClientId,
       grant_type: "password",
-      password: widgetPassword,
+      password,
       scope,
-      username: widgetUsername,
+      username,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
     Cypress.env("USER_ACCESS_TOKEN", response.body.access_token);
