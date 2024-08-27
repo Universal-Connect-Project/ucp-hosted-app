@@ -41,6 +41,15 @@ describe("Client API", () => {
 
   it("creates a new client, accesses institution cache endpoint, and deletes the client", () => {
     cy.request({
+      failOnStatusCode: false,
+      method: "DELETE",
+      url: keysUrl,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    cy.request({
       method: "POST",
       url: keysUrl,
       headers: {
