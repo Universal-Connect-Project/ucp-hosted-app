@@ -1,44 +1,100 @@
+import { JwtPayload } from "jsonwebtoken";
 import { PORT } from "../../src/shared/const";
 import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
 
+const keysUrl = `http://localhost:8089/v1/clients/keys`;
+
+type Keys = {
+  clientId: string;
+  clientSecret: string;
+};
+
 describe("Institution endpoints", () => {
   describe("/institutions/cacheList", () => {
-    it("gets 200 with valid token and has expected attributes", () => {
+    it("creates new client with user token, generates access token to access institution endpoints, gets institution cache list, and deletes the client", () => {
       cy.request({
-        url: `http://localhost:${PORT}/institutions/cacheList`,
-        method: "GET",
+        failOnStatusCode: false,
+        method: "DELETE",
+        url: keysUrl,
         headers: {
-          Authorization: `Bearer ${Cypress.env("ACCESS_TOKEN")}`,
+          Authorization: `Bearer ${Cypress.env("USER_ACCESS_TOKEN")}`,
         },
-      }).then((response: Cypress.Response<CachedInstitution[]>) => {
-        const institution = response.body[1];
-        const provider =
-          institution.mx ?? institution.sophtron ?? institution.finicity;
+      });
 
-        expect(response.status).to.eq(200);
+      cy.request({
+        method: "POST",
+        url: keysUrl,
+        headers: {
+          ContentType: "application/json",
+          Authorization: `Bearer ${Cypress.env("USER_ACCESS_TOKEN")}`,
+        },
+      }).then((response: Cypress.Response<Keys>) => {
+        const client = response.body;
 
-        // Institution Attributes
-        [
-          "name",
-          "keywords",
-          "logo",
-          "url",
-          "ucp_id",
-          "is_test_bank",
-          "routing_numbers",
-        ].forEach((attribute) => {
-          expect(institution).to.haveOwnProperty(attribute);
-        });
+        cy.request({
+          method: "POST",
+          url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
+          body: {
+            grant_type: "client_credentials",
+            audience: Cypress.env("AUTH0_WIDGET_AUDIENCE") as string,
+            client_id: client.clientId,
+            client_secret: client.clientSecret,
+          },
+        }).then((response: Cypress.Response<JwtPayload>) => {
+          const token = response.body.access_token as string;
 
-        // Provider Attributes
-        [
-          "id",
-          "supports_oauth",
-          "supports_identification",
-          "supports_aggregation",
-          "supports_history",
-        ].forEach((attribute) => {
-          expect(provider).to.haveOwnProperty(attribute);
+          cy.request({
+            url: `http://localhost:${PORT}/institutions/cacheList`,
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((response: Cypress.Response<CachedInstitution[]>) => {
+              const institution = response.body[1];
+              const provider =
+                institution.mx ??
+                institution.sophtron ??
+                institution.finicity ??
+                {};
+
+              expect(response.status).to.eq(200);
+
+              // Institution Attributes
+              [
+                "name",
+                "keywords",
+                "logo",
+                "url",
+                "ucp_id",
+                "is_test_bank",
+                "routing_numbers",
+              ].forEach((attribute) => {
+                expect(institution).to.haveOwnProperty(attribute);
+              });
+
+              // Provider Attributes
+              [
+                "id",
+                "supports_oauth",
+                "supports_identification",
+                "supports_aggregation",
+                "supports_history",
+              ].forEach((attribute) => {
+                expect(provider).to.haveOwnProperty(attribute);
+              });
+            })
+            .then(() => {
+              cy.request({
+                method: "DELETE",
+                url: keysUrl,
+                headers: {
+                  Authorization: `Bearer ${Cypress.env("USER_ACCESS_TOKEN")}`,
+                },
+              }).then((response) => {
+                expect(response.status).to.eq(200);
+              });
+            });
         });
       });
     });
@@ -62,7 +118,7 @@ describe("Institution endpoints", () => {
         failOnStatusCode: false,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${Cypress.env("USER_ACCESS_TOKEN")}`,
+          Authorization: `Bearer ${Cypress.env("NO_WIDGET_PERMISSION_ACCESS_TOKEN")}`,
         },
       }).then((response: Cypress.Response<{ message: string }>) => {
         expect(response.status).to.eq(403);
