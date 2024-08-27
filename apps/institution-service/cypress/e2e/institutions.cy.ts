@@ -118,7 +118,7 @@ describe("Institution endpoints", () => {
         failOnStatusCode: false,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${Cypress.env("NO_KEYS_USER_ACCESS_TOKEN")}`,
+          Authorization: `Bearer ${Cypress.env("NO_WIDGET_PERMISSION_ACCESS_TOKEN")}`,
         },
       }).then((response: Cypress.Response<{ message: string }>) => {
         expect(response.status).to.eq(403);

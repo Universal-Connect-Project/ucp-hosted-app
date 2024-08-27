@@ -31,9 +31,6 @@ before(() => {
 
   const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
 
-  const client_id = Cypress.env("WIDGET_CLIENT_ID") as string;
-  const client_secret = Cypress.env("WIDGET_CLIENT_SECRET") as string;
-
   const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`;
 
   cy.request({
@@ -55,19 +52,6 @@ before(() => {
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
     body: {
-      grant_type: "client_credentials",
-      audience: widgetAudience,
-      client_id,
-      client_secret,
-    },
-  }).then((response: Cypress.Response<JwtPayload>) => {
-    Cypress.env("ACCESS_TOKEN", response.body.access_token);
-  });
-
-  cy.request({
-    method: "POST",
-    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
-    body: {
       grant_type: "password",
       scope: "openid offline_access profile email",
       audience: widgetAudience,
@@ -76,6 +60,9 @@ before(() => {
       password,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
-    Cypress.env("NO_KEYS_USER_ACCESS_TOKEN", response.body.access_token);
+    Cypress.env(
+      "NO_WIDGET_PERMISSION_ACCESS_TOKEN",
+      response.body.access_token,
+    );
   });
 });
