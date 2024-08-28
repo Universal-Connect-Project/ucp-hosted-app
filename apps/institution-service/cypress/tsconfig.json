@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2020",
-    "lib": ["es2020"],
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
     "types": ["cypress", "node"]
   },
   "include": ["**/*.ts"]

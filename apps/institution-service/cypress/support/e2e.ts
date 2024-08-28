@@ -17,10 +17,7 @@
 // Import commands.js using ES2015 syntax:
 import { JwtPayload } from "jsonwebtoken";
 import "./commands";
-import {
-  DefaultPermissions,
-  UiClientPermissions,
-} from "../../src/shared/enums";
+import { DefaultPermissions, UiClientPermissions } from "@repo/shared-utils";
 
 before(() => {
   const widgetAudience = Cypress.env("AUTH0_WIDGET_AUDIENCE") as string;
