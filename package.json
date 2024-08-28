@@ -16,11 +16,11 @@
     "lint": "turbo lint",
     "prettier": "turbo run prettier",
     "test": "turbo run test",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "devDependencies": {
     "husky": "^9.0.11",
-    "turbo": "^1.13.3"
+    "turbo": "^1.13.4"
   },
   "engines": {
     "node": ">=20"

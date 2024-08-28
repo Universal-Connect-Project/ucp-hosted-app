@@ -1,7 +1,6 @@
-import { UiClientPermissions } from "@/shared/enums";
 import express, { Application, RequestHandler } from "express";
 
-// import { WidgetHostPermissions } from "@repo/shared-utils";
+import { UiClientPermissions } from "@repo/shared-utils";
 import { validateAccessToken } from "@/middleware/authMiddleware";
 import {
   clientsCreate,
@@ -29,30 +28,17 @@ export const clientsRoutes = (app: Application): void => {
   );
   clientsRouterV1.get(
     "/keys",
-    [
-      validateAccessToken,
-      requiredScopes((UiClientPermissions as Record<string, string>).READ_KEYS),
-    ],
+    [validateAccessToken, requiredScopes(UiClientPermissions.READ_KEYS)],
     clientsGet as RequestHandler,
   );
   clientsRouterV1.delete(
     "/keys",
-    [
-      validateAccessToken,
-      requiredScopes(
-        (UiClientPermissions as Record<string, string>).DELETE_KEYS,
-      ),
-    ],
+    [validateAccessToken, requiredScopes(UiClientPermissions.DELETE_KEYS)],
     clientsDelete as RequestHandler,
   );
   clientsRouterV1.post(
     "/keys/rotate",
-    [
-      validateAccessToken,
-      requiredScopes(
-        (UiClientPermissions as Record<string, string>).ROTATE_KEYS,
-      ),
-    ],
+    [validateAccessToken, requiredScopes(UiClientPermissions.ROTATE_KEYS)],
     clientsRotateSecrets as RequestHandler,
   );
 };

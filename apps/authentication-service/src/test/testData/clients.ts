@@ -1,6 +1,7 @@
 import { Client } from "auth0";
+
 import { Keys } from "@/resources/clients/clientsModel";
-import { UiClientPermissions } from "@/shared/enums";
+import { UiClientPermissions } from "@repo/shared-utils";
 
 export const exampleClientName = "UCP Test Client";
 export const exampleClientDesc = "For unit testing";
