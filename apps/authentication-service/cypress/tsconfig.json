@@ -4,7 +4,7 @@
     "target": "ES2022",
     "lib": ["ES2022", "DOM"],
     "module": "ES2022",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "Node",
     "types": ["cypress", "node"],
     "paths": {
       "@/*": ["../src/*"]
