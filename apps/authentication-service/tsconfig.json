@@ -1,18 +1,10 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "Bundler",
-
-    "declaration": true,
-    "declarationMap": true,
-
-    "outDir": "./dist",
+    "moduleResolution": "node",
     "strict": true,
-
     "skipLibCheck": true,
     "esModuleInterop": true,
-
     "typeRoots": [
       "../../node_modules/@types",
       "../../node_modules/@testing-library"

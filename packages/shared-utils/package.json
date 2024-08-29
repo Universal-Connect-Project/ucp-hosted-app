@@ -2,26 +2,8 @@
   "name": "@repo/shared-utils",
   "version": "0.0.1",
   "description": "Shared utils for the universal connect project",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./consts": {
-      "import": "./dist/consts.js",
-      "types": "./dist/consts.d.ts"
-    }
-  },
-  "type": "module",
-  "files": [
-    "dist/**/*"
-  ],
-  "scripts": {
-    "build": "tsc --build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "prettier": "prettier . --check",
-    "check-types": "tsc --noEmit"
-  },
+  "main": "./src/index.ts",
+  "scripts": {},
   "devDependencies": {
     "typescript": "^5.5.4"
   }
