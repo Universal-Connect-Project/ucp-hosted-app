@@ -18,12 +18,6 @@ export const clientsRoutes = (app: Application): void => {
   clientsRouterV1.post(
     "/keys",
     [validateAccessToken, requiredScopes(UiClientPermissions.CREATE_KEYS)],
-    [
-      validateAccessToken,
-      requiredScopes(
-        (UiClientPermissions as Record<string, string>).CREATE_KEYS,
-      ),
-    ],
     clientsCreate as RequestHandler,
   );
   clientsRouterV1.get(
