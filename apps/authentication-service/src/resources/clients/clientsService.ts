@@ -9,7 +9,7 @@ import {
   setUserClientId,
 } from "@/shared/users/usersService";
 import { ResponseMessage } from "@/resources/clients/clientsModel";
-import { WidgetHostPermissions } from "@/shared/enums";
+import { WidgetHostPermissions } from "@repo/shared-utils";
 
 const authDomain = envs.AUTH0_DOMAIN;
 const widgetAudience = "ucp-widget-interactions";
