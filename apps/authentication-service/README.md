@@ -6,7 +6,9 @@ functionality for the UCP platform.
 This repo is part of a monorepo. Please read the [README](../../README.md) at the root of the monorepo for more
 information.
 
-## Getting Started
+## Contributing
+
+### Getting Started
 
 From the root of the monorepo, do the following:
 

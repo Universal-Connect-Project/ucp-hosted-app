@@ -1,4 +1,13 @@
-### Server Setup
+# Institution Service
+
+This service manages the institution list that UCW provides connections to.
+
+This repo is part of a monorepo. Please read the [README](../../README.md) at the root of the monorepo for more
+information.
+
+## Contributing
+
+### Getting Started
 
 1. Install postgres
 
