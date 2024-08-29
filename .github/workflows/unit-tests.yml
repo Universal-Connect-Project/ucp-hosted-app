@@ -41,9 +41,6 @@ jobs:
         run: |
           npm ci
 
-      - name: Build shared-utils
-        run: npm run build --workspace packages/shared-utils
-
       - name: Setup Postgres Database
         run: |
           npm run test:db:setup --workspace apps/institution-service
