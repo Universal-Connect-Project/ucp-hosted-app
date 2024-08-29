@@ -9,7 +9,7 @@ jobs:
     secrets: inherit
 
   e2e-tests:
-    name: "Cypress (Clients)"
+    name: "Cypress (General)"
     runs-on: ubuntu-latest
     needs: [setup-env]
 
