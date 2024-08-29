@@ -1,7 +1,7 @@
 {
   "name": "@repo/shared-utils",
   "version": "0.0.1",
-  "description": "Shared utils for the universal connect project",
+  "description": "Shared utils for the universal connect project hosted apps",
   "main": "./src/index.ts",
   "scripts": {},
   "devDependencies": {
