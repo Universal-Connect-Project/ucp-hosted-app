@@ -1,6 +1,6 @@
-import { UiClientPermissions } from "@/shared/enums";
 import express, { Application, RequestHandler } from "express";
 
+import { UiClientPermissions } from "@repo/shared-utils";
 import { validateAccessToken } from "@/middleware/authMiddleware";
 import {
   clientsCreate,

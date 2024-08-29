@@ -1,7 +1,8 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
-import { DefaultPermissions, UiClientPermissions } from "@/shared/enums";
 import { JwtPayload } from "jsonwebtoken";
+
+import { DefaultPermissions, UiClientPermissions } from "@repo/shared-utils";
 
 // ***********************************************
 // This example commands.ts shows you how to

@@ -11,13 +11,10 @@ import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material";
 import { muiTheme } from "./theme";
 import { store } from "./store";
 import AuthenticationWrapper from "./AuthenticationWrapper";
-import {
-  DefaultPermissions,
-  WidgetHostPermissions,
-} from "./shared/constants/roles";
+import { DefaultPermissions, UiClientPermissions } from "@repo/shared-utils";
 
 const App: React.FC = () => {
-  const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(WidgetHostPermissions).join(" ")}`;
+  const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`;
 
   return (
     <CssVarsProvider theme={muiTheme}>

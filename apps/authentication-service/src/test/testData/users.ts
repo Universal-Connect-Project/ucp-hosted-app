@@ -1,8 +1,8 @@
 import envs from "@/config";
-import { DefaultPermissions, UiClientPermissions } from "@/shared/enums";
 import { sign, Algorithm, JwtPayload, SignOptions } from "jsonwebtoken";
 import { UserInfoResponse } from "auth0";
 import { User } from "@/shared/users/usersModel";
+import { DefaultPermissions, UiClientPermissions } from "@repo/shared-utils";
 
 export const exampleUserID = "google-oauth2|0000000000000000000000000000000";
 export const exampleClientID: string = "test-client-id";
