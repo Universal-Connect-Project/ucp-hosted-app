@@ -6,12 +6,9 @@ These applications are hosted by the Universal Connect Project, and are not inte
 
 This monorepo contains the following applications:
 
-- **[Authentication Service](./apps/authentication-service/README.md)** - This service consists of client and server authentication for the Universal Connect Project. It uses Auth0 as a backend.
-  - _This service is currently in development._
+- **[Authentication Service](./apps/authentication-service/README.md)** - This service manages authentication for the UCP-hosted services, as well as API Key management for those implementing their own self-hosted UCW-App. It uses Auth0 as a backend.
 - **[Institution Service](./apps/institution-service/README.md)** - This service manages all interaction with the Institution list, including retrieving an updated list of institutions, adding/editing/deleting institutions, etc.
-  - _This service is currently in development._
 - **[UCP UI](./apps/ucp-ui/README.md)** - The dashboard web application for the Universal Connect Project. This is where a user can manage various aspects of their account, as well as interact with the UCP-hosted services.
-  - _This application is currently in development._
 
 ## Contributing
 
