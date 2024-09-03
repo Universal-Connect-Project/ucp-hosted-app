@@ -6,12 +6,15 @@ functionality for the UCP platform.
 This repo is part of a monorepo. Please read the [README](../../README.md) at the root of the monorepo for more
 information.
 
-## Getting Started
+## Contributing
 
-From the root of the monorepo, do the following:
+### Getting Started
 
-1. Run `cp ./apps/authentication-service/src/.env.example ./apps/authentication-service/src/.env` to copy the example
-   .env file for this project
+If you want to run this project by itself, without running the other services in the monorepo, do the following:
+
+All of these commands should be run from the root of the monorepo:
+
+1. Run `cp ./apps/authentication-service/src/.env.example ./apps/authentication-service/src/.env` to copy the example .env file for this project
 1. Set up your environment variables in the new .env file
 1. Run `npm run dev --workspace apps/authentication-service` to start the server
 
@@ -30,4 +33,4 @@ We have a rate-limit test that needs to be run with the following command, prior
 For all other e2e tests, run `npm run dev` prior to launching cypress.
 
 The rate-limiting tests don't need to be run locally, as they are run during our CI pipeline. Unless you are changing some
-code related to rate-limiting, don't worry about running the rate-limiting tests.
+code related to rate-limiting, don't worry about running them.
