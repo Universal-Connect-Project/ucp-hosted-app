@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
-import Layout from "./Layout";
 import { Button } from "@mui/material";
 import { useAppDispatch } from "../shared/utils/redux";
 import { displaySnackbar } from "../shared/reducers/snackbar";
@@ -26,14 +25,7 @@ const TestComponent = () => {
 
 describe("<Snackbars />", () => {
   it("displays a snackbar and closes it when clicking elsewhere", async () => {
-    render(
-      <Layout>
-        <TestComponent />
-      </Layout>,
-      {
-        shouldRenderSnackbars: false,
-      },
-    );
+    render(<TestComponent />);
 
     await userEvent.click(screen.getByText(buttonText));
 
@@ -47,14 +39,7 @@ describe("<Snackbars />", () => {
   });
 
   it("clicking on the same snackbar triggering button after its open keeps it open", async () => {
-    render(
-      <Layout>
-        <TestComponent />
-      </Layout>,
-      {
-        shouldRenderSnackbars: false,
-      },
-    );
+    render(<TestComponent />);
 
     await userEvent.click(screen.getByText(buttonText));
 

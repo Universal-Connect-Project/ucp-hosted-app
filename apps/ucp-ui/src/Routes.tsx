@@ -7,20 +7,19 @@ import Layout from "./Layout/Layout";
 const Routes = () => {
   const router = createBrowserRouter([
     {
-      path: "*",
-      element: "Not found",
-    },
-    {
+      children: [
+        {
+          path: "",
+          element: <ApiKeys />,
+        },
+      ],
       path: "/",
-      element: <ApiKeys />,
+      element: <Layout />,
+      errorElement: "Something went wrong",
     },
   ]);
 
-  return (
-    <Layout>
-      <RouterProvider router={router} />
-    </Layout>
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default withAuthenticationRequired(Routes);
