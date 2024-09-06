@@ -10,7 +10,9 @@ const Layout = () => {
       <Snackbars />
       <div className={styles.container}>
         <SideNav />
-        <Outlet />
+        <div className={styles.pageContentContainer}>
+          <Outlet />
+        </div>
       </div>
     </>
   );

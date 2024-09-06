@@ -1,5 +1,6 @@
 import {
   Button,
+  Link as MuiLink,
   List,
   ListItemButton,
   ListItemIcon,
@@ -14,7 +15,11 @@ import { Logout, SettingsOutlined } from "@mui/icons-material";
 import { matchPath, useLocation } from "react-router-dom";
 import { WIDGET_MANAGEMENT_ROUTE } from "../shared/constants/routes";
 import { Link } from "react-router-dom";
-import { SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT } from "./constants";
+import {
+  SIDE_NAV_CONTACT_US_LINK_TEXT,
+  SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
+} from "./constants";
+import { SUPPORT_EMAIL } from "../shared/constants/support";
 
 const SideNav = () => {
   const { logout } = useAuth0();
@@ -59,6 +64,13 @@ const SideNav = () => {
             Log out
           </Button>
         </div>
+        <MuiLink
+          component={Link}
+          to={`mailto:${SUPPORT_EMAIL}`}
+          underline="hover"
+        >
+          {SIDE_NAV_CONTACT_US_LINK_TEXT}
+        </MuiLink>
       </div>
     </Paper>
   );
