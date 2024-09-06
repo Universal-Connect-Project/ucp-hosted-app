@@ -1,0 +1,33 @@
+.container {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  width: 252px;
+}
+
+.flexContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  height: -webkit-fill-available;
+  padding-bottom: 44px;
+  padding-top: 40px;
+}
+
+.buttonContainer {
+  align-items: flex-end;
+  display: flex;
+  flex: 1;
+}
+
+.listItemIcon {
+  &:global(.MuiListItemIcon-root) {
+    color: var(--mui-palette-primary-dark);
+    min-width: 32px;
+  }
+}
+
+.list {
+  width: 100%;
+}

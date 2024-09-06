@@ -1,0 +1,9 @@
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+.pageContentContainer {
+  margin-left: 60px;
+  margin-top: 52px;
+}

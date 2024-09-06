@@ -1,22 +1,19 @@
-import React, { ReactNode } from "react";
-import { Button } from "@mui/material";
-import { useAuth0 } from "@auth0/auth0-react";
+import React from "react";
 import Snackbars from "./Snackbars";
+import SideNav from "./SideNav";
+import styles from "./layout.module.css";
+import { Outlet } from "react-router-dom";
 
-interface LayoutProps {
-  children: ReactNode;
-}
-
-const Layout = ({ children }: LayoutProps) => {
-  const { logout } = useAuth0();
-
+const Layout = () => {
   return (
     <>
       <Snackbars />
-      <Button onClick={() => void logout()} variant="contained">
-        Log out
-      </Button>
-      {children}
+      <div className={styles.container}>
+        <SideNav />
+        <div className={styles.pageContentContainer}>
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 };

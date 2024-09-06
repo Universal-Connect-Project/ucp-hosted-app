@@ -99,8 +99,8 @@ const ApiKeys = () => {
   }
 
   return (
-    <Stack className={styles.pageContainer} spacing={3.5}>
-      <Typography variant="h3">Account</Typography>
+    <Stack spacing={3.5}>
+      <Typography variant="h3">Widget Management</Typography>
       <Card className={styles.apiKeysCard} variant="outlined">
         <CardHeader
           title={

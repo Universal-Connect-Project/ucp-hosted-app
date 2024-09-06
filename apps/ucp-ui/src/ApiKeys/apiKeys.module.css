@@ -6,10 +6,6 @@
   max-width: 744px;
 }
 
-.pageContainer {
-  margin-left: 60px;
-}
-
 .cardActions {
   &:global(.MuiCardActions-root) {
     padding-left: 16px;
