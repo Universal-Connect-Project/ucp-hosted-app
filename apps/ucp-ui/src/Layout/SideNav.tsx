@@ -17,6 +17,7 @@ import { WIDGET_MANAGEMENT_ROUTE } from "../shared/constants/routes";
 import { Link } from "react-router-dom";
 import {
   SIDE_NAV_CONTACT_US_LINK_TEXT,
+  SIDE_NAV_LOG_OUT_BUTTON_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
@@ -61,7 +62,7 @@ const SideNav = () => {
             startIcon={<Logout />}
             variant="outlined"
           >
-            Log out
+            {SIDE_NAV_LOG_OUT_BUTTON_TEXT}
           </Button>
         </div>
         <MuiLink

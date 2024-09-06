@@ -4,6 +4,7 @@ import Routes from "../Routes";
 import { API_KEYS_CARD_TITLE_TEXT } from "../ApiKeys/constants";
 import {
   SIDE_NAV_CONTACT_US_LINK_TEXT,
+  SIDE_NAV_LOG_OUT_BUTTON_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
@@ -22,7 +23,7 @@ describe("<SideNav />", () => {
   it("calls logout on click", async () => {
     render(<Routes />);
 
-    await userEvent.click(screen.getByText("Log out"));
+    await userEvent.click(screen.getByText(SIDE_NAV_LOG_OUT_BUTTON_TEXT));
 
     await waitFor(() => expect(mockLogout).toHaveBeenCalled());
   });
@@ -31,7 +32,9 @@ describe("<SideNav />", () => {
     render(<Routes />);
 
     await userEvent.click(
-      (await screen.findAllByText(SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT))[0],
+      await screen.findByRole("link", {
+        name: SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
+      }),
     );
 
     expect(
