@@ -1,7 +1,10 @@
+import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { RequestHandler, Router } from "express";
 import { auth, requiredScopes } from "express-oauth2-jwt-bearer";
-import { getInstitutionCachedList } from "../controllers/institutionController";
-import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
+import {
+  createInstitution,
+  getInstitutionCachedList,
+} from "../controllers/institutionController";
 
 const validateWidgetAccessToken = auth({
   audience: AUTH0_WIDGET_AUDIENCE,
@@ -17,5 +20,7 @@ router.get(
   requiredScopes("read:widget-endpoints"),
   getInstitutionCachedList as RequestHandler,
 );
+
+router.post("/", createInstitution as RequestHandler);
 
 export default router;
