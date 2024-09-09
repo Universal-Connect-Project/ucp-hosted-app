@@ -2,6 +2,7 @@ import React from "react";
 import PageTitle from "../shared/components/PageTitle";
 import { INSTITUTIONS_PAGE_TITLE } from "./constants";
 import {
+  Avatar,
   Chip,
   Table,
   TableBody,
@@ -35,7 +36,7 @@ const testData = [
     ],
   },
   {
-    name: "TestExampleA Bank",
+    name: "TestExampleA Supports 3",
     keywords: "test, example, tex",
     logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     url: "https://test-example.com",
@@ -51,7 +52,7 @@ const testData = [
         supports_identification: true,
         supports_verification: true,
         supports_aggregation: true,
-        supports_history: true,
+        supports_history: false,
       },
     ],
   },
@@ -262,9 +263,40 @@ const Institutions = () => {
                 <TableCell>{ucp_id}</TableCell>
                 <TableCell>
                   <div className={styles.aggregatorsCell}>
-                    {aggregators.map(({ displayName }) => (
-                      <Chip key={displayName} label={displayName} />
-                    ))}
+                    {aggregators.map(
+                      ({
+                        displayName,
+                        supports_aggregation,
+                        supports_history,
+                        supports_identification,
+                        supports_verification,
+                      }) => {
+                        const numberSupported = [
+                          supports_identification,
+                          supports_verification,
+                          supports_aggregation,
+                          supports_history,
+                        ].reduce((acc, supportsIt) => {
+                          if (supportsIt) {
+                            return acc + 1;
+                          }
+
+                          return acc;
+                        }, 0);
+
+                        return (
+                          <Chip
+                            avatar={
+                              <Avatar className={styles.chipAvatar}>
+                                {numberSupported}
+                              </Avatar>
+                            }
+                            key={displayName}
+                            label={displayName}
+                          />
+                        );
+                      },
+                    )}
                   </div>
                 </TableCell>
               </TableRow>

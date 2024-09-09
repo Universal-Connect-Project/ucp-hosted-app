@@ -7,6 +7,12 @@
   overflow-y: hidden;
 }
 
+.chipAvatar {
+  &:global(.MuiAvatar-root) {
+    background-color: var(--mui-palette-common-white);
+  }
+}
+
 .table {
   &:global(.MuiTableContainer-root) {
     background-color: var(--mui-palette-common-white);
