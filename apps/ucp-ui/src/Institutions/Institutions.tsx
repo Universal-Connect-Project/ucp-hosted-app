@@ -1,6 +1,10 @@
 import React from "react";
 import PageTitle from "../shared/components/PageTitle";
-import { INSTITUTIONS_PAGE_TITLE } from "./constants";
+import {
+  INSTITUTIONS_PAGE_TITLE,
+  INSTITUTIONS_ROW_TEST_ID,
+  INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
+} from "./constants";
 import {
   Avatar,
   Chip,
@@ -12,229 +16,7 @@ import {
   TableRow,
 } from "@mui/material";
 import styles from "./institutions.module.css";
-
-const testData = [
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    ucp_id: "UCP-testexamplea",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Supports 3",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    ucp_id: "UCP-testexample1",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: false,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    ucp_id: "UCP-testexample2",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    ucp_id: "UCP-testexample3",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    ucp_id: "UCP-testexample4",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    ucp_id: "UCP-testexample5",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    ucp_id: "UCP-testexample6",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    ucp_id: "UCP-testexample7",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    ucp_id: "UCP-bb5296bd5aae5d9",
-    name: "MX Bank",
-    keywords: "Gringotts, MX Bank",
-    logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
-    url: "https://mx.com",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "MX",
-        name: "mx",
-        id: "mxbank",
-        supports_oauth: false,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    ucp_id: "UCP-8847d925b00198f",
-    name: "Wells Fargo CEO",
-    keywords: null,
-    logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
-    url: "https://wellsoffice.ceo.wellsfargo.com/portal/signon/index.jsp?TYPE=33554433&REALMOID=06-ca0b23b0-76b2-100e-be13-83e731d90080&GUID=&SMAUTHREASON=0&METHOD=GET&SMAGENTNAME=$SM$4KNRToX6JXEuRTeu3lGJM%2fAg",
-    is_test_bank: false,
-    routing_numbers: [],
-    aggregators: [
-      {
-        id: "f10c1eea-abb6-4d98-8867-e0b5711e1c15",
-        displayName: "MX",
-        name: "mx",
-        supports_oauth: false,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-      {
-        id: "60d097a9-65c4-449a-b4ce-cfa4aab224f3",
-        displayName: "Sophtron",
-        name: "sophtron",
-        supports_oauth: false,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: false,
-      },
-    ],
-  },
-];
+import { institutions } from "./testData/institutions";
 
 const Institutions = () => {
   const tableHeadCells = ["Institution", "UCP ID", "Aggregators"];
@@ -252,8 +34,11 @@ const Institutions = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {testData.map(({ aggregators, logo, name, ucp_id }) => (
-              <TableRow key={ucp_id}>
+            {institutions.map(({ aggregators, logo, name, ucp_id }) => (
+              <TableRow
+                data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${ucp_id}`}
+                key={ucp_id}
+              >
                 <TableCell>
                   <div className={styles.institutionCell}>
                     <img className={styles.institutionLogo} src={logo} />
@@ -263,40 +48,47 @@ const Institutions = () => {
                 <TableCell>{ucp_id}</TableCell>
                 <TableCell>
                   <div className={styles.aggregatorsCell}>
-                    {aggregators.map(
-                      ({
-                        displayName,
-                        supports_aggregation,
-                        supports_history,
-                        supports_identification,
-                        supports_verification,
-                      }) => {
-                        const numberSupported = [
-                          supports_identification,
-                          supports_verification,
+                    {[...aggregators]
+                      .sort((a, b) =>
+                        a.displayName.localeCompare(b.displayName),
+                      )
+                      .map(
+                        ({
+                          displayName,
                           supports_aggregation,
                           supports_history,
-                        ].reduce((acc, supportsIt) => {
-                          if (supportsIt) {
-                            return acc + 1;
-                          }
-
-                          return acc;
-                        }, 0);
-
-                        return (
-                          <Chip
-                            avatar={
-                              <Avatar className={styles.chipAvatar}>
-                                {numberSupported}
-                              </Avatar>
+                          supports_identification,
+                          supports_verification,
+                        }) => {
+                          const numberSupported = [
+                            supports_identification,
+                            supports_verification,
+                            supports_aggregation,
+                            supports_history,
+                          ].reduce((acc, supportsIt) => {
+                            if (supportsIt) {
+                              return acc + 1;
                             }
-                            key={displayName}
-                            label={displayName}
-                          />
-                        );
-                      },
-                    )}
+
+                            return acc;
+                          }, 0);
+
+                          return (
+                            <Chip
+                              avatar={
+                                <Avatar className={styles.chipAvatar}>
+                                  {numberSupported}
+                                </Avatar>
+                              }
+                              data-testid={
+                                INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
+                              }
+                              key={displayName}
+                              label={displayName}
+                            />
+                          );
+                        },
+                      )}
                   </div>
                 </TableCell>
               </TableRow>
