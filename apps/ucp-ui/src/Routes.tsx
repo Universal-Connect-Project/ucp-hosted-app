@@ -3,6 +3,7 @@ import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ApiKeys from "./ApiKeys/ApiKeys";
 import Layout from "./Layout/Layout";
+import Institutions from "./Institutions/Institutions";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -10,6 +11,10 @@ const Routes = () => {
       children: [
         {
           path: "",
+          element: <Institutions />,
+        },
+        {
+          path: "widget-management",
           element: <ApiKeys />,
         },
       ],

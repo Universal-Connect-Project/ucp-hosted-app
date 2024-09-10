@@ -4,6 +4,8 @@
 }
 
 .pageContentContainer {
+  flex: 1;
   margin-left: 60px;
-  margin-top: 52px;
+  margin-right: 72px;
+  margin-top: var(--page-content-margin-top);
 }
