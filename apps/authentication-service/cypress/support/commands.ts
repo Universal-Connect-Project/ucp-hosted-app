@@ -2,7 +2,12 @@
 import "@testing-library/cypress/add-commands";
 import { JwtPayload } from "jsonwebtoken";
 
-import { DefaultPermissions, UiClientPermissions } from "@repo/shared-utils";
+import {
+  AUTH0_CLIENT_AUDIENCE,
+  AUTH0_WIDGET_AUDIENCE,
+  DefaultPermissions,
+  UiClientPermissions,
+} from "@repo/shared-utils";
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -103,7 +108,7 @@ const clientLoginArgs: LoginArgs = {
   usernameEnvKey: "AUTH_USERNAME_WITH_KEY_ROLES",
   passwordEnvKey: "AUTH_PASSWORD_WITH_KEY_ROLES",
   grantType: "password",
-  audience: Cypress.env("AUTH0_CLIENT_AUDIENCE") as string,
+  audience: AUTH0_CLIENT_AUDIENCE,
   clientId: Cypress.env("E2E_CLIENT_ID") as string,
   clientSecret: Cypress.env("E2E_CLIENT_SECRET") as string,
   scope: "",
@@ -134,7 +139,7 @@ Cypress.Commands.add("loginWidgetHost", (clientKeys: ClientKeys) => {
   login({
     storageKey: "jwt-widget-m2m",
     grantType: "client_credentials",
-    audience: Cypress.env("AUTH0_WIDGET_AUDIENCE") as string,
+    audience: AUTH0_WIDGET_AUDIENCE as string,
     clientId: clientId,
     clientSecret: clientSecret,
   });

@@ -1,6 +1,7 @@
 import { JwtPayload } from "jsonwebtoken";
 import { PORT } from "../../src/shared/const";
 import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
+import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 
 const keysUrl = `http://localhost:8089/v1/clients/keys`;
 
@@ -36,7 +37,7 @@ describe("Institution endpoints", () => {
           url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
           body: {
             grant_type: "client_credentials",
-            audience: Cypress.env("AUTH0_WIDGET_AUDIENCE") as string,
+            audience: AUTH0_WIDGET_AUDIENCE as string,
             client_id: client.clientId,
             client_secret: client.clientSecret,
           },

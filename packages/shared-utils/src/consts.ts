@@ -15,3 +15,6 @@ export const WidgetHostPermissions = {
   READ_WIDGET_ENDPOINTS: "read:widget-endpoints",
   WRITE_WIDGET_ENDPOINTS: "write:widget-endpoints",
 };
+
+export const AUTH0_CLIENT_AUDIENCE = "ucp-hosted-apps"
+export const AUTH0_WIDGET_AUDIENCE = "ucp-widget-interactions"

@@ -10,10 +10,6 @@ import {
 import sequelize from "../database";
 import { Institution } from "./institution";
 
-export enum supportedProviders {
-  MX = "mx",
-  SOPHTRON = "sophtron",
-}
 export class Provider extends Model<
   InferAttributes<Provider>,
   InferCreationAttributes<Provider>
