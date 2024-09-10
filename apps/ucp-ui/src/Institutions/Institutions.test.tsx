@@ -28,4 +28,11 @@ describe("<Institutions />", () => {
     expect(within(sophtronChip).getByText(3)).toBeInTheDocument();
     expect(within(sophtronChip).getByText("Sophtron")).toBeInTheDocument();
   });
+
+  it("renders the name of the institution and the ucp id", () => {
+    render(<Institutions />);
+
+    expect(screen.getByText(testInstitution.ucp_id)).toBeInTheDocument();
+    expect(screen.getByText(testInstitution.name)).toBeInTheDocument();
+  });
 });
