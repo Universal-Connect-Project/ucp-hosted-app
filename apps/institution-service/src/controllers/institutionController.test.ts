@@ -58,12 +58,14 @@ describe("institutionController", () => {
       const randomString = Math.random().toString(36).slice(2, 9);
       const newInstitutionId = `UCP-${randomString}`;
 
+      const institutionBody = {
+        ...testInstitution,
+        ucp_id: newInstitutionId,
+        name: `createTest-${randomString}`,
+      };
+
       const req: Request = {
-        body: {
-          ...testInstitution,
-          ucp_id: newInstitutionId,
-          name: `createTest-${randomString}`,
-        },
+        body: institutionBody,
       } as unknown as Request;
 
       const res = {
@@ -75,8 +77,9 @@ describe("institutionController", () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(201);
-      const institution = await Institution.findByPk(newInstitutionId);
-      expect(institution?.ucp_id).toBe(newInstitutionId);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining(institutionBody),
+      );
     });
 
     it("response with an error when a required field is missing", async () => {
@@ -124,7 +127,7 @@ describe("institutionController", () => {
     });
 
     it("response with success when an institution with the same name already exists", async () => {
-      const randomString = Math.random().toString(36).slice(2, 9);
+      const randomString = Math.random().toString(36).slice(1, 9);
       const newInstitutionId = `UCP-${randomString}`;
 
       const req: Request = {
