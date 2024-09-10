@@ -11,7 +11,6 @@ import {
   IconButton,
   Stack,
   Tooltip,
-  Typography,
 } from "@mui/material";
 import {
   API_KEY_TOOLTIP_TEST_ID,
@@ -28,6 +27,7 @@ import FetchError from "../shared/components/FetchError";
 import GenerateKeys from "./GenerateKeys";
 import ApiKey from "./ApiKey";
 import ManageApiKeys from "./ManageApiKeys";
+import PageTitle from "../shared/components/PageTitle";
 
 const ApiKeys = () => {
   const { user } = useAuth0();
@@ -100,7 +100,7 @@ const ApiKeys = () => {
 
   return (
     <Stack spacing={3.5}>
-      <Typography variant="h3">Widget Management</Typography>
+      <PageTitle>Widget Management</PageTitle>
       <Card className={styles.apiKeysCard} variant="outlined">
         <CardHeader
           title={

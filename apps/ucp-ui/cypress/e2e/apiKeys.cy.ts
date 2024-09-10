@@ -9,12 +9,15 @@ import {
   API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT,
   REQUEST_API_KEY_ACCESS_BUTTON_TEXT,
 } from "../../src/ApiKeys/constants";
+import { navigateToWidgetManagement } from "../shared/navigation";
 
 const deleteKeysUrl = `http://localhost:8089/v1/clients/keys`;
 
 describe("apiKeys", () => {
   it("renders the request api keys screen for a user without the widget role and without keys", () => {
     cy.loginWithoutWidgetRole();
+
+    navigateToWidgetManagement();
 
     cy.findByText(REQUEST_API_KEY_ACCESS_BUTTON_TEXT).should("exist");
   });
@@ -35,6 +38,8 @@ describe("apiKeys", () => {
 
     it("generates and rotates api keys for a user with the widget role", () => {
       cy.loginWithWidgetRole();
+
+      navigateToWidgetManagement();
 
       cy.findByText(API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT).click();
 

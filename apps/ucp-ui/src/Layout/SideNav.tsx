@@ -11,12 +11,20 @@ import React from "react";
 import styles from "./sideNav.module.css";
 import { useAuth0 } from "@auth0/auth0-react";
 import UCPLogo from "../shared/components/UCPLogo";
-import { Logout, SettingsOutlined } from "@mui/icons-material";
+import {
+  AccountBalanceOutlined,
+  Logout,
+  SettingsOutlined,
+} from "@mui/icons-material";
 import { matchPath, useLocation } from "react-router-dom";
-import { WIDGET_MANAGEMENT_ROUTE } from "../shared/constants/routes";
+import {
+  INSTITUTIONS_ROUTE,
+  WIDGET_MANAGEMENT_ROUTE,
+} from "../shared/constants/routes";
 import { Link } from "react-router-dom";
 import {
   SIDE_NAV_CONTACT_US_LINK_TEXT,
+  SIDE_NAV_INSTITUTIONS_LINK_TEXT,
   SIDE_NAV_LOG_OUT_BUTTON_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
@@ -28,6 +36,11 @@ const SideNav = () => {
   const { pathname } = useLocation();
 
   const links = [
+    {
+      label: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
+      Icon: AccountBalanceOutlined,
+      path: INSTITUTIONS_ROUTE,
+    },
     {
       label: SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
       Icon: SettingsOutlined,

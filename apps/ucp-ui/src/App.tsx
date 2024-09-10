@@ -12,6 +12,7 @@ import { muiTheme } from "./theme";
 import { store } from "./store";
 import AuthenticationWrapper from "./AuthenticationWrapper";
 import { DefaultPermissions, UiClientPermissions } from "@repo/shared-utils";
+import "./style.module.css";
 
 const App: React.FC = () => {
   const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`;
