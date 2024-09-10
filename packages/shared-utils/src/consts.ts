@@ -16,5 +16,9 @@ export const WidgetHostPermissions = {
   WRITE_WIDGET_ENDPOINTS: "write:widget-endpoints",
 };
 
-export const AUTH0_CLIENT_AUDIENCE = "ucp-hosted-apps"
-export const AUTH0_WIDGET_AUDIENCE = "ucp-widget-interactions"
+export const UiUserPermissions = {
+  CREATE_INSTITUTION: "create:institution",
+};
+
+export const AUTH0_CLIENT_AUDIENCE = "ucp-hosted-apps";
+export const AUTH0_WIDGET_AUDIENCE = "ucp-widget-interactions";

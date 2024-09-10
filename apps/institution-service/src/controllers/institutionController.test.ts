@@ -1,7 +1,15 @@
 import { Request, Response } from "express";
 import { Institution } from "../models/institution";
-import { cachedInstitutionFromSeed } from "../test/testData/institutions";
-import { getInstitutionCachedList } from "./institutionController";
+import {
+  cachedInstitutionFromSeed,
+  seedInstitutionId,
+  seedInstitutionName,
+  testInstitution,
+} from "../test/testData/institutions";
+import {
+  createInstitution,
+  getInstitutionCachedList,
+} from "./institutionController";
 
 describe("institutionController", () => {
   describe("getInstitutionCachedList", () => {
@@ -42,6 +50,100 @@ describe("institutionController", () => {
       expect(res.json).toHaveBeenCalledWith({
         error: "Error getting all Institutions",
       });
+    });
+  });
+
+  describe("createInstitution", () => {
+    it("creates a new institution with valid params", async () => {
+      const randomString = Math.random().toString(36).slice(2, 9);
+      const newInstitutionId = `UCP-${randomString}`;
+
+      const req: Request = {
+        body: {
+          ...testInstitution,
+          ucp_id: newInstitutionId,
+          name: `createTest-${randomString}`,
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await createInstitution(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(201);
+      const institution = await Institution.findByPk(newInstitutionId);
+      expect(institution?.ucp_id).toBe(newInstitutionId);
+    });
+
+    it("response with an error when a required field is missing", async () => {
+      const req: Request = {
+        body: {
+          ...testInstitution,
+          ucp_id: undefined,
+          name: "createTest",
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await createInstitution(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it("response with an error when an institution with that ucp_id already exists", async () => {
+      const req: Request = {
+        body: {
+          ...testInstitution,
+          ucp_id: seedInstitutionId,
+          name: "createTest",
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await createInstitution(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Invalid Institution Data",
+        message: "ucp_id must be unique",
+      });
+    });
+
+    it("response with success when an institution with the same name already exists", async () => {
+      const randomString = Math.random().toString(36).slice(2, 9);
+      const newInstitutionId = `UCP-${randomString}`;
+
+      const req: Request = {
+        body: {
+          ...testInstitution,
+          ucp_id: newInstitutionId,
+          name: seedInstitutionName,
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await createInstitution(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(201);
     });
   });
 });
