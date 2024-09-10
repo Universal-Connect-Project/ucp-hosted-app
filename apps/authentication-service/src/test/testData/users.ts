@@ -2,7 +2,11 @@ import envs from "@/config";
 import { sign, Algorithm, JwtPayload, SignOptions } from "jsonwebtoken";
 import { UserInfoResponse } from "auth0";
 import { User } from "@/shared/users/usersModel";
-import { DefaultPermissions, UiClientPermissions } from "@repo/shared-utils";
+import {
+  AUTH0_CLIENT_AUDIENCE,
+  DefaultPermissions,
+  UiClientPermissions,
+} from "@repo/shared-utils";
 
 export const exampleUserID = "google-oauth2|0000000000000000000000000000000";
 export const exampleClientID: string = "test-client-id";
@@ -121,10 +125,7 @@ export const getTestToken = (
       kid: "0",
     },
     algorithm: "RS256" as Algorithm,
-    audience: [
-      envs.AUTH0_CLIENT_AUDIENCE,
-      `https://${envs.AUTH0_DOMAIN}/userinfo`,
-    ],
+    audience: [AUTH0_CLIENT_AUDIENCE, `https://${envs.AUTH0_DOMAIN}/userinfo`],
     issuer: `https://${envs.AUTH0_DOMAIN}/`,
   };
 

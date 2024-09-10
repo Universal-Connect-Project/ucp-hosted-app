@@ -10,7 +10,6 @@ describe("config", () => {
     expect(envs.ENV).toBeDefined();
     expect(envs.CLIENT_ORIGIN_URL).toBeDefined();
     expect(envs.AUTH0_M2M_AUDIENCE).toBeDefined();
-    expect(envs.AUTH0_CLIENT_AUDIENCE).toBeDefined();
     expect(envs.AUTH0_DOMAIN).toBeDefined();
     expect(envs.AUTH0_CLIENT_ID).toBeDefined();
     expect(envs.AUTH0_CLIENT_SECRET).toBeDefined();

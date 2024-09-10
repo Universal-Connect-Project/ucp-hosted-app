@@ -1,9 +1,10 @@
 import { RequestHandler, Router } from "express";
 import { auth, requiredScopes } from "express-oauth2-jwt-bearer";
 import { getInstitutionCachedList } from "../controllers/institutionController";
+import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 
-const validateAccessToken = auth({
-  audience: process.env.AUTH0_WIDGET_AUDIENCE,
+const validateWidgetAccessToken = auth({
+  audience: AUTH0_WIDGET_AUDIENCE,
   issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
   tokenSigningAlg: "RS256",
 });
@@ -12,7 +13,7 @@ const router = Router();
 
 router.get(
   "/cacheList",
-  [validateAccessToken],
+  [validateWidgetAccessToken],
   requiredScopes("read:widget-endpoints"),
   getInstitutionCachedList as RequestHandler,
 );
