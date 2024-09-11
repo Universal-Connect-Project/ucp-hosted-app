@@ -15,6 +15,7 @@ export class Provider extends Model<
   InferCreationAttributes<Provider>
 > {
   declare id: CreationOptional<number>;
+  declare isActive: CreationOptional<boolean>;
   declare provider_institution_id: string;
   declare name: string;
   declare supports_oauth: CreationOptional<boolean>;
@@ -36,6 +37,10 @@ Provider.init(
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
     provider_institution_id: {
       type: DataTypes.STRING,

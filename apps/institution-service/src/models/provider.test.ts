@@ -14,6 +14,7 @@ describe("Provider Model", () => {
 
     expect(createdProvider).toHaveProperty("id");
     expect(createdProvider.name).toBe(providerAttributes.name);
+    expect(createdProvider.isActive).toBeTruthy();
     expect(createdProvider.supports_oauth).toBeTruthy();
     expect(createdProvider.supports_identification).toBeFalsy();
     expect(createdProvider.supports_verification).toBeFalsy();

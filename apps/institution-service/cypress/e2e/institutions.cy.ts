@@ -12,7 +12,7 @@ type Keys = {
 
 describe("Institution endpoints", () => {
   describe("/institutions/cacheList", () => {
-    it("creates new client with user token, generates access token to access institution endpoints, gets institution cache list, and deletes the client", () => {
+    it("gets institution cache list and filters out institutions without active aggregators", () => {
       cy.request({
         failOnStatusCode: false,
         method: "DELETE",
@@ -60,6 +60,12 @@ describe("Institution endpoints", () => {
                 {};
 
               expect(response.status).to.eq(200);
+
+              expect(
+                response.body.find(
+                  ({ name }) => name === "FinBank Profiles - A",
+                ),
+              ).to.eq(undefined);
 
               // Institution Attributes
               [

@@ -5,7 +5,7 @@ import { getInstitutionCachedList } from "./institutionController";
 
 describe("institutionController", () => {
   describe("getInstitutionCachedList", () => {
-    it("returns all institutions in the cached format", async () => {
+    it("returns all institutions in the cached format, doesn't return aggregator connections that aren't active, and filters out institutions that don't have any aggregator connections", async () => {
       const req = {} as Request;
       const res = {
         json: jest.fn(),
@@ -16,11 +16,12 @@ describe("institutionController", () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.arrayContaining([
-          expect.objectContaining(cachedInstitutionFromSeed),
-        ]),
-      );
+      expect(res.json).toHaveBeenCalledWith([
+        expect.objectContaining(cachedInstitutionFromSeed),
+      ]);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect((res.json as jest.Mock).mock.calls[0]?.[0]).toHaveLength(1);
     });
 
     it("returns 404 on error", async () => {
