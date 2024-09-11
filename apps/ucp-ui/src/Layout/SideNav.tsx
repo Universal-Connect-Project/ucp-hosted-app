@@ -29,18 +29,25 @@ import {
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
+import { useFlags } from "launchdarkly-react-client-sdk";
 
 const SideNav = () => {
   const { logout } = useAuth0();
 
   const { pathname } = useLocation();
 
+  const { institutionsPage } = useFlags();
+
   const links = [
-    {
-      label: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
-      Icon: AccountBalanceOutlined,
-      path: INSTITUTIONS_ROUTE,
-    },
+    ...(institutionsPage
+      ? [
+          {
+            label: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
+            Icon: AccountBalanceOutlined,
+            path: INSTITUTIONS_ROUTE,
+          },
+        ]
+      : []),
     {
       label: SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
       Icon: SettingsOutlined,
