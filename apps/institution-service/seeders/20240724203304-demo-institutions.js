@@ -5,6 +5,8 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     // Add Institutions
     const seedInstitutionId = "UCP-123456789";
+
+    const secondSeedInstitutionId = `UCP-9999`;
     await queryInterface.bulkInsert("institutions", [
       {
         ucp_id: seedInstitutionId,
@@ -17,7 +19,7 @@ module.exports = {
         createdAt: new Date(),
       },
       {
-        ucp_id: `UCP-9999`,
+        ucp_id: secondSeedInstitutionId,
         name: "Chase Bank",
         keywords: "chase, bank",
         logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-78c7b591-6512-9c17-b092-1cddbd3c85ba_100x100.png",
@@ -31,6 +33,7 @@ module.exports = {
     // Add providers
     await queryInterface.bulkInsert("providers", [
       {
+        isActive: false,
         name: "mx",
         provider_institution_id: "mx_bank",
         supports_oauth: true,
@@ -42,6 +45,7 @@ module.exports = {
         createdAt: new Date(),
       },
       {
+        isActive: true,
         name: "sophtron",
         provider_institution_id: "sophtron_bank",
         supports_oauth: true,
@@ -50,6 +54,18 @@ module.exports = {
         supports_aggregation: true,
         supports_history: true,
         institution_id: seedInstitutionId,
+        createdAt: new Date(),
+      },
+      {
+        isActive: false,
+        name: "sophtron",
+        provider_institution_id: "sophtron_bank",
+        supports_oauth: true,
+        supports_identification: true,
+        supports_verification: true,
+        supports_aggregation: true,
+        supports_history: true,
+        institution_id: secondSeedInstitutionId,
         createdAt: new Date(),
       },
     ]);

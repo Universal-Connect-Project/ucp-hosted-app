@@ -17,6 +17,9 @@ export const getInstitutionCachedList = async (req: Request, res: Response) => {
             "supports_aggregation",
             "supports_history",
           ],
+          where: {
+            isActive: true,
+          },
         },
       ],
     });

@@ -81,6 +81,7 @@ async function loadInstitutionData() {
     if (institution?.finicity?.id) {
       const finicity = institution.finicity;
       providerList.push({
+        isActive: false,
         name: "finicity",
         provider_institution_id: finicity.id,
         institution_id: institution.ucp_id,

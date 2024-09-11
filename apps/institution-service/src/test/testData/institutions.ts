@@ -20,14 +20,6 @@ export const cachedInstitutionFromSeed = {
   keywords: "wells, fargo",
   logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
   routing_numbers: ["123", "456"],
-  mx: {
-    id: "mx_bank",
-    supports_aggregation: true,
-    supports_history: true,
-    supports_identification: true,
-    supports_oauth: true,
-    supports_verification: true,
-  },
   sophtron: {
     id: "sophtron_bank",
     supports_aggregation: true,
@@ -47,17 +39,6 @@ export const institutionWithProviderQueryObj = {
     routing_numbers: ["123", "456"],
   },
   providers: [
-    {
-      dataValues: {
-        name: "mx",
-        id: "mx_bank",
-        supports_aggregation: true,
-        supports_history: true,
-        supports_identification: true,
-        supports_oauth: true,
-        supports_verification: true,
-      },
-    } as unknown as Provider,
     {
       dataValues: {
         name: "sophtron",
