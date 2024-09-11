@@ -21,14 +21,14 @@ const router = Router();
 
 router.get(
   "/cacheList",
-  [validateAccessToken(AUTH0_WIDGET_AUDIENCE)],
+  [validateAccessToken(AUTH0_WIDGET_AUDIENCE as string)],
   requiredScopes("read:widget-endpoints"),
   getInstitutionCachedList as RequestHandler,
 );
 
 router.post(
   "/",
-  [validateAccessToken(AUTH0_CLIENT_AUDIENCE)],
+  [validateAccessToken(AUTH0_CLIENT_AUDIENCE as string)],
   requiredScopes(UiUserPermissions.CREATE_INSTITUTION),
   createInstitution as RequestHandler,
 );

@@ -82,7 +82,7 @@ describe("institutionController", () => {
       );
     });
 
-    it("response with an error when a required field is missing", async () => {
+    it("responds with an error when a required field is missing", async () => {
       const req: Request = {
         body: {
           ...testInstitution,
@@ -102,7 +102,7 @@ describe("institutionController", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("response with an error when an institution with that ucp_id already exists", async () => {
+    it("responds with an error when an institution with that ucp_id already exists", async () => {
       const req: Request = {
         body: {
           ...testInstitution,
@@ -126,7 +126,7 @@ describe("institutionController", () => {
       });
     });
 
-    it("response with success when an institution with the same name already exists", async () => {
+    it("responds with success when an institution with the same name already exists", async () => {
       const randomString = Math.random().toString(36).slice(1, 9);
       const newInstitutionId = `UCP-${randomString}`;
 
