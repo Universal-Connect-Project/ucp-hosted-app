@@ -57,10 +57,11 @@ jobs:
           # Secrets (can't load these from another job, due to GH security features)
           echo WEB_UI_CLIENT_SECRET=${{ secrets.WEB_UI_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
           echo E2E_INSTITUTION_PASSWORD=${{ secrets.E2E_INSTITUTION_PASSWORD }} >> ${ENV_FILE_PATH}
-          
+          echo SUPER_ADMIN_PASSWORD=${{ secrets.SUPER_ADMIN_PASSWORD }} >> ${ENV_FILE_PATH}
+
           # For authentication service
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
-          
+
           # Copy the env file to the authentication service
           cp ${ENV_FILE_PATH} ${AUTH_ENV_FILE_PATH}
 

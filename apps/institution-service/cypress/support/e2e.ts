@@ -15,17 +15,19 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import { JwtPayload } from "jsonwebtoken";
-import "./commands";
 import {
+  AUTH0_CLIENT_AUDIENCE,
   AUTH0_WIDGET_AUDIENCE,
   DefaultPermissions,
   UiClientPermissions,
+  UiUserPermissions,
 } from "@repo/shared-utils";
+import { JwtPayload } from "jsonwebtoken";
+import "./commands";
 
 before(() => {
   const widgetAudience = AUTH0_WIDGET_AUDIENCE as string;
-  const clientAudience = "ucp-hosted-apps";
+  const clientAudience = AUTH0_CLIENT_AUDIENCE as string;
 
   const username = Cypress.env("E2E_INSTITUTION_USERNAME") as string;
   const password = Cypress.env("E2E_INSTITUTION_PASSWORD") as string;
@@ -33,6 +35,7 @@ before(() => {
   const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
 
   const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`;
+  const allPermissionsScope = `${scope} ${Object.values(UiUserPermissions).join(" ")}`;
 
   cy.request({
     method: "POST",
@@ -65,5 +68,20 @@ before(() => {
       "NO_WIDGET_PERMISSION_ACCESS_TOKEN",
       response.body.access_token,
     );
+  });
+
+  cy.request({
+    method: "POST",
+    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
+    body: {
+      audience: clientAudience,
+      client_id: ucpWebUiClientId,
+      grant_type: "password",
+      password: Cypress.env("SUPER_ADMIN_PASSWORD") as string,
+      username: Cypress.env("SUPER_ADMIN_USERNAME") as string,
+      scope: allPermissionsScope,
+    },
+  }).then((response: Cypress.Response<JwtPayload>) => {
+    Cypress.env("SUPER_USER_ACCESS_TOKEN", response.body.access_token);
   });
 });
