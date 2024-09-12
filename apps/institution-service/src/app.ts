@@ -4,6 +4,7 @@ import logger from "morgan";
 
 import institutionRoutes from "./routes/institutionRoutes";
 import { PORT } from "./shared/const";
+import permissionsRoutes from "./routes/permissionRoutes";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(logger("dev"));
 
 // Routes
 app.use("/institutions", institutionRoutes);
+app.use(permissionsRoutes);
 
 app.listen(PORT, () => {
   console.info(`App listening on port ${PORT}`);

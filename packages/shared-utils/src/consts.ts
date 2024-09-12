@@ -18,6 +18,7 @@ export const WidgetHostPermissions = {
 
 export const UiUserPermissions = {
   CREATE_INSTITUTION: "create:institution",
+  CREATE_INSTITUTION_AGGREGATOR: "create:institution:aggregator"
 };
 
 export const AUTH0_CLIENT_AUDIENCE = "ucp-hosted-apps";
