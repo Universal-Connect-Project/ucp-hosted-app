@@ -4,10 +4,12 @@ import Routes from "../Routes";
 import { API_KEYS_CARD_TITLE_TEXT } from "../ApiKeys/constants";
 import {
   SIDE_NAV_CONTACT_US_LINK_TEXT,
+  SIDE_NAV_INSTITUTIONS_LINK_TEXT,
   SIDE_NAV_LOG_OUT_BUTTON_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
+import * as launchDarkly from "launchdarkly-react-client-sdk";
 
 const mockLogout = jest.fn();
 
@@ -19,13 +21,47 @@ jest.mock("@auth0/auth0-react", () => ({
   withAuthenticationRequired: (component: any): any => component,
 }));
 
+jest.mock("launchdarkly-react-client-sdk");
+
 describe("<SideNav />", () => {
+  beforeEach(() => {
+    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({});
+  });
+
   it("calls logout on click", async () => {
     render(<Routes />);
 
     await userEvent.click(screen.getByText(SIDE_NAV_LOG_OUT_BUTTON_TEXT));
 
     await waitFor(() => expect(mockLogout).toHaveBeenCalled());
+  });
+
+  it("doesnt render institutions if the flag is off", () => {
+    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({
+      institutionsPage: false,
+    });
+
+    render(<Routes />);
+
+    expect(
+      screen.queryByRole("link", {
+        name: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders institutions if the flag is on", () => {
+    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({
+      institutionsPage: true,
+    });
+
+    render(<Routes />);
+
+    expect(
+      screen.getByRole("link", {
+        name: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
+      }),
+    ).toBeInTheDocument();
   });
 
   it("navigates to widget management after clicking on the link", async () => {
