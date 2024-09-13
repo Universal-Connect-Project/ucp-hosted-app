@@ -7,6 +7,11 @@ import {
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
+import {
+  SUPER_USER_ACCESS_TOKEN_ENV,
+  USER_ACCESS_TOKEN_ENV,
+} from "../shared/constants/accessTokens";
+import { createAuthorizationHeader } from "../shared/utils/authorization";
 
 const keysUrl = `http://localhost:8089/v1/clients/keys`;
 
@@ -32,7 +37,7 @@ describe("/institutions/cacheList", () => {
       method: "DELETE",
       url: keysUrl,
       headers: {
-        Authorization: `Bearer ${Cypress.env("USER_ACCESS_TOKEN")}`,
+        Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
       },
     });
 
@@ -41,7 +46,7 @@ describe("/institutions/cacheList", () => {
       url: keysUrl,
       headers: {
         ContentType: "application/json",
-        Authorization: `Bearer ${Cypress.env("USER_ACCESS_TOKEN")}`,
+        Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
       },
     }).then((response: Cypress.Response<Keys>) => {
       const client = response.body;
@@ -100,7 +105,7 @@ describe("/institutions/cacheList", () => {
               method: "DELETE",
               url: keysUrl,
               headers: {
-                Authorization: `Bearer ${Cypress.env("USER_ACCESS_TOKEN")}`,
+                Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
               },
             }).then((response) => {
               expect(response.status).to.eq(200);
@@ -143,7 +148,7 @@ describe("POST /institutions (Institution create)", () => {
         ucp_id: getUniqueId(),
       },
       headers: {
-        Authorization: `Bearer ${Cypress.env("SUPER_USER_ACCESS_TOKEN")}`,
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
       },
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(201);

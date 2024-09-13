@@ -24,64 +24,77 @@ import {
 } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
 import "./commands";
+import {
+  AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+  NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
+  SUPER_USER_ACCESS_TOKEN_ENV,
+  USER_ACCESS_TOKEN_ENV,
+} from "../shared/constants/accessTokens";
 
-before(() => {
-  const widgetAudience = AUTH0_WIDGET_AUDIENCE as string;
-  const clientAudience = AUTH0_CLIENT_AUDIENCE as string;
-
-  const username = Cypress.env("E2E_INSTITUTION_USERNAME") as string;
-  const password = Cypress.env("E2E_INSTITUTION_PASSWORD") as string;
-
+const authenticateAndStoreToken = ({
+  audience,
+  passwordEnvString,
+  usernameEnvString,
+  variableName,
+}: {
+  audience: string;
+  passwordEnvString: string;
+  usernameEnvString: string;
+  variableName: string;
+}) => {
   const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
 
-  const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`;
-  const allPermissionsScope = `${scope} ${Object.values(UiUserPermissions).join(" ")}`;
+  const allPermissionsScope = [
+    DefaultPermissions,
+    UiClientPermissions,
+    UiUserPermissions,
+  ]
+    .map((permissions) => Object.values(permissions))
+    .reduce((acc, permissions) => [...acc, ...permissions], [])
+    .join(" ");
 
   cy.request({
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
     body: {
-      audience: clientAudience,
+      audience,
       client_id: ucpWebUiClientId,
       grant_type: "password",
-      password,
-      username,
-      scope,
-    },
-  }).then((response: Cypress.Response<JwtPayload>) => {
-    Cypress.env("USER_ACCESS_TOKEN", response.body.access_token);
-  });
-
-  cy.request({
-    method: "POST",
-    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
-    body: {
-      grant_type: "password",
-      scope: "openid offline_access profile email",
-      audience: widgetAudience,
-      client_id: ucpWebUiClientId,
-      username,
-      password,
-    },
-  }).then((response: Cypress.Response<JwtPayload>) => {
-    Cypress.env(
-      "NO_WIDGET_PERMISSION_ACCESS_TOKEN",
-      response.body.access_token,
-    );
-  });
-
-  cy.request({
-    method: "POST",
-    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
-    body: {
-      audience: clientAudience,
-      client_id: ucpWebUiClientId,
-      grant_type: "password",
-      password: Cypress.env("SUPER_ADMIN_PASSWORD") as string,
-      username: Cypress.env("SUPER_ADMIN_USERNAME") as string,
+      password: Cypress.env(passwordEnvString) as string,
+      username: Cypress.env(usernameEnvString) as string,
       scope: allPermissionsScope,
     },
   }).then((response: Cypress.Response<JwtPayload>) => {
-    Cypress.env("SUPER_USER_ACCESS_TOKEN", response.body.access_token);
+    Cypress.env(variableName, response.body.access_token);
+  });
+};
+
+before(() => {
+  authenticateAndStoreToken({
+    audience: AUTH0_CLIENT_AUDIENCE,
+    passwordEnvString: "E2E_INSTITUTION_PASSWORD",
+    usernameEnvString: "E2E_INSTITUTION_USERNAME",
+    variableName: USER_ACCESS_TOKEN_ENV,
+  });
+
+  authenticateAndStoreToken({
+    audience: AUTH0_WIDGET_AUDIENCE,
+    passwordEnvString: "E2E_INSTITUTION_PASSWORD",
+    usernameEnvString: "E2E_INSTITUTION_USERNAME",
+    variableName: NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
+  });
+
+  authenticateAndStoreToken({
+    audience: AUTH0_CLIENT_AUDIENCE,
+    passwordEnvString: "SUPER_ADMIN_PASSWORD",
+    usernameEnvString: "SUPER_ADMIN_USERNAME",
+    variableName: SUPER_USER_ACCESS_TOKEN_ENV,
+  });
+
+  authenticateAndStoreToken({
+    audience: AUTH0_CLIENT_AUDIENCE,
+    passwordEnvString: "AGGREGATOR_ADMIN_PASSWORD",
+    usernameEnvString: "AGGREGATOR_ADMIN_USERNAME",
+    variableName: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   });
 });
