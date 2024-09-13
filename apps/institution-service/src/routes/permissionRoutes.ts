@@ -4,10 +4,6 @@ import { getPermissions } from "../controllers/permissionController";
 
 const router = Router();
 
-router.get(
-  "/permissions",
-  [validateUIAudience],
-  getPermissions as RequestHandler,
-);
+router.get("/", [validateUIAudience], getPermissions as RequestHandler);
 
 export default router;

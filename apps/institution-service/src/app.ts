@@ -15,7 +15,7 @@ app.use(logger("dev"));
 
 // Routes
 app.use("/institutions", institutionRoutes);
-app.use(permissionsRoutes);
+app.use("/permissions", permissionsRoutes);
 
 app.listen(PORT, () => {
   console.info(`App listening on port ${PORT}`);
