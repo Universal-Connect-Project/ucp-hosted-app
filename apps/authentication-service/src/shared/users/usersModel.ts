@@ -1,5 +1,5 @@
 export type User = {
-  user_metadata?: {
+  app_metadata?: {
     client_id?: string;
   };
   [key: string]: unknown;
