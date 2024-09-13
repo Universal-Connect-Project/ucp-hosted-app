@@ -21,9 +21,10 @@ export const getPermissions = (req: Request, res: Response) => {
     };
 
     res.status(200);
-    res.json(permissions);
+    res.send(permissions);
   } catch (error) {
     console.log("error", error);
-    res.status(400).json({ error: "Error getting permissions" });
+    res.status(400);
+    res.send({ error: "Error getting permissions" });
   }
 };
