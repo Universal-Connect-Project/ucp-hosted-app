@@ -29,7 +29,7 @@ export const getUserIdFromToken = async (token: string): Promise<string> => {
 
 export const getUserClientId = async (userId: string): Promise<string> => {
   const userInfo: User = await getUserById(userId);
-  return Promise.resolve(userInfo?.user_metadata?.client_id || "");
+  return Promise.resolve(userInfo?.app_metadata?.client_id || "");
 };
 
 export const getUserById = async (userId: string): Promise<User> => {
@@ -65,7 +65,7 @@ export const setUserClientId = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_metadata: {
+        app_metadata: {
           client_id: clientId.length === 0 ? null : clientIdEncoded,
         },
       }),
