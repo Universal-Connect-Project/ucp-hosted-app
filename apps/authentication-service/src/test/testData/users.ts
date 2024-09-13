@@ -58,7 +58,7 @@ export const exampleUserWithoutClient: User = {
 
 export const exampleUserWithClientId: User = {
   ...exampleUserWithoutClient,
-  user_metadata: {
+  app_metadata: {
     client_id: "test-client-id",
   },
 };
