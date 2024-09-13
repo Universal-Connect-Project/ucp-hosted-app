@@ -11,11 +11,13 @@ export const getPermissions = (req: Request, res: Response) => {
   const decodedToken = jwtDecode<DecodedToken>(token as string);
 
   const permissions = {
-      canCreateInstitution: [
-        UiUserPermissions.CREATE_INSTITUTION,
-        UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR,
-      ].some((permission) => decodedToken?.permissions?.includes(permission)),
-    };
+    canCreateInstitution: [
+      UiUserPermissions.CREATE_INSTITUTION,
+      UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR,
+    ].some((permission: string) =>
+      decodedToken?.permissions?.includes(permission),
+    ),
+  };
 
   res.status(200);
   res.send(permissions);
