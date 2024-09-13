@@ -7,24 +7,18 @@ interface DecodedToken {
 }
 
 export const getPermissions = (req: Request, res: Response) => {
-  try {
-    const token = req.headers.authorization?.split(" ")?.[1];
-    const decodedToken = jwtDecode<DecodedToken>(token as string);
+  const token = req.headers.authorization?.split(" ")?.[1];
+  const decodedToken = jwtDecode<DecodedToken>(token as string);
 
-    const permissions = {
-      canCreateInstitution: !!decodedToken.permissions.find((permission) =>
-        [
-          UiUserPermissions.CREATE_INSTITUTION,
-          UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR,
-        ].includes(permission),
-      ),
-    };
+  const permissions = {
+    canCreateInstitution: !!decodedToken?.permissions?.find((permission) =>
+      [
+        UiUserPermissions.CREATE_INSTITUTION,
+        UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR,
+      ].includes(permission),
+    ),
+  };
 
-    res.status(200);
-    res.send(permissions);
-  } catch (error) {
-    console.log("error", error);
-    res.status(400);
-    res.send({ error: "Error getting permissions" });
-  }
+  res.status(200);
+  res.send(permissions);
 };
