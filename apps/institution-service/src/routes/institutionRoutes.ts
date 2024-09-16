@@ -43,7 +43,7 @@ router.put(
     validate(institutionUpdateSchema),
   ],
   scopeIncludesAny(
-    `${UiUserPermissions.CREATE_INSTITUTION} ${UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR}`,
+    `${UiUserPermissions.UPDATE_INSTITUTION} ${UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR}`,
   ),
   updateInstitution as RequestHandler,
 );

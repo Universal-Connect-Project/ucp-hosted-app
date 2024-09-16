@@ -56,7 +56,7 @@ interface institutionTestCase {
   expectedMessage: string;
 }
 
-const updateValidationTestCases: institutionTestCase[] = [
+const institutionValidationTestCases: institutionTestCase[] = [
   {
     description: "routing number is invalid",
     body: {
@@ -88,18 +88,6 @@ const updateValidationTestCases: institutionTestCase[] = [
       '"url" must be a valid uri with a scheme matching the http|https pattern',
   },
 ];
-
-const createValidationTestCases: institutionTestCase[] =
-  updateValidationTestCases.reduce((acc: institutionTestCase[], testCase) => {
-    acc.push({
-      ...testCase,
-      body: {
-        ...testCase.body,
-        ucp_id: `UCP-${getUniqueId()}`, // Add ucp_id to the body
-      },
-    });
-    return acc;
-  }, []);
 
 describe("/institutions/cacheList", () => {
   it("gets institution cache list and filters out institutions without active aggregators", () => {
@@ -210,12 +198,12 @@ describe("POST /institutions (Institution create)", () => {
     body: testInstitution,
   });
 
-  createValidationTestCases.forEach((testCase) => {
+  institutionValidationTestCases.forEach((testCase) => {
     it(`should fail validation when ${testCase.description}`, () => {
       cy.request({
         url: `http://localhost:${PORT}/institutions`,
         method: "POST",
-        body: testCase.body,
+        body: { ...testCase.body, ucp_id: `UCP-${getUniqueId()}` },
         headers: {
           Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
         },
@@ -329,7 +317,7 @@ describe("PUT /institutions/:id (Institution update)", () => {
     });
   });
 
-  updateValidationTestCases.forEach((testCase) => {
+  institutionValidationTestCases.forEach((testCase) => {
     it(`should fail validation when ${testCase.description}`, () => {
       cy.request({
         url: `http://localhost:${PORT}/institutions/${newInstitutionData.ucp_id}`,

@@ -165,9 +165,9 @@ describe("institutionController", () => {
     });
 
     it("responds with 404 when institution is not found", async () => {
-      const nonExistantInstitutionId = "nonExistantInstitutionId";
+      const nonExistentInstitutionId = "nonExistentInstitutionId";
       const req = {
-        params: { id: nonExistantInstitutionId },
+        params: { id: nonExistentInstitutionId },
         body: { name: "newName" },
       } as unknown as Request;
 
