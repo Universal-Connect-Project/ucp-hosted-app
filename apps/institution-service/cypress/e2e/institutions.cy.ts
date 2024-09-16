@@ -4,14 +4,15 @@ import { PORT } from "../../src/shared/const";
 import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
 import { testInstitution } from "../../src/test/testData/institutions";
 import {
-  runInvalidPermissionCheck,
-  runTokenInvalidCheck,
-} from "../support/utils";
-import {
+  AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
+import {
+  runInvalidPermissionCheck,
+  runTokenInvalidCheck,
+} from "../support/utils";
 
 const keysUrl = `http://localhost:8089/v1/clients/keys`;
 
@@ -29,6 +30,76 @@ const institutionAttributes = [
   "is_test_bank",
   "routing_numbers",
 ];
+const getUniqueId = () => Cypress._.uniqueId(Date.now().toString());
+
+const validUpdateParams = {
+  name: "newName",
+  keywords: "newKeywords",
+  logo: "https://logo.com",
+  url: "https://url.com",
+  is_test_bank: true,
+  routing_numbers: ["123456789"],
+};
+
+interface institutionTestCase {
+  description: string;
+  body: {
+    ucp_id?: string;
+    name: string;
+    keywords: string;
+    logo: string;
+    url: string;
+    is_test_bank: boolean;
+    routing_numbers: string[];
+  };
+  expectedStatus: number;
+  expectedMessage: string;
+}
+
+const updateValidationTestCases: institutionTestCase[] = [
+  {
+    description: "routing number is invalid",
+    body: {
+      ...validUpdateParams,
+      routing_numbers: ["123"],
+    },
+    expectedStatus: 400,
+    expectedMessage:
+      '"routing_numbers[0]" with value "123" fails to match the 9 digits pattern',
+  },
+  {
+    description: "logo is invalid",
+    body: {
+      ...validUpdateParams,
+      logo: "junk",
+    },
+    expectedStatus: 400,
+    expectedMessage:
+      '"logo" must be a valid uri with a scheme matching the http|https pattern',
+  },
+  {
+    description: "url is invalid",
+    body: {
+      ...validUpdateParams,
+      url: "junk",
+    },
+    expectedStatus: 400,
+    expectedMessage:
+      '"url" must be a valid uri with a scheme matching the http|https pattern',
+  },
+];
+
+const createValidationTestCases: institutionTestCase[] =
+  updateValidationTestCases.reduce((acc: institutionTestCase[], testCase) => {
+    acc.push({
+      ...testCase,
+      body: {
+        ...testCase.body,
+        ucp_id: `UCP-${getUniqueId()}`, // Add ucp_id to the body
+      },
+    });
+    return acc;
+  }, []);
 
 describe("/institutions/cacheList", () => {
   it("gets institution cache list and filters out institutions without active aggregators", () => {
@@ -131,15 +202,33 @@ describe("POST /institutions (Institution create)", () => {
     url: `http://localhost:${PORT}/institutions`,
     method: "POST",
   });
+
   runInvalidPermissionCheck({
     url: `http://localhost:${PORT}/institutions`,
     token_env_var: "USER_ACCESS_TOKEN",
     method: "POST",
+    body: testInstitution,
+  });
+
+  createValidationTestCases.forEach((testCase) => {
+    it(`should fail validation when ${testCase.description}`, () => {
+      cy.request({
+        url: `http://localhost:${PORT}/institutions`,
+        method: "POST",
+        body: testCase.body,
+        headers: {
+          Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+        },
+        failOnStatusCode: false,
+      }).then((response: Cypress.Response<{ error: string }>) => {
+        expect(response.status).to.eq(testCase.expectedStatus);
+        expect(response.body.error).to.include(testCase.expectedMessage);
+      });
+    });
   });
 
   it("gets 201 created when user has permission to create", () => {
-    const getUniqueId = () => Cypress._.uniqueId(Date.now().toString());
-
+    // Create as SUPER USER
     cy.request({
       url: `http://localhost:${PORT}/institutions`,
       method: "POST",
@@ -156,6 +245,158 @@ describe("POST /institutions (Institution create)", () => {
       institutionAttributes.forEach((attribute) => {
         expect(response.body).to.haveOwnProperty(attribute);
       });
+    });
+
+    // Create as Aggregator admin
+    cy.request({
+      url: `http://localhost:${PORT}/institutions`,
+      method: "POST",
+      body: {
+        ...testInstitution,
+        ucp_id: getUniqueId(),
+      },
+      headers: {
+        Authorization: createAuthorizationHeader(
+          AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+        ),
+      },
+    }).then((response: Cypress.Response<{ message: string }>) => {
+      expect(response.status).to.eq(201);
+
+      institutionAttributes.forEach((attribute) => {
+        expect(response.body).to.haveOwnProperty(attribute);
+      });
+    });
+  });
+});
+
+let newInstitutionData: { ucp_id: string };
+
+describe("PUT /institutions/:id (Institution update)", () => {
+  before(() => {
+    const getUniqueId = () => Cypress._.uniqueId(Date.now().toString());
+    cy.request({
+      url: `http://localhost:${PORT}/institutions`,
+      method: "POST",
+      body: {
+        ...testInstitution,
+        ucp_id: getUniqueId(),
+      },
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ ucp_id: string }>) => {
+      newInstitutionData = response.body;
+    });
+  });
+
+  runTokenInvalidCheck({
+    url: `http://localhost:${PORT}/institutions/${newInstitutionData?.ucp_id}`,
+    method: "PUT",
+  });
+
+  runInvalidPermissionCheck({
+    url: `http://localhost:${PORT}/institutions/${newInstitutionData?.ucp_id}`,
+    token_env_var: "USER_ACCESS_TOKEN",
+    method: "PUT",
+  });
+
+  it("gets 404 when trying to update an institution that doesnt exist", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions/wrongInstitutionId`,
+      method: "PUT",
+      body: validUpdateParams,
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+      failOnStatusCode: false,
+    }).then((response: Cypress.Response<{ error: string }>) => {
+      expect(response.status).to.eq(404);
+      expect(response.body.error).to.eq("Institution not found");
+    });
+  });
+
+  it("gets 200 updated when user has permission to update and params are valid", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions/${newInstitutionData.ucp_id}`,
+      method: "PUT",
+      body: validUpdateParams,
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ message: string }>) => {
+      expect(response.status).to.eq(200);
+    });
+  });
+
+  updateValidationTestCases.forEach((testCase) => {
+    it(`should fail validation when ${testCase.description}`, () => {
+      cy.request({
+        url: `http://localhost:${PORT}/institutions/${newInstitutionData.ucp_id}`,
+        method: "PUT",
+        body: testCase.body,
+        headers: {
+          Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+        },
+        failOnStatusCode: false,
+      }).then((response: Cypress.Response<{ error: string }>) => {
+        expect(response.status).to.eq(testCase.expectedStatus);
+        expect(response.body.error).to.include(testCase.expectedMessage);
+      });
+    });
+  });
+
+  it("should prevent an aggregator from updating institutions with other aggregator implementations", () => {
+    const institutionWithOtherProviderImplementations = "UCP-024b97a3cd4d4df";
+    cy.request({
+      url: `http://localhost:${PORT}/institutions/${institutionWithOtherProviderImplementations}`,
+      method: "PUT",
+      body: validUpdateParams,
+      headers: {
+        Authorization: createAuthorizationHeader(
+          AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+        ),
+      },
+      failOnStatusCode: false,
+    }).then((response: Cypress.Response<{ error: string }>) => {
+      expect(response.status).to.eq(403);
+      expect(response.body.error).to.include(
+        "Aggregator cannot edit an institution used by other aggregators",
+      );
+    });
+  });
+
+  it("should allow an aggregator to update institutions with no other aggregator implementations", () => {
+    const institutionWithNoAggregators = "UCP-testNoAggImplementations";
+    cy.request({
+      url: `http://localhost:${PORT}/institutions/${institutionWithNoAggregators}`,
+      method: "PUT",
+      body: validUpdateParams,
+      headers: {
+        Authorization: createAuthorizationHeader(
+          AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+        ),
+      },
+      failOnStatusCode: false,
+    }).then((response: Cypress.Response<{ error: string }>) => {
+      expect(response.status).to.eq(200);
+    });
+  });
+
+  it("should allow an aggregator to update when it is the only implementation on the institution", () => {
+    const testExampleUcpId = "UCP-testExampleA";
+    cy.request({
+      url: `http://localhost:${PORT}/institutions/${testExampleUcpId}`,
+      method: "PUT",
+      body: validUpdateParams,
+      headers: {
+        Authorization: createAuthorizationHeader(
+          AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+        ),
+      },
+      failOnStatusCode: false,
+    }).then((response: Cypress.Response<{ error: string }>) => {
+      expect(response.status).to.eq(200);
     });
   });
 });

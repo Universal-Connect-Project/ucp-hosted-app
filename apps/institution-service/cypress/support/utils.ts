@@ -1,3 +1,6 @@
+import { InstitutionAttrs } from "test/testData/institutions";
+import { createAuthorizationHeader } from "../shared/utils/authorization";
+
 interface runTokenInvalidCheckArgs {
   url: string;
   method: string;
@@ -24,20 +27,22 @@ interface runInvalidPermissionCheckArgs {
   url: string;
   token_env_var: string;
   method: string;
+  body?: InstitutionAttrs;
 }
 
 export const runInvalidPermissionCheck = (
   args: runInvalidPermissionCheckArgs,
 ) => {
   it("gets 403 when token doesnt have permission", () => {
-    const { url, token_env_var, method } = args;
+    const { url, token_env_var, method, body } = args;
 
     cy.request({
       url,
       failOnStatusCode: false,
       method,
+      body,
       headers: {
-        Authorization: `Bearer ${Cypress.env(token_env_var)}`,
+        Authorization: createAuthorizationHeader(token_env_var),
       },
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(403);
