@@ -1,6 +1,5 @@
 import {
   ArrowRightOutlined,
-  Close,
   RotateRightOutlined,
   Settings,
 } from "@mui/icons-material";
@@ -11,7 +10,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Stack,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -31,6 +29,9 @@ import { useRotateApiKeysMutation } from "./api";
 import { displaySnackbar } from "../shared/reducers/snackbar";
 import { LoadingButton } from "@mui/lab";
 import FormSubmissionError from "../shared/components/FormSubmissionError";
+import DrawerCloseButton from "../shared/components/Drawer/DrawerCloseButton";
+import DrawerContainer from "../shared/components/Drawer/DrawerContainer";
+import DrawerContent from "../shared/components/Drawer/DrawerContent";
 
 const rotateFormId = "rotateForm";
 
@@ -77,16 +78,11 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
         onClose={handleCloseDrawer}
         open={isManageDrawerOpen}
       >
-        <div className={styles.manageDrawer}>
-          <Stack alignItems="flex-start" spacing={1.5}>
-            <Button
-              color="inherit"
-              onClick={handleCloseDrawer}
-              startIcon={<Close />}
-              variant="text"
-            >
+        <DrawerContainer>
+          <DrawerContent>
+            <DrawerCloseButton handleClose={handleCloseDrawer}>
               {API_KEYS_MANAGE_CLOSE_DRAWER_BUTTON_TEXT}
-            </Button>
+            </DrawerCloseButton>
             {shouldShowConfirmRotateSecret ? (
               <>
                 {isRotateApiKeysError && (
@@ -157,8 +153,8 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
                 </ListItemButton>
               </>
             )}
-          </Stack>
-        </div>
+          </DrawerContent>
+        </DrawerContainer>
       </Drawer>
       <SkeletonIfLoading isLoading={isLoading}>
         <Button onClick={handleOpenDrawer} startIcon={<Settings />}>

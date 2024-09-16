@@ -1,12 +1,14 @@
 import React from "react";
 import PageTitle from "../shared/components/PageTitle";
 import {
+  INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
   INSTITUTIONS_PAGE_TITLE,
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
 } from "./constants";
 import {
   Avatar,
+  Button,
   Chip,
   Table,
   TableBody,
@@ -17,13 +19,19 @@ import {
 } from "@mui/material";
 import styles from "./institutions.module.css";
 import { institutions } from "./testData/institutions";
+import { Add } from "@mui/icons-material";
 
 const Institutions = () => {
   const tableHeadCells = ["Institution", "UCP ID", "Aggregators"];
 
   return (
     <div className={styles.pageContainer}>
-      <PageTitle>{INSTITUTIONS_PAGE_TITLE}</PageTitle>
+      <div className={styles.header}>
+        <PageTitle>{INSTITUTIONS_PAGE_TITLE}</PageTitle>
+        <Button size="medium" startIcon={<Add />} variant="contained">
+          {INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT}
+        </Button>
+      </div>
       <TableContainer className={styles.table}>
         <Table stickyHeader>
           <TableHead>
