@@ -1,0 +1,7 @@
+.container {
+  background-color: var(--mui-palette-common-white);
+  bottom: 0;
+  padding: 16px;
+  position: sticky;
+  z-index: 1;
+}

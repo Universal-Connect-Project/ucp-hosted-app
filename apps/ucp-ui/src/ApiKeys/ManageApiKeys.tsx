@@ -32,6 +32,7 @@ import FormSubmissionError from "../shared/components/FormSubmissionError";
 import DrawerCloseButton from "../shared/components/Drawer/DrawerCloseButton";
 import DrawerContainer from "../shared/components/Drawer/DrawerContainer";
 import DrawerContent from "../shared/components/Drawer/DrawerContent";
+import DrawerTitle from "../shared/components/Drawer/DrawerTitle";
 
 const rotateFormId = "rotateForm";
 
@@ -92,9 +93,9 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
                     title="Something went wrong"
                   />
                 )}
-                <Typography variant="h5">
+                <DrawerTitle>
                   Are you sure you want to rotate your Client Secret?
-                </Typography>
+                </DrawerTitle>
                 <Typography className={styles.secondaryColor} variant="body1">
                   This will create a new Client Secret and invalidate your
                   existing one. Your widget will not be able to authenticate
@@ -129,7 +130,7 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
               </>
             ) : (
               <>
-                <Typography variant="h5">Manage API Keys</Typography>
+                <DrawerTitle>Manage API Keys</DrawerTitle>
                 <ListItemButton
                   className={styles.listItemButton}
                   onClick={handleShowConfirmRotateSecret}
