@@ -1,29 +1,45 @@
-import { Add } from "@mui/icons-material";
-import { Button, Drawer, TextField, Typography } from "@mui/material";
+import { Add, Delete, InfoOutlined } from "@mui/icons-material";
+import {
+  Button,
+  Drawer,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
 import {
   INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
+  INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT,
   INSTITUTION_FORM_LOGO_URL_LABEL_TEXT,
   INSTITUTION_FORM_NAME_LABEL_TEXT,
+  INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT,
   INSTITUTION_FORM_SUBMIT_BUTTON_TEXT,
   INSTITUTION_FORM_URL_LABEL_TEXT,
+  INSTITUTION_ROUTING_NUMBERS_TOOLTIP,
   INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
 } from "./constants";
 import DrawerContainer from "../shared/components/Drawer/DrawerContainer";
 import DrawerContent from "../shared/components/Drawer/DrawerContent";
 import DrawerCloseButton from "../shared/components/Drawer/DrawerCloseButton";
 import DrawerTitle from "../shared/components/Drawer/DrawerTitle";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { REQUIRED_ERROR_TEXT } from "../shared/constants/validation";
 import styles from "./addInstitution.module.css";
 import DrawerStickyFooter from "../shared/components/Drawer/DrawerStickyFooter";
+import RoutingNumberInput from "./RoutingNumberInput";
 
 interface Inputs {
   name: string;
   url: string;
   logoUrl: string;
-  routingNumber: string[];
+  routingNumbers: { value: string }[];
   keywords: string[];
   isTestInstitution: boolean;
 }
@@ -40,8 +56,18 @@ const AddInstitution = () => {
     defaultValues: {
       name: "",
       logoUrl: "",
+      routingNumbers: [],
       url: "",
     },
+  });
+
+  const {
+    append: routingNumbersAppend,
+    fields: routingNumberFields,
+    remove: routingNumbersRemove,
+  } = useFieldArray({
+    control,
+    name: "routingNumbers",
   });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
@@ -87,7 +113,7 @@ const AddInstitution = () => {
                   />
                 )}
               />
-              <div className={styles.institutionDetails}>
+              <div className={styles.inputStack}>
                 <Typography variant="body1">Institution Details</Typography>
                 <Controller
                   name="url"
@@ -119,6 +145,46 @@ const AddInstitution = () => {
                     />
                   )}
                 />
+              </div>
+              <div className={styles.inputStack}>
+                <div className={styles.routingNumbersHeader}>
+                  <Typography variant="body1">Routing Numbers</Typography>
+                  <Tooltip title={INSTITUTION_ROUTING_NUMBERS_TOOLTIP}>
+                    <InfoOutlined color="action" fontSize="small" />
+                  </Tooltip>
+                </div>
+                {routingNumberFields.map((item, index) => (
+                  <div className={styles.routingNumbersRow} key={item.id}>
+                    <Controller
+                      name={`routingNumbers.${index}.value`}
+                      control={control}
+                      defaultValue={item.value}
+                      render={({
+                        field: { ref, ...fieldProps },
+                        fieldState: { error },
+                      }) => (
+                        <RoutingNumberInput
+                          error={!!error}
+                          fullWidth
+                          helperText={error?.message}
+                          inputRef={ref}
+                          label={INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT}
+                          variant="filled"
+                          {...fieldProps}
+                        />
+                      )}
+                    />
+                    <IconButton onClick={() => routingNumbersRemove(index)}>
+                      <Delete />
+                    </IconButton>
+                  </div>
+                ))}
+                <Button
+                  onClick={() => routingNumbersAppend({ value: "" })}
+                  startIcon={<Add />}
+                >
+                  {INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT}
+                </Button>
               </div>
             </DrawerContent>
           </DrawerContainer>
