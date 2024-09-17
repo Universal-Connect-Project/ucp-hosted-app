@@ -4,14 +4,24 @@ import { Provider } from "../../models/provider";
 export const seedInstitutionId = "UCP-123456789";
 export const seedInstitutionName = "Wells Fargo";
 
-export const testInstitution = {
+export interface InstitutionAttrs {
+  ucp_id: string;
+  name: string;
+  keywords: string;
+  logo: string;
+  url: string;
+  is_test_bank: boolean;
+  routing_numbers: string[];
+}
+
+export const testInstitution: InstitutionAttrs = {
   ucp_id: `UCP-123`,
   name: "Test Bank #1",
   keywords: "test, bank",
   logo: "https://logo.com",
   url: "https://url.com",
   is_test_bank: true,
-  routing_numbers: ["123", "324"],
+  routing_numbers: ["123456789", "999999999"],
 };
 
 export const cachedInstitutionFromSeed = {

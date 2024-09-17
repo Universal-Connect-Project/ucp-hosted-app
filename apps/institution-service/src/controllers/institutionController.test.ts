@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Model } from "sequelize";
 import { Institution } from "../models/institution";
 import {
   cachedInstitutionFromSeed,
@@ -9,7 +10,17 @@ import {
 import {
   createInstitution,
   getInstitutionCachedList,
+  updateInstitution,
 } from "./institutionController";
+
+const createNewInstitution = async () => {
+  const randomString = Math.random().toString(36).slice(2, 9);
+  const newInstitutionId = `UCP-${randomString}`;
+  return await Institution.create({
+    ...testInstitution,
+    ucp_id: newInstitutionId,
+  });
+};
 
 describe("institutionController", () => {
   describe("getInstitutionCachedList", () => {
@@ -33,9 +44,7 @@ describe("institutionController", () => {
     });
 
     it("returns 404 on error", async () => {
-      jest.spyOn(Institution, "findAll").mockImplementation(() => {
-        throw new Error();
-      });
+      jest.spyOn(Institution, "findAll").mockRejectedValue(new Error());
 
       const req = {} as Request;
       const res = {
@@ -147,6 +156,92 @@ describe("institutionController", () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(201);
+    });
+  });
+
+  describe("updateInstitution", () => {
+    beforeEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("responds with 404 when institution is not found", async () => {
+      const nonExistentInstitutionId = "nonExistentInstitutionId";
+      const req = {
+        params: { id: nonExistentInstitutionId },
+        body: { name: "newName" },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await updateInstitution(req, res);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Institution not found",
+      });
+    });
+
+    it("responds with 200 when institution exists and attributes are valid", async () => {
+      const institution = await createNewInstitution();
+      const existingUcpId = institution.ucp_id;
+
+      const updateBody = {
+        name: "newName",
+        keywords: "newKeywords",
+        logo: "newLogo",
+        url: "newUrl",
+        is_test_bank: true,
+        routing_numbers: ["123456789"],
+      };
+
+      const req = {
+        params: { id: existingUcpId },
+        body: updateBody,
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await updateInstitution(req, res);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Institution updated successfully",
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        institution: expect.objectContaining({
+          ...updateBody,
+          ucp_id: existingUcpId,
+        }),
+      });
+    });
+
+    it("responds with 500 when there's an error updating the institution", async () => {
+      const req = {
+        params: { id: seedInstitutionId },
+        body: {},
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      jest.spyOn(Institution, "findByPk").mockResolvedValue({
+        update: jest.fn().mockRejectedValue(new Error("Server broke")),
+      } as unknown as Model);
+
+      await updateInstitution(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "An error occurred while updating the institution",
+      });
     });
   });
 });

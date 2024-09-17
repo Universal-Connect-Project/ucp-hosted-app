@@ -1,10 +1,7 @@
+import { UiUserPermissions } from "@repo/shared-utils";
 import { Request, Response } from "express";
 import { jwtDecode } from "jwt-decode";
-import { UiUserPermissions } from "@repo/shared-utils";
-
-interface DecodedToken {
-  permissions: string[];
-}
+import { DecodedToken } from "../middlewares/validationMiddleware";
 
 export const getPermissions = (req: Request, res: Response) => {
   const token = req.headers.authorization?.split(" ")?.[1];
