@@ -2,5 +2,8 @@
   align-items: flex-start;
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: 20px;
+  padding-bottom: 32px;
+  padding-top: 20px;
 }

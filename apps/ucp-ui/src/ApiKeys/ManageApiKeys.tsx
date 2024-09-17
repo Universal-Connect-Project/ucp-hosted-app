@@ -7,6 +7,7 @@ import {
   Button,
   DialogActions,
   Drawer,
+  List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -79,11 +80,14 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
         onClose={handleCloseDrawer}
         open={isManageDrawerOpen}
       >
-        <DrawerContainer>
-          <DrawerContent>
+        <DrawerContainer
+          closeButton={
             <DrawerCloseButton handleClose={handleCloseDrawer}>
               {API_KEYS_MANAGE_CLOSE_DRAWER_BUTTON_TEXT}
             </DrawerCloseButton>
+          }
+        >
+          <DrawerContent>
             {shouldShowConfirmRotateSecret ? (
               <>
                 {isRotateApiKeysError && (
@@ -131,27 +135,29 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
             ) : (
               <>
                 <DrawerTitle>Manage API Keys</DrawerTitle>
-                <ListItemButton
-                  className={styles.listItemButton}
-                  onClick={handleShowConfirmRotateSecret}
-                >
-                  <ListItemIcon
-                    className={styles.manageKeysIconButton}
-                    color="inherit"
+                <List className={styles.list}>
+                  <ListItemButton
+                    className={styles.listItemButton}
+                    onClick={handleShowConfirmRotateSecret}
                   >
-                    <RotateRightOutlined />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={API_KEYS_MANAGE_LIST_ROTATE_TEXT}
-                    secondary="Get a new secret"
-                  />
-                  <ListItemIcon
-                    className={styles.manageKeysIconButton}
-                    color="inherit"
-                  >
-                    <ArrowRightOutlined />
-                  </ListItemIcon>
-                </ListItemButton>
+                    <ListItemIcon
+                      className={styles.manageKeysIconButton}
+                      color="inherit"
+                    >
+                      <RotateRightOutlined />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={API_KEYS_MANAGE_LIST_ROTATE_TEXT}
+                      secondary="Get a new secret"
+                    />
+                    <ListItemIcon
+                      className={styles.manageKeysIconButton}
+                      color="inherit"
+                    >
+                      <ArrowRightOutlined />
+                    </ListItemIcon>
+                  </ListItemButton>
+                </List>
               </>
             )}
           </DrawerContent>

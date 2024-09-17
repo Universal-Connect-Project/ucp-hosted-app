@@ -89,11 +89,14 @@ const AddInstitution = () => {
           //   eslint-disable-next-line @typescript-eslint/no-misused-promises
           onSubmit={handleSubmit(onSubmit)}
         >
-          <DrawerContainer>
-            <DrawerContent>
+          <DrawerContainer
+            closeButton={
               <DrawerCloseButton handleClose={handleCloseDrawer}>
                 {INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT}
               </DrawerCloseButton>
+            }
+          >
+            <DrawerContent>
               <DrawerTitle>
                 {INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE}
               </DrawerTitle>
@@ -187,13 +190,13 @@ const AddInstitution = () => {
                 </Button>
               </div>
             </DrawerContent>
+            <DrawerStickyFooter>
+              <Button form={formId} type="submit" variant="contained">
+                {INSTITUTION_FORM_SUBMIT_BUTTON_TEXT}
+              </Button>
+            </DrawerStickyFooter>
           </DrawerContainer>
         </form>
-        <DrawerStickyFooter>
-          <Button form={formId} type="submit" variant="contained">
-            {INSTITUTION_FORM_SUBMIT_BUTTON_TEXT}
-          </Button>
-        </DrawerStickyFooter>
       </Drawer>
     </>
   );
