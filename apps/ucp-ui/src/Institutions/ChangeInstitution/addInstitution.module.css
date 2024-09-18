@@ -6,13 +6,6 @@
   width: 100%;
 }
 
-.sectionHeader {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-}
-
 .multipleInputsRow {
   align-items: center;
   display: flex;

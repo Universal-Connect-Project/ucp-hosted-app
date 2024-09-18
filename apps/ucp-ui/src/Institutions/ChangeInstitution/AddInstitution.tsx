@@ -1,11 +1,10 @@
-import { Add, Delete, InfoOutlined } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import {
   Button,
   Drawer,
   IconButton,
   Switch,
   TextField,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -43,6 +42,7 @@ import styles from "./addInstitution.module.css";
 import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
 import RoutingNumberInput from "../RoutingNumberInput";
 import { validateUrlRule } from "../../shared/utils/validation";
+import SectionHeader from "./SectionHeader";
 
 interface Inputs {
   name: string;
@@ -181,12 +181,10 @@ const AddInstitution = () => {
                 />
               </div>
               <div className={styles.inputStack}>
-                <div className={styles.sectionHeader}>
-                  <Typography variant="body1">Routing Numbers</Typography>
-                  <Tooltip title={INSTITUTION_ROUTING_NUMBERS_TOOLTIP}>
-                    <InfoOutlined color="action" fontSize="small" />
-                  </Tooltip>
-                </div>
+                <SectionHeader
+                  sectionTitle="Routing Numbers"
+                  tooltipTitle={INSTITUTION_ROUTING_NUMBERS_TOOLTIP}
+                />
                 {routingNumberFields.map((item, index) => (
                   <div className={styles.multipleInputsRow} key={item.id}>
                     <Controller
@@ -227,12 +225,10 @@ const AddInstitution = () => {
                 </Button>
               </div>
               <div className={styles.inputStack}>
-                <div className={styles.sectionHeader}>
-                  <Typography variant="body1">Search Keywords</Typography>
-                  <Tooltip title={INSTITUTION_KEYWORDS_TOOLTIP}>
-                    <InfoOutlined color="action" fontSize="small" />
-                  </Tooltip>
-                </div>
+                <SectionHeader
+                  sectionTitle="Search Keywords"
+                  tooltipTitle={INSTITUTION_KEYWORDS_TOOLTIP}
+                />
                 {keywordsFields.map((item, index) => (
                   <div className={styles.multipleInputsRow} key={item.id}>
                     <Controller
@@ -263,18 +259,14 @@ const AddInstitution = () => {
                 </Button>
               </div>
               <div className={styles.testInstitutionContainer}>
-                <div className={styles.sectionHeader}>
-                  <Typography
-                    component="label"
-                    htmlFor={testInstitutionSwitchId}
-                    variant="body1"
-                  >
-                    {INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT}
-                  </Typography>
-                  <Tooltip title={INSTITUTION_TEST_INSTITUTION_TOOLTIP}>
-                    <InfoOutlined color="action" fontSize="small" />
-                  </Tooltip>
-                </div>
+                <SectionHeader
+                  sectionTitle={INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT}
+                  tooltipTitle={INSTITUTION_TEST_INSTITUTION_TOOLTIP}
+                  typographyProps={{
+                    component: "label",
+                    htmlFor: testInstitutionSwitchId,
+                  }}
+                />
                 <Controller
                   name="isTestInstitution"
                   control={control}
