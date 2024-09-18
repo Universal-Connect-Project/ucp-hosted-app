@@ -3,6 +3,7 @@ import {
   Button,
   Drawer,
   IconButton,
+  Switch,
   TextField,
   Tooltip,
   Typography,
@@ -18,9 +19,11 @@ import {
   INSTITUTION_FORM_NAME_LABEL_TEXT,
   INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT,
   INSTITUTION_FORM_SUBMIT_BUTTON_TEXT,
+  INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT,
   INSTITUTION_FORM_URL_LABEL_TEXT,
   INSTITUTION_KEYWORDS_TOOLTIP,
   INSTITUTION_ROUTING_NUMBERS_TOOLTIP,
+  INSTITUTION_TEST_INSTITUTION_TOOLTIP,
   INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
 } from "./constants";
 import DrawerContainer from "../shared/components/Drawer/DrawerContainer";
@@ -49,6 +52,7 @@ interface Inputs {
 }
 
 const formId = "addInstitution";
+const testInstitutionSwitchId = "testInstitutionSwitch";
 
 const AddInstitution = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,6 +61,7 @@ const AddInstitution = () => {
 
   const { control, handleSubmit, reset } = useForm<Inputs>({
     defaultValues: {
+      isTestInstitution: false,
       keywords: [],
       name: "",
       logoUrl: "",
@@ -254,6 +259,30 @@ const AddInstitution = () => {
                 >
                   {INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT}
                 </Button>
+              </div>
+              <div className={styles.testInstitutionContainer}>
+                <div className={styles.sectionHeader}>
+                  <Typography
+                    component="label"
+                    htmlFor={testInstitutionSwitchId}
+                    variant="body1"
+                  >
+                    {INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT}
+                  </Typography>
+                  <Tooltip title={INSTITUTION_TEST_INSTITUTION_TOOLTIP}>
+                    <InfoOutlined color="action" fontSize="small" />
+                  </Tooltip>
+                </div>
+                <Controller
+                  name="isTestInstitution"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      inputProps={{ id: testInstitutionSwitchId }}
+                      {...field}
+                    />
+                  )}
+                />
               </div>
             </DrawerContent>
             <DrawerStickyFooter>
