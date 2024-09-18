@@ -31,9 +31,9 @@ module.exports = {
     ]);
 
     // Add Aggregators
-    const mxAggregatorId = 99
-    const sophtronAggregatorId = 100
-    const finicityAggregatorId = 101
+    const mxAggregatorId = 99;
+    const sophtronAggregatorId = 100;
+    const finicityAggregatorId = 101;
     await queryInterface.bulkInsert("aggregators", [
       {
         id: mxAggregatorId,
