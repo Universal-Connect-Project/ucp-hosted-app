@@ -1,5 +1,5 @@
 import { Institution } from "../../models/institution";
-import { Provider } from "../../models/provider";
+import { Provider } from "../../models/providerIntegration";
 
 export const seedInstitutionId = "UCP-123456789";
 export const seedInstitutionName = "Wells Fargo";

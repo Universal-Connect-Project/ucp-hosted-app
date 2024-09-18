@@ -9,12 +9,12 @@ type providerKey = "mx" | "sophtron" | "finicity";
 export function transformInstitutionToCachedInstitution(
   institution: Institution,
 ) {
-  const { providers, dataValues } = institution;
-  const { ucp_id, name, keywords, logo, url, is_test_bank, routing_numbers } =
+  const { providerIntegrations, dataValues } = institution;
+
+  const { ucp_id, keywords, logo, url, is_test_bank, routing_numbers } =
     dataValues;
   const institutionObj = {
     ucp_id,
-    name,
     keywords,
     logo,
     url,
@@ -22,10 +22,24 @@ export function transformInstitutionToCachedInstitution(
     routing_numbers,
   } as CachedInstitution;
 
-  providers?.forEach((provider) => {
-    const { name, ...providerAttrs } = provider.dataValues;
-    institutionObj[name as providerKey] =
-      providerAttrs as unknown as InstitutionProvider;
+  providerIntegrations?.forEach((providerIntegration) => {
+    const { provider, dataValues } = providerIntegration;
+    const {
+      id,
+      supports_aggregation,
+      supports_history,
+      supports_identification,
+      supports_oauth,
+      supports_verification,
+    } = dataValues;
+    institutionObj[provider?.name as providerKey] = {
+      id,
+      supports_aggregation,
+      supports_history,
+      supports_identification,
+      supports_oauth,
+      supports_verification,
+    } as unknown as InstitutionProvider;
   });
   return institutionObj;
 }

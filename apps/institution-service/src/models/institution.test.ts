@@ -1,6 +1,6 @@
 import { testInstitution } from "../test/testData/institutions";
 import { Institution } from "./institution";
-import { Provider } from "./provider";
+import { Provider } from "./providerIntegration";
 
 describe("Institution Model", () => {
   it("should create an institution", async () => {
@@ -56,7 +56,8 @@ describe("Institution Model", () => {
     const provider1 = await Provider.create(mxProviderAttributes);
     const provier2 = await Provider.create(sophtronProviderAttributes);
 
-    const institutionProviders = await createdInstitution.getProviders();
+    const institutionProviders =
+      await createdInstitution.getProviderIntegrations();
 
     expect(institutionProviders).toHaveLength(2);
 

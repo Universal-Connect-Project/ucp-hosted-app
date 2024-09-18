@@ -3,6 +3,7 @@ import path from "path";
 import db from "../database";
 import { Institution } from "../models/institution";
 import { Provider } from "../models/provider";
+import { ProviderIntegration } from "../models/providerIntegration";
 
 export interface CachedInstitution {
   name: string;
@@ -36,8 +37,29 @@ async function loadInstitutionData() {
     ),
   ) as CachedInstitution[];
 
+  // const providers = await Provider.findAll({
+  //   attributes: ["name", "id"],
+  //   raw: true,
+  // });
+
   const institutionsList: Institution[] = [];
-  const providerList: Provider[] = [];
+  const providerList: ProviderIntegration[] = [];
+  const [mxProvider, _mxCreated] = await Provider.findOrCreate({
+    where: { name: "mx" },
+  });
+  const [sophtronProvider, _sophtronCreated] = await Provider.findOrCreate({
+    where: { name: "sophtron" },
+  });
+  const [finicityProvider, _finicityCreated] = await Provider.findOrCreate({
+    where: { name: "finicity" },
+  });
+  // const mxProvider = providers.find((provider) => provider.name === "mx");
+  // const sophtronProvider = providers.find(
+  //   (provider) => provider.name === "sophtron",
+  // );
+  // const finicityProvider = providers.find(
+  //   (provider) => provider.name === "finicity",
+  // );
 
   institutions.forEach((institution: CachedInstitution) => {
     institutionsList.push({
@@ -52,8 +74,9 @@ async function loadInstitutionData() {
 
     if (institution?.mx?.id) {
       const mx = institution.mx;
+
       providerList.push({
-        name: "mx",
+        providerId: mxProvider?.id,
         provider_institution_id: mx.id,
         institution_id: institution.ucp_id,
         supports_oauth: mx.supports_oauth,
@@ -61,13 +84,14 @@ async function loadInstitutionData() {
         supports_verification: mx.supports_verification,
         supports_history: mx.supports_history,
         supports_aggregation: mx.supports_aggregation,
-      } as Provider);
+      } as ProviderIntegration);
     }
 
     if (institution?.sophtron?.id) {
       const sophtron = institution.sophtron;
+
       providerList.push({
-        name: "sophtron",
+        providerId: sophtronProvider?.id,
         provider_institution_id: sophtron.id,
         institution_id: institution.ucp_id,
         supports_oauth: sophtron.supports_oauth,
@@ -75,14 +99,14 @@ async function loadInstitutionData() {
         supports_verification: sophtron.supports_verification,
         supports_history: sophtron.supports_history,
         supports_aggregation: sophtron.supports_aggregation,
-      } as Provider);
+      } as ProviderIntegration);
     }
 
     if (institution?.finicity?.id) {
       const finicity = institution.finicity;
       providerList.push({
         isActive: false,
-        name: "finicity",
+        providerId: finicityProvider?.id,
         provider_institution_id: finicity.id,
         institution_id: institution.ucp_id,
         supports_oauth: finicity.supports_oauth,
@@ -90,7 +114,7 @@ async function loadInstitutionData() {
         supports_verification: finicity.supports_verification,
         supports_history: finicity.supports_history,
         supports_aggregation: finicity.supports_aggregation,
-      } as Provider);
+      } as ProviderIntegration);
     }
   });
 
@@ -98,7 +122,7 @@ async function loadInstitutionData() {
     await Institution.bulkCreate(institutionsList);
     console.log("Institution successful");
 
-    await Provider.bulkCreate(providerList);
+    await ProviderIntegration.bulkCreate(providerList);
     console.log("provider transaction successful");
   } catch (error) {
     console.error("Error loading data", error);

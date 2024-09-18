@@ -1,7 +1,8 @@
 import {
+  Association,
   CreationOptional,
   DataTypes,
-  ForeignKey,
+  HasManyGetAssociationsMixin,
   InferAttributes,
   InferCreationAttributes,
   Model,
@@ -9,55 +10,38 @@ import {
 } from "sequelize";
 import sequelize from "../database";
 import { Institution } from "./institution";
+import { ProviderIntegration } from "./providerIntegration";
 
 export class Provider extends Model<
-  InferAttributes<Provider>,
-  InferCreationAttributes<Provider>
+  InferAttributes<Provider, { omit: "providerIntegrations" }>,
+  InferCreationAttributes<Provider, { omit: "providerIntegrations" }>
 > {
-  declare id: CreationOptional<number>;
-  declare isActive: CreationOptional<boolean>;
-  declare provider_institution_id: string;
+  declare id?: number;
   declare name: string;
-  declare supports_oauth: CreationOptional<boolean>;
-  declare supports_identification: CreationOptional<boolean>;
-  declare supports_verification: CreationOptional<boolean>;
-  declare supports_aggregation: CreationOptional<boolean>;
-  declare supports_history: CreationOptional<boolean>;
-  declare institution_id: ForeignKey<Institution["ucp_id"]>;
-
-  declare institution?: NonAttribute<Institution>;
+  declare displayName: string;
+  declare logo: string;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
+
+  declare getProviderIntegrations: HasManyGetAssociationsMixin<ProviderIntegration>;
+
+  declare providerIntegrations?: NonAttribute<ProviderIntegration[]>;
+
+  declare static associations: {
+    providerIntegrations: Association<Provider, ProviderIntegration>;
+  };
 }
 
 Provider.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
-    provider_institution_id: {
-      type: DataTypes.STRING,
-    },
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
-    supports_oauth: { type: DataTypes.BOOLEAN, defaultValue: false },
-    supports_identification: { type: DataTypes.BOOLEAN, defaultValue: false },
-    supports_verification: { type: DataTypes.BOOLEAN, defaultValue: false },
-    supports_aggregation: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
-    supports_history: { type: DataTypes.BOOLEAN, defaultValue: false },
-    createdAt: { type: DataTypes.DATE, defaultValue: new Date() },
-    updatedAt: { type: DataTypes.DATE, defaultValue: new Date() },
+    displayName: DataTypes.TEXT,
+    logo: DataTypes.TEXT,
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
   },
   {
     tableName: "providers",
@@ -65,3 +49,31 @@ Provider.init(
     sequelize,
   },
 );
+
+Provider.hasMany(ProviderIntegration, {
+  sourceKey: "id",
+  foreignKey: "providerId",
+  as: "providerIntegrations",
+});
+
+Provider.belongsToMany(Institution, {
+  through: "ProviderIntegration",
+  sourceKey: "id",
+  foreignKey: "providerId",
+});
+
+Institution.belongsToMany(Provider, {
+  through: "ProviderIntegration",
+  sourceKey: "ucp_id",
+  foreignKey: "institution_id",
+});
+
+ProviderIntegration.belongsTo(Institution, {
+  foreignKey: "institution_id",
+  as: "institution",
+});
+
+ProviderIntegration.belongsTo(Provider, {
+  foreignKey: "providerId",
+  as: "provider",
+});

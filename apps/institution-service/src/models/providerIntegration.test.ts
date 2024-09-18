@@ -1,6 +1,6 @@
-import { Provider } from "./provider";
+import { ProviderIntegration } from "./providerIntegration";
 
-describe("Provider Model", () => {
+describe("ProviderIntegration Model", () => {
   it("should create a provider", async () => {
     const providerAttributes = {
       name: "mx",
@@ -10,7 +10,8 @@ describe("Provider Model", () => {
       provider_institution_id: "mx_oauth_bank",
     };
 
-    const createdProvider = await Provider.create(providerAttributes);
+    const createdProvider =
+      await ProviderIntegration.create(providerAttributes);
 
     expect(createdProvider).toHaveProperty("id");
     expect(createdProvider.name).toBe(providerAttributes.name);

@@ -10,10 +10,11 @@ import {
 } from "sequelize";
 import sequelize from "../database";
 import { Provider } from "./provider";
+import { ProviderIntegration } from "./providerIntegration";
 
 export class Institution extends Model<
-  InferAttributes<Institution, { omit: "providers" }>,
-  InferCreationAttributes<Institution, { omit: "providers" }>
+  InferAttributes<Institution, { omit: "providerIntegrations" }>,
+  InferCreationAttributes<Institution, { omit: "providerIntegrations" }>
 > {
   declare ucp_id: string;
   declare name: string;
@@ -26,12 +27,14 @@ export class Institution extends Model<
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
-  declare getProviders: HasManyGetAssociationsMixin<Provider>;
+  declare getProviderIntegrations: HasManyGetAssociationsMixin<ProviderIntegration>;
 
-  declare providers?: NonAttribute<Provider[]>;
+  declare providerIntegrations?: NonAttribute<ProviderIntegration[]>;
+  declare Providers?: NonAttribute<Provider[]>;
 
   declare static associations: {
-    providers: Association<Institution, Provider>;
+    providerIntegrations: Association<Institution, ProviderIntegration>;
+    Providers: Association<Institution, Provider>;
   };
 }
 
@@ -60,8 +63,8 @@ Institution.init(
   },
 );
 
-Institution.hasMany(Provider, {
+Institution.hasMany(ProviderIntegration, {
   sourceKey: "ucp_id",
   foreignKey: "institution_id",
-  as: "providers",
+  as: "providerIntegrations",
 });

@@ -72,17 +72,17 @@ export const validateUserCanEditInstitution = async (
     }
 
     const aggregatorId = decodedToken["ucw/appMetaData"].aggregatorId;
-    const providers = await institution?.getProviders();
-    const hasOtherProviders = providers?.some(
-      (provider) => provider.name !== aggregatorId,
-    );
+    const providerIntegrations = await institution?.getProviderIntegrations();
+    // const hasOtherProviderIntegrations = providerIntegrations?.some(
+    //   (provider) => provider.name !== aggregatorId,
+    // );
 
-    if (hasOtherProviders) {
-      return res.status(403).json({
-        error:
-          "Aggregator cannot edit an institution used by other aggregators",
-      });
-    }
+    // if (hasOtherProviderIntegrations) {
+    //   return res.status(403).json({
+    //     error:
+    //       "Aggregator cannot edit an institution used by other aggregators",
+    //   });
+    // }
 
     next();
   } catch (err) {

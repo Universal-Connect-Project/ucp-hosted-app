@@ -30,11 +30,27 @@ module.exports = {
       },
     ]);
 
-    // Add providers
+    // Add Providers
     await queryInterface.bulkInsert("providers", [
       {
-        isActive: false,
         name: "mx",
+        displayName: "MX",
+      },
+      {
+        name: "sophtron",
+        displayName: "Sophtron",
+      },
+      {
+        name: "Finicity",
+        displayName: "finicity",
+      },
+    ]);
+
+    // Add providerIntegrations
+    await queryInterface.bulkInsert("providerIntegrations", [
+      {
+        isActive: false,
+        providerId: 1, // mx
         provider_institution_id: "mx_bank",
         supports_oauth: true,
         supports_identification: true,
@@ -46,7 +62,7 @@ module.exports = {
       },
       {
         isActive: true,
-        name: "sophtron",
+        providerId: 2,
         provider_institution_id: "sophtron_bank",
         supports_oauth: true,
         supports_identification: true,
@@ -58,7 +74,7 @@ module.exports = {
       },
       {
         isActive: false,
-        name: "sophtron",
+        providerId: 3,
         provider_institution_id: "sophtron_bank",
         supports_oauth: true,
         supports_identification: true,
