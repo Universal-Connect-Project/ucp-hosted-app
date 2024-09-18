@@ -30,28 +30,34 @@ module.exports = {
       },
     ]);
 
-    // Add Providers
-    await queryInterface.bulkInsert("providers", [
+    // Add Aggregators
+    const mxAggregatorId = 99
+    const sophtronAggregatorId = 100
+    const finicityAggregatorId = 101
+    await queryInterface.bulkInsert("aggregators", [
       {
+        id: mxAggregatorId,
         name: "mx",
         displayName: "MX",
       },
       {
+        id: sophtronAggregatorId,
         name: "sophtron",
         displayName: "Sophtron",
       },
       {
+        id: finicityAggregatorId,
         name: "Finicity",
         displayName: "finicity",
       },
     ]);
 
-    // Add providerIntegrations
-    await queryInterface.bulkInsert("providerIntegrations", [
+    // Add aggregatorIntegrations
+    await queryInterface.bulkInsert("aggregatorIntegrations", [
       {
         isActive: false,
-        providerId: 1, // mx
-        provider_institution_id: "mx_bank",
+        aggregatorId: mxAggregatorId, // mx
+        aggregator_institution_id: "mx_bank",
         supports_oauth: true,
         supports_identification: true,
         supports_verification: true,
@@ -62,8 +68,8 @@ module.exports = {
       },
       {
         isActive: true,
-        providerId: 2,
-        provider_institution_id: "sophtron_bank",
+        aggregatorId: sophtronAggregatorId,
+        aggregator_institution_id: "sophtron_bank",
         supports_oauth: true,
         supports_identification: true,
         supports_verification: true,
@@ -74,8 +80,8 @@ module.exports = {
       },
       {
         isActive: false,
-        providerId: 3,
-        provider_institution_id: "sophtron_bank",
+        aggregatorId: finicityAggregatorId,
+        aggregator_institution_id: "sophtron_bank",
         supports_oauth: true,
         supports_identification: true,
         supports_verification: true,

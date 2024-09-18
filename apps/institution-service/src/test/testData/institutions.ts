@@ -1,5 +1,5 @@
+import { AggregatorIntegration } from "../../models/aggregatorIntegration";
 import { Institution } from "../../models/institution";
-import { Provider } from "../../models/providerIntegration";
 
 export const seedInstitutionId = "UCP-123456789";
 export const seedInstitutionName = "Wells Fargo";
@@ -40,7 +40,7 @@ export const cachedInstitutionFromSeed = {
   },
 };
 
-export const institutionWithProviderQueryObj = {
+export const institutionWithAggregatorQueryObj = {
   dataValues: {
     name: "Wells Fargo",
     is_test_bank: false,
@@ -48,10 +48,9 @@ export const institutionWithProviderQueryObj = {
     logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
     routing_numbers: ["123", "456"],
   },
-  providers: [
+  aggregatorIntegrations: [
     {
       dataValues: {
-        name: "sophtron",
         id: "sophtron_bank",
         supports_aggregation: true,
         supports_history: true,
@@ -59,6 +58,9 @@ export const institutionWithProviderQueryObj = {
         supports_oauth: true,
         supports_verification: true,
       },
-    } as unknown as Provider,
+      aggregator: {
+        name: "sophtron",
+      },
+    } as unknown as AggregatorIntegration,
   ],
-} as Institution;
+} as unknown as Institution;

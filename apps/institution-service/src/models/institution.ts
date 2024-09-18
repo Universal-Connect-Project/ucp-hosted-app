@@ -9,12 +9,12 @@ import {
   NonAttribute,
 } from "sequelize";
 import sequelize from "../database";
-import { Provider } from "./provider";
-import { ProviderIntegration } from "./providerIntegration";
+import { Aggregator } from "./aggregator";
+import { AggregatorIntegration } from "./aggregatorIntegration";
 
 export class Institution extends Model<
-  InferAttributes<Institution, { omit: "providerIntegrations" }>,
-  InferCreationAttributes<Institution, { omit: "providerIntegrations" }>
+  InferAttributes<Institution, { omit: "aggregatorIntegrations" }>,
+  InferCreationAttributes<Institution, { omit: "aggregatorIntegrations" }>
 > {
   declare ucp_id: string;
   declare name: string;
@@ -27,14 +27,15 @@ export class Institution extends Model<
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
-  declare getProviderIntegrations: HasManyGetAssociationsMixin<ProviderIntegration>;
+  declare getAggregatorIntegrations: HasManyGetAssociationsMixin<AggregatorIntegration>;
+  declare getAggregators: HasManyGetAssociationsMixin<Aggregator>;
 
-  declare providerIntegrations?: NonAttribute<ProviderIntegration[]>;
-  declare Providers?: NonAttribute<Provider[]>;
+  declare aggregatorIntegrations?: NonAttribute<AggregatorIntegration[]>;
+  declare aggregators?: NonAttribute<Aggregator[]>;
 
   declare static associations: {
-    providerIntegrations: Association<Institution, ProviderIntegration>;
-    Providers: Association<Institution, Provider>;
+    aggregatorIntegrations: Association<Institution, AggregatorIntegration>;
+    aggregators: Association<Institution, Aggregator>;
   };
 }
 
@@ -63,8 +64,8 @@ Institution.init(
   },
 );
 
-Institution.hasMany(ProviderIntegration, {
+Institution.hasMany(AggregatorIntegration, {
   sourceKey: "ucp_id",
   foreignKey: "institution_id",
-  as: "providerIntegrations",
+  as: "aggregatorIntegrations",
 });
