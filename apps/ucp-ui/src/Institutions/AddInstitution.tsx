@@ -11,12 +11,15 @@ import React, { useState } from "react";
 import {
   INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
+  INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT,
+  INSTITUTION_FORM_KEYWORD_LABEL_TEXT,
   INSTITUTION_FORM_LOGO_URL_LABEL_TEXT,
   INSTITUTION_FORM_NAME_LABEL_TEXT,
   INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT,
   INSTITUTION_FORM_SUBMIT_BUTTON_TEXT,
   INSTITUTION_FORM_URL_LABEL_TEXT,
+  INSTITUTION_KEYWORDS_TOOLTIP,
   INSTITUTION_ROUTING_NUMBERS_TOOLTIP,
   INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
 } from "./constants";
@@ -41,7 +44,7 @@ interface Inputs {
   url: string;
   logoUrl: string;
   routingNumbers: { value: string }[];
-  keywords: string[];
+  keywords: { value: string }[];
   isTestInstitution: boolean;
 }
 
@@ -54,6 +57,7 @@ const AddInstitution = () => {
 
   const { control, handleSubmit, reset } = useForm<Inputs>({
     defaultValues: {
+      keywords: [],
       name: "",
       logoUrl: "",
       routingNumbers: [],
@@ -73,6 +77,15 @@ const AddInstitution = () => {
   } = useFieldArray({
     control,
     name: "routingNumbers",
+  });
+
+  const {
+    append: keywordsAppend,
+    fields: keywordsFields,
+    remove: keywordsRemove,
+  } = useFieldArray({
+    control,
+    name: "keywords",
   });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
@@ -161,14 +174,14 @@ const AddInstitution = () => {
                 />
               </div>
               <div className={styles.inputStack}>
-                <div className={styles.routingNumbersHeader}>
+                <div className={styles.sectionHeader}>
                   <Typography variant="body1">Routing Numbers</Typography>
                   <Tooltip title={INSTITUTION_ROUTING_NUMBERS_TOOLTIP}>
                     <InfoOutlined color="action" fontSize="small" />
                   </Tooltip>
                 </div>
                 {routingNumberFields.map((item, index) => (
-                  <div className={styles.routingNumbersRow} key={item.id}>
+                  <div className={styles.multipleInputsRow} key={item.id}>
                     <Controller
                       name={`routingNumbers.${index}.value`}
                       control={control}
@@ -204,6 +217,42 @@ const AddInstitution = () => {
                   startIcon={<Add />}
                 >
                   {INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT}
+                </Button>
+              </div>
+              <div className={styles.inputStack}>
+                <div className={styles.sectionHeader}>
+                  <Typography variant="body1">Search Keywords</Typography>
+                  <Tooltip title={INSTITUTION_KEYWORDS_TOOLTIP}>
+                    <InfoOutlined color="action" fontSize="small" />
+                  </Tooltip>
+                </div>
+                {keywordsFields.map((item, index) => (
+                  <div className={styles.multipleInputsRow} key={item.id}>
+                    <Controller
+                      name={`keywords.${index}.value`}
+                      control={control}
+                      defaultValue={item.value}
+                      render={({ field, fieldState: { error } }) => (
+                        <TextField
+                          error={!!error}
+                          fullWidth
+                          helperText={error?.message}
+                          label={INSTITUTION_FORM_KEYWORD_LABEL_TEXT}
+                          variant="filled"
+                          {...field}
+                        />
+                      )}
+                    />
+                    <IconButton onClick={() => keywordsRemove(index)}>
+                      <Delete />
+                    </IconButton>
+                  </div>
+                ))}
+                <Button
+                  onClick={() => keywordsAppend({ value: "" })}
+                  startIcon={<Add />}
+                >
+                  {INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT}
                 </Button>
               </div>
             </DrawerContent>
