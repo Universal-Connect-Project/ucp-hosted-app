@@ -21,26 +21,28 @@ import {
   INSTITUTION_FORM_SUBMIT_BUTTON_TEXT,
   INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT,
   INSTITUTION_FORM_URL_LABEL_TEXT,
+  INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+} from "./constants";
+import {
   INSTITUTION_KEYWORDS_TOOLTIP,
   INSTITUTION_ROUTING_NUMBERS_TOOLTIP,
   INSTITUTION_TEST_INSTITUTION_TOOLTIP,
-  INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
-} from "./constants";
-import DrawerContainer from "../shared/components/Drawer/DrawerContainer";
-import DrawerContent from "../shared/components/Drawer/DrawerContent";
-import DrawerCloseButton from "../shared/components/Drawer/DrawerCloseButton";
-import DrawerTitle from "../shared/components/Drawer/DrawerTitle";
+} from "../constants";
+import DrawerContainer from "../../shared/components/Drawer/DrawerContainer";
+import DrawerContent from "../../shared/components/Drawer/DrawerContent";
+import DrawerCloseButton from "../../shared/components/Drawer/DrawerCloseButton";
+import DrawerTitle from "../../shared/components/Drawer/DrawerTitle";
 import {
   Controller,
   SubmitHandler,
   useFieldArray,
   useForm,
 } from "react-hook-form";
-import { REQUIRED_ERROR_TEXT } from "../shared/constants/validation";
+import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
 import styles from "./addInstitution.module.css";
-import DrawerStickyFooter from "../shared/components/Drawer/DrawerStickyFooter";
-import RoutingNumberInput from "./RoutingNumberInput";
-import { validateUrlRule } from "../shared/utils/validation";
+import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
+import RoutingNumberInput from "../RoutingNumberInput";
+import { validateUrlRule } from "../../shared/utils/validation";
 
 interface Inputs {
   name: string;

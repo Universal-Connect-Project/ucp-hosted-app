@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import styles from "./institutions.module.css";
 import { institutions } from "./testData/institutions";
-import AddInstitution from "./AddInstitution";
+import AddInstitution from "./ChangeInstitution/AddInstitution";
 
 const Institutions = () => {
   const tableHeadCells = ["Institution", "UCP ID", "Aggregators"];
