@@ -131,7 +131,7 @@ describe("/institutions/cacheList", () => {
         })
           .then((response: Cypress.Response<CachedInstitution[]>) => {
             const institution = response.body[1];
-            const provider =
+            const aggregator =
               institution.mx ??
               institution.sophtron ??
               institution.finicity ??
@@ -148,7 +148,7 @@ describe("/institutions/cacheList", () => {
               expect(institution).to.haveOwnProperty(attribute);
             });
 
-            // Provider Attributes
+            // Aggregator Attributes
             [
               "id",
               "supports_oauth",
@@ -156,7 +156,7 @@ describe("/institutions/cacheList", () => {
               "supports_aggregation",
               "supports_history",
             ].forEach((attribute) => {
-              expect(provider).to.haveOwnProperty(attribute);
+              expect(aggregator).to.haveOwnProperty(attribute);
             });
           })
           .then(() => {
@@ -335,9 +335,10 @@ describe("PUT /institutions/:id (Institution update)", () => {
   });
 
   it("should prevent an aggregator from updating institutions with other aggregator implementations", () => {
-    const institutionWithOtherProviderImplementations = "UCP-024b97a3cd4d4df";
+    const institutionWithOtherAggregatorImplementationsId =
+      "UCP-024b97a3cd4d4df";
     cy.request({
-      url: `http://localhost:${PORT}/institutions/${institutionWithOtherProviderImplementations}`,
+      url: `http://localhost:${PORT}/institutions/${institutionWithOtherAggregatorImplementationsId}`,
       method: "PUT",
       body: validUpdateParams,
       headers: {

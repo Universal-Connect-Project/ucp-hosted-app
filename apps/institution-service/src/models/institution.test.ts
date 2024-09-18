@@ -1,6 +1,6 @@
 import { testInstitution } from "../test/testData/institutions";
+import { AggregatorIntegration } from "./aggregatorIntegration";
 import { Institution } from "./institution";
-import { Provider } from "./provider";
 
 describe("Institution Model", () => {
   it("should create an institution", async () => {
@@ -27,7 +27,7 @@ describe("Institution Model", () => {
     void createdInstitution.destroy();
   });
 
-  it("should have associated providers", async () => {
+  it("should have associated aggregators", async () => {
     const randomString = Math.random().toString(36).slice(2, 7);
     const newInstitutionAttributes = {
       ...testInstitution,
@@ -40,29 +40,32 @@ describe("Institution Model", () => {
 
     expect(createdInstitution).toHaveProperty("ucp_id");
 
-    const mxProviderAttributes = {
-      name: "mx",
+    const mxAggregatorAttributes = {
       supports_oauth: true,
       institution_id: createdInstitution.ucp_id,
-      provider_institution_id: "mx_oauth_bank",
+      aggregator_institution_id: "mx_oauth_bank",
     };
-    const sophtronProviderAttributes = {
-      name: "sophtron",
+    const sophtronAggregatorAttributes = {
       supports_oauth: true,
       institution_id: createdInstitution.ucp_id,
-      provider_institution_id: "sophtron-1234",
+      aggregator_institution_id: "sophtron-1234",
     };
 
-    const provider1 = await Provider.create(mxProviderAttributes);
-    const provier2 = await Provider.create(sophtronProviderAttributes);
+    const aggregator1 = await AggregatorIntegration.create(
+      mxAggregatorAttributes,
+    );
+    const aggregator2 = await AggregatorIntegration.create(
+      sophtronAggregatorAttributes,
+    );
 
-    const institutionProviders = await createdInstitution.getProviders();
+    const institutionAggregators =
+      await createdInstitution.getAggregatorIntegrations();
 
-    expect(institutionProviders).toHaveLength(2);
+    expect(institutionAggregators).toHaveLength(2);
 
     // db cleanup
     void createdInstitution.destroy();
-    void provider1.destroy();
-    void provier2.destroy();
+    void aggregator1.destroy();
+    void aggregator2.destroy();
   });
 });

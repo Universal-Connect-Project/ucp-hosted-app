@@ -1,4 +1,5 @@
 import {
+  Association,
   CreationOptional,
   DataTypes,
   ForeignKey,
@@ -8,30 +9,36 @@ import {
   NonAttribute,
 } from "sequelize";
 import sequelize from "../database";
+import { Aggregator } from "./aggregator";
 import { Institution } from "./institution";
 
-export class Provider extends Model<
-  InferAttributes<Provider>,
-  InferCreationAttributes<Provider>
+export class AggregatorIntegration extends Model<
+  InferAttributes<AggregatorIntegration>,
+  InferCreationAttributes<AggregatorIntegration>
 > {
   declare id: CreationOptional<number>;
   declare isActive: CreationOptional<boolean>;
-  declare provider_institution_id: string;
-  declare name: string;
+  declare aggregator_institution_id: string;
   declare supports_oauth: CreationOptional<boolean>;
   declare supports_identification: CreationOptional<boolean>;
   declare supports_verification: CreationOptional<boolean>;
   declare supports_aggregation: CreationOptional<boolean>;
   declare supports_history: CreationOptional<boolean>;
   declare institution_id: ForeignKey<Institution["ucp_id"]>;
+  declare aggregatorId: ForeignKey<Aggregator["id"]>;
 
   declare institution?: NonAttribute<Institution>;
+  declare aggregator?: NonAttribute<Aggregator>;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
+
+  declare static associations: {
+    aggregator: Association<AggregatorIntegration, Aggregator>;
+  };
 }
 
-Provider.init(
+AggregatorIntegration.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -42,11 +49,11 @@ Provider.init(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
-    provider_institution_id: {
+    aggregator_institution_id: {
       type: DataTypes.STRING,
     },
-    name: {
-      type: DataTypes.STRING,
+    aggregatorId: {
+      type: DataTypes.INTEGER,
     },
     supports_oauth: { type: DataTypes.BOOLEAN, defaultValue: false },
     supports_identification: { type: DataTypes.BOOLEAN, defaultValue: false },
@@ -60,8 +67,8 @@ Provider.init(
     updatedAt: { type: DataTypes.DATE, defaultValue: new Date() },
   },
   {
-    tableName: "providers",
-    modelName: "Provider",
+    tableName: "aggregatorIntegrations",
+    modelName: "AggregatorIntegration",
     sequelize,
   },
 );

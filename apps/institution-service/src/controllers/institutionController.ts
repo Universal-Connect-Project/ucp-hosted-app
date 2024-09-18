@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ValidationError } from "sequelize";
+import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
 
@@ -8,10 +9,9 @@ export const getInstitutionCachedList = async (req: Request, res: Response) => {
     const institutions = await Institution.findAll({
       include: [
         {
-          association: Institution.associations.providers,
+          association: Institution.associations.aggregatorIntegrations,
           attributes: [
-            "name",
-            ["provider_institution_id", "id"],
+            ["aggregator_institution_id", "id"],
             "supports_oauth",
             "supports_identification",
             "supports_verification",
@@ -21,6 +21,13 @@ export const getInstitutionCachedList = async (req: Request, res: Response) => {
           where: {
             isActive: true,
           },
+          include: [
+            {
+              model: Aggregator,
+              as: "aggregator",
+              attributes: ["name", "id"],
+            },
+          ],
         },
       ],
     });
