@@ -23,13 +23,13 @@ import {
   UiUserPermissions,
 } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
-import "./commands";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
+import "./commands";
 
 const authenticateAndStoreToken = ({
   audience,
