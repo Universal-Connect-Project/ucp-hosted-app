@@ -1,5 +1,5 @@
 import { Add } from "@mui/icons-material";
-import { Button, Drawer, Switch, TextField, Typography } from "@mui/material";
+import { Button, Drawer, Switch, Typography } from "@mui/material";
 import React, { useState } from "react";
 import {
   INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE,
@@ -38,6 +38,7 @@ import { validateUrlRule } from "../../shared/utils/validation";
 import SectionHeader from "./SectionHeader";
 import RemoveInput from "./RemoveInput";
 import AddInputButton from "./AddInputButton";
+import TextField from "../../shared/components/Forms/TextField";
 
 interface Inputs {
   name: string;
@@ -237,14 +238,18 @@ const AddInstitution = () => {
                       name={`keywords.${index}.value`}
                       control={control}
                       defaultValue={item.value}
-                      render={({ field, fieldState: { error } }) => (
+                      render={({
+                        field: { ref, ...fieldProps },
+                        fieldState: { error },
+                      }) => (
                         <TextField
                           error={!!error}
                           fullWidth
                           helperText={error?.message}
+                          inputRef={ref}
                           label={INSTITUTION_FORM_KEYWORD_LABEL_TEXT}
                           variant="filled"
-                          {...field}
+                          {...fieldProps}
                         />
                       )}
                     />
