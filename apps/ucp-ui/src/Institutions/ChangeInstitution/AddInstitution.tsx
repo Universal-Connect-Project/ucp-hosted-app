@@ -37,6 +37,7 @@ import RoutingNumberInput from "../RoutingNumberInput";
 import { validateUrlRule } from "../../shared/utils/validation";
 import SectionHeader from "./SectionHeader";
 import RemoveInput from "./RemoveInput";
+import AddInputButton from "./AddInputButton";
 
 interface Inputs {
   name: string;
@@ -212,12 +213,11 @@ const AddInstitution = () => {
                     />
                   </div>
                 ))}
-                <Button
+                <AddInputButton
                   onClick={() => routingNumbersAppend({ value: "" })}
-                  startIcon={<Add />}
                 >
                   {INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT}
-                </Button>
+                </AddInputButton>
               </div>
               <div className={styles.inputStack}>
                 <SectionHeader
@@ -244,12 +244,9 @@ const AddInstitution = () => {
                     <RemoveInput index={index} onRemove={keywordsRemove} />
                   </div>
                 ))}
-                <Button
-                  onClick={() => keywordsAppend({ value: "" })}
-                  startIcon={<Add />}
-                >
+                <AddInputButton onClick={() => keywordsAppend({ value: "" })}>
                   {INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT}
-                </Button>
+                </AddInputButton>
               </div>
               <div className={styles.testInstitutionContainer}>
                 <SectionHeader
