@@ -1,7 +1,8 @@
 .container {
   background-color: var(--mui-palette-common-white);
+  border-top: solid 1px var(--mui-palette-divider);
   bottom: 0;
-  padding: 16px;
+  padding: var(--drawer-left-padding);
   position: sticky;
   z-index: 1;
 }

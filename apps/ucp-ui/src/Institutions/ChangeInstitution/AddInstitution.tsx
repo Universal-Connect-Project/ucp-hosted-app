@@ -115,6 +115,13 @@ const AddInstitution = () => {
                 {INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT}
               </DrawerCloseButton>
             }
+            footer={
+              <DrawerStickyFooter>
+                <Button form={formId} type="submit" variant="contained">
+                  {INSTITUTION_FORM_SUBMIT_BUTTON_TEXT}
+                </Button>
+              </DrawerStickyFooter>
+            }
           >
             <DrawerContent>
               <DrawerTitle>
@@ -269,11 +276,6 @@ const AddInstitution = () => {
                 />
               </div>
             </DrawerContent>
-            <DrawerStickyFooter>
-              <Button form={formId} type="submit" variant="contained">
-                {INSTITUTION_FORM_SUBMIT_BUTTON_TEXT}
-              </Button>
-            </DrawerStickyFooter>
           </DrawerContainer>
         </form>
       </Drawer>
