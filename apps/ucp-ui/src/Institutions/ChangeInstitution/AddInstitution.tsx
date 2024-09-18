@@ -1,12 +1,5 @@
-import { Add, Delete } from "@mui/icons-material";
-import {
-  Button,
-  Drawer,
-  IconButton,
-  Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { Button, Drawer, Switch, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import {
   INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE,
@@ -43,6 +36,7 @@ import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFoote
 import RoutingNumberInput from "../RoutingNumberInput";
 import { validateUrlRule } from "../../shared/utils/validation";
 import SectionHeader from "./SectionHeader";
+import RemoveInput from "./RemoveInput";
 
 interface Inputs {
   name: string;
@@ -212,9 +206,10 @@ const AddInstitution = () => {
                         />
                       )}
                     />
-                    <IconButton onClick={() => routingNumbersRemove(index)}>
-                      <Delete />
-                    </IconButton>
+                    <RemoveInput
+                      index={index}
+                      onRemove={routingNumbersRemove}
+                    />
                   </div>
                 ))}
                 <Button
@@ -246,9 +241,7 @@ const AddInstitution = () => {
                         />
                       )}
                     />
-                    <IconButton onClick={() => keywordsRemove(index)}>
-                      <Delete />
-                    </IconButton>
+                    <RemoveInput index={index} onRemove={keywordsRemove} />
                   </div>
                 ))}
                 <Button
