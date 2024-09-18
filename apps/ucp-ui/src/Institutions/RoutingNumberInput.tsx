@@ -8,7 +8,9 @@ const RoutingNumberInput = ({ ...props }) => {
       allowNegative={false}
       customInput={TextField}
       decimalScale={0}
-      maxLength={9}
+      inputProps={{
+        maxLength: 9,
+      }}
       {...props}
     />
   );

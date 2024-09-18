@@ -34,6 +34,7 @@ import { REQUIRED_ERROR_TEXT } from "../shared/constants/validation";
 import styles from "./addInstitution.module.css";
 import DrawerStickyFooter from "../shared/components/Drawer/DrawerStickyFooter";
 import RoutingNumberInput from "./RoutingNumberInput";
+import { validateUrlRule } from "../shared/utils/validation";
 
 interface Inputs {
   name: string;
@@ -50,9 +51,8 @@ const AddInstitution = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenDrawer = () => setIsOpen(true);
-  const handleCloseDrawer = () => setIsOpen(false);
 
-  const { control, handleSubmit } = useForm<Inputs>({
+  const { control, handleSubmit, reset } = useForm<Inputs>({
     defaultValues: {
       name: "",
       logoUrl: "",
@@ -60,6 +60,11 @@ const AddInstitution = () => {
       url: "",
     },
   });
+
+  const handleCloseDrawer = () => {
+    setIsOpen(false);
+    reset();
+  };
 
   const {
     append: routingNumbersAppend,
@@ -121,6 +126,9 @@ const AddInstitution = () => {
                 <Controller
                   name="url"
                   control={control}
+                  rules={{
+                    validate: validateUrlRule,
+                  }}
                   render={({ field, fieldState: { error } }) => (
                     <TextField
                       error={!!error}
@@ -135,7 +143,10 @@ const AddInstitution = () => {
                 <Controller
                   name="logoUrl"
                   control={control}
-                  rules={{ required: REQUIRED_ERROR_TEXT }}
+                  rules={{
+                    required: REQUIRED_ERROR_TEXT,
+                    validate: validateUrlRule,
+                  }}
                   render={({ field, fieldState: { error } }) => (
                     <TextField
                       error={!!error}
@@ -162,6 +173,12 @@ const AddInstitution = () => {
                       name={`routingNumbers.${index}.value`}
                       control={control}
                       defaultValue={item.value}
+                      rules={{
+                        minLength: {
+                          message: "Must be a 9 digit number",
+                          value: 9,
+                        },
+                      }}
                       render={({
                         field: { ref, ...fieldProps },
                         fieldState: { error },
