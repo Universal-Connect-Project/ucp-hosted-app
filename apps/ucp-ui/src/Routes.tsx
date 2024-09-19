@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ApiKeys from "./ApiKeys/ApiKeys";
 import Layout from "./Layout/Layout";
 import Institutions from "./Institutions/Institutions";
+import Institution from "./Institutions/Institution/Institution";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -12,6 +13,10 @@ const Routes = () => {
         {
           path: "",
           element: <Institutions />,
+        },
+        {
+          path: `institutions/:institutionId`,
+          element: <Institution />,
         },
         {
           path: "widget-management",

@@ -10,13 +10,17 @@ export interface CreateInstitution {
   isTestInstitution: boolean;
 }
 
+interface Institution {
+  ucp_id: string;
+}
+
 const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
 export const AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions/`;
 
 export const institutionsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createInstitution: builder.mutation<void, CreateInstitution>({
+    createInstitution: builder.mutation<Institution, CreateInstitution>({
       query: ({
         isTestInstitution,
         keywords,

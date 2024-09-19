@@ -14,6 +14,7 @@ export default ({ production }) => {
     output: {
       filename: "bundle.js",
       path: path.resolve(path.dirname(""), "dist"),
+      publicPath: "/",
     },
     resolve: {
       extensions: [".tsx", ".ts", ".js"],

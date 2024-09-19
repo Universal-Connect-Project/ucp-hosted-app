@@ -44,6 +44,8 @@ import { CreateInstitution, useCreateInstitutionMutation } from "./api";
 import { LoadingButton } from "@mui/lab";
 import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
+import { useNavigate } from "react-router-dom";
+import { INSTITUTION_ROUTE } from "../../shared/constants/routes";
 
 interface Inputs {
   name: string;
@@ -67,6 +69,8 @@ const AddInstitution = () => {
   const handleCloseDrawer = () => {
     setIsOpen(false);
   };
+
+  const navigate = useNavigate();
 
   const { control, handleSubmit, reset } = useForm<Inputs>({
     defaultValues: {
@@ -97,9 +101,9 @@ const AddInstitution = () => {
   const createInstitution = (body: CreateInstitution) => {
     mutateCreateInstitution(body)
       .unwrap()
-      .then(() => {
+      .then(({ ucp_id }) => {
         dispatch(displaySnackbar(INSTITUTION_ADD_SUCCESS_TEXT));
-        handleCloseDrawer();
+        navigate(`${INSTITUTION_ROUTE}/${ucp_id}`);
       })
       .catch(() => {});
   };
