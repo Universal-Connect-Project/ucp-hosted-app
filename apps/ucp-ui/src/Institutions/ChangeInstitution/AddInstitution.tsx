@@ -3,6 +3,7 @@ import { Button, Drawer, Switch, Typography } from "@mui/material";
 import React, { useState } from "react";
 import {
   INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE,
+  INSTITUTION_ADD_SUCCESS_TEXT,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT,
@@ -39,8 +40,10 @@ import SectionHeader from "./SectionHeader";
 import RemoveInput from "./RemoveInput";
 import AddInputButton from "./AddInputButton";
 import TextField from "../../shared/components/Forms/TextField";
-import { useCreateInstitutionMutation } from "./api";
+import { CreateInstitution, useCreateInstitutionMutation } from "./api";
 import { LoadingButton } from "@mui/lab";
+import { useAppDispatch } from "../../shared/utils/redux";
+import { displaySnackbar } from "../../shared/reducers/snackbar";
 
 interface Inputs {
   name: string;
@@ -58,6 +61,10 @@ const AddInstitution = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenDrawer = () => setIsOpen(true);
+  const handleCloseDrawer = () => {
+    setIsOpen(false);
+    reset();
+  };
 
   const { control, handleSubmit, reset } = useForm<Inputs>({
     defaultValues: {
@@ -70,12 +77,19 @@ const AddInstitution = () => {
     },
   });
 
-  const [createInstitution, { isLoading: isCreateInstitutionLoading }] =
+  const [mutateCreateInstitution, { isLoading: isCreateInstitutionLoading }] =
     useCreateInstitutionMutation();
 
-  const handleCloseDrawer = () => {
-    setIsOpen(false);
-    reset();
+  const dispatch = useAppDispatch();
+
+  const createInstitution = (body: CreateInstitution) => {
+    mutateCreateInstitution(body)
+      .unwrap()
+      .then(() => {
+        dispatch(displaySnackbar(INSTITUTION_ADD_SUCCESS_TEXT));
+        handleCloseDrawer();
+      })
+      .catch(() => {});
   };
 
   const {

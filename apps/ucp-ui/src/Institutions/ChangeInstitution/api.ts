@@ -1,7 +1,7 @@
 import { api, TagTypes } from "../../baseApi";
 import { HttpMethods } from "../../shared/constants/http";
 
-interface CreateInstitution {
+export interface CreateInstitution {
   name: string;
   url: string;
   logoUrl: string;
