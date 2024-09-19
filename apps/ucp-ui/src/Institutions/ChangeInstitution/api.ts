@@ -25,14 +25,17 @@ export const institutionsApi = api.injectEndpoints({
         url,
         routingNumbers,
       }) => {
+        const filterJunk = (array: string[]) =>
+          Array.from(new Set(array.filter((value) => value)));
+
         return {
           body: {
             is_test_bank: isTestInstitution,
-            keywords: Array.from(new Set(keywords)).join(" "),
+            keywords: filterJunk(keywords).join(" "),
             name,
             logo: logoUrl,
             url,
-            routing_numbers: routingNumbers,
+            routing_numbers: filterJunk(routingNumbers),
           },
           method: HttpMethods.POST,
           url: AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL,
