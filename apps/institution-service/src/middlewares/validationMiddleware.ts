@@ -72,12 +72,13 @@ export const validateUserCanEditInstitution = async (
     }
 
     const aggregatorId = decodedToken["ucw/appMetaData"].aggregatorId;
-    const providers = await institution?.getProviders();
-    const hasOtherProviders = providers?.some(
-      (provider) => provider.name !== aggregatorId,
+
+    const aggregators = await institution?.getAggregators({ raw: true });
+    const hasOtherAggregators = aggregators?.some(
+      (aggregator) => aggregator.name !== aggregatorId,
     );
 
-    if (hasOtherProviders) {
+    if (hasOtherAggregators) {
       return res.status(403).json({
         error:
           "Aggregator cannot edit an institution used by other aggregators",

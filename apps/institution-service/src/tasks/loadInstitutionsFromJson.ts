@@ -1,8 +1,9 @@
 import fs from "fs";
 import path from "path";
 import db from "../database";
+import { Aggregator } from "../models/aggregator";
+import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
-import { Provider } from "../models/provider";
 
 export interface CachedInstitution {
   name: string;
@@ -12,13 +13,13 @@ export interface CachedInstitution {
   ucp_id: string;
   is_test_bank: boolean;
   routing_numbers: string[];
-  mx: InstitutionProvider;
-  sophtron: InstitutionProvider;
-  finicity: InstitutionProvider;
-  akoya: InstitutionProvider;
+  mx: InstitutionAggregator;
+  sophtron: InstitutionAggregator;
+  finicity: InstitutionAggregator;
+  akoya: InstitutionAggregator;
 }
 
-export interface InstitutionProvider {
+export interface InstitutionAggregator {
   id: string;
   supports_oauth: boolean;
   supports_identification: boolean;
@@ -37,7 +38,16 @@ async function loadInstitutionData() {
   ) as CachedInstitution[];
 
   const institutionsList: Institution[] = [];
-  const providerList: Provider[] = [];
+  const aggregatorList: AggregatorIntegration[] = [];
+  const [mxAggregator, _mxCreated] = await Aggregator.findOrCreate({
+    where: { name: "mx" },
+  });
+  const [sophtronAggregator, _sophtronCreated] = await Aggregator.findOrCreate({
+    where: { name: "sophtron" },
+  });
+  const [finicityAggregator, _finicityCreated] = await Aggregator.findOrCreate({
+    where: { name: "finicity" },
+  });
 
   institutions.forEach((institution: CachedInstitution) => {
     institutionsList.push({
@@ -52,45 +62,47 @@ async function loadInstitutionData() {
 
     if (institution?.mx?.id) {
       const mx = institution.mx;
-      providerList.push({
-        name: "mx",
-        provider_institution_id: mx.id,
+
+      aggregatorList.push({
+        aggregatorId: mxAggregator?.id,
+        aggregator_institution_id: mx.id,
         institution_id: institution.ucp_id,
         supports_oauth: mx.supports_oauth,
         supports_identification: mx.supports_identification,
         supports_verification: mx.supports_verification,
         supports_history: mx.supports_history,
         supports_aggregation: mx.supports_aggregation,
-      } as Provider);
+      } as AggregatorIntegration);
     }
 
     if (institution?.sophtron?.id) {
       const sophtron = institution.sophtron;
-      providerList.push({
-        name: "sophtron",
-        provider_institution_id: sophtron.id,
+
+      aggregatorList.push({
+        aggregatorId: sophtronAggregator?.id,
+        aggregator_institution_id: sophtron.id,
         institution_id: institution.ucp_id,
         supports_oauth: sophtron.supports_oauth,
         supports_identification: sophtron.supports_identification,
         supports_verification: sophtron.supports_verification,
         supports_history: sophtron.supports_history,
         supports_aggregation: sophtron.supports_aggregation,
-      } as Provider);
+      } as AggregatorIntegration);
     }
 
     if (institution?.finicity?.id) {
       const finicity = institution.finicity;
-      providerList.push({
+      aggregatorList.push({
         isActive: false,
-        name: "finicity",
-        provider_institution_id: finicity.id,
+        aggregatorId: finicityAggregator?.id,
+        aggregator_institution_id: finicity.id,
         institution_id: institution.ucp_id,
         supports_oauth: finicity.supports_oauth,
         supports_identification: finicity.supports_identification,
         supports_verification: finicity.supports_verification,
         supports_history: finicity.supports_history,
         supports_aggregation: finicity.supports_aggregation,
-      } as Provider);
+      } as AggregatorIntegration);
     }
   });
 
@@ -98,8 +110,8 @@ async function loadInstitutionData() {
     await Institution.bulkCreate(institutionsList);
     console.log("Institution successful");
 
-    await Provider.bulkCreate(providerList);
-    console.log("provider transaction successful");
+    await AggregatorIntegration.bulkCreate(aggregatorList);
+    console.log("aggregator transaction successful");
   } catch (error) {
     console.error("Error loading data", error);
   } finally {
