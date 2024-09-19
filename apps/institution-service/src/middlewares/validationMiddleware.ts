@@ -38,9 +38,7 @@ export const institutionUpdateSchema = Joi.object({
     }),
 });
 
-export const institutionCreateSchema = institutionUpdateSchema.append({
-  ucp_id: Joi.string().required(),
-});
+export const institutionCreateSchema = institutionUpdateSchema;
 
 export interface DecodedToken {
   permissions: string[];

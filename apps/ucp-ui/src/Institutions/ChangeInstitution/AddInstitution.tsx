@@ -39,6 +39,8 @@ import SectionHeader from "./SectionHeader";
 import RemoveInput from "./RemoveInput";
 import AddInputButton from "./AddInputButton";
 import TextField from "../../shared/components/Forms/TextField";
+import { useCreateInstitutionMutation } from "./api";
+import { LoadingButton } from "@mui/lab";
 
 interface Inputs {
   name: string;
@@ -68,6 +70,9 @@ const AddInstitution = () => {
     },
   });
 
+  const [createInstitution, { isLoading: isCreateInstitutionLoading }] =
+    useCreateInstitutionMutation();
+
   const handleCloseDrawer = () => {
     setIsOpen(false);
     reset();
@@ -91,7 +96,22 @@ const AddInstitution = () => {
     name: "keywords",
   });
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = ({
+    isTestInstitution,
+    name,
+    url,
+    logoUrl,
+    routingNumbers,
+    keywords,
+  }) =>
+    createInstitution({
+      isTestInstitution,
+      keywords: keywords.map(({ value }) => value),
+      name,
+      logoUrl,
+      url,
+      routingNumbers: routingNumbers.map(({ value }) => value),
+    });
 
   return (
     <>
@@ -118,9 +138,14 @@ const AddInstitution = () => {
             }
             footer={
               <DrawerStickyFooter>
-                <Button form={formId} type="submit" variant="contained">
+                <LoadingButton
+                  loading={isCreateInstitutionLoading}
+                  form={formId}
+                  type="submit"
+                  variant="contained"
+                >
                   {INSTITUTION_FORM_SUBMIT_BUTTON_TEXT}
-                </Button>
+                </LoadingButton>
               </DrawerStickyFooter>
             }
           >
@@ -132,7 +157,11 @@ const AddInstitution = () => {
                 name="name"
                 control={control}
                 rules={{ required: REQUIRED_ERROR_TEXT }}
-                render={({ field, fieldState: { error } }) => (
+                render={({
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  field: { ref, ...fieldProps },
+                  fieldState: { error },
+                }) => (
                   <TextField
                     error={!!error}
                     fullWidth
@@ -140,7 +169,7 @@ const AddInstitution = () => {
                     InputLabelProps={{ required: true }}
                     label={INSTITUTION_FORM_NAME_LABEL_TEXT}
                     variant="filled"
-                    {...field}
+                    {...fieldProps}
                   />
                 )}
               />
@@ -150,16 +179,22 @@ const AddInstitution = () => {
                   name="url"
                   control={control}
                   rules={{
+                    required: REQUIRED_ERROR_TEXT,
                     validate: validateUrlRule,
                   }}
-                  render={({ field, fieldState: { error } }) => (
+                  render={({
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    field: { ref, ...fieldProps },
+                    fieldState: { error },
+                  }) => (
                     <TextField
                       error={!!error}
                       fullWidth
                       helperText={error?.message}
+                      InputLabelProps={{ required: true }}
                       label={INSTITUTION_FORM_URL_LABEL_TEXT}
                       variant="filled"
-                      {...field}
+                      {...fieldProps}
                     />
                   )}
                 />
@@ -170,7 +205,11 @@ const AddInstitution = () => {
                     required: REQUIRED_ERROR_TEXT,
                     validate: validateUrlRule,
                   }}
-                  render={({ field, fieldState: { error } }) => (
+                  render={({
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    field: { ref, ...fieldProps },
+                    fieldState: { error },
+                  }) => (
                     <TextField
                       error={!!error}
                       fullWidth
@@ -178,7 +217,7 @@ const AddInstitution = () => {
                       InputLabelProps={{ required: true }}
                       label={INSTITUTION_FORM_LOGO_URL_LABEL_TEXT}
                       variant="filled"
-                      {...field}
+                      {...fieldProps}
                     />
                   )}
                 />
@@ -272,10 +311,11 @@ const AddInstitution = () => {
                 <Controller
                   name="isTestInstitution"
                   control={control}
-                  render={({ field }) => (
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  render={({ field: { ref, ...fieldProps } }) => (
                     <Switch
                       inputProps={{ id: testInstitutionSwitchId }}
-                      {...field}
+                      {...fieldProps}
                     />
                   )}
                 />
