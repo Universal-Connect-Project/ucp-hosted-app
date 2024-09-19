@@ -1,6 +1,6 @@
 import { Add } from "@mui/icons-material";
 import { Button, Drawer, Switch, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE,
   INSTITUTION_ADD_SUCCESS_TEXT,
@@ -60,10 +60,12 @@ const testInstitutionSwitchId = "testInstitutionSwitch";
 const AddInstitution = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleOpenDrawer = () => setIsOpen(true);
+  const handleOpenDrawer = () => {
+    reset();
+    setIsOpen(true);
+  };
   const handleCloseDrawer = () => {
     setIsOpen(false);
-    reset();
   };
 
   const { control, handleSubmit, reset } = useForm<Inputs>({
@@ -77,8 +79,18 @@ const AddInstitution = () => {
     },
   });
 
-  const [mutateCreateInstitution, { isLoading: isCreateInstitutionLoading }] =
-    useCreateInstitutionMutation();
+  const [
+    mutateCreateInstitution,
+    {
+      isLoading: isCreateInstitutionLoading,
+      isSuccess: isCreateInstitutionSuccessful,
+    },
+  ] = useCreateInstitutionMutation();
+
+  useEffect(() => {
+    // Unfortunately trying to reset on success doesn't reset the field arrays, so we have to reset like this
+    reset();
+  }, [isCreateInstitutionSuccessful, reset]);
 
   const dispatch = useAppDispatch();
 
