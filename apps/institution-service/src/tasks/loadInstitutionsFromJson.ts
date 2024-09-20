@@ -17,11 +17,13 @@ export interface CachedInstitution {
   sophtron?: InstitutionAggregator;
   finicity?: InstitutionAggregator;
   testExampleA?: InstitutionAggregator;
+  testExampleB?: InstitutionAggregator;
   akoya?: InstitutionAggregator;
 }
 
 export interface InstitutionAggregator {
   id: string;
+  isActive: boolean;
   supports_oauth: boolean;
   supports_identification: boolean;
   supports_verification: boolean;
@@ -53,6 +55,10 @@ async function loadInstitutionData() {
     await Aggregator.findOrCreate({
       where: { name: "testExampleA" },
     });
+  const [testExampleBAggregator, _testExampleBCreated] =
+    await Aggregator.findOrCreate({
+      where: { name: "testExampleB" },
+    });
 
   institutions.forEach((institution: CachedInstitution) => {
     institutionsList.push({
@@ -69,6 +75,7 @@ async function loadInstitutionData() {
       const mx = institution.mx;
 
       aggregatorList.push({
+        isActive: mx.isActive ?? true,
         aggregatorId: mxAggregator?.id,
         aggregator_institution_id: mx.id,
         institution_id: institution.id,
@@ -84,6 +91,7 @@ async function loadInstitutionData() {
       const sophtron = institution.sophtron;
 
       aggregatorList.push({
+        isActive: sophtron.isActive ?? true,
         aggregatorId: sophtronAggregator?.id,
         aggregator_institution_id: sophtron.id,
         institution_id: institution.id,
@@ -113,7 +121,7 @@ async function loadInstitutionData() {
     if (institution?.testExampleA?.id) {
       const testExampleA = institution.testExampleA;
       aggregatorList.push({
-        isActive: false,
+        isActive: testExampleA.isActive ?? true,
         aggregatorId: testExampleAAggregator?.id,
         aggregator_institution_id: testExampleA.id,
         institution_id: institution.id,
@@ -122,6 +130,20 @@ async function loadInstitutionData() {
         supports_verification: testExampleA.supports_verification,
         supports_history: testExampleA.supports_history,
         supports_aggregation: testExampleA.supports_aggregation,
+      } as AggregatorIntegration);
+    }
+    if (institution?.testExampleB?.id) {
+      const testExampleB = institution.testExampleB;
+      aggregatorList.push({
+        isActive: testExampleB.isActive ?? true,
+        aggregatorId: testExampleBAggregator?.id,
+        aggregator_institution_id: testExampleB.id,
+        institution_id: institution.id,
+        supports_oauth: testExampleB.supports_oauth,
+        supports_identification: testExampleB.supports_identification,
+        supports_verification: testExampleB.supports_verification,
+        supports_history: testExampleB.supports_history,
+        supports_aggregation: testExampleB.supports_aggregation,
       } as AggregatorIntegration);
     }
   });
