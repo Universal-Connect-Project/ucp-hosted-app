@@ -15,13 +15,13 @@ describe("<Routes />", () => {
       institutionsPage: true,
     });
 
-    render(<Routes />);
+    render(<Routes />, { shouldRenderRouter: false });
 
     expect(await screen.findAllByText(INSTITUTIONS_PAGE_TITLE)).toHaveLength(2);
   });
 
   it("renders Widget Management", async () => {
-    render(<Routes />);
+    render(<Routes />, { shouldRenderRouter: false });
 
     await userEvent.click(
       await screen.findByRole("link", {

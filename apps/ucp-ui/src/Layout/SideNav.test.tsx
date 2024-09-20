@@ -29,7 +29,7 @@ describe("<SideNav />", () => {
   });
 
   it("calls logout on click", async () => {
-    render(<Routes />);
+    render(<Routes />, { shouldRenderRouter: false });
 
     await userEvent.click(screen.getByText(SIDE_NAV_LOG_OUT_BUTTON_TEXT));
 
@@ -41,7 +41,7 @@ describe("<SideNav />", () => {
       institutionsPage: false,
     });
 
-    render(<Routes />);
+    render(<Routes />, { shouldRenderRouter: false });
 
     expect(
       screen.queryByRole("link", {
@@ -55,7 +55,7 @@ describe("<SideNav />", () => {
       institutionsPage: true,
     });
 
-    render(<Routes />);
+    render(<Routes />, { shouldRenderRouter: false });
 
     expect(
       screen.getByRole("link", {
@@ -65,7 +65,7 @@ describe("<SideNav />", () => {
   });
 
   it("navigates to widget management after clicking on the link", async () => {
-    render(<Routes />);
+    render(<Routes />, { shouldRenderRouter: false });
 
     await userEvent.click(
       await screen.findByRole("link", {
@@ -79,7 +79,7 @@ describe("<SideNav />", () => {
   });
 
   it("renders a contact us button", async () => {
-    render(<Routes />);
+    render(<Routes />, { shouldRenderRouter: false });
 
     const contactLink = await screen.findByText(SIDE_NAV_CONTACT_US_LINK_TEXT);
 
