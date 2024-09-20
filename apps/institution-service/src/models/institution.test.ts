@@ -1,19 +1,20 @@
+import { UUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 import { testInstitution } from "../test/testData/institutions";
 import { AggregatorIntegration } from "./aggregatorIntegration";
 import { Institution } from "./institution";
 
 describe("Institution Model", () => {
   it("should create an institution", async () => {
-    const randomString = Math.random().toString(36).slice(2, 7);
     const newInstitutionAttributes = {
       ...testInstitution,
-      ucp_id: `UCP-${randomString}`,
+      id: uuidv4() as UUID,
     };
     const createdInstitution = await Institution.create(
       newInstitutionAttributes,
     );
 
-    expect(createdInstitution).toHaveProperty("ucp_id");
+    expect(createdInstitution).toHaveProperty("id");
     expect(createdInstitution.name).toBe(newInstitutionAttributes.name);
     expect(createdInstitution.keywords).toBe(newInstitutionAttributes.keywords);
     expect(createdInstitution.logo).toBe(newInstitutionAttributes.logo);
@@ -28,26 +29,25 @@ describe("Institution Model", () => {
   });
 
   it("should have associated aggregators", async () => {
-    const randomString = Math.random().toString(36).slice(2, 7);
     const newInstitutionAttributes = {
       ...testInstitution,
-      ucp_id: `UCP-${randomString}`,
+      id: uuidv4() as UUID,
     };
 
     const createdInstitution = await Institution.create(
       newInstitutionAttributes,
     );
 
-    expect(createdInstitution).toHaveProperty("ucp_id");
+    expect(createdInstitution).toHaveProperty("id");
 
     const mxAggregatorAttributes = {
       supports_oauth: true,
-      institution_id: createdInstitution.ucp_id,
+      institution_id: createdInstitution.id,
       aggregator_institution_id: "mx_oauth_bank",
     };
     const sophtronAggregatorAttributes = {
       supports_oauth: true,
-      institution_id: createdInstitution.ucp_id,
+      institution_id: createdInstitution.id,
       aggregator_institution_id: "sophtron-1234",
     };
 

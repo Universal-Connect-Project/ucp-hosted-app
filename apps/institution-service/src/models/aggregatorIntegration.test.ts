@@ -1,3 +1,5 @@
+import { UUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 import { AggregatorIntegration } from "./aggregatorIntegration";
 
 describe("AggregatorIntegration Model", () => {
@@ -6,7 +8,7 @@ describe("AggregatorIntegration Model", () => {
       name: "mx",
       supports_oauth: true,
       supports_history: true,
-      institution_id: "123",
+      institution_id: uuidv4() as UUID,
       aggregator_institution_id: "mx_oauth_bank",
     };
 

@@ -16,7 +16,7 @@ export const validate = (schema: ObjectSchema) => {
   };
 };
 
-export const institutionUpdateSchema = Joi.object({
+export const institutionSchema = Joi.object({
   name: Joi.string(),
   keywords: Joi.string(),
   logo: Joi.string()
@@ -36,10 +36,6 @@ export const institutionUpdateSchema = Joi.object({
       "string.pattern.base": "Each routing number must be exactly 9 digits",
       "array.base": "Routing numbers must be an array of strings",
     }),
-});
-
-export const institutionCreateSchema = institutionUpdateSchema.append({
-  ucp_id: Joi.string().required(),
 });
 
 export interface DecodedToken {

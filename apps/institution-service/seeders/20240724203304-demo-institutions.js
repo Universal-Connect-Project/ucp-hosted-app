@@ -4,12 +4,12 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     // Add Institutions
-    const seedInstitutionId = "UCP-123456789";
+    const seedInstitutionId = "c14e9877-c1e3-4d3a-b449-585086d14845";
 
-    const secondSeedInstitutionId = `UCP-9999`;
+    const secondSeedInstitutionId = "7ad26dbb-78ee-4d06-b67d-bb71c11de653";
     await queryInterface.bulkInsert("institutions", [
       {
-        ucp_id: seedInstitutionId,
+        id: seedInstitutionId,
         name: "Wells Fargo",
         keywords: "wells, fargo",
         logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
@@ -19,7 +19,7 @@ module.exports = {
         createdAt: new Date(),
       },
       {
-        ucp_id: secondSeedInstitutionId,
+        id: secondSeedInstitutionId,
         name: "Chase Bank",
         keywords: "chase, bank",
         logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-78c7b591-6512-9c17-b092-1cddbd3c85ba_100x100.png",
@@ -95,7 +95,12 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete("institutions", {
-      ucp_id: { [Sequelize.Op.in]: ["UCP-123456789", "UCP-9999"] },
+      id: {
+        [Sequelize.Op.in]: [
+          "c14e9877-c1e3-4d3a-b449-585086d14845",
+          "7ad26dbb-78ee-4d06-b67d-bb71c11de653",
+        ],
+      },
     });
   },
 };

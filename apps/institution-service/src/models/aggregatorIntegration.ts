@@ -24,7 +24,7 @@ export class AggregatorIntegration extends Model<
   declare supports_verification: CreationOptional<boolean>;
   declare supports_aggregation: CreationOptional<boolean>;
   declare supports_history: CreationOptional<boolean>;
-  declare institution_id: ForeignKey<Institution["ucp_id"]>;
+  declare institution_id: ForeignKey<Institution["id"]>;
   declare aggregatorId: ForeignKey<Aggregator["id"]>;
 
   declare institution?: NonAttribute<Institution>;

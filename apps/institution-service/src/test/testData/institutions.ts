@@ -1,11 +1,12 @@
+import { UUID } from "crypto";
 import { AggregatorIntegration } from "../../models/aggregatorIntegration";
 import { Institution } from "../../models/institution";
 
-export const seedInstitutionId = "UCP-123456789";
+export const seedInstitutionId = "c14e9877-c1e3-4d3a-b449-585086d14845";
 export const seedInstitutionName = "Wells Fargo";
 
 export interface InstitutionAttrs {
-  ucp_id: string;
+  id?: UUID;
   name: string;
   keywords: string;
   logo: string;
@@ -15,7 +16,6 @@ export interface InstitutionAttrs {
 }
 
 export const testInstitution: InstitutionAttrs = {
-  ucp_id: `UCP-123`,
   name: "Test Bank #1",
   keywords: "test, bank",
   logo: "https://logo.com",

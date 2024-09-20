@@ -10,13 +10,14 @@ export interface CachedInstitution {
   keywords: string;
   logo: string;
   url: string;
-  ucp_id: string;
+  id: string;
   is_test_bank: boolean;
   routing_numbers: string[];
-  mx: InstitutionAggregator;
-  sophtron: InstitutionAggregator;
-  finicity: InstitutionAggregator;
-  akoya: InstitutionAggregator;
+  mx?: InstitutionAggregator;
+  sophtron?: InstitutionAggregator;
+  finicity?: InstitutionAggregator;
+  testExampleA?: InstitutionAggregator;
+  akoya?: InstitutionAggregator;
 }
 
 export interface InstitutionAggregator {
@@ -48,10 +49,14 @@ async function loadInstitutionData() {
   const [finicityAggregator, _finicityCreated] = await Aggregator.findOrCreate({
     where: { name: "finicity" },
   });
+  const [testExampleAAggregator, _testExampleACreated] =
+    await Aggregator.findOrCreate({
+      where: { name: "testExampleA" },
+    });
 
   institutions.forEach((institution: CachedInstitution) => {
     institutionsList.push({
-      ucp_id: institution.ucp_id,
+      id: institution.id,
       name: institution.name,
       keywords: institution.keywords,
       url: institution.url,
@@ -66,7 +71,7 @@ async function loadInstitutionData() {
       aggregatorList.push({
         aggregatorId: mxAggregator?.id,
         aggregator_institution_id: mx.id,
-        institution_id: institution.ucp_id,
+        institution_id: institution.id,
         supports_oauth: mx.supports_oauth,
         supports_identification: mx.supports_identification,
         supports_verification: mx.supports_verification,
@@ -81,7 +86,7 @@ async function loadInstitutionData() {
       aggregatorList.push({
         aggregatorId: sophtronAggregator?.id,
         aggregator_institution_id: sophtron.id,
-        institution_id: institution.ucp_id,
+        institution_id: institution.id,
         supports_oauth: sophtron.supports_oauth,
         supports_identification: sophtron.supports_identification,
         supports_verification: sophtron.supports_verification,
@@ -96,12 +101,27 @@ async function loadInstitutionData() {
         isActive: false,
         aggregatorId: finicityAggregator?.id,
         aggregator_institution_id: finicity.id,
-        institution_id: institution.ucp_id,
+        institution_id: institution.id,
         supports_oauth: finicity.supports_oauth,
         supports_identification: finicity.supports_identification,
         supports_verification: finicity.supports_verification,
         supports_history: finicity.supports_history,
         supports_aggregation: finicity.supports_aggregation,
+      } as AggregatorIntegration);
+    }
+
+    if (institution?.testExampleA?.id) {
+      const testExampleA = institution.testExampleA;
+      aggregatorList.push({
+        isActive: false,
+        aggregatorId: testExampleAAggregator?.id,
+        aggregator_institution_id: testExampleA.id,
+        institution_id: institution.id,
+        supports_oauth: testExampleA.supports_oauth,
+        supports_identification: testExampleA.supports_identification,
+        supports_verification: testExampleA.supports_verification,
+        supports_history: testExampleA.supports_history,
+        supports_aggregation: testExampleA.supports_aggregation,
       } as AggregatorIntegration);
     }
   });

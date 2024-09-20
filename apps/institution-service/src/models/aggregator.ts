@@ -65,7 +65,7 @@ Aggregator.belongsToMany(Institution, {
 
 Institution.belongsToMany(Aggregator, {
   through: "AggregatorIntegration",
-  sourceKey: "ucp_id",
+  sourceKey: "id",
   foreignKey: "institution_id",
 });
 
