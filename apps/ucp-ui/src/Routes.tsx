@@ -5,6 +5,10 @@ import ApiKeys from "./ApiKeys/ApiKeys";
 import Layout from "./Layout/Layout";
 import Institutions from "./Institutions/Institutions";
 import Institution from "./Institutions/Institution/Institution";
+import {
+  institutionRoute,
+  widgetManagementRoute,
+} from "./shared/constants/routes";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -15,11 +19,11 @@ const Routes = () => {
           element: <Institutions />,
         },
         {
-          path: `institutions/:institutionId`,
+          path: institutionRoute.childRoute,
           element: <Institution />,
         },
         {
-          path: "widget-management",
+          path: widgetManagementRoute.childRoute,
           element: <ApiKeys />,
         },
       ],
