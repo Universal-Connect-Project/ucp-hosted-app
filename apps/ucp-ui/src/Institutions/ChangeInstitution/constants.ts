@@ -18,3 +18,6 @@ export const INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT =
 export const INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT = "ADD KEYWORD";
 
 export const INSTITUTION_ADD_SUCCESS_TEXT = "Institution has been added.";
+
+export const INSTITUTION_ADD_ERROR_TEXT =
+  "We couldn't save your changes. Please try again in a few moments.";

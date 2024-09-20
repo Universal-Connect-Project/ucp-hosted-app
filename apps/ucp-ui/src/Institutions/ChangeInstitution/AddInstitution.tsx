@@ -2,6 +2,7 @@ import { Add } from "@mui/icons-material";
 import { Button, Drawer, Switch, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import {
+  INSTITUTION_ADD_ERROR_TEXT,
   INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE,
   INSTITUTION_ADD_SUCCESS_TEXT,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
@@ -46,6 +47,7 @@ import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
 import { useNavigate } from "react-router-dom";
 import { institutionRoute } from "../../shared/constants/routes";
+import FormSubmissionError from "../../shared/components/FormSubmissionError";
 
 interface Inputs {
   name: string;
@@ -86,6 +88,7 @@ const AddInstitution = () => {
   const [
     mutateCreateInstitution,
     {
+      isError: isCreateInstitutionError,
       isLoading: isCreateInstitutionLoading,
       isSuccess: isCreateInstitutionSuccessful,
     },
@@ -180,6 +183,13 @@ const AddInstitution = () => {
             }
           >
             <DrawerContent>
+              {isCreateInstitutionError && (
+                <FormSubmissionError
+                  description={INSTITUTION_ADD_ERROR_TEXT}
+                  formId={formId}
+                  title="Something went wrong"
+                />
+              )}
               <DrawerTitle>
                 {INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE}
               </DrawerTitle>
