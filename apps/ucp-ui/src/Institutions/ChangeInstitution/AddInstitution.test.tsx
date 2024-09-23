@@ -28,6 +28,7 @@ import { server } from "../../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_CREATE_INSTITUTION_URL } from "./api";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
+import { INVALID_URL_TEXT } from "../../shared/utils/validation";
 
 const renderAndSubmit = async () => {
   render(<AddInstitution />);
@@ -234,7 +235,7 @@ describe("<AddInstitution />", () => {
       screen.getByRole("button", { name: INSTITUTION_FORM_SUBMIT_BUTTON_TEXT }),
     );
 
-    expect(await screen.findAllByText("Not a valid URL")).toHaveLength(2);
+    expect(await screen.findAllByText(INVALID_URL_TEXT)).toHaveLength(2);
   });
 
   it("shows routing number validation errors", async () => {

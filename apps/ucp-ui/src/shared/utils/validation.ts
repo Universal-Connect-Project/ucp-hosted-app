@@ -1,3 +1,5 @@
+export const INVALID_URL_TEXT = "Not a valid URL";
+
 export const validateUrlRule = (url: string) => {
   if (!url) {
     return true;
@@ -7,6 +9,6 @@ export const validateUrlRule = (url: string) => {
     new URL(url);
     return true;
   } catch {
-    return "Not a valid URL";
+    return INVALID_URL_TEXT;
   }
 };
