@@ -67,6 +67,7 @@ const SideNav = () => {
             <ListItemButton
               component={Link}
               color="primary"
+              data-testid={`side-nav-link-${label}`}
               key={label}
               selected={matchPaths.some(
                 (currentPath) => !!matchPath(currentPath, pathname),

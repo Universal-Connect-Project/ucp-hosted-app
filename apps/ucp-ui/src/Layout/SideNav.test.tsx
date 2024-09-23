@@ -10,6 +10,12 @@ import {
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
 import * as launchDarkly from "launchdarkly-react-client-sdk";
+import SideNav from "./SideNav";
+import {
+  institutionRoute,
+  INSTITUTIONS_ROUTE,
+  widgetManagementRoute,
+} from "../shared/constants/routes";
 
 const mockLogout = jest.fn();
 
@@ -86,5 +92,41 @@ describe("<SideNav />", () => {
     expect(contactLink).toBeInTheDocument();
 
     expect(contactLink).toHaveAttribute("href", `mailto:${SUPPORT_EMAIL}`);
+  });
+
+  it("adds a selected status for each routes match paths", () => {
+    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({
+      institutionsPage: true,
+    });
+
+    const result1 = render(<SideNav />, {
+      initialRoute: institutionRoute.fullRoute,
+    });
+
+    expect(
+      screen.getByTestId(`side-nav-link-${SIDE_NAV_INSTITUTIONS_LINK_TEXT}`),
+    ).toHaveClass("Mui-selected");
+
+    result1.unmount();
+
+    const result2 = render(<SideNav />, { initialRoute: INSTITUTIONS_ROUTE });
+
+    expect(
+      screen.getByTestId(`side-nav-link-${SIDE_NAV_INSTITUTIONS_LINK_TEXT}`),
+    ).toHaveClass("Mui-selected");
+
+    result2.unmount();
+
+    const result3 = render(<SideNav />, {
+      initialRoute: widgetManagementRoute.fullRoute,
+    });
+
+    expect(
+      screen.getByTestId(
+        `side-nav-link-${SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT}`,
+      ),
+    ).toHaveClass("Mui-selected");
+
+    result3.unmount();
   });
 });
