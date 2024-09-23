@@ -16,7 +16,7 @@ interface Institution {
 
 const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
-export const AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions/`;
+export const INSTITUTION_SERVICE_CREATE_INSTITUTION_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions`;
 
 export const institutionsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -42,7 +42,7 @@ export const institutionsApi = api.injectEndpoints({
             routing_numbers: filterJunk(routingNumbers),
           },
           method: HttpMethods.POST,
-          url: AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL,
+          url: INSTITUTION_SERVICE_CREATE_INSTITUTION_URL,
         };
       },
       invalidatesTags: (result, error) =>

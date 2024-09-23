@@ -36,7 +36,10 @@ const AllTheProviders = ({
     <ReduxProvider store={store}>
       {shouldRenderSnackbars && <Snackbars />}
       {shouldRenderRouter ? (
-        <MemoryRouter initialEntries={[initialRoute]}>{children}</MemoryRouter>
+        <MemoryRouter initialEntries={[initialRoute]}>
+          <LocationDisplay />
+          {children}
+        </MemoryRouter>
       ) : (
         children
       )}
