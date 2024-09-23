@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./sectionHeader.module.css";
 import { Tooltip, Typography } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
+import { SECTION_HEADER_INFO_ICON_TEST_ID } from "./constants";
 
 const SectionHeader = ({
   sectionTitle,
@@ -18,7 +19,11 @@ const SectionHeader = ({
         {sectionTitle}
       </Typography>
       <Tooltip title={tooltipTitle}>
-        <InfoOutlined color="action" fontSize="small" />
+        <InfoOutlined
+          color="action"
+          data-testid={SECTION_HEADER_INFO_ICON_TEST_ID}
+          fontSize="small"
+        />
       </Tooltip>
     </div>
   );

@@ -23,3 +23,5 @@ export const INSTITUTION_ADD_ERROR_TEXT =
   "We couldn't save your changes. Please try again in a few moments.";
 
 export const REMOVE_INPUT_TEST_ID = "removeInput";
+
+export const SECTION_HEADER_INFO_ICON_TEST_ID = "sectionHeaderInfoIcon";
