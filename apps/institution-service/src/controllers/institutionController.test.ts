@@ -176,7 +176,7 @@ describe("institutionController", () => {
 
       const updateBody = {
         name: "newName",
-        keywords: "newKeywords",
+        keywords: ["newKeywords"],
         logo: "newLogo",
         url: "newUrl",
         is_test_bank: true,

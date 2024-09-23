@@ -19,7 +19,7 @@ export class Institution extends Model<
 > {
   declare id?: UUID;
   declare name: string;
-  declare keywords: string | null;
+  declare keywords: string[];
   declare logo: string;
   declare url: string;
   declare is_test_bank: boolean;
@@ -52,7 +52,7 @@ Institution.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    keywords: DataTypes.TEXT,
+    keywords: DataTypes.ARRAY(DataTypes.TEXT),
     logo: DataTypes.TEXT,
     url: DataTypes.TEXT,
     is_test_bank: DataTypes.BOOLEAN,
