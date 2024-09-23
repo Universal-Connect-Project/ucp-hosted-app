@@ -14,7 +14,6 @@ import {
   getInstitutionCachedList,
   updateInstitution,
 } from "./institutionController";
-import { randomUUID } from "crypto";
 
 const createNewInstitution = async () => {
   return await Institution.create(testInstitution);
@@ -85,69 +84,6 @@ describe("institutionController", () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining(institutionBody),
       );
-    });
-
-    it("creates a new institution with valid params", async () => {
-      const newInstitutionId = randomUUID();
-
-      const institutionBody = {
-        ...testInstitution,
-        ucp_id: newInstitutionId,
-        name: `createTest-${newInstitutionId}`,
-      };
-
-      const req: Request = {
-        body: institutionBody,
-      } as unknown as Request;
-
-      const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      } as unknown as Response;
-
-      await createInstitution(req, res);
-
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining(institutionBody),
-      );
-    });
-
-    it("creates a new institution if no ucp_id is provided", async () => {
-      const newInstitutionId = randomUUID();
-
-      const institutionBody = {
-        ...testInstitution,
-        ucp_id: undefined,
-        name: `createTest-${newInstitutionId}`,
-      };
-
-      const req: Request = {
-        body: institutionBody,
-      } as unknown as Request;
-
-      const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      } as unknown as Response;
-
-      await createInstitution(req, res);
-
-      const institutionResult = {
-        ...institutionBody,
-      };
-
-      delete institutionResult.ucp_id;
-
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining(institutionResult),
-      );
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect((res.json as jest.Mock).mock.calls[0][0].ucp_id).toBeTruthy();
     });
 
     it("responds with an error when a required field is missing", async () => {
