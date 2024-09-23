@@ -83,6 +83,7 @@ const AddInstitution = () => {
       routingNumbers: [],
       url: "",
     },
+    mode: "onTouched",
   });
 
   const [
