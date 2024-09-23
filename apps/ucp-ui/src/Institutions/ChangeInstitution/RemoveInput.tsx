@@ -2,6 +2,7 @@ import { Delete } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import React from "react";
 import { UseFieldArrayRemove } from "react-hook-form";
+import { REMOVE_INPUT_TEST_ID } from "./constants";
 
 const RemoveInput = ({
   index,
@@ -11,7 +12,10 @@ const RemoveInput = ({
   onRemove: UseFieldArrayRemove;
 }) => {
   return (
-    <IconButton onClick={() => onRemove(index)}>
+    <IconButton
+      data-testid={REMOVE_INPUT_TEST_ID}
+      onClick={() => onRemove(index)}
+    >
       <Delete />
     </IconButton>
   );

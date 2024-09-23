@@ -4,10 +4,13 @@ import {
   render,
   screen,
   userEvent,
+  waitFor,
 } from "../../shared/test/testUtils";
 import AddInstitution from "./AddInstitution";
 import {
+  INSTITUTION_ADD_ERROR_TEXT,
   INSTITUTION_ADD_SUCCESS_TEXT,
+  INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT,
   INSTITUTION_FORM_KEYWORD_LABEL_TEXT,
@@ -17,16 +20,111 @@ import {
   INSTITUTION_FORM_SUBMIT_BUTTON_TEXT,
   INSTITUTION_FORM_URL_LABEL_TEXT,
   INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+  REMOVE_INPUT_TEST_ID,
 } from "./constants";
 import { createInstitutionResponse } from "../../shared/test/testData/institution";
 import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
+import { server } from "../../shared/test/testServer";
+import { http, HttpResponse } from "msw";
+import { INSTITUTION_SERVICE_CREATE_INSTITUTION_URL } from "./api";
+import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
+
+const renderAndSubmit = async () => {
+  render(<AddInstitution />);
+
+  await userEvent.click(
+    screen.getByText(INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT),
+  );
+
+  await userEvent.type(
+    await screen.findByLabelText(new RegExp(INSTITUTION_FORM_NAME_LABEL_TEXT)),
+    "Test Name",
+  );
+
+  await userEvent.type(
+    screen.getByLabelText(new RegExp(INSTITUTION_FORM_URL_LABEL_TEXT)),
+    "http://fake",
+  );
+
+  await userEvent.type(
+    screen.getByLabelText(new RegExp(INSTITUTION_FORM_LOGO_URL_LABEL_TEXT)),
+    "http://fake",
+  );
+
+  await userEvent.click(
+    screen.getByRole("button", {
+      name: INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT,
+    }),
+  );
+
+  await userEvent.type(
+    await screen.findByLabelText(INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT),
+    "123456789",
+  );
+
+  await userEvent.click(
+    screen.getByRole("button", {
+      name: INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
+    }),
+  );
+
+  await userEvent.type(
+    await screen.findByLabelText(INSTITUTION_FORM_KEYWORD_LABEL_TEXT),
+    "Test",
+  );
+
+  await userEvent.click(
+    screen.getByRole("button", { name: INSTITUTION_FORM_SUBMIT_BUTTON_TEXT }),
+  );
+};
 
 describe("<AddInstitution />", () => {
   it("shows a snackbar and redirects on success", async () => {
+    await renderAndSubmit();
+
+    expect(
+      await screen.findByText(INSTITUTION_ADD_SUCCESS_TEXT),
+    ).toBeInTheDocument();
+
+    expectLocation(`/institutions/${createInstitutionResponse.id}`);
+  });
+
+  it("shows an error on api failure and allows retry", async () => {
+    server.use(
+      http.post(
+        INSTITUTION_SERVICE_CREATE_INSTITUTION_URL,
+        () => new HttpResponse(null, { status: 400 }),
+      ),
+    );
+
+    await renderAndSubmit();
+
+    expect(
+      await screen.findByText(INSTITUTION_ADD_ERROR_TEXT),
+    ).toBeInTheDocument();
+
+    server.use(
+      http.post(INSTITUTION_SERVICE_CREATE_INSTITUTION_URL, () =>
+        HttpResponse.json(createInstitutionResponse),
+      ),
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: TRY_AGAIN_BUTTON_TEXT }),
+    );
+
+    expect(
+      await screen.findByText(INSTITUTION_ADD_SUCCESS_TEXT),
+    ).toBeInTheDocument();
+  });
+
+  it("resets the form when the drawer is closed and reopened", async () => {
     render(<AddInstitution />);
 
     await userEvent.click(
-      screen.getByText(INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT),
+      screen.getByRole("button", {
+        name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+      }),
     );
 
     await userEvent.type(
@@ -36,14 +134,32 @@ describe("<AddInstitution />", () => {
       "Test Name",
     );
 
-    await userEvent.type(
-      screen.getByLabelText(new RegExp(INSTITUTION_FORM_URL_LABEL_TEXT)),
-      "http://fake",
+    await userEvent.click(
+      screen.getByRole("button", {
+        name: INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
+      }),
     );
 
-    await userEvent.type(
-      screen.getByLabelText(new RegExp(INSTITUTION_FORM_LOGO_URL_LABEL_TEXT)),
-      "http://fake",
+    await userEvent.click(
+      screen.getByRole("button", {
+        name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+      }),
+    );
+
+    expect(
+      await screen.findByLabelText(
+        new RegExp(INSTITUTION_FORM_NAME_LABEL_TEXT),
+      ),
+    ).toHaveValue("");
+  });
+
+  it("removes keywords and routing numbers when the delete button is pressed", async () => {
+    render(<AddInstitution />);
+
+    await userEvent.click(
+      screen.getByRole("button", {
+        name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+      }),
     );
 
     await userEvent.click(
@@ -52,9 +168,16 @@ describe("<AddInstitution />", () => {
       }),
     );
 
-    await userEvent.type(
+    expect(
       await screen.findByLabelText(INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT),
-      "123456789",
+    ).toBeInTheDocument();
+
+    await userEvent.click(screen.getByTestId(REMOVE_INPUT_TEST_ID));
+
+    await waitFor(() =>
+      expect(
+        screen.queryByLabelText(INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT),
+      ).not.toBeInTheDocument(),
     );
 
     await userEvent.click(
@@ -63,25 +186,18 @@ describe("<AddInstitution />", () => {
       }),
     );
 
-    await userEvent.type(
-      await screen.findByLabelText(INSTITUTION_FORM_KEYWORD_LABEL_TEXT),
-      "Test",
-    );
-
-    await userEvent.click(
-      screen.getByRole("button", { name: INSTITUTION_FORM_SUBMIT_BUTTON_TEXT }),
-    );
-
     expect(
-      await screen.findByText(INSTITUTION_ADD_SUCCESS_TEXT),
+      await screen.findByLabelText(INSTITUTION_FORM_KEYWORD_LABEL_TEXT),
     ).toBeInTheDocument();
 
-    expectLocation(`/institutions/${createInstitutionResponse.id}`);
+    await userEvent.click(screen.getByTestId(REMOVE_INPUT_TEST_ID));
+
+    await waitFor(() =>
+      expect(
+        screen.queryByLabelText(INSTITUTION_FORM_KEYWORD_LABEL_TEXT),
+      ).not.toBeInTheDocument(),
+    );
   });
-
-  it("shows an error on api failure and allows retry", () => {});
-
-  it("removes keywords and routing numbers when the delete button is pressed", () => {});
 
   it("shows required validation errors", async () => {
     render(<AddInstitution />);

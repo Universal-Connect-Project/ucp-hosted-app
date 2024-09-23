@@ -1,6 +1,6 @@
 import { Add } from "@mui/icons-material";
 import { Button, Drawer, Switch, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   INSTITUTION_ADD_ERROR_TEXT,
   INSTITUTION_ADD_INSTITUTION_DRAWER_TITLE,
@@ -91,14 +91,8 @@ const AddInstitution = () => {
     {
       isError: isCreateInstitutionError,
       isLoading: isCreateInstitutionLoading,
-      isSuccess: isCreateInstitutionSuccessful,
     },
   ] = useCreateInstitutionMutation();
-
-  useEffect(() => {
-    // Unfortunately trying to reset on success doesn't reset the field arrays, so we have to reset like this
-    reset();
-  }, [isCreateInstitutionSuccessful, reset]);
 
   const dispatch = useAppDispatch();
 

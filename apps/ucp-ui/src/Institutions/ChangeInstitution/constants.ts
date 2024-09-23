@@ -21,3 +21,5 @@ export const INSTITUTION_ADD_SUCCESS_TEXT = "Institution has been added.";
 
 export const INSTITUTION_ADD_ERROR_TEXT =
   "We couldn't save your changes. Please try again in a few moments.";
+
+export const REMOVE_INPUT_TEST_ID = "removeInput";
