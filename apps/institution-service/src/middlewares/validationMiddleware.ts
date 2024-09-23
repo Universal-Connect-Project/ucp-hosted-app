@@ -18,7 +18,7 @@ export const validate = (schema: ObjectSchema) => {
 
 export const institutionSchema = Joi.object({
   name: Joi.string(),
-  keywords: Joi.string(),
+  keywords: Joi.array().items(Joi.string()),
   logo: Joi.string()
     .uri({ scheme: ["http", "https"] })
     .messages({

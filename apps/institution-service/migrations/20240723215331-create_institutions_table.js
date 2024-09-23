@@ -15,8 +15,7 @@ module.exports = {
         allowNull: false,
       },
       keywords: {
-        type: Sequelize.TEXT,
-        allowNull: true,
+        type: Sequelize.ARRAY(Sequelize.TEXT),
       },
       logo: {
         type: Sequelize.TEXT,

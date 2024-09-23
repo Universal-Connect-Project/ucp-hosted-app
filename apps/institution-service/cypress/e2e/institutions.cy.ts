@@ -33,7 +33,7 @@ const institutionAttributes = [
 
 const validUpdateParams = {
   name: "newName",
-  keywords: "newKeywords",
+  keywords: ["newKeywords"],
   logo: "https://logo.com",
   url: "https://url.com",
   is_test_bank: true,
@@ -45,7 +45,7 @@ interface institutionTestCase {
   body: {
     id?: string;
     name: string;
-    keywords: string;
+    keywords: string[];
     logo: string;
     url: string;
     is_test_bank: boolean;

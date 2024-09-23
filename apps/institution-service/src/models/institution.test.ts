@@ -16,7 +16,9 @@ describe("Institution Model", () => {
 
     expect(createdInstitution).toHaveProperty("id");
     expect(createdInstitution.name).toBe(newInstitutionAttributes.name);
-    expect(createdInstitution.keywords).toBe(newInstitutionAttributes.keywords);
+    expect(createdInstitution.keywords).toStrictEqual(
+      newInstitutionAttributes.keywords,
+    );
     expect(createdInstitution.logo).toBe(newInstitutionAttributes.logo);
     expect(createdInstitution.url).toBe(newInstitutionAttributes.url);
     expect(createdInstitution.is_test_bank).toBeTruthy();

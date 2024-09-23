@@ -11,7 +11,7 @@ module.exports = {
       {
         id: seedInstitutionId,
         name: "Wells Fargo",
-        keywords: "wells, fargo",
+        keywords: ["wells", "fargo"],
         logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
         url: "https://wellsfargo.com",
         is_test_bank: false,
@@ -21,7 +21,7 @@ module.exports = {
       {
         id: secondSeedInstitutionId,
         name: "Chase Bank",
-        keywords: "chase, bank",
+        keywords: ["chase", "bank"],
         logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-78c7b591-6512-9c17-b092-1cddbd3c85ba_100x100.png",
         url: "https://chase.com",
         is_test_bank: false,
