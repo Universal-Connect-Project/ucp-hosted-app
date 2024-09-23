@@ -15,7 +15,7 @@ describe("<Institutions />", () => {
     render(<Institutions />);
 
     const rowWithTestInstitution = screen.getByTestId(
-      `${INSTITUTIONS_ROW_TEST_ID}-${testInstitution.ucp_id}`,
+      `${INSTITUTIONS_ROW_TEST_ID}-${testInstitution.id}`,
     );
 
     const [mxChip, sophtronChip] = within(
@@ -32,7 +32,7 @@ describe("<Institutions />", () => {
   it("renders the name of the institution and the ucp id", () => {
     render(<Institutions />);
 
-    expect(screen.getByText(testInstitution.ucp_id)).toBeInTheDocument();
+    expect(screen.getByText(testInstitution.id)).toBeInTheDocument();
     expect(screen.getByText(testInstitution.name)).toBeInTheDocument();
   });
 });

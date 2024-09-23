@@ -1,10 +1,3 @@
-import React from "react";
-import PageTitle from "../shared/components/PageTitle";
-import {
-  INSTITUTIONS_PAGE_TITLE,
-  INSTITUTIONS_ROW_TEST_ID,
-  INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
-} from "./constants";
 import {
   Avatar,
   Chip,
@@ -15,6 +8,13 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import React from "react";
+import PageTitle from "../shared/components/PageTitle";
+import {
+  INSTITUTIONS_PAGE_TITLE,
+  INSTITUTIONS_ROW_TEST_ID,
+  INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
+} from "./constants";
 import styles from "./institutions.module.css";
 import { institutions } from "./testData/institutions";
 
@@ -34,10 +34,10 @@ const Institutions = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {institutions.map(({ aggregators, logo, name, ucp_id }) => (
+            {institutions.map(({ aggregators, logo, name, id }) => (
               <TableRow
-                data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${ucp_id}`}
-                key={ucp_id}
+                data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
+                key={id}
               >
                 <TableCell>
                   <div className={styles.institutionCell}>
@@ -45,7 +45,7 @@ const Institutions = () => {
                     <div>{name}</div>
                   </div>
                 </TableCell>
-                <TableCell>{ucp_id}</TableCell>
+                <TableCell>{id}</TableCell>
                 <TableCell>
                   <div className={styles.aggregatorsCell}>
                     {[...aggregators]

@@ -22,15 +22,14 @@ type Keys = {
 };
 
 const institutionAttributes = [
+  "id",
   "name",
   "keywords",
   "logo",
   "url",
-  "ucp_id",
   "is_test_bank",
   "routing_numbers",
 ];
-const getUniqueId = () => Cypress._.uniqueId(Date.now().toString());
 
 const validUpdateParams = {
   name: "newName",
@@ -44,7 +43,7 @@ const validUpdateParams = {
 interface institutionTestCase {
   description: string;
   body: {
-    ucp_id?: string;
+    id?: string;
     name: string;
     keywords: string;
     logo: string;
@@ -203,7 +202,7 @@ describe("POST /institutions (Institution create)", () => {
       cy.request({
         url: `http://localhost:${PORT}/institutions`,
         method: "POST",
-        body: { ...testCase.body, ucp_id: `UCP-${getUniqueId()}` },
+        body: testCase.body,
         headers: {
           Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
         },
@@ -222,7 +221,6 @@ describe("POST /institutions (Institution create)", () => {
       method: "POST",
       body: {
         ...testInstitution,
-        ucp_id: getUniqueId(),
       },
       headers: {
         Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
@@ -241,7 +239,6 @@ describe("POST /institutions (Institution create)", () => {
       method: "POST",
       body: {
         ...testInstitution,
-        ucp_id: getUniqueId(),
       },
       headers: {
         Authorization: createAuthorizationHeader(
@@ -258,40 +255,53 @@ describe("POST /institutions (Institution create)", () => {
   });
 });
 
-let newInstitutionData: { ucp_id: string };
+let newInstitutionData: { id: string };
 
 describe("PUT /institutions/:id (Institution update)", () => {
   before(() => {
-    const getUniqueId = () => Cypress._.uniqueId(Date.now().toString());
     cy.request({
       url: `http://localhost:${PORT}/institutions`,
       method: "POST",
       body: {
         ...testInstitution,
-        ucp_id: getUniqueId(),
       },
       headers: {
         Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
       },
-    }).then((response: Cypress.Response<{ ucp_id: string }>) => {
+    }).then((response: Cypress.Response<{ id: string }>) => {
       newInstitutionData = response.body;
     });
   });
 
   runTokenInvalidCheck({
-    url: `http://localhost:${PORT}/institutions/${newInstitutionData?.ucp_id}`,
+    url: `http://localhost:${PORT}/institutions/${newInstitutionData?.id}`,
     method: "PUT",
   });
 
   runInvalidPermissionCheck({
-    url: `http://localhost:${PORT}/institutions/${newInstitutionData?.ucp_id}`,
+    url: `http://localhost:${PORT}/institutions/${newInstitutionData?.id}`,
     token_env_var: "USER_ACCESS_TOKEN",
     method: "PUT",
   });
 
-  it("gets 404 when trying to update an institution that doesnt exist", () => {
+  it("gets 404 when trying to update an institution with invalid institution id", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions/wrongInstitutionId`,
+      method: "PUT",
+      body: validUpdateParams,
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+      failOnStatusCode: false,
+    }).then((response: Cypress.Response<{ error: string }>) => {
+      expect(response.status).to.eq(404);
+      expect(response.body.error).to.eq("Invalid institution Id");
+    });
+  });
+
+  it("gets 404 when trying to update an institution that doesnt exist", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions/df25313d-d78c-458a-94c3-e20fdd2b94ce`,
       method: "PUT",
       body: validUpdateParams,
       headers: {
@@ -306,7 +316,7 @@ describe("PUT /institutions/:id (Institution update)", () => {
 
   it("gets 200 updated when user has permission to update and params are valid", () => {
     cy.request({
-      url: `http://localhost:${PORT}/institutions/${newInstitutionData.ucp_id}`,
+      url: `http://localhost:${PORT}/institutions/${newInstitutionData.id}`,
       method: "PUT",
       body: validUpdateParams,
       headers: {
@@ -320,7 +330,7 @@ describe("PUT /institutions/:id (Institution update)", () => {
   institutionValidationTestCases.forEach((testCase) => {
     it(`should fail validation when ${testCase.description}`, () => {
       cy.request({
-        url: `http://localhost:${PORT}/institutions/${newInstitutionData.ucp_id}`,
+        url: `http://localhost:${PORT}/institutions/${newInstitutionData.id}`,
         method: "PUT",
         body: testCase.body,
         headers: {
@@ -336,7 +346,7 @@ describe("PUT /institutions/:id (Institution update)", () => {
 
   it("should prevent an aggregator from updating institutions with other aggregator implementations", () => {
     const institutionWithOtherAggregatorImplementationsId =
-      "UCP-024b97a3cd4d4df";
+      "ee6d71dc-e693-4fc3-a775-53c378bc5066"; // Alabama Credit Union
     cy.request({
       url: `http://localhost:${PORT}/institutions/${institutionWithOtherAggregatorImplementationsId}`,
       method: "PUT",
@@ -356,11 +366,11 @@ describe("PUT /institutions/:id (Institution update)", () => {
   });
 
   it("should allow an aggregator to update institutions with no other aggregator implementations", () => {
-    const institutionWithNoAggregators = "UCP-testNoAggImplementations";
+    const institutionWithNoAggregators = "12d9889b-d74e-4e67-8161-96aa2b8c52da"; // testNoAggregators
     cy.request({
       url: `http://localhost:${PORT}/institutions/${institutionWithNoAggregators}`,
       method: "PUT",
-      body: validUpdateParams,
+      body: { ...validUpdateParams, name: "testNoAggregators" },
       headers: {
         Authorization: createAuthorizationHeader(
           AGGREGATOR_USER_ACCESS_TOKEN_ENV,
@@ -373,11 +383,11 @@ describe("PUT /institutions/:id (Institution update)", () => {
   });
 
   it("should allow an aggregator to update when it is the only implementation on the institution", () => {
-    const testExampleUcpId = "UCP-testExampleA";
+    const testExampleInstitutionId = "5e498f60-3496-4299-96ed-f8eb328ae8af"; // testExampleA
     cy.request({
-      url: `http://localhost:${PORT}/institutions/${testExampleUcpId}`,
+      url: `http://localhost:${PORT}/institutions/${testExampleInstitutionId}`,
       method: "PUT",
-      body: validUpdateParams,
+      body: { ...validUpdateParams, name: "testExampleA" },
       headers: {
         Authorization: createAuthorizationHeader(
           AGGREGATOR_USER_ACCESS_TOKEN_ENV,

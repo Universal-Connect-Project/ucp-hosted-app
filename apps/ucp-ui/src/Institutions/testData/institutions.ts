@@ -1,5 +1,5 @@
 export const testInstitution = {
-  ucp_id: "UCP-8847d925b00198f",
+  id: "cb5b312f-bd10-44d8-a982-ddd8f25b5fb2",
   name: "Wells Fargo CEO",
   keywords: null,
   logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
@@ -36,7 +36,7 @@ export const institutions = [
     keywords: "test, example, tex",
     logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     url: "https://test-example.com",
-    ucp_id: "UCP-testexamplea",
+    id: "9dfbd80b-137c-445b-8a0a-dd106d09df7e",
     is_test_bank: true,
     routing_numbers: [],
     aggregators: [
@@ -57,7 +57,7 @@ export const institutions = [
     keywords: "test, example, tex",
     logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     url: "https://test-example.com",
-    ucp_id: "UCP-testexample1",
+    id: "9721a415-05e1-4250-a866-41d5f6c40815",
     is_test_bank: true,
     routing_numbers: [],
     aggregators: [
@@ -78,7 +78,7 @@ export const institutions = [
     keywords: "test, example, tex",
     logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     url: "https://test-example.com",
-    ucp_id: "UCP-testexample2",
+    id: "2038a437-1e58-4f8f-9d09-29544f0f50c2",
     is_test_bank: true,
     routing_numbers: [],
     aggregators: [
@@ -99,7 +99,7 @@ export const institutions = [
     keywords: "test, example, tex",
     logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     url: "https://test-example.com",
-    ucp_id: "UCP-testexample3",
+    id: "eb069cd6-144a-4bf5-a83a-69a6848525b9",
     is_test_bank: true,
     routing_numbers: [],
     aggregators: [
@@ -120,7 +120,7 @@ export const institutions = [
     keywords: "test, example, tex",
     logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     url: "https://test-example.com",
-    ucp_id: "UCP-testexample4",
+    id: "3c3ee26d-5391-4706-80c5-24a0ee9be0f3",
     is_test_bank: true,
     routing_numbers: [],
     aggregators: [
@@ -141,7 +141,7 @@ export const institutions = [
     keywords: "test, example, tex",
     logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     url: "https://test-example.com",
-    ucp_id: "UCP-testexample5",
+    id: "1b052901-5d2c-4d54-9fb8-c161234fc566",
     is_test_bank: true,
     routing_numbers: [],
     aggregators: [
@@ -162,7 +162,7 @@ export const institutions = [
     keywords: "test, example, tex",
     logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     url: "https://test-example.com",
-    ucp_id: "UCP-testexample6",
+    id: "b45b911f-c108-4e8b-ab55-a9f5ef33f5cf",
     is_test_bank: true,
     routing_numbers: [],
     aggregators: [
@@ -183,7 +183,7 @@ export const institutions = [
     keywords: "test, example, tex",
     logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     url: "https://test-example.com",
-    ucp_id: "UCP-testexample7",
+    id: "12e80d81-ae8d-491f-acbf-798b854742a7",
     is_test_bank: true,
     routing_numbers: [],
     aggregators: [
@@ -200,7 +200,7 @@ export const institutions = [
     ],
   },
   {
-    ucp_id: "UCP-bb5296bd5aae5d9",
+    id: "b7859f65-5617-490e-bbbb-141852025057",
     name: "MX Bank",
     keywords: "Gringotts, MX Bank",
     logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
