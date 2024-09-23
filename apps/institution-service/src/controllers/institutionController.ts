@@ -64,7 +64,7 @@ export const createInstitution = async (req: Request, res: Response) => {
 
 interface updateInstitutionParams {
   name: string;
-  keywords: string;
+  keywords: string[];
   logo: string;
   url: string;
   is_test_bank: boolean;

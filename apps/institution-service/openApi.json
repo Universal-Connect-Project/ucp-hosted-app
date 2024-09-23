@@ -40,7 +40,7 @@
                     {
                       "id": "b2c01271-10e3-4f24-9236-44719e41fb40",
                       "name": "FinBank Profiles - A",
-                      "keywords": "finbank, finicity",
+                      "keywords": ["finbank", "finicity"],
                       "logo": "https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/102105/icon.svg",
                       "url": "http://www.finbank.com",
                       "is_test_bank": true,
@@ -57,7 +57,7 @@
                     {
                       "id": "a44e81b6-127f-46fb-be3f-8898354c95f1",
                       "name": "MX Bank (Oauth)",
-                      "keywords": "Gringotts, MX Bank, oauth",
+                      "keywords": ["Gringotts", "MX Bank", "oauth"],
                       "logo": "https://s3.amazonaws.com/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
                       "url": "https://mx.com",
                       "is_test_bank": true,
@@ -74,7 +74,7 @@
                     {
                       "id": "ee0afbc5-47ab-4e6e-aa32-fea3a91fa606",
                       "name": "Alabama Credit Union",
-                      "keywords": "ACU, Alabama CU, Alabama Credit Union",
+                      "keywords": ["ACU", "Alabama CU", "Alabama Credit Union"],
                       "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-c4d51160-465e-1d78-4a50-fd6836684c3a_100x100.png",
                       "url": "https://www.alabamacu.com/",
                       "is_test_bank": false,
@@ -146,7 +146,10 @@
                     "type": "string"
                   },
                   "keywords": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "logo": {
                     "type": "string"
@@ -180,7 +183,7 @@
                     "institution": {
                       "id": "UCP-024b97a3cd4d4df",
                       "name": "FinBank Profiles - A",
-                      "keywords": "finbank, finicity",
+                      "keywords": ["finbank", "finicity"],
                       "logo": "https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/102105/icon.svg",
                       "url": "http://www.finbank.com",
                       "is_test_bank": true,

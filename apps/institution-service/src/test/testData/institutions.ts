@@ -8,7 +8,7 @@ export const seedInstitutionName = "Wells Fargo";
 export interface InstitutionAttrs {
   id?: UUID;
   name: string;
-  keywords: string;
+  keywords: string[];
   logo: string;
   url: string;
   is_test_bank: boolean;
@@ -17,7 +17,7 @@ export interface InstitutionAttrs {
 
 export const testInstitution: InstitutionAttrs = {
   name: "Test Bank #1",
-  keywords: "test, bank",
+  keywords: ["test", "bank"],
   logo: "https://logo.com",
   url: "https://url.com",
   is_test_bank: true,
@@ -27,7 +27,7 @@ export const testInstitution: InstitutionAttrs = {
 export const cachedInstitutionFromSeed = {
   name: "Wells Fargo",
   is_test_bank: false,
-  keywords: "wells, fargo",
+  keywords: ["wells", "fargo"],
   logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
   routing_numbers: ["123", "456"],
   sophtron: {
@@ -44,7 +44,7 @@ export const institutionWithAggregatorQueryObj = {
   dataValues: {
     name: "Wells Fargo",
     is_test_bank: false,
-    keywords: "wells, fargo",
+    keywords: ["wells", "fargo"],
     logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
     routing_numbers: ["123", "456"],
   },

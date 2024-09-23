@@ -7,7 +7,7 @@ import { Institution } from "../models/institution";
 
 export interface CachedInstitution {
   name: string;
-  keywords: string;
+  keywords: string[];
   logo: string;
   url: string;
   id: string;
