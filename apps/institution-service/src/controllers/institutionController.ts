@@ -4,7 +4,6 @@ import { validate } from "uuid";
 import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
-import { randomUUID } from "crypto";
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -48,13 +47,7 @@ export const getInstitutionCachedList = async (req: Request, res: Response) => {
 
 export const createInstitution = async (req: Request, res: Response) => {
   try {
-    const body: Institution = { ...req.body } as Institution;
-
-    if (!body?.ucp_id) {
-      body.ucp_id = randomUUID();
-    }
-
-    const institution = await Institution.create(body);
+    const institution = await Institution.create(req.body as Institution);
 
     res.status(201).json(institution);
   } catch (error) {
