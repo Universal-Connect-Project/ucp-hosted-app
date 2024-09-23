@@ -5,6 +5,7 @@ import {
   screen,
   userEvent,
   waitFor,
+  waitForLoad,
 } from "../../shared/test/testUtils";
 import AddInstitution from "./AddInstitution";
 import {
@@ -29,12 +30,15 @@ import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_CREATE_INSTITUTION_URL } from "./api";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import { INVALID_URL_TEXT } from "../../shared/utils/validation";
+import { INSTITUTION_SERVICE_PERMISSIONS_URL } from "../api";
 
 const renderAndSubmit = async () => {
   render(<AddInstitution />);
 
   await userEvent.click(
-    screen.getByText(INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT),
+    await screen.findByRole("button", {
+      name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+    }),
   );
 
   await userEvent.type(
@@ -80,6 +84,24 @@ const renderAndSubmit = async () => {
 };
 
 describe("<AddInstitution />", () => {
+  it("doesn't show the add button if you don't have access", async () => {
+    server.use(
+      http.get(INSTITUTION_SERVICE_PERMISSIONS_URL, () =>
+        HttpResponse.json({}),
+      ),
+    );
+
+    render(<AddInstitution />);
+
+    await waitForLoad();
+
+    expect(
+      screen.queryByRole("button", {
+        name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+      }),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows a snackbar and redirects on success", async () => {
     await renderAndSubmit();
 
@@ -123,7 +145,7 @@ describe("<AddInstitution />", () => {
     render(<AddInstitution />);
 
     await userEvent.click(
-      screen.getByRole("button", {
+      await screen.findByRole("button", {
         name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
       }),
     );
@@ -158,7 +180,7 @@ describe("<AddInstitution />", () => {
     render(<AddInstitution />);
 
     await userEvent.click(
-      screen.getByRole("button", {
+      await screen.findByRole("button", {
         name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
       }),
     );
@@ -204,7 +226,9 @@ describe("<AddInstitution />", () => {
     render(<AddInstitution />);
 
     await userEvent.click(
-      screen.getByText(INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT),
+      await screen.findByRole("button", {
+        name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+      }),
     );
 
     await userEvent.click(
@@ -218,7 +242,9 @@ describe("<AddInstitution />", () => {
     render(<AddInstitution />);
 
     await userEvent.click(
-      screen.getByText(INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT),
+      await screen.findByRole("button", {
+        name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+      }),
     );
 
     await userEvent.type(
@@ -242,7 +268,9 @@ describe("<AddInstitution />", () => {
     render(<AddInstitution />);
 
     await userEvent.click(
-      screen.getByText(INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT),
+      await screen.findByRole("button", {
+        name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
+      }),
     );
 
     await userEvent.click(

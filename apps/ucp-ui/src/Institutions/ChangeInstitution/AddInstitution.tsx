@@ -48,6 +48,8 @@ import { displaySnackbar } from "../../shared/reducers/snackbar";
 import { useNavigate } from "react-router-dom";
 import { institutionRoute } from "../../shared/constants/routes";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
+import { useGetInstitutionPermissionsQuery } from "../api";
+import { InvisibleLoader } from "../../shared/components/Skeleton";
 
 interface Inputs {
   name: string;
@@ -71,6 +73,11 @@ const AddInstitution = () => {
   const handleCloseDrawer = () => {
     setIsOpen(false);
   };
+
+  const {
+    data: institutionPermissions,
+    isLoading: isInstitutionPermissionsLoading,
+  } = useGetInstitutionPermissionsQuery();
 
   const navigate = useNavigate();
 
@@ -143,14 +150,17 @@ const AddInstitution = () => {
 
   return (
     <>
-      <Button
-        onClick={handleOpenDrawer}
-        size="medium"
-        startIcon={<Add />}
-        variant="contained"
-      >
-        {INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT}
-      </Button>
+      {isInstitutionPermissionsLoading && <InvisibleLoader />}
+      {institutionPermissions?.canCreateInstitution && (
+        <Button
+          onClick={handleOpenDrawer}
+          size="medium"
+          startIcon={<Add />}
+          variant="contained"
+        >
+          {INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT}
+        </Button>
+      )}
       <Drawer anchor="right" onClose={handleCloseDrawer} open={isOpen}>
         <form
           className={styles.form}

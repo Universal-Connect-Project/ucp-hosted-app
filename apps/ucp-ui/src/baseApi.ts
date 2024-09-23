@@ -5,6 +5,7 @@ import { RootState } from "./store";
 export enum TagTypes {
   API_KEYS = "apiKeys",
   INSTITUTIONS = "institutions",
+  INSTITUTION_PERMISSIONS = "institutionPermissions",
 }
 
 export const api = createApi({

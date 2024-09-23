@@ -5,11 +5,18 @@ import {
   AUTHENTICATION_SERVICE_ROTATE_API_KEYS_URL,
 } from "../../ApiKeys/api";
 import { INSTITUTION_SERVICE_CREATE_INSTITUTION_URL } from "../../Institutions/ChangeInstitution/api";
-import { createInstitutionResponse } from "./testData/institution";
+import {
+  createInstitutionResponse,
+  institutionPermissionsResponse,
+} from "./testData/institution";
+import { INSTITUTION_SERVICE_PERMISSIONS_URL } from "../../Institutions/api";
 
 export const handlers = [
   http.post(INSTITUTION_SERVICE_CREATE_INSTITUTION_URL, () =>
     HttpResponse.json(createInstitutionResponse),
+  ),
+  http.get(INSTITUTION_SERVICE_PERMISSIONS_URL, () =>
+    HttpResponse.json(institutionPermissionsResponse),
   ),
   http.post(
     AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL,
