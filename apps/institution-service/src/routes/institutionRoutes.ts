@@ -7,8 +7,7 @@ import {
   updateInstitution,
 } from "../controllers/institutionController";
 import {
-  institutionCreateSchema,
-  institutionUpdateSchema,
+  institutionSchema,
   validate,
   validateUserCanEditInstitution,
 } from "../middlewares/validationMiddleware";
@@ -28,7 +27,7 @@ router.get(
 
 router.post(
   "/",
-  [validateUIAudience, validate(institutionCreateSchema)],
+  [validateUIAudience, validate(institutionSchema)],
   scopeIncludesAny(
     `${UiUserPermissions.CREATE_INSTITUTION} ${UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR}`,
   ),
@@ -40,7 +39,7 @@ router.put(
   [
     validateUIAudience,
     validateUserCanEditInstitution,
-    validate(institutionUpdateSchema),
+    validate(institutionSchema),
   ],
   scopeIncludesAny(
     `${UiUserPermissions.UPDATE_INSTITUTION} ${UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR}`,

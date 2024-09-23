@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ValidationError } from "sequelize";
+import { validate } from "uuid";
 import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
@@ -63,7 +64,7 @@ export const createInstitution = async (req: Request, res: Response) => {
         message: error.errors[0]?.message,
       });
     } else {
-      res.status(400).json({ error: "Unexpected error" });
+      res.status(400).json({ error: error });
     }
   }
 };
@@ -81,6 +82,10 @@ export const updateInstitution = async (req: Request, res: Response) => {
   try {
     const institutionId = req.params.id;
     const updateData = req.body as updateInstitutionParams;
+
+    if (!validate(institutionId)) {
+      return res.status(404).json({ error: "Invalid institution Id" });
+    }
 
     const institution = await Institution.findByPk(institutionId);
 

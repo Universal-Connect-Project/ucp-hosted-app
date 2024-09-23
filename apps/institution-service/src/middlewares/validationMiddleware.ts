@@ -16,7 +16,7 @@ export const validate = (schema: ObjectSchema) => {
   };
 };
 
-export const institutionUpdateSchema = Joi.object({
+export const institutionSchema = Joi.object({
   name: Joi.string(),
   keywords: Joi.string().allow(""),
   logo: Joi.string()
@@ -37,8 +37,6 @@ export const institutionUpdateSchema = Joi.object({
       "array.base": "Routing numbers must be an array of strings",
     }),
 });
-
-export const institutionCreateSchema = institutionUpdateSchema;
 
 export interface DecodedToken {
   permissions: string[];

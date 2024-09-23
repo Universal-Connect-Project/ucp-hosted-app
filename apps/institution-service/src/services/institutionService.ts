@@ -11,11 +11,11 @@ export function transformInstitutionToCachedInstitution(
 ) {
   const { aggregatorIntegrations, dataValues } = institution;
 
-  const { ucp_id, keywords, logo, url, is_test_bank, routing_numbers, name } =
+  const { id, keywords, logo, url, is_test_bank, routing_numbers, name } =
     dataValues;
   const institutionObj = {
     name,
-    ucp_id,
+    id,
     keywords,
     logo,
     url,

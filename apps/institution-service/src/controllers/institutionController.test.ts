@@ -1,5 +1,7 @@
+import { UUID } from "crypto";
 import { Request, Response } from "express";
 import { Model } from "sequelize";
+import { v4 as uuidv4 } from "uuid";
 import { Institution } from "../models/institution";
 import {
   cachedInstitutionFromSeed,
@@ -15,11 +17,7 @@ import {
 import { randomUUID } from "crypto";
 
 const createNewInstitution = async () => {
-  const newInstitutionId = randomUUID();
-  return await Institution.create({
-    ...testInstitution,
-    ucp_id: newInstitutionId,
-  });
+  return await Institution.create(testInstitution);
 };
 
 describe("institutionController", () => {
@@ -64,11 +62,10 @@ describe("institutionController", () => {
 
   describe("createInstitution", () => {
     it("creates a new institution with valid params", async () => {
-      const newInstitutionId = randomUUID();
+      const newInstitutionId = uuidv4() as UUID;
 
       const institutionBody = {
         ...testInstitution,
-        ucp_id: newInstitutionId,
         name: `createTest-${newInstitutionId}`,
       };
 
@@ -172,37 +169,10 @@ describe("institutionController", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("responds with an error when an institution with that ucp_id already exists", async () => {
-      const req: Request = {
-        body: {
-          ...testInstitution,
-          ucp_id: seedInstitutionId,
-          name: "createTest",
-        },
-      } as unknown as Request;
-
-      const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      } as unknown as Response;
-
-      await createInstitution(req, res);
-
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({
-        error: "Invalid Institution Data",
-        message: "ucp_id must be unique",
-      });
-    });
-
     it("responds with success when an institution with the same name already exists", async () => {
-      const newInstitutionId = randomUUID();
-
       const req: Request = {
         body: {
           ...testInstitution,
-          ucp_id: newInstitutionId,
           name: seedInstitutionName,
         },
       } as unknown as Request;
@@ -224,8 +194,28 @@ describe("institutionController", () => {
       jest.restoreAllMocks();
     });
 
+    it("responds with 404 when institutionId is invalid", async () => {
+      const invalidInstitutionId = "invalidInstitutionId";
+      const req = {
+        params: { id: invalidInstitutionId },
+        body: { name: "newName" },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await updateInstitution(req, res);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Invalid institution Id",
+      });
+    });
+
     it("responds with 404 when institution is not found", async () => {
-      const nonExistentInstitutionId = "nonExistentInstitutionId";
+      const nonExistentInstitutionId = "b2c01271-10e3-4f24-9236-44719e41fb40";
       const req = {
         params: { id: nonExistentInstitutionId },
         body: { name: "newName" },
@@ -246,7 +236,7 @@ describe("institutionController", () => {
 
     it("responds with 200 when institution exists and attributes are valid", async () => {
       const institution = await createNewInstitution();
-      const existingUcpId = institution.ucp_id;
+      const existingInstitutionId = institution.id;
 
       const updateBody = {
         name: "newName",
@@ -258,7 +248,7 @@ describe("institutionController", () => {
       };
 
       const req = {
-        params: { id: existingUcpId },
+        params: { id: existingInstitutionId },
         body: updateBody,
       } as unknown as Request;
 
@@ -275,7 +265,7 @@ describe("institutionController", () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         institution: expect.objectContaining({
           ...updateBody,
-          ucp_id: existingUcpId,
+          id: existingInstitutionId,
         }),
       });
     });

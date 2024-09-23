@@ -1,3 +1,4 @@
+import { UUID } from "crypto";
 import {
   Association,
   CreationOptional,
@@ -16,7 +17,7 @@ export class Institution extends Model<
   InferAttributes<Institution, { omit: "aggregatorIntegrations" }>,
   InferCreationAttributes<Institution, { omit: "aggregatorIntegrations" }>
 > {
-  declare ucp_id: string;
+  declare id?: UUID;
   declare name: string;
   declare keywords: string | null;
   declare logo: string;
@@ -41,21 +42,29 @@ export class Institution extends Model<
 
 Institution.init(
   {
-    ucp_id: {
-      type: DataTypes.TEXT,
+    id: {
+      type: DataTypes.UUID,
       unique: true,
       primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
     },
     name: {
       type: DataTypes.TEXT,
+      allowNull: false,
     },
     keywords: DataTypes.TEXT,
     logo: DataTypes.TEXT,
     url: DataTypes.TEXT,
     is_test_bank: DataTypes.BOOLEAN,
     routing_numbers: DataTypes.ARRAY(DataTypes.TEXT),
-    createdAt: DataTypes.DATE,
-    updatedAt: DataTypes.DATE,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
   },
   {
     tableName: "institutions",
@@ -65,7 +74,7 @@ Institution.init(
 );
 
 Institution.hasMany(AggregatorIntegration, {
-  sourceKey: "ucp_id",
+  sourceKey: "id",
   foreignKey: "institution_id",
   as: "aggregatorIntegrations",
 });

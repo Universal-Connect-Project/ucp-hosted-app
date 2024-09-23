@@ -4,10 +4,10 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.addColumn("providers", "institution_id", {
-      type: Sequelize.TEXT,
+      type: Sequelize.UUID,
       references: {
         model: "institutions",
-        key: "ucp_id",
+        key: "id",
       },
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
