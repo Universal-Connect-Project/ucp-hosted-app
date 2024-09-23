@@ -35,7 +35,7 @@ export const institutionsApi = api.injectEndpoints({
         return {
           body: {
             is_test_bank: isTestInstitution,
-            keywords: filterJunk(keywords).join(" "),
+            keywords: filterJunk(keywords),
             name,
             logo: logoUrl,
             url,
