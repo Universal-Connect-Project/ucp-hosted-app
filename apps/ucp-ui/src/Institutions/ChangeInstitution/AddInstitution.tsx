@@ -104,9 +104,9 @@ const AddInstitution = () => {
   const createInstitution = (body: CreateInstitution) => {
     mutateCreateInstitution(body)
       .unwrap()
-      .then(({ ucp_id }) => {
+      .then(({ id }) => {
         dispatch(displaySnackbar(INSTITUTION_ADD_SUCCESS_TEXT));
-        navigate(institutionRoute.createPath({ institutionId: ucp_id }));
+        navigate(institutionRoute.createPath({ institutionId: id }));
       })
       .catch(() => {});
   };

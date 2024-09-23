@@ -68,6 +68,10 @@ Cypress.Commands.add("loginWithoutWidgetRole", () =>
   ),
 );
 
+Cypress.Commands.add("loginSuperAdmin", () =>
+  login("auth_username_super_admin", "auth_password_super_admin"),
+);
+
 Cypress.Commands.add("getAccessToken", () =>
   cy.wrap(localStorage).invoke("getItem", ACCESS_TOKEN_LOCAL_STORAGE_KEY),
 );
@@ -77,6 +81,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       getAccessToken(): Chainable<string>;
+      loginSuperAdmin(): Chainable<void>;
       loginWithWidgetRole(): Chainable<void>;
       loginWithoutWidgetRole(): Chainable<void>;
     }

@@ -11,7 +11,7 @@ export interface CreateInstitution {
 }
 
 interface Institution {
-  ucp_id: string;
+  id: string;
 }
 
 const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
