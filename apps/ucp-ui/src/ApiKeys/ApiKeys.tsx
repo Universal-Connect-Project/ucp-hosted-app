@@ -28,6 +28,7 @@ import GenerateKeys from "./GenerateKeys";
 import ApiKey from "./ApiKey";
 import ManageApiKeys from "./ManageApiKeys";
 import PageTitle from "../shared/components/PageTitle";
+import PageContent from "../shared/components/PageContent";
 
 const ApiKeys = () => {
   const { user } = useAuth0();
@@ -99,37 +100,41 @@ const ApiKeys = () => {
   }
 
   return (
-    <Stack spacing={3.5}>
-      <PageTitle>Widget Management</PageTitle>
-      <Card className={styles.apiKeysCard} variant="outlined">
-        <CardHeader
-          title={
-            <Stack alignItems="center" direction="row" spacing={0.5}>
-              <ClickAwayListener onClickAway={handleCloseTooltip}>
-                <Tooltip open={isTooltipOpen} title={API_KEY_TOOLTIP_TEXT}>
-                  <IconButton
-                    color="primary"
-                    data-testid={API_KEY_TOOLTIP_TEST_ID}
-                    onClick={handleOpenTooltip}
-                  >
-                    <InfoOutlined />
-                  </IconButton>
-                </Tooltip>
-              </ClickAwayListener>
-              <div className={styles.cardTitle}>{API_KEYS_CARD_TITLE_TEXT}</div>
-              {shouldShowManageButton && (
-                <ManageApiKeys isLoading={isGetApiKeysFetching} />
-              )}
-            </Stack>
-          }
-          titleTypographyProps={{
-            variant: "h6",
-          }}
-        />
-        <Divider />
-        {cardBody}
-      </Card>
-    </Stack>
+    <PageContent>
+      <Stack spacing={3.5}>
+        <PageTitle>Widget Management</PageTitle>
+        <Card className={styles.apiKeysCard} variant="outlined">
+          <CardHeader
+            title={
+              <Stack alignItems="center" direction="row" spacing={0.5}>
+                <ClickAwayListener onClickAway={handleCloseTooltip}>
+                  <Tooltip open={isTooltipOpen} title={API_KEY_TOOLTIP_TEXT}>
+                    <IconButton
+                      color="primary"
+                      data-testid={API_KEY_TOOLTIP_TEST_ID}
+                      onClick={handleOpenTooltip}
+                    >
+                      <InfoOutlined />
+                    </IconButton>
+                  </Tooltip>
+                </ClickAwayListener>
+                <div className={styles.cardTitle}>
+                  {API_KEYS_CARD_TITLE_TEXT}
+                </div>
+                {shouldShowManageButton && (
+                  <ManageApiKeys isLoading={isGetApiKeysFetching} />
+                )}
+              </Stack>
+            }
+            titleTypographyProps={{
+              variant: "h6",
+            }}
+          />
+          <Divider />
+          {cardBody}
+        </Card>
+      </Stack>
+    </PageContent>
   );
 };
 

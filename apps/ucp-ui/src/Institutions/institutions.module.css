@@ -19,8 +19,8 @@
     border: solid 1px var(--mui-palette-divider);
     border-bottom: none;
     border-collapse: separate;
-    border-radius: 4px 4px 0 0;
-
+    border-radius: var(--mui-shape-borderRadius) var(--mui-shape-borderRadius) 0
+      0;
     width: unset;
   }
 }
@@ -42,4 +42,11 @@
   flex-direction: row;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }

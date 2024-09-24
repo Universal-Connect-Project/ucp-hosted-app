@@ -3,3 +3,7 @@
     opacity: 0;
   }
 }
+
+.invisible {
+  display: none;
+}

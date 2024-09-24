@@ -15,13 +15,18 @@ import {
   AUTH0_CLIENT_AUDIENCE,
   DefaultPermissions,
   UiClientPermissions,
+  UiUserPermissions,
 } from "@repo/shared-utils";
 import "./style.module.css";
 import { LDProvider } from "launchdarkly-react-client-sdk";
 import { LAUNCH_DARKLY_CLIENT_ID } from "./shared/constants/environment";
 
 const App: React.FC = () => {
-  const scope = `${Object.values(DefaultPermissions).join(" ")} ${Object.values(UiClientPermissions).join(" ")}`;
+  const scope = [DefaultPermissions, UiClientPermissions, UiUserPermissions]
+    .map((permissions) => Object.values(permissions))
+    .reduce((acc, permissions) => [...acc, ...permissions], [])
+    .join(" ");
+
   return (
     <LDProvider clientSideID={LAUNCH_DARKLY_CLIENT_ID}>
       <CssVarsProvider theme={muiTheme}>

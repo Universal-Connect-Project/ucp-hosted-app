@@ -6,20 +6,43 @@ import { createStore } from "../../store";
 import Snackbars from "../../Layout/Snackbars";
 import { Store } from "@reduxjs/toolkit";
 import { SKELETON_LOADER_TEST_ID } from "../components/constants";
+import { MemoryRouter, useLocation } from "react-router-dom";
+
+const locationTestId = "location-display";
+
+export const expectLocation = (path: string) =>
+  expect(screen.getByTestId(locationTestId)).toHaveTextContent(path);
+
+export const LocationDisplay = () => {
+  const location = useLocation();
+
+  return <div data-testid={locationTestId}>{location.pathname}</div>;
+};
 
 const AllTheProviders = ({
   children,
+  initialRoute,
+  shouldRenderRouter,
   shouldRenderSnackbars,
   store,
 }: {
   children: React.ReactNode;
+  initialRoute: string;
+  shouldRenderRouter: boolean;
   shouldRenderSnackbars: boolean;
   store: Store;
 }) => {
   return (
     <ReduxProvider store={store}>
       {shouldRenderSnackbars && <Snackbars />}
-      {children}
+      {shouldRenderRouter ? (
+        <MemoryRouter initialEntries={[initialRoute]}>
+          <LocationDisplay />
+          {children}
+        </MemoryRouter>
+      ) : (
+        children
+      )}
     </ReduxProvider>
   );
 };
@@ -27,13 +50,22 @@ const AllTheProviders = ({
 const customRender = (
   ui: ReactElement,
   {
+    initialRoute = "/",
+    shouldRenderRouter = true,
     shouldRenderSnackbars = true,
     store = createStore(),
-  }: { shouldRenderSnackbars?: boolean; store?: Store } = {},
+  }: {
+    initialRoute?: string;
+    shouldRenderRouter?: boolean;
+    shouldRenderSnackbars?: boolean;
+    store?: Store;
+  } = {},
 ) =>
   render(ui, {
     wrapper: (props) => (
       <AllTheProviders
+        initialRoute={initialRoute}
+        shouldRenderRouter={shouldRenderRouter}
         shouldRenderSnackbars={shouldRenderSnackbars}
         store={store}
         {...props}

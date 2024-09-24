@@ -1,6 +1,5 @@
 import {
   ArrowRightOutlined,
-  Close,
   RotateRightOutlined,
   Settings,
 } from "@mui/icons-material";
@@ -8,10 +7,10 @@ import {
   Button,
   DialogActions,
   Drawer,
+  List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Stack,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -31,6 +30,10 @@ import { useRotateApiKeysMutation } from "./api";
 import { displaySnackbar } from "../shared/reducers/snackbar";
 import { LoadingButton } from "@mui/lab";
 import FormSubmissionError from "../shared/components/FormSubmissionError";
+import DrawerCloseButton from "../shared/components/Drawer/DrawerCloseButton";
+import DrawerContainer from "../shared/components/Drawer/DrawerContainer";
+import DrawerContent from "../shared/components/Drawer/DrawerContent";
+import DrawerTitle from "../shared/components/Drawer/DrawerTitle";
 
 const rotateFormId = "rotateForm";
 
@@ -77,16 +80,14 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
         onClose={handleCloseDrawer}
         open={isManageDrawerOpen}
       >
-        <div className={styles.manageDrawer}>
-          <Stack alignItems="flex-start" spacing={1.5}>
-            <Button
-              color="inherit"
-              onClick={handleCloseDrawer}
-              startIcon={<Close />}
-              variant="text"
-            >
+        <DrawerContainer
+          closeButton={
+            <DrawerCloseButton handleClose={handleCloseDrawer}>
               {API_KEYS_MANAGE_CLOSE_DRAWER_BUTTON_TEXT}
-            </Button>
+            </DrawerCloseButton>
+          }
+        >
+          <DrawerContent>
             {shouldShowConfirmRotateSecret ? (
               <>
                 {isRotateApiKeysError && (
@@ -96,9 +97,9 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
                     title="Something went wrong"
                   />
                 )}
-                <Typography variant="h5">
+                <DrawerTitle>
                   Are you sure you want to rotate your Client Secret?
-                </Typography>
+                </DrawerTitle>
                 <Typography className={styles.secondaryColor} variant="body1">
                   This will create a new Client Secret and invalidate your
                   existing one. Your widget will not be able to authenticate
@@ -133,32 +134,34 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
               </>
             ) : (
               <>
-                <Typography variant="h5">Manage API Keys</Typography>
-                <ListItemButton
-                  className={styles.listItemButton}
-                  onClick={handleShowConfirmRotateSecret}
-                >
-                  <ListItemIcon
-                    className={styles.manageKeysIconButton}
-                    color="inherit"
+                <DrawerTitle>Manage API Keys</DrawerTitle>
+                <List className={styles.list}>
+                  <ListItemButton
+                    className={styles.listItemButton}
+                    onClick={handleShowConfirmRotateSecret}
                   >
-                    <RotateRightOutlined />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={API_KEYS_MANAGE_LIST_ROTATE_TEXT}
-                    secondary="Get a new secret"
-                  />
-                  <ListItemIcon
-                    className={styles.manageKeysIconButton}
-                    color="inherit"
-                  >
-                    <ArrowRightOutlined />
-                  </ListItemIcon>
-                </ListItemButton>
+                    <ListItemIcon
+                      className={styles.manageKeysIconButton}
+                      color="inherit"
+                    >
+                      <RotateRightOutlined />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={API_KEYS_MANAGE_LIST_ROTATE_TEXT}
+                      secondary="Get a new secret"
+                    />
+                    <ListItemIcon
+                      className={styles.manageKeysIconButton}
+                      color="inherit"
+                    >
+                      <ArrowRightOutlined />
+                    </ListItemIcon>
+                  </ListItemButton>
+                </List>
               </>
             )}
-          </Stack>
-        </div>
+          </DrawerContent>
+        </DrawerContainer>
       </Drawer>
       <SkeletonIfLoading isLoading={isLoading}>
         <Button onClick={handleOpenDrawer} startIcon={<Settings />}>

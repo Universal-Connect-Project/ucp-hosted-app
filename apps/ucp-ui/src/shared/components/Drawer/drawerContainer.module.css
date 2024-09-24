@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 400px;
+}
+
+.closeButtonContainer {
+  background-color: var(--mui-palette-common-white);
+  position: sticky;
+  padding-left: var(--drawer-left-padding);
+  padding-top: 32px;
+  top: 0;
+  z-index: 2;
+}

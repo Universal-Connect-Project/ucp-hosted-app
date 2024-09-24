@@ -18,8 +18,9 @@ import {
 } from "@mui/icons-material";
 import { matchPath, useLocation } from "react-router-dom";
 import {
+  institutionRoute,
   INSTITUTIONS_ROUTE,
-  WIDGET_MANAGEMENT_ROUTE,
+  widgetManagementRoute,
 } from "../shared/constants/routes";
 import { Link } from "react-router-dom";
 import {
@@ -43,6 +44,7 @@ const SideNav = () => {
       ? [
           {
             label: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
+            matchPaths: [INSTITUTIONS_ROUTE, institutionRoute.fullRoute],
             Icon: AccountBalanceOutlined,
             path: INSTITUTIONS_ROUTE,
           },
@@ -50,8 +52,9 @@ const SideNav = () => {
       : []),
     {
       label: SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
+      matchPaths: [widgetManagementRoute.fullRoute],
       Icon: SettingsOutlined,
-      path: WIDGET_MANAGEMENT_ROUTE,
+      path: widgetManagementRoute.fullRoute,
     },
   ];
 
@@ -60,12 +63,15 @@ const SideNav = () => {
       <div className={styles.flexContainer}>
         <UCPLogo />
         <List className={styles.list}>
-          {links.map(({ label, Icon, path }) => (
+          {links.map(({ label, matchPaths, Icon, path }) => (
             <ListItemButton
               component={Link}
               color="primary"
+              data-testid={`side-nav-link-${label}`}
               key={label}
-              selected={!!matchPath(path, pathname)}
+              selected={matchPaths.some(
+                (currentPath) => !!matchPath(currentPath, pathname),
+              )}
               to={path}
             >
               <ListItemIcon className={styles.listItemIcon}>

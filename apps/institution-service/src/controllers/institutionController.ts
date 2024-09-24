@@ -47,8 +47,7 @@ export const getInstitutionCachedList = async (req: Request, res: Response) => {
 
 export const createInstitution = async (req: Request, res: Response) => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const institution = await Institution.create(req.body);
+    const institution = await Institution.create(req.body as Institution);
 
     res.status(201).json(institution);
   } catch (error) {

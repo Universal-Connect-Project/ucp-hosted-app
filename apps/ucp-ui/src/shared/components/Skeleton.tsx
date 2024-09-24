@@ -52,3 +52,7 @@ export const TextSkeletonIfLoading = ({
     </SkeletonIfLoading>
   );
 };
+
+export const InvisibleLoader = () => (
+  <div className={styles.invisible} data-testid={SKELETON_LOADER_TEST_ID} />
+);
