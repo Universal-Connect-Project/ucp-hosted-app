@@ -15,7 +15,7 @@ module.exports = {
         logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
         url: "https://wellsfargo.com",
         is_test_bank: false,
-        routing_numbers: ['111111111'],
+        routing_numbers: ["111111111"],
         createdAt: new Date(),
         updatedAt: new Date(),
       },
