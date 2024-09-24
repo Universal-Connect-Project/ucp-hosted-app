@@ -43,21 +43,21 @@ async function loadInstitutionData() {
   const institutionsList: Institution[] = [];
   const aggregatorList: AggregatorIntegration[] = [];
   const [mxAggregator, _mxCreated] = await Aggregator.findOrCreate({
-    where: { name: "mx" },
+    where: { name: "mx", displayName: "MX" },
   });
   const [sophtronAggregator, _sophtronCreated] = await Aggregator.findOrCreate({
-    where: { name: "sophtron" },
+    where: { name: "sophtron", displayName: "Sophtron" },
   });
   const [finicityAggregator, _finicityCreated] = await Aggregator.findOrCreate({
-    where: { name: "finicity" },
+    where: { name: "finicity", displayName: "Finicity" },
   });
   const [testExampleAAggregator, _testExampleACreated] =
     await Aggregator.findOrCreate({
-      where: { name: "testExampleA" },
+      where: { name: "testExampleA", displayName: "Test Example A" },
     });
   const [testExampleBAggregator, _testExampleBCreated] =
     await Aggregator.findOrCreate({
-      where: { name: "testExampleB" },
+      where: { name: "testExampleB", displayName: "Test Example B" },
     });
 
   institutions.forEach((institution: CachedInstitution) => {

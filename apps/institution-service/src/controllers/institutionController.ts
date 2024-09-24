@@ -97,3 +97,49 @@ export const updateInstitution = async (req: Request, res: Response) => {
       .json({ error: "An error occurred while updating the institution" });
   }
 };
+
+export const getPaginatedInstitutions = async (req: Request, res: Response) => {
+  try {
+    const { limit, offset, page } = res.locals.pagination!;
+
+    const { count, rows: institutions } = await Institution.findAndCountAll({
+      include: [
+        {
+          association: Institution.associations.aggregatorIntegrations,
+          attributes: [
+            "aggregator_institution_id",
+            "supports_oauth",
+            "supports_identification",
+            "supports_verification",
+            "supports_aggregation",
+            "supports_history",
+            "isActive",
+          ],
+          include: [
+            {
+              model: Aggregator,
+              as: "aggregator",
+              attributes: ["name", "id", "displayName", "logo"],
+            },
+          ],
+        },
+      ],
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]], // Optional: Order by created date in descending order
+    });
+
+    return res.status(200).json({
+      currentPage: page,
+      pageSize: limit,
+      totalRecords: count,
+      totalPages: Math.ceil(count / limit),
+      institutions,
+    });
+  } catch (error) {
+    console.error("Error fetching paginated institutions:", error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while fetching institutions." });
+  }
+};

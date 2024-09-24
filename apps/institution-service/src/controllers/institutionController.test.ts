@@ -12,6 +12,7 @@ import {
 import {
   createInstitution,
   getInstitutionCachedList,
+  getPaginatedInstitutions,
   updateInstitution,
 } from "./institutionController";
 
@@ -228,6 +229,83 @@ describe("institutionController", () => {
       expect(res.json).toHaveBeenCalledWith({
         error: "An error occurred while updating the institution",
       });
+    });
+  });
+
+  describe("getPaginatedInstitutions", () => {
+    it("returns a paginated list of institutions", async () => {
+      const PAGE_SIZE = 30;
+      const CURRENT_PAGE = 1;
+      const OFFSET = (CURRENT_PAGE - 1) * PAGE_SIZE;
+      const req = {} as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+        locals: {
+          pagination: {
+            limit: PAGE_SIZE,
+            offset: OFFSET,
+            page: CURRENT_PAGE,
+          },
+        },
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentPage: CURRENT_PAGE,
+          pageSize: PAGE_SIZE,
+          totalRecords: expect.any(Number),
+          totalPages: expect.any(Number),
+          institutions: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(String),
+              name: expect.any(String),
+              keywords: expect.arrayContaining([expect.any(String)]),
+              logo: expect.any(String),
+              url: expect.any(String),
+              is_test_bank: expect.any(Boolean),
+              routing_numbers: expect.arrayContaining([expect.any(String)]),
+              createdAt: expect.any(Date),
+              updatedAt: expect.any(Date),
+              aggregatorIntegrations: expect.arrayContaining([
+                expect.objectContaining({
+                  id: expect.any(String),
+                  supports_oauth: expect.any(Boolean),
+                  supports_identification: expect.any(Boolean),
+                  supports_verification: expect.any(Boolean),
+                  supports_aggregation: expect.any(Boolean),
+                  supports_history: expect.any(Boolean),
+                  isActive: expect.any(Boolean),
+                  aggregator: expect.objectContaining({
+                    name: expect.any(String),
+                    id: expect.any(Number),
+                    displayName: expect.any(String),
+                  }),
+                }),
+              ]),
+            }),
+          ]),
+        }),
+      );
+    });
+
+    it("responds with 500 when there's an error", async () => {
+      const req = {} as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+        locals: {
+          // missing pagination will trigger an error
+        },
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
     });
   });
 });
