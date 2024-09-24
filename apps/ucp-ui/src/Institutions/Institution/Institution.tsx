@@ -20,7 +20,8 @@ const institution = {
 const Institution = () => {
   const { institutionId } = useParams();
 
-  const { logo, name } = institution;
+  const { is_test_bank, keywords, logo, name, routing_numbers, url } =
+    institution;
 
   return (
     <PageContent>
@@ -47,6 +48,31 @@ const Institution = () => {
             name="UCP ID"
             tooltip="A unique identifier for the institution."
             value={institutionId as string}
+          />
+          <InstitutionField
+            name="Institution URL"
+            tooltip="The institution's website URL."
+            value={url}
+          />
+          <InstitutionField
+            name="Logo URL"
+            tooltip="Where the institution's logo is saved."
+            value={logo}
+          />
+          <InstitutionField
+            name="Routing Number(s)"
+            tooltip="Nine-digit identifiers for every financial institution that are used to search within the widget."
+            value={routing_numbers.join(", ")}
+          />
+          <InstitutionField
+            name="Search Keywords"
+            tooltip="Help widget users find institutions more easily."
+            value={keywords.join(", ")}
+          />
+          <InstitutionField
+            name="Test Institution"
+            tooltip="Used for testing aggregator implementation and will not appear in the widget in production environments."
+            value={is_test_bank ? "Yes" : "No"}
           />
         </div>
       </div>

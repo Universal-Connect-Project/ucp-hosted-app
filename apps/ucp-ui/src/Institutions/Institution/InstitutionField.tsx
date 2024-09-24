@@ -17,7 +17,7 @@ const InstitutionField = ({
       <Tooltip title={tooltip}>
         <InfoOutlined fontSize="small" />
       </Tooltip>
-      <Typography variant="body2">{name}</Typography>
+      <Typography>{name}</Typography>
     </div>
     <Typography variant="body2">{value}</Typography>
   </div>
