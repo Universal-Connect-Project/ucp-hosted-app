@@ -255,6 +255,93 @@
           }
         }
       }
+    },
+    "/institutions": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Create an Institution",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "logo": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "is_test_bank": {
+                    "type": "boolean"
+                  },
+                  "routing_numbers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "institution": {
+                      "id": "UCP-024b97a3cd4d4df",
+                      "name": "FinBank Profiles - A",
+                      "keywords": ["finbank", "finicity"],
+                      "logo": "https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/102105/icon.svg",
+                      "url": "http://www.finbank.com",
+                      "is_test_bank": true,
+                      "routing_numbers": ["123456789"],
+                      "createdAt": "2024-09-10T16:07:46.038Z",
+                      "updatedAt": "2024-09-11T17:22:35.653Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "\"logo\" must be a valid uri with a scheme matching the http|https pattern"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
     }
   }
 }
