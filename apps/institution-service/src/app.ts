@@ -2,7 +2,6 @@ import cors from "cors";
 import "dotenv/config";
 import express, { Request, Response } from "express";
 import logger from "morgan";
-1;
 
 import institutionRoutes from "./routes/institutionRoutes";
 import { PORT } from "./shared/const";
