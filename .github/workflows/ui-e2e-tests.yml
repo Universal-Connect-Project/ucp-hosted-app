@@ -60,6 +60,8 @@ jobs:
           CYPRESS_auth_password_with_widget_role: ${{ secrets.AUTH_PASSWORD_WITH_WIDGET_ROLE }}
           CYPRESS_auth_username_without_widget_role: ${{ secrets.AUTH_USERNAME_WITHOUT_WIDGET_ROLE }}
           CYPRESS_auth_password_without_widget_role: ${{ secrets.AUTH_PASSWORD_WITHOUT_WIDGET_ROLE }}
+          CYPRESS_auth_username_super_admin: ${{ secrets.UI_AUTH_USERNAME_SUPER_ADMIN }}
+          CYPRESS_auth_password_super_admin: ${{ secrets.UI_AUTH_PASSWORD_SUPER_ADMIN }}
 
         with:
           project: apps/ucp-ui
