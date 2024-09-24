@@ -1,5 +1,6 @@
 import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
+import { PaginatedInstitutionsResponse } from "../../src/controllers/institutionController";
 import { DEFAULT_PAGINATION_PAGE_SIZE, PORT } from "../../src/shared/const";
 import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
 import { testInstitution } from "../../src/test/testData/institutions";
@@ -408,8 +409,9 @@ describe("/institutions", () => {
       headers: {
         Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
       },
-    }).then((response: Cypress.Response<any>) => {
-      const institutionResponse = response.body;
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as PaginatedInstitutionsResponse;
 
       expect(response.status).to.eq(200);
 
@@ -450,8 +452,9 @@ describe("/institutions", () => {
       headers: {
         Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
       },
-    }).then((response: Cypress.Response<any>) => {
-      const institutionResponse = response.body;
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as PaginatedInstitutionsResponse;
 
       expect(response.status).to.eq(200);
 

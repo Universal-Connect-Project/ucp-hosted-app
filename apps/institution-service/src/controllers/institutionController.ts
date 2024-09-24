@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ValidationError } from "sequelize";
 import { validate } from "uuid";
+import { PaginationOptions } from "../middlewares/paginationMiddleware";
 import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
@@ -98,9 +99,45 @@ export const updateInstitution = async (req: Request, res: Response) => {
   }
 };
 
+interface AggregatorIntegrator {
+  aggregator_institution_id: string;
+  supports_oauth: boolean;
+  supports_identification: boolean;
+  supports_verification: boolean;
+  supports_aggregation: boolean;
+  supports_history: boolean;
+  isActive: boolean;
+  aggregator: {
+    name: string;
+    id: number;
+    displayName: string | null;
+    logo: string | null;
+  };
+}
+
+interface InstitutionDetail {
+  id: string;
+  name: string;
+  keywords: string[];
+  logo: string;
+  url: string;
+  is_test_bank: boolean;
+  routing_numbers: string[];
+  createdAt: string;
+  updatedAt: string;
+  aggregatorIntegrators: AggregatorIntegrator[];
+}
+export interface PaginatedInstitutionsResponse {
+  currentPage: number;
+  pageSize: number;
+  totalRecords: number;
+  totalPages: number;
+  institutions: InstitutionDetail[];
+}
+
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   try {
-    const { limit, offset, page } = res.locals.pagination!;
+    const { limit, offset, page } = res.locals.pagination! as PaginationOptions;
 
     const { count, rows: institutions } = await Institution.findAndCountAll({
       include: [
@@ -135,7 +172,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
       totalRecords: count,
       totalPages: Math.ceil(count / limit),
       institutions,
-    });
+    } as unknown as PaginatedInstitutionsResponse);
   } catch (error) {
     console.error("Error fetching paginated institutions:", error);
     return res

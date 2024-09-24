@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { UUID } from "crypto";
 import { Request, Response } from "express";
 import { Model } from "sequelize";
@@ -199,7 +200,6 @@ describe("institutionController", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: "Institution updated successfully",
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         institution: expect.objectContaining({
           ...updateBody,
           id: existingInstitutionId,
@@ -305,6 +305,7 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });

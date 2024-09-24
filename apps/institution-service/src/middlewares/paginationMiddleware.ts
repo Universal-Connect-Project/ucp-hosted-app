@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 
+export interface PaginationOptions {
+  page: number;
+  limit: number;
+  offset: number;
+}
+
 export const paginationMiddleware = (
   req: Request,
   res: Response,
@@ -14,7 +20,7 @@ export const paginationMiddleware = (
     page,
     limit,
     offset: (page - 1) * limit,
-  };
+  } as PaginationOptions;
 
   next();
 };
