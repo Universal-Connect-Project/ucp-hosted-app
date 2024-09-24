@@ -5,6 +5,7 @@ import { Breadcrumbs, Link, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 import styles from "./institution.module.css";
+import InstitutionField from "./InstitutionField";
 
 const institution = {
   id: "UCP-a4f437a6454f7b5",
@@ -41,7 +42,13 @@ const Institution = () => {
             <Typography variant="h4">{name}</Typography>
           </div>
         </div>
-        {institutionId}
+        <div className={styles.institutionFields}>
+          <InstitutionField
+            name="UCP ID"
+            tooltip="A unique identifier for the institution."
+            value={institutionId as string}
+          />
+        </div>
       </div>
     </PageContent>
   );
