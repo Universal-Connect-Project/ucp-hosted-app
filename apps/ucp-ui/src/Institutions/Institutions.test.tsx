@@ -44,13 +44,17 @@ describe("<Institutions />", () => {
     ).toBeInTheDocument();
   });
 
-  it("sorts the aggregators by their displayName and shows the number of supported job types", () => {
-    expect(testInstitution.aggregators[0].displayName).toEqual("Sophtron");
-    expect(testInstitution.aggregators[1].displayName).toEqual("MX");
+  it("sorts the aggregators by their displayName and shows the number of supported job types", async () => {
+    expect(
+      testInstitution.aggregatorIntegrations[0].aggregator.displayName,
+    ).toEqual("Sophtron");
+    expect(
+      testInstitution.aggregatorIntegrations[1].aggregator.displayName,
+    ).toEqual("MX");
 
     render(<Institutions />);
 
-    const rowWithTestInstitution = screen.getByTestId(
+    const rowWithTestInstitution = await screen.findByTestId(
       `${INSTITUTIONS_ROW_TEST_ID}-${testInstitution.id}`,
     );
 
@@ -65,10 +69,10 @@ describe("<Institutions />", () => {
     expect(within(sophtronChip).getByText("Sophtron")).toBeInTheDocument();
   });
 
-  it("renders the name of the institution and the ucp id", () => {
+  it("renders the name of the institution and the ucp id", async () => {
     render(<Institutions />);
 
-    expect(screen.getByText(testInstitution.id)).toBeInTheDocument();
-    expect(screen.getByText(testInstitution.name)).toBeInTheDocument();
+    expect(await screen.findByText(testInstitution.id)).toBeInTheDocument();
+    expect(await screen.findByText(testInstitution.name)).toBeInTheDocument();
   });
 });

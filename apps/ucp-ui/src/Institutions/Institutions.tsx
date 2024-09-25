@@ -17,10 +17,12 @@ import {
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
 } from "./constants";
 import styles from "./institutions.module.css";
-import { institutions } from "./testData/institutions";
 import AddInstitution from "./ChangeInstitution/AddInstitution";
 import FetchError from "../shared/components/FetchError";
-import { useGetInstitutionPermissionsQuery } from "./api";
+import {
+  useGetInstitutionPermissionsQuery,
+  useGetInstitutionsQuery,
+} from "./api";
 import PageContent from "../shared/components/PageContent";
 
 const Institutions = () => {
@@ -28,6 +30,13 @@ const Institutions = () => {
 
   const { isError: isInstitutionPermissionsError, refetch } =
     useGetInstitutionPermissionsQuery();
+
+  const { data } = useGetInstitutionsQuery({
+    page: 0,
+    pageSize: 500,
+  });
+
+  const institutions = data?.institutions;
 
   return (
     <>
@@ -54,65 +63,69 @@ const Institutions = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {institutions.map(({ aggregators, logo, name, id }) => (
-                  <TableRow
-                    data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
-                    key={id}
-                  >
-                    <TableCell>
-                      <div className={styles.institutionCell}>
-                        <img className={styles.institutionLogo} src={logo} />
-                        <div>{name}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{id}</TableCell>
-                    <TableCell>
-                      <div className={styles.aggregatorsCell}>
-                        {[...aggregators]
-                          .sort((a, b) =>
-                            a.displayName.localeCompare(b.displayName),
-                          )
-                          .map(
-                            ({
-                              displayName,
-                              supports_aggregation,
-                              supports_history,
-                              supports_identification,
-                              supports_verification,
-                            }) => {
-                              const numberSupported = [
-                                supports_identification,
-                                supports_verification,
+                {institutions?.map(
+                  ({ aggregatorIntegrations, logo, name, id }) => (
+                    <TableRow
+                      data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
+                      key={id}
+                    >
+                      <TableCell>
+                        <div className={styles.institutionCell}>
+                          <img className={styles.institutionLogo} src={logo} />
+                          <div>{name}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{id}</TableCell>
+                      <TableCell>
+                        <div className={styles.aggregatorsCell}>
+                          {[...aggregatorIntegrations]
+                            .sort((a, b) =>
+                              a.aggregator.displayName.localeCompare(
+                                b.aggregator.displayName,
+                              ),
+                            )
+                            .map(
+                              ({
+                                aggregator: { displayName },
                                 supports_aggregation,
                                 supports_history,
-                              ].reduce((acc, supportsIt) => {
-                                if (supportsIt) {
-                                  return acc + 1;
-                                }
-
-                                return acc;
-                              }, 0);
-
-                              return (
-                                <Chip
-                                  avatar={
-                                    <Avatar className={styles.chipAvatar}>
-                                      {numberSupported}
-                                    </Avatar>
+                                supports_identification,
+                                supports_verification,
+                              }) => {
+                                const numberSupported = [
+                                  supports_identification,
+                                  supports_verification,
+                                  supports_aggregation,
+                                  supports_history,
+                                ].reduce((acc, supportsIt) => {
+                                  if (supportsIt) {
+                                    return acc + 1;
                                   }
-                                  data-testid={
-                                    INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
-                                  }
-                                  key={displayName}
-                                  label={displayName}
-                                />
-                              );
-                            },
-                          )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+
+                                  return acc;
+                                }, 0);
+
+                                return (
+                                  <Chip
+                                    avatar={
+                                      <Avatar className={styles.chipAvatar}>
+                                        {numberSupported}
+                                      </Avatar>
+                                    }
+                                    data-testid={
+                                      INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
+                                    }
+                                    key={displayName}
+                                    label={displayName}
+                                  />
+                                );
+                              },
+                            )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ),
+                )}
               </TableBody>
             </Table>
           </TableContainer>
