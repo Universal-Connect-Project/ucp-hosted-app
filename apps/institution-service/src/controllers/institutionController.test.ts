@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { Model } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 import { Institution } from "../models/institution";
+import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
   cachedInstitutionFromSeed,
   seedInstitutionId,
@@ -286,6 +287,30 @@ describe("institutionController", () => {
               ]),
             }),
           ]),
+        }),
+      );
+    });
+
+    it("gets default pagination values when none are passed", async () => {
+      const req = {
+        query: {},
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentPage: 1,
+          pageSize: DEFAULT_PAGINATION_PAGE_SIZE,
+          totalRecords: expect.any(Number),
+          totalPages: expect.any(Number),
+          institutions: expect.arrayContaining([]),
         }),
       );
     });
