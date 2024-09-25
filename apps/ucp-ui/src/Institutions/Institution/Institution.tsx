@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import PageContent from "../../shared/components/PageContent";
 import {
   Breadcrumbs,
+  Chip,
   Link,
   Table,
+  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -26,13 +28,95 @@ const institution = {
   logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-aa65b215-42d3-a6eb-d9c0-4427d744a2bc_100x100.png",
   url: "https://www.americanexpress.com",
   routing_numbers: [121000248, 121000249],
+  aggregatorIntegrations: [
+    {
+      id: "aafae3bd-4801-4720-be66-a41d81a74b6c",
+      isActive: true,
+      supports_oauth: true,
+      supports_identification: true,
+      supports_verification: true,
+      supports_aggregation: true,
+      supports_history: true,
+      aggregator: {
+        name: "mx",
+        id: 1,
+        displayName: "MX",
+        logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
+      },
+    },
+    {
+      id: "bbfae3bd-4801-4720-be66-a41d81a74b6c",
+      isActive: true,
+      supports_oauth: true,
+      supports_identification: false,
+      supports_verification: false,
+      supports_aggregation: true,
+      supports_history: false,
+      aggregator: {
+        name: "sophtron",
+        id: 1,
+        displayName: "Sophtron",
+        logo: "https://sophtron.com/Images/logo.png",
+      },
+    },
+    {
+      id: "ccfae3bd-4801-4720-be66-a41d81a74b6c",
+      isActive: false,
+      supports_oauth: false,
+      supports_identification: true,
+      supports_verification: false,
+      supports_aggregation: false,
+      supports_history: false,
+      aggregator: {
+        name: "textExampleA",
+        id: 1,
+        displayName: "TextExampleA",
+        logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
+      },
+    },
+  ],
 };
+
+interface JobType {
+  name: string;
+  supportsField:
+    | "supports_aggregation"
+    | "supports_identification"
+    | "supports_verification"
+    | "supports_history";
+}
 
 const Institution = () => {
   const { institutionId } = useParams();
 
-  const { is_test_bank, keywords, logo, name, routing_numbers, url } =
-    institution;
+  const jobTypes: JobType[] = [
+    {
+      name: "Aggregation",
+      supportsField: "supports_aggregation",
+    },
+    {
+      name: "Identification",
+      supportsField: "supports_identification",
+    },
+    {
+      name: "Verification",
+      supportsField: "supports_verification",
+    },
+    {
+      name: "Full History",
+      supportsField: "supports_history",
+    },
+  ];
+
+  const {
+    is_test_bank,
+    keywords,
+    logo,
+    name,
+    routing_numbers,
+    url,
+    aggregatorIntegrations,
+  } = institution;
 
   const tableHeadCells = [
     { name: "Aggregator" },
@@ -106,6 +190,7 @@ const Institution = () => {
           />
           <InstitutionField
             name="Test Institution"
+            shouldDisableValueTooltip
             tooltip="Used for testing aggregator implementation and will not appear in the widget in production environments."
             value={is_test_bank ? "Yes" : "No"}
           />
@@ -128,6 +213,53 @@ const Institution = () => {
                 ))}
               </TableRow>
             </TableHead>
+            <TableBody>
+              {aggregatorIntegrations.map((aggregatorIntegration) => {
+                const {
+                  aggregator: { displayName, logo },
+                  id,
+                  isActive,
+                  supports_oauth,
+                } = aggregatorIntegration;
+
+                return (
+                  <TableRow
+                    className={!isActive ? styles.inactiveTableRow : undefined}
+                    key={id}
+                  >
+                    <TableCell>
+                      <div className={styles.nameLogoCell}>
+                        <img className={styles.aggregatorLogo} src={logo} />
+                        {displayName}
+                      </div>
+                    </TableCell>
+                    <TableCell>{id}</TableCell>
+                    <TableCell>
+                      <div className={styles.jobTypesCell}>
+                        {jobTypes.map(
+                          ({ name, supportsField }) =>
+                            aggregatorIntegration[supportsField] && (
+                              <Chip key={name} label={name} />
+                            ),
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        color={supports_oauth ? "success" : "default"}
+                        label={supports_oauth ? "Yes" : "No"}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        color={isActive ? "success" : "default"}
+                        label={isActive ? "Active" : "Inactive"}
+                      />
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
           </Table>
         </TableContainer>
       </div>

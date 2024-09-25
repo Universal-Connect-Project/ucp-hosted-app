@@ -1,8 +1,6 @@
 .container {
-  height: 100vh;
-  position: sticky;
-  top: 0;
-  width: 252px;
+  min-width: var(--side-nav-width);
+  width: var(--side-nav-width);
 }
 
 .flexContainer {
@@ -11,8 +9,10 @@
   flex-direction: column;
   gap: 32px;
   height: -webkit-fill-available;
+  min-width: var(--side-nav-width);
   padding-bottom: 44px;
   padding-top: 40px;
+  width: var(--side-nav-width);
 }
 
 .buttonContainer {

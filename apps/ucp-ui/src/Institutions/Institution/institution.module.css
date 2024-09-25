@@ -17,8 +17,8 @@
 }
 
 .logo {
-  height: 48px;
-  width: 48px;
+  max-height: 48px;
+  max-width: 48px;
   border-radius: var(--mui-shape-borderRadius);
 }
 
@@ -32,6 +32,7 @@
     background-color: var(--mui-palette-common-white);
     border: solid 1px var(--mui-palette-divider);
     border-radius: var(--mui-shape-borderRadius);
+    border-bottom: none;
   }
 }
 
@@ -39,4 +40,32 @@
   align-items: center;
   display: flex;
   gap: 4px;
+  white-space: nowrap;
+}
+
+.aggregatorLogo {
+  border-radius: var(--mui-shape-borderRadius);
+  max-height: 32px;
+  max-width: 32px;
+}
+
+.nameLogoCell {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.jobTypesCell {
+  display: flex;
+  gap: 4px;
+}
+
+.inactiveTableRow {
+  :global(.MuiTableCell-root) {
+    color: var(--mui-palette-text-disabled);
+  }
+
+  .aggregatorLogo {
+    opacity: 50%;
+  }
 }

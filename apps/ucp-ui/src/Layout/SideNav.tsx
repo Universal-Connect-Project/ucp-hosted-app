@@ -5,7 +5,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Paper,
+  Drawer,
 } from "@mui/material";
 import React from "react";
 import styles from "./sideNav.module.css";
@@ -59,7 +59,7 @@ const SideNav = () => {
   ];
 
   return (
-    <Paper className={styles.container} square>
+    <Drawer className={styles.container} variant="permanent" anchor="left">
       <div className={styles.flexContainer}>
         <UCPLogo />
         <List className={styles.list}>
@@ -99,7 +99,7 @@ const SideNav = () => {
           {SIDE_NAV_CONTACT_US_LINK_TEXT}
         </MuiLink>
       </div>
-    </Paper>
+    </Drawer>
   );
 };
 

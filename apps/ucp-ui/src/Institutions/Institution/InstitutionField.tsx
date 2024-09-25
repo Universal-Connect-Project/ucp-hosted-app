@@ -5,21 +5,27 @@ import { Tooltip, Typography } from "@mui/material";
 
 const InstitutionField = ({
   name,
+  shouldDisableValueTooltip,
   tooltip,
   value,
 }: {
   name: string;
+  shouldDisableValueTooltip?: boolean;
   tooltip: string;
   value: string;
 }) => (
-  <div>
+  <div className={styles.container}>
     <div className={styles.header}>
       <Tooltip title={tooltip}>
         <InfoOutlined color="action" fontSize="inherit" />
       </Tooltip>
       <Typography>{name}</Typography>
     </div>
-    <Typography variant="body2">{value}</Typography>
+    <Tooltip title={shouldDisableValueTooltip ? "" : value}>
+      <Typography className={styles.value} variant="body2">
+        {value}
+      </Typography>
+    </Tooltip>
   </div>
 );
 
