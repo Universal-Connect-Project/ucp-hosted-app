@@ -43,13 +43,25 @@ async function loadInstitutionData() {
   const institutionsList: Institution[] = [];
   const aggregatorList: AggregatorIntegration[] = [];
   const [mxAggregator, _mxCreated] = await Aggregator.findOrCreate({
-    where: { name: "mx", displayName: "MX" },
+    where: {
+      name: "mx",
+      displayName: "MX",
+      logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
+    },
   });
   const [sophtronAggregator, _sophtronCreated] = await Aggregator.findOrCreate({
-    where: { name: "sophtron", displayName: "Sophtron" },
+    where: {
+      name: "sophtron",
+      displayName: "Sophtron",
+      logo: "https://sophtron.com/Images/logo.png",
+    },
   });
   const [finicityAggregator, _finicityCreated] = await Aggregator.findOrCreate({
-    where: { name: "finicity", displayName: "Finicity" },
+    where: {
+      name: "finicity",
+      displayName: "Finicity",
+      logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
+    },
   });
   const [testExampleAAggregator, _testExampleACreated] =
     await Aggregator.findOrCreate({

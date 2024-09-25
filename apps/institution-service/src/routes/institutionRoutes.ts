@@ -7,7 +7,6 @@ import {
   getPaginatedInstitutions,
   updateInstitution,
 } from "../controllers/institutionController";
-import { paginationMiddleware } from "../middlewares/paginationMiddleware";
 import {
   institutionSchema,
   validate,
@@ -29,7 +28,7 @@ router.get(
 
 router.get(
   "/",
-  [validateUIAudience, paginationMiddleware],
+  [validateUIAudience],
   getPaginatedInstitutions as RequestHandler,
 );
 

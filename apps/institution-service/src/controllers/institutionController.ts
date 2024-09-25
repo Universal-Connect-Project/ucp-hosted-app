@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { ValidationError } from "sequelize";
 import { validate } from "uuid";
-import { PaginationOptions } from "../middlewares/paginationMiddleware";
 import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
+import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -135,9 +135,23 @@ export interface PaginatedInstitutionsResponse {
   institutions: InstitutionDetail[];
 }
 
+interface PaginationOptions {
+  page: number;
+  limit: number;
+  offset: number;
+}
+
+const getPaginationOptions = (req: Request): PaginationOptions => {
+  const page = parseInt(req.query.page as string, 10) || 1;
+  const limit =
+    parseInt(req.query.pageSize as string, 10) || DEFAULT_PAGINATION_PAGE_SIZE;
+  const offset = (page - 1) * limit;
+  return { page, limit, offset };
+};
+
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   try {
-    const { limit, offset, page } = res.locals.pagination! as PaginationOptions;
+    const { limit, offset, page } = getPaginationOptions(req);
 
     const { count, rows: institutions } = await Institution.findAndCountAll({
       include: [

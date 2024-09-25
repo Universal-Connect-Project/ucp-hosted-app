@@ -236,18 +236,15 @@ describe("institutionController", () => {
     it("returns a paginated list of institutions", async () => {
       const PAGE_SIZE = 100;
       const CURRENT_PAGE = 1;
-      const OFFSET = (CURRENT_PAGE - 1) * PAGE_SIZE;
-      const req = {} as unknown as Request;
+      const req = {
+        query: {
+          page: CURRENT_PAGE,
+          pageSize: PAGE_SIZE,
+        },
+      } as unknown as Request;
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-        locals: {
-          pagination: {
-            limit: PAGE_SIZE,
-            offset: OFFSET,
-            page: CURRENT_PAGE,
-          },
-        },
       } as unknown as Response;
 
       await getPaginatedInstitutions(req, res);

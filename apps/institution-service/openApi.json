@@ -21,195 +21,6 @@
     }
   ],
   "paths": {
-    "/institutions": {
-      "get": {
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "description": "Get the paginated list of Institutions",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "page",
-            "schema": {
-              "type": "integer",
-              "default": 1
-            },
-            "required": false,
-            "example": 30,
-            "description": "Page to be returned in the paginated response."
-          },
-          {
-            "in": "query",
-            "name": "pageSize",
-            "schema": {
-              "type": "integer",
-              "default": 10
-            },
-            "required": false,
-            "example": 3,
-            "description": "The number of institutions to be returned in the paginated response."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "example": [
-                    {
-                      "currentPage": 30,
-                      "pageSize": 3,
-                      "totalRecords": 29489,
-                      "totalPages": 9830,
-                      "institutions": [
-                        {
-                          "id": "94b05c68-bab7-4694-9695-5934d8adf722",
-                          "name": "Preferred Trust ",
-                          "keywords": [],
-                          "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
-                          "url": "https://preferredtrustcompany.com/",
-                          "is_test_bank": false,
-                          "routing_numbers": [],
-                          "createdAt": "2024-09-23T15:33:58.664Z",
-                          "updatedAt": "2024-09-23T15:33:58.664Z",
-                          "aggregatorIntegrations": [
-                            {
-                              "aggregator_institution_id": "5a74733d-aa8f-471a-b454-ca5bfda01902",
-                              "supports_oauth": false,
-                              "supports_identification": false,
-                              "supports_verification": false,
-                              "supports_aggregation": true,
-                              "supports_history": false,
-                              "isActive": true,
-                              "aggregator": {
-                                "name": "mx",
-                                "id": 1,
-                                "displayName": null,
-                                "logo": null
-                              }
-                            },
-                            {
-                              "aggregator_institution_id": "2bbdf338-7fcc-4655-9c4d-5ccaffb60b2a",
-                              "supports_oauth": false,
-                              "supports_identification": false,
-                              "supports_verification": false,
-                              "supports_aggregation": true,
-                              "supports_history": false,
-                              "isActive": true,
-                              "aggregator": {
-                                "name": "sophtron",
-                                "id": 2,
-                                "displayName": null,
-                                "logo": null
-                              }
-                            }
-                          ]
-                        },
-                        {
-                          "id": "5670bd8e-13c1-411f-bc88-34abf02ba6e4",
-                          "name": "Greater State Bank (TX)",
-                          "keywords": [],
-                          "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
-                          "url": "https://greaterstate.bank/",
-                          "is_test_bank": false,
-                          "routing_numbers": [],
-                          "createdAt": "2024-09-23T15:33:58.664Z",
-                          "updatedAt": "2024-09-23T15:33:58.664Z",
-                          "aggregatorIntegrations": [
-                            {
-                              "aggregator_institution_id": "a9fb59b3-b9c2-4cd4-a3fc-9ca9c7eaa6cc",
-                              "supports_oauth": false,
-                              "supports_identification": false,
-                              "supports_verification": false,
-                              "supports_aggregation": true,
-                              "supports_history": false,
-                              "isActive": true,
-                              "aggregator": {
-                                "name": "mx",
-                                "id": 1,
-                                "displayName": null,
-                                "logo": null
-                              }
-                            },
-                            {
-                              "aggregator_institution_id": "171045",
-                              "supports_oauth": false,
-                              "supports_identification": false,
-                              "supports_verification": false,
-                              "supports_aggregation": true,
-                              "supports_history": false,
-                              "isActive": false,
-                              "aggregator": {
-                                "name": "finicity",
-                                "id": 3,
-                                "displayName": null,
-                                "logo": null
-                              }
-                            }
-                          ]
-                        },
-                        {
-                          "id": "e8d0a555-fc75-4e5a-9453-cad84bc0c8a4",
-                          "name": "Andrews Federal Credit Union DMI ",
-                          "keywords": [],
-                          "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
-                          "url": "https://andrewsfcu.mtgsvc.com/Account/UserLogin?conn=Q67%7B52609b13-69a0-4acd-8e5a-c3bc366bb7bd%7D",
-                          "is_test_bank": false,
-                          "routing_numbers": [],
-                          "createdAt": "2024-09-23T15:33:58.664Z",
-                          "updatedAt": "2024-09-23T15:33:58.664Z",
-                          "aggregatorIntegrations": [
-                            {
-                              "aggregator_institution_id": "e85f0f46-1bcd-4b5f-b1a2-cb14699e9cbd",
-                              "supports_oauth": false,
-                              "supports_identification": false,
-                              "supports_verification": false,
-                              "supports_aggregation": true,
-                              "supports_history": false,
-                              "isActive": true,
-                              "aggregator": {
-                                "name": "mx",
-                                "id": 1,
-                                "displayName": null,
-                                "logo": null
-                              }
-                            },
-                            {
-                              "aggregator_institution_id": "32ead61c-ad84-4a4b-8bae-66f3c0bf6ba6",
-                              "supports_oauth": false,
-                              "supports_identification": false,
-                              "supports_verification": false,
-                              "supports_aggregation": true,
-                              "supports_history": false,
-                              "isActive": true,
-                              "aggregator": {
-                                "name": "sophtron",
-                                "id": 2,
-                                "displayName": null,
-                                "logo": null
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        },
-        "summary": "Institution List"
-      }
-    },
     "/institutions/cacheList": {
       "get": {
         "security": [
@@ -446,6 +257,193 @@
       }
     },
     "/institutions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Get the paginated list of Institutions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "required": false,
+            "example": 30,
+            "description": "Page to be returned in the paginated response."
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "required": false,
+            "example": 3,
+            "description": "The number of institutions to be returned in the paginated response."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "currentPage": 30,
+                      "pageSize": 3,
+                      "totalRecords": 29489,
+                      "totalPages": 9830,
+                      "institutions": [
+                        {
+                          "id": "94b05c68-bab7-4694-9695-5934d8adf722",
+                          "name": "Preferred Trust ",
+                          "keywords": [],
+                          "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
+                          "url": "https://preferredtrustcompany.com/",
+                          "is_test_bank": false,
+                          "routing_numbers": [],
+                          "createdAt": "2024-09-23T15:33:58.664Z",
+                          "updatedAt": "2024-09-23T15:33:58.664Z",
+                          "aggregatorIntegrations": [
+                            {
+                              "aggregator_institution_id": "5a74733d-aa8f-471a-b454-ca5bfda01902",
+                              "supports_oauth": false,
+                              "supports_identification": false,
+                              "supports_verification": false,
+                              "supports_aggregation": true,
+                              "supports_history": false,
+                              "isActive": true,
+                              "aggregator": {
+                                "name": "mx",
+                                "id": 1,
+                                "displayName": null,
+                                "logo": null
+                              }
+                            },
+                            {
+                              "aggregator_institution_id": "2bbdf338-7fcc-4655-9c4d-5ccaffb60b2a",
+                              "supports_oauth": false,
+                              "supports_identification": false,
+                              "supports_verification": false,
+                              "supports_aggregation": true,
+                              "supports_history": false,
+                              "isActive": true,
+                              "aggregator": {
+                                "name": "sophtron",
+                                "id": 2,
+                                "displayName": null,
+                                "logo": null
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "5670bd8e-13c1-411f-bc88-34abf02ba6e4",
+                          "name": "Greater State Bank (TX)",
+                          "keywords": [],
+                          "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
+                          "url": "https://greaterstate.bank/",
+                          "is_test_bank": false,
+                          "routing_numbers": [],
+                          "createdAt": "2024-09-23T15:33:58.664Z",
+                          "updatedAt": "2024-09-23T15:33:58.664Z",
+                          "aggregatorIntegrations": [
+                            {
+                              "aggregator_institution_id": "a9fb59b3-b9c2-4cd4-a3fc-9ca9c7eaa6cc",
+                              "supports_oauth": false,
+                              "supports_identification": false,
+                              "supports_verification": false,
+                              "supports_aggregation": true,
+                              "supports_history": false,
+                              "isActive": true,
+                              "aggregator": {
+                                "name": "mx",
+                                "id": 1,
+                                "displayName": null,
+                                "logo": null
+                              }
+                            },
+                            {
+                              "aggregator_institution_id": "171045",
+                              "supports_oauth": false,
+                              "supports_identification": false,
+                              "supports_verification": false,
+                              "supports_aggregation": true,
+                              "supports_history": false,
+                              "isActive": false,
+                              "aggregator": {
+                                "name": "finicity",
+                                "id": 3,
+                                "displayName": null,
+                                "logo": null
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "e8d0a555-fc75-4e5a-9453-cad84bc0c8a4",
+                          "name": "Andrews Federal Credit Union DMI ",
+                          "keywords": [],
+                          "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
+                          "url": "https://andrewsfcu.mtgsvc.com/Account/UserLogin?conn=Q67%7B52609b13-69a0-4acd-8e5a-c3bc366bb7bd%7D",
+                          "is_test_bank": false,
+                          "routing_numbers": [],
+                          "createdAt": "2024-09-23T15:33:58.664Z",
+                          "updatedAt": "2024-09-23T15:33:58.664Z",
+                          "aggregatorIntegrations": [
+                            {
+                              "aggregator_institution_id": "e85f0f46-1bcd-4b5f-b1a2-cb14699e9cbd",
+                              "supports_oauth": false,
+                              "supports_identification": false,
+                              "supports_verification": false,
+                              "supports_aggregation": true,
+                              "supports_history": false,
+                              "isActive": true,
+                              "aggregator": {
+                                "name": "mx",
+                                "id": 1,
+                                "displayName": null,
+                                "logo": null
+                              }
+                            },
+                            {
+                              "aggregator_institution_id": "32ead61c-ad84-4a4b-8bae-66f3c0bf6ba6",
+                              "supports_oauth": false,
+                              "supports_identification": false,
+                              "supports_verification": false,
+                              "supports_aggregation": true,
+                              "supports_history": false,
+                              "isActive": true,
+                              "aggregator": {
+                                "name": "sophtron",
+                                "id": 2,
+                                "displayName": null,
+                                "logo": null
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Institution List"
+      },
       "post": {
         "security": [
           {
