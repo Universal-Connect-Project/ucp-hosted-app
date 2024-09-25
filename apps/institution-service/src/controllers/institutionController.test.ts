@@ -13,6 +13,7 @@ import {
 } from "../test/testData/institutions";
 import {
   createInstitution,
+  getInstitution,
   getInstitutionCachedList,
   getPaginatedInstitutions,
   updateInstitution,
@@ -320,15 +321,104 @@ describe("institutionController", () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
-        locals: {
-          // missing pagination will trigger an error
-        },
       } as unknown as Response;
+
+      jest.spyOn(Institution, "findAndCountAll").mockRejectedValue(new Error());
 
       await getPaginatedInstitutions(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe("getInstitution", () => {
+    beforeEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("responds with an institution and has the expected attributes", async () => {
+      const req = {
+        params: { id: seedInstitutionId },
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getInstitution(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          institution: expect.objectContaining({
+            id: seedInstitutionId,
+            name: "Wells Fargo",
+            keywords: ["wells", "fargo"],
+            logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
+            url: "https://wellsfargo.com",
+            is_test_bank: false,
+            routing_numbers: ["111111111"],
+            createdAt: expect.any(Date),
+            updatedAt: expect.any(Date),
+            aggregatorIntegrations: expect.arrayContaining([
+              expect.objectContaining({
+                id: expect.any(Number),
+                aggregator_institution_id: expect.any(String),
+                supports_oauth: expect.any(Boolean),
+                supports_identification: expect.any(Boolean),
+                supports_verification: expect.any(Boolean),
+                supports_aggregation: expect.any(Boolean),
+                supports_history: expect.any(Boolean),
+                isActive: expect.any(Boolean),
+                aggregator: expect.objectContaining({
+                  name: "mx",
+                  id: expect.any(Number),
+                  displayName: "MX",
+                  logo: "https://logo.com",
+                }),
+              }),
+            ]),
+          }),
+        }),
+      );
+    });
+
+    it("responds with 404 when id param is invalid", async () => {
+      const req = {
+        params: { id: "123" },
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getInstitution(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Invalid institution Id",
+      });
+    });
+
+    it("responds with 404 when id param is valid but not belonging to an institution", async () => {
+      const req = {
+        params: { id: "ee6d71dc-e693-4fc3-a775-53c378bc5066" },
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getInstitution(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Institution not found",
+      });
     });
   });
 });

@@ -1,6 +1,9 @@
 import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
-import { PaginatedInstitutionsResponse } from "../../src/controllers/institutionController";
+import {
+  InstitutionDetail,
+  PaginatedInstitutionsResponse,
+} from "../../src/controllers/institutionController";
 import { DEFAULT_PAGINATION_PAGE_SIZE, PORT } from "../../src/shared/const";
 import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
 import { testInstitution } from "../../src/test/testData/institutions";
@@ -469,6 +472,56 @@ describe("/institutions", () => {
 
   runTokenInvalidCheck({
     url: `http://localhost:${PORT}/institutions`,
+    method: "GET",
+  });
+});
+
+interface InstitutionDetailResponse {
+  institution: InstitutionDetail;
+}
+describe("GET /institutions/:id (Institution Details)", () => {
+  it("gets Alabama Credit Union in the response on success", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions/ee6d71dc-e693-4fc3-a775-53c378bc5066`,
+      method: "GET",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as InstitutionDetailResponse;
+
+      expect(response.status).to.eq(200);
+
+      expect(institutionResponse).to.haveOwnProperty("institution");
+      expect(institutionResponse.institution.name).to.eq(
+        "Alabama Credit Union",
+      );
+    });
+  });
+
+  it("gets a 404 and error response if id doesnt match an institution", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions/ee6d71dc-e693-4fc3-a775-53c378bc506a`,
+      method: "GET",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+      failOnStatusCode: false,
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as InstitutionDetailResponse;
+
+      expect(response.status).to.eq(404);
+
+      expect(institutionResponse).to.contain({
+        error: "Institution not found",
+      });
+    });
+  });
+
+  runTokenInvalidCheck({
+    url: `http://localhost:${PORT}/institutions/ee6d71dc-e693-4fc3-a775-53c378bc5066`,
     method: "GET",
   });
 });
