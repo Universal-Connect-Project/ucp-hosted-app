@@ -1,11 +1,22 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import PageContent from "../../shared/components/PageContent";
-import { Breadcrumbs, Link, Typography } from "@mui/material";
+import {
+  Breadcrumbs,
+  Link,
+  Table,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 import styles from "./institution.module.css";
 import InstitutionField from "./InstitutionField";
+import { InfoOutlined } from "@mui/icons-material";
 
 const institution = {
   id: "UCP-a4f437a6454f7b5",
@@ -22,6 +33,30 @@ const Institution = () => {
 
   const { is_test_bank, keywords, logo, name, routing_numbers, url } =
     institution;
+
+  const tableHeadCells = [
+    { name: "Aggregator" },
+    {
+      name: "Aggregator Institution ID",
+      tooltip:
+        "A unique identifier linking the Aggregator with the Institution.",
+    },
+    {
+      name: "Job Types",
+      tooltip:
+        "Types of jobs the Aggregator supports for this Institution: aggregation, identification, verification, and/or full history.",
+    },
+    {
+      name: "OAuth",
+      tooltip:
+        "Indicates whether the aggregator supports OAuth for secure user authentication.",
+    },
+    {
+      name: "Status",
+      tooltip:
+        "Indicates whether a connection between aggregator and institution is active.",
+    },
+  ];
 
   return (
     <PageContent>
@@ -75,6 +110,26 @@ const Institution = () => {
             value={is_test_bank ? "Yes" : "No"}
           />
         </div>
+        <TableContainer className={styles.table}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {tableHeadCells.map(({ name, tooltip }) => (
+                  <TableCell key={name}>
+                    <div className={styles.tableHeadCell}>
+                      {tooltip && (
+                        <Tooltip title={tooltip}>
+                          <InfoOutlined color="action" fontSize="inherit" />
+                        </Tooltip>
+                      )}
+                      {name}
+                    </div>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+          </Table>
+        </TableContainer>
       </div>
     </PageContent>
   );

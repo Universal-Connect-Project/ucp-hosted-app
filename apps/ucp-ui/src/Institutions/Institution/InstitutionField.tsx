@@ -15,7 +15,7 @@ const InstitutionField = ({
   <div>
     <div className={styles.header}>
       <Tooltip title={tooltip}>
-        <InfoOutlined fontSize="small" />
+        <InfoOutlined color="action" fontSize="inherit" />
       </Tooltip>
       <Typography>{name}</Typography>
     </div>

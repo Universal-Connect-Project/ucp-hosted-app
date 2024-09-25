@@ -19,10 +19,24 @@
 .logo {
   height: 48px;
   width: 48px;
-  border-radius: 4px;
+  border-radius: var(--mui-shape-borderRadius);
 }
 
 .institutionFields {
   display: flex;
   gap: 20px;
+}
+
+.table {
+  &:global(.MuiTableContainer-root) {
+    background-color: var(--mui-palette-common-white);
+    border: solid 1px var(--mui-palette-divider);
+    border-radius: var(--mui-shape-borderRadius);
+  }
+}
+
+.tableHeadCell {
+  align-items: center;
+  display: flex;
+  gap: 4px;
 }
