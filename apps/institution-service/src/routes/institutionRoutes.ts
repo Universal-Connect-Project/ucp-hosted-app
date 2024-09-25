@@ -4,6 +4,7 @@ import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import {
   createInstitution,
   getInstitutionCachedList,
+  getPaginatedInstitutions,
   updateInstitution,
 } from "../controllers/institutionController";
 import {
@@ -23,6 +24,12 @@ router.get(
   [validateWidgetAudience],
   requiredScopes(WidgetHostPermissions.READ_WIDGET_ENDPOINTS),
   getInstitutionCachedList as RequestHandler,
+);
+
+router.get(
+  "/",
+  [validateUIAudience],
+  getPaginatedInstitutions as RequestHandler,
 );
 
 router.post(

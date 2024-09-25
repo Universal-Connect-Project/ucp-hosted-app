@@ -15,8 +15,9 @@ module.exports = {
         logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
         url: "https://wellsfargo.com",
         is_test_bank: false,
-        routing_numbers: ["123", "456"],
+        routing_numbers: ["111111111"],
         createdAt: new Date(),
+        updatedAt: new Date(),
       },
       {
         id: secondSeedInstitutionId,
@@ -25,8 +26,9 @@ module.exports = {
         logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-78c7b591-6512-9c17-b092-1cddbd3c85ba_100x100.png",
         url: "https://chase.com",
         is_test_bank: false,
-        routing_numbers: ["8888888", "2222222"],
+        routing_numbers: ["888888888", "222222222"],
         createdAt: new Date(),
+        updatedAt: new Date(),
       },
     ]);
 

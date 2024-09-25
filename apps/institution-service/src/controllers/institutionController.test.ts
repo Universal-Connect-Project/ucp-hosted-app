@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { UUID } from "crypto";
 import { Request, Response } from "express";
 import { Model } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 import { Institution } from "../models/institution";
+import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
   cachedInstitutionFromSeed,
   seedInstitutionId,
@@ -12,6 +14,7 @@ import {
 import {
   createInstitution,
   getInstitutionCachedList,
+  getPaginatedInstitutions,
   updateInstitution,
 } from "./institutionController";
 
@@ -198,7 +201,6 @@ describe("institutionController", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: "Institution updated successfully",
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         institution: expect.objectContaining({
           ...updateBody,
           id: existingInstitutionId,
@@ -228,6 +230,105 @@ describe("institutionController", () => {
       expect(res.json).toHaveBeenCalledWith({
         error: "An error occurred while updating the institution",
       });
+    });
+  });
+
+  describe("getPaginatedInstitutions", () => {
+    it("returns a paginated list of institutions", async () => {
+      const PAGE_SIZE = 100;
+      const CURRENT_PAGE = 1;
+      const req = {
+        query: {
+          page: CURRENT_PAGE,
+          pageSize: PAGE_SIZE,
+        },
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentPage: CURRENT_PAGE,
+          pageSize: PAGE_SIZE,
+          totalRecords: expect.any(Number),
+          totalPages: expect.any(Number),
+          institutions: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(String),
+              name: expect.any(String),
+              keywords: expect.arrayContaining([expect.any(String)]),
+              logo: expect.any(String),
+              url: expect.any(String),
+              is_test_bank: expect.any(Boolean),
+              routing_numbers: expect.arrayContaining([expect.any(String)]),
+              createdAt: expect.any(Date),
+              updatedAt: expect.any(Date),
+              aggregatorIntegrations: expect.arrayContaining([
+                expect.objectContaining({
+                  aggregator_institution_id: expect.any(String),
+                  supports_oauth: expect.any(Boolean),
+                  supports_identification: expect.any(Boolean),
+                  supports_verification: expect.any(Boolean),
+                  supports_aggregation: expect.any(Boolean),
+                  supports_history: expect.any(Boolean),
+                  isActive: expect.any(Boolean),
+                  aggregator: expect.objectContaining({
+                    name: expect.any(String),
+                    id: expect.any(Number),
+                    displayName: expect.any(String),
+                  }),
+                }),
+              ]),
+            }),
+          ]),
+        }),
+      );
+    });
+
+    it("gets default pagination values when none are passed", async () => {
+      const req = {
+        query: {},
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currentPage: 1,
+          pageSize: DEFAULT_PAGINATION_PAGE_SIZE,
+          totalRecords: expect.any(Number),
+          totalPages: expect.any(Number),
+          institutions: expect.arrayContaining([]),
+        }),
+      );
+    });
+
+    it("responds with 500 when there's an error", async () => {
+      const req = {} as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+        locals: {
+          // missing pagination will trigger an error
+        },
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(500);
     });
   });
 });

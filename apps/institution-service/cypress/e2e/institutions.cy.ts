@@ -1,6 +1,7 @@
 import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
-import { PORT } from "../../src/shared/const";
+import { PaginatedInstitutionsResponse } from "../../src/controllers/institutionController";
+import { DEFAULT_PAGINATION_PAGE_SIZE, PORT } from "../../src/shared/const";
 import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
 import { testInstitution } from "../../src/test/testData/institutions";
 import {
@@ -397,5 +398,77 @@ describe("PUT /institutions/:id (Institution update)", () => {
     }).then((response: Cypress.Response<{ error: string }>) => {
       expect(response.status).to.eq(200);
     });
+  });
+});
+
+describe("/institutions", () => {
+  it("gets paginated institution list with default pagination options", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions`,
+      method: "GET",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as PaginatedInstitutionsResponse;
+
+      expect(response.status).to.eq(200);
+
+      // Should have pagination properties
+      expect(institutionResponse.currentPage).to.eq(1);
+      expect(institutionResponse.pageSize).to.eq(DEFAULT_PAGINATION_PAGE_SIZE);
+      expect(institutionResponse.totalRecords).to.be.greaterThan(100);
+      expect(institutionResponse.totalPages).to.be.greaterThan(100);
+      expect(institutionResponse.institutions.length).to.eq(
+        DEFAULT_PAGINATION_PAGE_SIZE,
+      );
+
+      institutionResponse.institutions.forEach((institution) => {
+        [
+          "id",
+          "name",
+          "keywords",
+          "logo",
+          "url",
+          "is_test_bank",
+          "routing_numbers",
+          "createdAt",
+          "updatedAt",
+          "aggregatorIntegrations",
+        ].forEach((attribute) => {
+          expect(institution).to.haveOwnProperty(attribute);
+        });
+      });
+    });
+  });
+
+  it("gets paginated institution list with custom pagination options", () => {
+    const PAGE_SIZE = 3;
+    const PAGE = 5;
+    cy.request({
+      url: `http://localhost:${PORT}/institutions?page=${PAGE}&pageSize=${PAGE_SIZE}`,
+      method: "GET",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as PaginatedInstitutionsResponse;
+
+      expect(response.status).to.eq(200);
+
+      // Should have pagination properties
+      expect(institutionResponse.currentPage).to.eq(PAGE);
+      expect(institutionResponse.pageSize).to.eq(PAGE_SIZE);
+      expect(institutionResponse.totalRecords).to.be.greaterThan(100);
+      expect(institutionResponse.totalPages).to.be.greaterThan(100);
+      expect(institutionResponse.institutions.length).to.eq(PAGE_SIZE);
+    });
+  });
+
+  runTokenInvalidCheck({
+    url: `http://localhost:${PORT}/institutions`,
+    method: "GET",
   });
 });

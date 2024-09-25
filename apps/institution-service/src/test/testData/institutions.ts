@@ -29,7 +29,8 @@ export const cachedInstitutionFromSeed = {
   is_test_bank: false,
   keywords: ["wells", "fargo"],
   logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
-  routing_numbers: ["123", "456"],
+  routing_numbers: ["111111111"],
+  url: "https://wellsfargo.com",
   sophtron: {
     id: "sophtron_bank",
     supports_aggregation: true,
@@ -46,7 +47,8 @@ export const institutionWithAggregatorQueryObj = {
     is_test_bank: false,
     keywords: ["wells", "fargo"],
     logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
-    routing_numbers: ["123", "456"],
+    routing_numbers: ["111111111"],
+    url: "https://wellsfargo.com",
   },
   aggregatorIntegrations: [
     {
