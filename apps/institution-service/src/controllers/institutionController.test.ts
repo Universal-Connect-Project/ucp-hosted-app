@@ -234,7 +234,7 @@ describe("institutionController", () => {
 
   describe("getPaginatedInstitutions", () => {
     it("returns a paginated list of institutions", async () => {
-      const PAGE_SIZE = 30;
+      const PAGE_SIZE = 100;
       const CURRENT_PAGE = 1;
       const OFFSET = (CURRENT_PAGE - 1) * PAGE_SIZE;
       const req = {} as unknown as Request;
@@ -273,7 +273,7 @@ describe("institutionController", () => {
               updatedAt: expect.any(Date),
               aggregatorIntegrations: expect.arrayContaining([
                 expect.objectContaining({
-                  id: expect.any(String),
+                  aggregator_institution_id: expect.any(String),
                   supports_oauth: expect.any(Boolean),
                   supports_identification: expect.any(Boolean),
                   supports_verification: expect.any(Boolean),
