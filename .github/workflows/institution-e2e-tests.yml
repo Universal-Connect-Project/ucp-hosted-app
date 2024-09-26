@@ -62,7 +62,7 @@ jobs:
           # Copy the env file to the authentication service
           cp ${ENV_FILE_PATH} ${AUTH_ENV_FILE_PATH}
 
-      - name: Cypress run
+      - name: Cypress run (General)
         uses: cypress-io/github-action@v6
         with:
           project: apps/institution-service
@@ -70,12 +70,28 @@ jobs:
             npm run dev --workspace apps/authentication-service
             npm run dev --workspace apps/institution-service
           wait-on: "http://localhost:8089/ping, http://localhost:8088/ping"
-          spec: apps/institution-service/cypress/e2e/**/*.cy.ts
+          spec: apps/institution-service/cypress/e2e/*.cy.ts
         env:
           AGGREGATOR_ADMIN_USERNAME: ${{ secrets.AGGREGATOR_ADMIN_USERNAME }}
           AGGREGATOR_ADMIN_PASSWORD: ${{ secrets.AGGREGATOR_ADMIN_PASSWORD }}
           E2E_INSTITUTION_PASSWORD: ${{ secrets.E2E_INSTITUTION_PASSWORD }}
           SUPER_ADMIN_PASSWORD: ${{ secrets.SUPER_ADMIN_PASSWORD }}
+
+      - name: Cypress run (Rate Limit cacheList endpoint)
+        uses: cypress-io/github-action@v6
+        with:
+          project: apps/institution-service
+          start: |
+            npm run dev --workspace apps/institution-service
+          wait-on: "http://localhost:8088/ping"
+          spec: apps/institution-service/cypress/e2e/special/rateLimitingCacheList.cy.ts
+        env:
+          AGGREGATOR_ADMIN_USERNAME: ${{ secrets.AGGREGATOR_ADMIN_USERNAME }}
+          AGGREGATOR_ADMIN_PASSWORD: ${{ secrets.AGGREGATOR_ADMIN_PASSWORD }}
+          E2E_INSTITUTION_PASSWORD: ${{ secrets.E2E_INSTITUTION_PASSWORD }}
+          SUPER_ADMIN_PASSWORD: ${{ secrets.SUPER_ADMIN_PASSWORD }}
+          WIDGET_CLIENT_ID: ${{ secrets.WIDGET_CLIENT_ID }}
+          WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
