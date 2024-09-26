@@ -150,7 +150,7 @@ describe("institutionController", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        error: "Invalid institution Id",
+        error: "Institution not found",
       });
     });
 
@@ -399,7 +399,7 @@ describe("institutionController", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        error: "Invalid institution Id",
+        error: "Institution not found",
       });
     });
 

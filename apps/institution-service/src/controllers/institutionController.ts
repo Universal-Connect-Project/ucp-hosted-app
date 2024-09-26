@@ -78,7 +78,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
     const updateData = req.body as updateInstitutionParams;
 
     if (!validate(institutionId)) {
-      return res.status(404).json({ error: "Invalid institution Id" });
+      return res.status(404).json({ error: "Institution not found" });
     }
 
     const institution = await Institution.findByPk(institutionId);
@@ -199,7 +199,7 @@ export const getInstitution = async (req: Request, res: Response) => {
     const institutionId = req.params.id;
 
     if (!validate(institutionId)) {
-      return res.status(404).json({ error: "Invalid institution Id" });
+      return res.status(404).json({ error: "Institution not found" });
     }
 
     const institution = await Institution.findByPk(institutionId, {
