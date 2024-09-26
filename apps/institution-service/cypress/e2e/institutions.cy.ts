@@ -299,7 +299,7 @@ describe("PUT /institutions/:id (Institution update)", () => {
       failOnStatusCode: false,
     }).then((response: Cypress.Response<{ error: string }>) => {
       expect(response.status).to.eq(404);
-      expect(response.body.error).to.eq("Invalid institution Id");
+      expect(response.body.error).to.eq("Institution not found");
     });
   });
 
@@ -479,7 +479,7 @@ describe("/institutions", () => {
 interface InstitutionDetailResponse {
   institution: InstitutionDetail;
 }
-describe.only("GET /institutions/:id (Institution Details)", () => {
+describe("GET /institutions/:id (Institution Details)", () => {
   it("gets Alabama Credit Union in the response on success", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions/ee6d71dc-e693-4fc3-a775-53c378bc5066`,
