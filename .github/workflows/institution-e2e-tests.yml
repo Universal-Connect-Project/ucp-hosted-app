@@ -58,6 +58,7 @@ jobs:
 
           # For authentication service
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
+          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
 
           # Copy the env file to the authentication service
           cp ${ENV_FILE_PATH} ${AUTH_ENV_FILE_PATH}
@@ -90,8 +91,6 @@ jobs:
           AGGREGATOR_ADMIN_PASSWORD: ${{ secrets.AGGREGATOR_ADMIN_PASSWORD }}
           E2E_INSTITUTION_PASSWORD: ${{ secrets.E2E_INSTITUTION_PASSWORD }}
           SUPER_ADMIN_PASSWORD: ${{ secrets.SUPER_ADMIN_PASSWORD }}
-          WIDGET_CLIENT_ID: ${{ secrets.WIDGET_CLIENT_ID }}
-          WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}
 
       - name: Cypress run (Rate Limit default)
         uses: cypress-io/github-action@v6
@@ -106,8 +105,6 @@ jobs:
           AGGREGATOR_ADMIN_PASSWORD: ${{ secrets.AGGREGATOR_ADMIN_PASSWORD }}
           E2E_INSTITUTION_PASSWORD: ${{ secrets.E2E_INSTITUTION_PASSWORD }}
           SUPER_ADMIN_PASSWORD: ${{ secrets.SUPER_ADMIN_PASSWORD }}
-          WIDGET_CLIENT_ID: ${{ secrets.WIDGET_CLIENT_ID }}
-          WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
