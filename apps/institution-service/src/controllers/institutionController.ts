@@ -99,7 +99,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
   }
 };
 
-interface AggregatorIntegrator {
+interface AggregatorIntegration {
   aggregator_institution_id: string;
   supports_oauth: boolean;
   supports_identification: boolean;
@@ -125,7 +125,7 @@ export interface InstitutionDetail {
   routing_numbers: string[];
   createdAt: string;
   updatedAt: string;
-  aggregatorIntegrators: AggregatorIntegrator[];
+  aggregatorIntegrations: AggregatorIntegration[];
 }
 export interface PaginatedInstitutionsResponse {
   currentPage: number;
