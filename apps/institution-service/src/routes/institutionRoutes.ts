@@ -3,6 +3,7 @@ import { RequestHandler, Router } from "express";
 import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import {
   createInstitution,
+  getInstitution,
   getInstitutionCachedList,
   getPaginatedInstitutions,
   updateInstitution,
@@ -40,6 +41,8 @@ router.post(
   ),
   createInstitution as RequestHandler,
 );
+
+router.get("/:id", [validateUIAudience], getInstitution as RequestHandler);
 
 router.put(
   "/:id",

@@ -41,16 +41,19 @@ module.exports = {
         id: mxAggregatorId,
         name: "mx",
         displayName: "MX",
+        logo: "https://logo.com",
       },
       {
         id: sophtronAggregatorId,
         name: "sophtron",
         displayName: "Sophtron",
+        logo: "https://logo.com",
       },
       {
         id: finicityAggregatorId,
         name: "Finicity",
         displayName: "finicity",
+        logo: "https://logo.com",
       },
     ]);
 

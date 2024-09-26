@@ -78,7 +78,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
     const updateData = req.body as updateInstitutionParams;
 
     if (!validate(institutionId)) {
-      return res.status(404).json({ error: "Invalid institution Id" });
+      return res.status(404).json({ error: "Institution not found" });
     }
 
     const institution = await Institution.findByPk(institutionId);
@@ -99,7 +99,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
   }
 };
 
-interface AggregatorIntegrator {
+interface AggregatorIntegration {
   aggregator_institution_id: string;
   supports_oauth: boolean;
   supports_identification: boolean;
@@ -115,7 +115,7 @@ interface AggregatorIntegrator {
   };
 }
 
-interface InstitutionDetail {
+export interface InstitutionDetail {
   id: string;
   name: string;
   keywords: string[];
@@ -125,7 +125,7 @@ interface InstitutionDetail {
   routing_numbers: string[];
   createdAt: string;
   updatedAt: string;
-  aggregatorIntegrators: AggregatorIntegrator[];
+  aggregatorIntegrations: AggregatorIntegration[];
 }
 export interface PaginatedInstitutionsResponse {
   currentPage: number;
@@ -191,5 +191,52 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ error: "An error occurred while fetching institutions." });
+  }
+};
+
+export const getInstitution = async (req: Request, res: Response) => {
+  try {
+    const institutionId = req.params.id;
+
+    if (!validate(institutionId)) {
+      return res.status(404).json({ error: "Institution not found" });
+    }
+
+    const institution = await Institution.findByPk(institutionId, {
+      include: [
+        {
+          association: Institution.associations.aggregatorIntegrations,
+          attributes: [
+            "id",
+            "aggregator_institution_id",
+            "supports_oauth",
+            "supports_identification",
+            "supports_verification",
+            "supports_aggregation",
+            "supports_history",
+            "createdAt",
+            "updatedAt",
+            "isActive",
+          ],
+          include: [
+            {
+              model: Aggregator,
+              as: "aggregator",
+              attributes: ["name", "id", "displayName", "logo"],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!institution) {
+      return res.status(404).json({ error: "Institution not found" });
+    }
+
+    return res.status(200).json({ institution });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "An error occurred while requesting the institution" });
   }
 };
