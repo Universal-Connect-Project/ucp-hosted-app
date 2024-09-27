@@ -2,9 +2,6 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-
-  max-height: calc(100vh - var(--page-content-margin-top));
-  overflow-y: hidden;
 }
 
 .chipAvatar {
@@ -17,10 +14,8 @@
   &:global(.MuiTableContainer-root) {
     background-color: var(--mui-palette-common-white);
     border: solid 1px var(--mui-palette-divider);
-    border-bottom: none;
     border-collapse: separate;
-    border-radius: var(--mui-shape-borderRadius) var(--mui-shape-borderRadius) 0
-      0;
+    border-radius: var(--mui-shape-borderRadius);
     width: unset;
   }
 }
@@ -49,4 +44,15 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px;
+
+  :global(.MuiToolbar-root) {
+    padding-left: 0;
+  }
 }

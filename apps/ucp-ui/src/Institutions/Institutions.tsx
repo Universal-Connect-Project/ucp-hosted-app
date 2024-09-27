@@ -1,14 +1,16 @@
 import {
   Avatar,
   Chip,
+  Pagination,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import PageTitle from "../shared/components/PageTitle";
 import {
   INSTITUTIONS_PAGE_TITLE,
@@ -28,15 +30,35 @@ import PageContent from "../shared/components/PageContent";
 const Institutions = () => {
   const tableHeadCells = ["Institution", "UCP ID", "Aggregators"];
 
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+    window.scrollTo({ behavior: "smooth", top: 0 });
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(1);
+  };
+
   const { isError: isInstitutionPermissionsError, refetch } =
     useGetInstitutionPermissionsQuery();
 
   const { data } = useGetInstitutionsQuery({
-    page: 0,
-    pageSize: 500,
+    page: page,
+    pageSize: rowsPerPage,
   });
 
   const institutions = data?.institutions;
+  const totalRecords = data?.totalRecords || 0;
+  const pages = data?.totalPages;
 
   return (
     <>
@@ -76,7 +98,7 @@ const Institutions = () => {
                         </div>
                       </TableCell>
                       <TableCell>{id}</TableCell>
-                      <TableCell>
+                      <TableCell padding="none">
                         <div className={styles.aggregatorsCell}>
                           {[...aggregatorIntegrations]
                             .sort((a, b) =>
@@ -128,6 +150,35 @@ const Institutions = () => {
                 )}
               </TableBody>
             </Table>
+            <div className={styles.paginationContainer}>
+              <TablePagination
+                count={totalRecords}
+                component="div"
+                page={page - 1}
+                onPageChange={() => {}}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPage={rowsPerPage}
+                size="small"
+                slotProps={{
+                  actions: {
+                    nextButton: {
+                      style: { display: "none" },
+                    },
+                    previousButton: {
+                      style: { display: "none" },
+                    },
+                  },
+                }}
+              />
+              <Pagination
+                count={pages}
+                onChange={handleChangePage}
+                shape="circular"
+                showFirstButton
+                showLastButton
+                size="small"
+              />
+            </div>
           </TableContainer>
         </div>
       </PageContent>
