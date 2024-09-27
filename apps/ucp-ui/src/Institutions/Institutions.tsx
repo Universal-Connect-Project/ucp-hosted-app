@@ -9,6 +9,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tooltip,
 } from "@mui/material";
 import React, { useState } from "react";
 import PageTitle from "../shared/components/PageTitle";
@@ -26,9 +27,19 @@ import {
   useGetInstitutionsQuery,
 } from "./api";
 import PageContent from "../shared/components/PageContent";
+import { supportsJobTypeMap } from "../shared/constants/jobTypes";
+import { InfoOutlined } from "@mui/icons-material";
 
 const Institutions = () => {
-  const tableHeadCells = ["Institution", "UCP ID", "Aggregators"];
+  const tableHeadCells = [
+    { label: "Institution" },
+    { label: "UCP ID" },
+    {
+      label: "Aggregators",
+      tooltip:
+        "Aggregators that support each institution, along with the number of job types they support.",
+    },
+  ];
 
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -79,8 +90,17 @@ const Institutions = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                  {tableHeadCells.map((name) => (
-                    <TableCell key={name}>{name}</TableCell>
+                  {tableHeadCells.map(({ label, tooltip }) => (
+                    <TableCell key={label}>
+                      <div className={styles.tableHeadCell}>
+                        {tooltip && (
+                          <Tooltip title={tooltip}>
+                            <InfoOutlined fontSize="inherit" />
+                          </Tooltip>
+                        )}
+                        <div>{label}</div>
+                      </div>
+                    </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
@@ -98,7 +118,7 @@ const Institutions = () => {
                         </div>
                       </TableCell>
                       <TableCell>{id}</TableCell>
-                      <TableCell padding="none">
+                      <TableCell>
                         <div className={styles.aggregatorsCell}>
                           {[...aggregatorIntegrations]
                             .sort((a, b) =>
@@ -109,37 +129,43 @@ const Institutions = () => {
                             .map(
                               ({
                                 aggregator: { displayName },
-                                supports_aggregation,
-                                supports_history,
-                                supports_identification,
-                                supports_verification,
+                                isActive,
+                                ...rest
                               }) => {
-                                const numberSupported = [
-                                  supports_identification,
-                                  supports_verification,
-                                  supports_aggregation,
-                                  supports_history,
-                                ].reduce((acc, supportsIt) => {
-                                  if (supportsIt) {
-                                    return acc + 1;
-                                  }
+                                if (!isActive) {
+                                  return null;
+                                }
 
-                                  return acc;
-                                }, 0);
+                                const supportedTypes = Object.values(
+                                  supportsJobTypeMap,
+                                ).filter(({ prop }) => rest[prop]);
+
+                                const namesSupported = supportedTypes
+                                  .map(({ displayName }) => displayName)
+                                  .join(", ");
+                                const numberSupported = supportedTypes.length;
 
                                 return (
-                                  <Chip
-                                    avatar={
-                                      <Avatar className={styles.chipAvatar}>
-                                        {numberSupported}
-                                      </Avatar>
-                                    }
-                                    data-testid={
-                                      INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
-                                    }
+                                  <Tooltip
+                                    disableInteractive
                                     key={displayName}
-                                    label={displayName}
-                                  />
+                                    title={
+                                      numberSupported ? namesSupported : null
+                                    }
+                                  >
+                                    <Chip
+                                      avatar={
+                                        <Avatar className={styles.chipAvatar}>
+                                          {numberSupported}
+                                        </Avatar>
+                                      }
+                                      data-testid={
+                                        INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
+                                      }
+                                      label={displayName}
+                                      size="small"
+                                    />
+                                  </Tooltip>
                                 );
                               },
                             )}

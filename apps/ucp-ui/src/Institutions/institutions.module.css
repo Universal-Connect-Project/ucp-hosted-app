@@ -56,3 +56,9 @@
     padding-left: 0;
   }
 }
+
+.tableHeadCell {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
