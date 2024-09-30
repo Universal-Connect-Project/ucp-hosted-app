@@ -11,7 +11,7 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import PageTitle from "../shared/components/PageTitle";
 import {
   INSTITUTIONS_ERROR_TEXT,
@@ -31,6 +31,7 @@ import {
 import PageContent from "../shared/components/PageContent";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import { InfoOutlined } from "@mui/icons-material";
+import { useSearchParams } from "react-router-dom";
 import {
   SkeletonIfLoading,
   TextSkeletonIfLoading,
@@ -71,22 +72,35 @@ const Institutions = () => {
     },
   ];
 
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const rowsPerPage = parseInt(searchParams.get("rowsPerPage") || "10", 10);
 
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
     newPage: number,
   ) => {
-    setPage(newPage);
+    setSearchParams(
+      {
+        page: newPage.toString(),
+        rowsPerPage: rowsPerPage.toString(),
+      },
+      { replace: true },
+    );
     window.scrollTo({ behavior: "smooth", top: 0 });
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(1);
+    setSearchParams(
+      {
+        page: "1",
+        rowsPerPage: parseInt(event.target.value, 10).toString(),
+      },
+      { replace: true },
+    );
   };
 
   const {
