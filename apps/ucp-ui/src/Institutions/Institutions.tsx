@@ -14,6 +14,8 @@ import {
 import React from "react";
 import PageTitle from "../shared/components/PageTitle";
 import {
+  INSTITUTIONS_AGGREGATOR_INFO_ICON,
+  INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP,
   INSTITUTIONS_ERROR_TEXT,
   INSTITUTIONS_PAGE_TITLE,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
@@ -67,8 +69,7 @@ const Institutions = () => {
     { label: "UCP ID" },
     {
       label: "Aggregators",
-      tooltip:
-        "Aggregators that support each institution, along with the number of job types they support.",
+      tooltip: INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP,
     },
   ];
 
@@ -156,7 +157,10 @@ const Institutions = () => {
                         <TableCell key={label}>
                           <div className={styles.tableHeadCell}>
                             {tooltip && (
-                              <Tooltip title={tooltip}>
+                              <Tooltip
+                                data-testid={INSTITUTIONS_AGGREGATOR_INFO_ICON}
+                                title={tooltip}
+                              >
                                 <InfoOutlined fontSize="inherit" />
                               </Tooltip>
                             )}

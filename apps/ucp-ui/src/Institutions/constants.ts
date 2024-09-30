@@ -16,3 +16,7 @@ export const INSTITUTIONS_PERMISSIONS_ERROR_TEXT =
 
 export const INSTITUTIONS_ERROR_TEXT =
   "We cannot load the Institution list right now.";
+
+export const INSTITUTIONS_AGGREGATOR_INFO_ICON = "institutions-aggregator-info";
+export const INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP =
+  "Aggregators that support each institution, along with the number of job types they support.";
