@@ -13,7 +13,7 @@ import {
   INSTITUTION_SERVICE_INSTITUTIONS_URL,
   INSTITUTION_SERVICE_PERMISSIONS_URL,
 } from "../../Institutions/api";
-import { institutions } from "../../Institutions/testData/institutions";
+import { institutionsPage1 } from "../../Institutions/testData/institutions";
 
 export const handlers = [
   http.post(INSTITUTION_SERVICE_CREATE_INSTITUTION_URL, () =>
@@ -23,7 +23,7 @@ export const handlers = [
     HttpResponse.json(institutionPermissionsResponse),
   ),
   http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, () =>
-    HttpResponse.json({ institutions }),
+    HttpResponse.json(institutionsPage1),
   ),
   http.post(
     AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL,

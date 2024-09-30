@@ -37,3 +37,37 @@ export const testInstitution = {
 };
 
 export const institutions = [testInstitution];
+
+export const institutionsPage1 = {
+  currentPage: 1,
+  pageSize: 10,
+  totalRecords: 13057,
+  totalPages: 262,
+  institutions,
+};
+
+export const institutionsBiggerPage = {
+  currentPage: 1,
+  pageSize: 25,
+  totalRecords: 13057,
+  totalPages: 262,
+  institutions: [
+    {
+      ...testInstitution,
+      id: "bbbbbbbbbbbb",
+    },
+  ],
+};
+
+export const institutionsPage2 = {
+  currentPage: 1,
+  pageSize: 10,
+  totalRecords: 13057,
+  totalPages: 262,
+  institutions: [
+    {
+      ...testInstitution,
+      id: "aaaaaaaaaaa",
+    },
+  ],
+};

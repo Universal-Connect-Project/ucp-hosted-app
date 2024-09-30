@@ -81,6 +81,11 @@ export const waitForLoad = async () =>
     expect(screen.queryAllByTestId(SKELETON_LOADER_TEST_ID)).toHaveLength(0),
   );
 
+export const expectSkeletonLoader = async () =>
+  expect(
+    (await screen.findAllByTestId(SKELETON_LOADER_TEST_ID)).length,
+  ).toBeGreaterThan(0);
+
 export * from "@testing-library/react";
 export { customRender as render };
 export { userEvent };

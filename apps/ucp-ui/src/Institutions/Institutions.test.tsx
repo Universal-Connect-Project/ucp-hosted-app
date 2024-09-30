@@ -1,5 +1,12 @@
 import React from "react";
-import { render, screen, userEvent, within } from "../shared/test/testUtils";
+import {
+  expectSkeletonLoader,
+  render,
+  screen,
+  userEvent,
+  waitForLoad,
+  within,
+} from "../shared/test/testUtils";
 import Institutions from "./Institutions";
 import {
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
@@ -75,4 +82,26 @@ describe("<Institutions />", () => {
     expect(await screen.findByText(testInstitution.id)).toBeInTheDocument();
     expect(await screen.findByText(testInstitution.name)).toBeInTheDocument();
   });
+
+  it("shows a loading state with skeletons before data arrives and while paginating", async () => {
+    render(<Institutions />);
+
+    await expectSkeletonLoader();
+
+    await waitForLoad();
+
+    await userEvent.click(screen.getByText("2"));
+
+    await expectSkeletonLoader();
+
+    await waitForLoad();
+  });
+
+  it("shows an error on institutions failure and allow retry", () => {});
+
+  it("paginates and changes number of rows", () => {});
+
+  it("shows a tooltip for aggregators", () => {});
+
+  it("shows a tooltip for supported job types", () => {});
 });
