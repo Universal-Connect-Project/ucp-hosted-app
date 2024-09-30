@@ -226,7 +226,7 @@ const Institutions = () => {
                                         disableInteractive
                                         title={
                                           numberSupported
-                                            ? namesSupported
+                                            ? `Supported job types: ${namesSupported}`
                                             : null
                                         }
                                       >
