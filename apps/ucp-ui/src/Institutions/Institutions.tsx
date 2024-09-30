@@ -23,12 +23,41 @@ import styles from "./institutions.module.css";
 import AddInstitution from "./ChangeInstitution/AddInstitution";
 import FetchError from "../shared/components/FetchError";
 import {
+  AggregatorIntegration,
   useGetInstitutionPermissionsQuery,
   useGetInstitutionsQuery,
 } from "./api";
 import PageContent from "../shared/components/PageContent";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import { InfoOutlined } from "@mui/icons-material";
+import {
+  SkeletonIfLoading,
+  TextSkeletonIfLoading,
+} from "../shared/components/Skeleton";
+
+const generateFakeInstitutionData = (rowsPerPage: number) => {
+  return new Array(rowsPerPage).fill(0).map(() => ({
+    id: window.crypto.randomUUID(),
+    logo: undefined,
+    name: "Test that has to be quite long 1234566777",
+    aggregatorIntegrations: new Array(Math.floor(Math.random() * 2) + 1)
+      .fill(0)
+      .map((_, index) => ({
+        id: index,
+        isActive: true,
+        ...Object.values(supportsJobTypeMap).reduce(
+          (acc, { prop }) => ({
+            ...acc,
+            [prop]: true,
+          }),
+          {},
+        ),
+        aggregator: {
+          displayName: (Math.random() + 1).toString(36).substring(7),
+        },
+      })),
+  }));
+};
 
 const Institutions = () => {
   const tableHeadCells = [
@@ -62,12 +91,15 @@ const Institutions = () => {
   const { isError: isInstitutionPermissionsError, refetch } =
     useGetInstitutionPermissionsQuery();
 
-  const { data } = useGetInstitutionsQuery({
+  const { data, isFetching: isInstitutionsLoading } = useGetInstitutionsQuery({
     page: page,
     pageSize: rowsPerPage,
   });
 
-  const institutions = data?.institutions;
+  const institutions =
+    isInstitutionsLoading && !data
+      ? generateFakeInstitutionData(rowsPerPage)
+      : data?.institutions;
   const totalRecords = data?.totalRecords || 0;
   const pages = data?.totalPages;
 
@@ -113,11 +145,29 @@ const Institutions = () => {
                     >
                       <TableCell>
                         <div className={styles.institutionCell}>
-                          <img className={styles.institutionLogo} src={logo} />
-                          <div>{name}</div>
+                          <SkeletonIfLoading
+                            height="100%"
+                            isLoading={isInstitutionsLoading}
+                          >
+                            <img
+                              className={styles.institutionLogo}
+                              src={logo}
+                            />
+                          </SkeletonIfLoading>
+                          <TextSkeletonIfLoading
+                            isLoading={isInstitutionsLoading}
+                          >
+                            <div>{name}</div>
+                          </TextSkeletonIfLoading>
                         </div>
                       </TableCell>
-                      <TableCell>{id}</TableCell>
+                      <TableCell>
+                        <TextSkeletonIfLoading
+                          isLoading={isInstitutionsLoading}
+                        >
+                          <div>{id}</div>
+                        </TextSkeletonIfLoading>
+                      </TableCell>
                       <TableCell>
                         <div className={styles.aggregatorsCell}>
                           {[...aggregatorIntegrations]
@@ -126,29 +176,38 @@ const Institutions = () => {
                                 b.aggregator.displayName,
                               ),
                             )
-                            .map(
-                              ({
+                            .map((aggregatorInregration) => {
+                              const {
                                 aggregator: { displayName },
                                 isActive,
-                                ...rest
-                              }) => {
-                                if (!isActive) {
-                                  return null;
-                                }
+                              } = aggregatorInregration;
 
-                                const supportedTypes = Object.values(
-                                  supportsJobTypeMap,
-                                ).filter(({ prop }) => rest[prop]);
+                              if (!isActive) {
+                                return null;
+                              }
 
-                                const namesSupported = supportedTypes
-                                  .map(({ displayName }) => displayName)
-                                  .join(", ");
-                                const numberSupported = supportedTypes.length;
+                              const supportedTypes = Object.values(
+                                supportsJobTypeMap,
+                              ).filter(
+                                ({ prop }) =>
+                                  (
+                                    aggregatorInregration as AggregatorIntegration
+                                  )[prop],
+                              );
 
-                                return (
+                              const namesSupported = supportedTypes
+                                .map(({ displayName }) => displayName)
+                                .join(", ");
+                              const numberSupported = supportedTypes.length;
+
+                              return (
+                                <SkeletonIfLoading
+                                  isLoading={isInstitutionsLoading}
+                                  key={displayName}
+                                  sx={{ borderRadius: "16px" }}
+                                >
                                   <Tooltip
                                     disableInteractive
-                                    key={displayName}
                                     title={
                                       numberSupported ? namesSupported : null
                                     }
@@ -166,9 +225,9 @@ const Institutions = () => {
                                       size="small"
                                     />
                                   </Tooltip>
-                                );
-                              },
-                            )}
+                                </SkeletonIfLoading>
+                              );
+                            })}
                         </div>
                       </TableCell>
                     </TableRow>

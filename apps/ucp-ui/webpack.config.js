@@ -1,6 +1,7 @@
 import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import Dotenv from "dotenv-webpack";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 export default ({ production }) => {
   const environmentString = production ? "production" : "staging";
@@ -33,7 +34,7 @@ export default ({ production }) => {
         {
           test: /\.css$/i,
           use: [
-            "style-loader",
+            MiniCssExtractPlugin.loader,
             {
               loader: "css-loader",
               options: { esModule: false, modules: true },
@@ -49,6 +50,7 @@ export default ({ production }) => {
       new Dotenv({
         path: `./env/${environmentString}.env`,
       }),
+      new MiniCssExtractPlugin(),
     ],
   };
 };

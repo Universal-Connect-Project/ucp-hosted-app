@@ -29,6 +29,7 @@
   align-items: center;
   display: flex;
   gap: 8px;
+  height: 32px;
   flex-direction: row;
 }
 

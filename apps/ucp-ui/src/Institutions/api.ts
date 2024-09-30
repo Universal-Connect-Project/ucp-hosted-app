@@ -11,7 +11,7 @@ interface Aggregator {
   name: string;
 }
 
-interface AggregatorIntegration {
+export interface AggregatorIntegration {
   aggregator_institution_id: string;
   aggregator: Aggregator;
   isActive: boolean;

@@ -16,7 +16,7 @@ export const SkeletonIfLoading = ({
   if (isLoading) {
     return (
       <Skeleton
-        className={styles.hideChilden}
+        className={styles.hideChildren}
         data-testid={SKELETON_LOADER_TEST_ID}
         variant="rectangular"
         {...props}
