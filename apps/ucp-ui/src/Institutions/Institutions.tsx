@@ -14,6 +14,7 @@ import {
 import React, { useState } from "react";
 import PageTitle from "../shared/components/PageTitle";
 import {
+  INSTITUTIONS_ERROR_TEXT,
   INSTITUTIONS_PAGE_TITLE,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
@@ -88,10 +89,17 @@ const Institutions = () => {
     setPage(1);
   };
 
-  const { isError: isInstitutionPermissionsError, refetch } =
-    useGetInstitutionPermissionsQuery();
+  const {
+    isError: isInstitutionPermissionsError,
+    refetch: refetchInstitutionPermissions,
+  } = useGetInstitutionPermissionsQuery();
 
-  const { data, isFetching: isInstitutionsLoading } = useGetInstitutionsQuery({
+  const {
+    data,
+    isError: isInstitutionsError,
+    isFetching: isInstitutionsLoading,
+    refetch: refetchInstitutions,
+  } = useGetInstitutionsQuery({
     page: page,
     pageSize: rowsPerPage,
   });
@@ -108,7 +116,7 @@ const Institutions = () => {
       {isInstitutionPermissionsError && (
         <FetchError
           description={INSTITUTIONS_PERMISSIONS_ERROR_TEXT}
-          refetch={() => void refetch()}
+          refetch={() => void refetchInstitutionPermissions()}
           title="We're unable to check permissions right now"
         />
       )}
@@ -119,151 +127,165 @@ const Institutions = () => {
             <AddInstitution />
           </div>
           <TableContainer className={styles.table}>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  {tableHeadCells.map(({ label, tooltip }) => (
-                    <TableCell key={label}>
-                      <div className={styles.tableHeadCell}>
-                        {tooltip && (
-                          <Tooltip title={tooltip}>
-                            <InfoOutlined fontSize="inherit" />
-                          </Tooltip>
-                        )}
-                        <div>{label}</div>
-                      </div>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {institutions?.map(
-                  ({ aggregatorIntegrations, logo, name, id }) => (
-                    <TableRow
-                      data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
-                      key={id}
-                    >
-                      <TableCell>
-                        <div className={styles.institutionCell}>
-                          <SkeletonIfLoading
-                            height="100%"
-                            isLoading={isInstitutionsLoading}
-                          >
-                            <img
-                              className={styles.institutionLogo}
-                              src={logo}
-                            />
-                          </SkeletonIfLoading>
-                          <TextSkeletonIfLoading
-                            isLoading={isInstitutionsLoading}
-                          >
-                            <div>{name}</div>
-                          </TextSkeletonIfLoading>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <TextSkeletonIfLoading
-                          isLoading={isInstitutionsLoading}
-                        >
-                          <div>{id}</div>
-                        </TextSkeletonIfLoading>
-                      </TableCell>
-                      <TableCell>
-                        <div className={styles.aggregatorsCell}>
-                          {[...aggregatorIntegrations]
-                            .sort((a, b) =>
-                              a.aggregator.displayName.localeCompare(
-                                b.aggregator.displayName,
-                              ),
-                            )
-                            .map((aggregatorInregration) => {
-                              const {
-                                aggregator: { displayName },
-                                isActive,
-                              } = aggregatorInregration;
-
-                              if (!isActive) {
-                                return null;
-                              }
-
-                              const supportedTypes = Object.values(
-                                supportsJobTypeMap,
-                              ).filter(
-                                ({ prop }) =>
-                                  (
-                                    aggregatorInregration as AggregatorIntegration
-                                  )[prop],
-                              );
-
-                              const namesSupported = supportedTypes
-                                .map(({ displayName }) => displayName)
-                                .join(", ");
-                              const numberSupported = supportedTypes.length;
-
-                              return (
-                                <SkeletonIfLoading
-                                  isLoading={isInstitutionsLoading}
-                                  key={displayName}
-                                  sx={{ borderRadius: "16px" }}
-                                >
-                                  <Tooltip
-                                    disableInteractive
-                                    title={
-                                      numberSupported ? namesSupported : null
-                                    }
-                                  >
-                                    <Chip
-                                      avatar={
-                                        <Avatar className={styles.chipAvatar}>
-                                          {numberSupported}
-                                        </Avatar>
-                                      }
-                                      data-testid={
-                                        INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
-                                      }
-                                      label={displayName}
-                                      size="small"
-                                    />
-                                  </Tooltip>
-                                </SkeletonIfLoading>
-                              );
-                            })}
-                        </div>
-                      </TableCell>
+            {isInstitutionsError ? (
+              <FetchError
+                description={INSTITUTIONS_ERROR_TEXT}
+                refetch={() => void refetchInstitutions()}
+                title="Something went wrong"
+              />
+            ) : (
+              <>
+                <Table stickyHeader>
+                  <TableHead>
+                    <TableRow>
+                      {tableHeadCells.map(({ label, tooltip }) => (
+                        <TableCell key={label}>
+                          <div className={styles.tableHeadCell}>
+                            {tooltip && (
+                              <Tooltip title={tooltip}>
+                                <InfoOutlined fontSize="inherit" />
+                              </Tooltip>
+                            )}
+                            <div>{label}</div>
+                          </div>
+                        </TableCell>
+                      ))}
                     </TableRow>
-                  ),
-                )}
-              </TableBody>
-            </Table>
-            <div className={styles.paginationContainer}>
-              <TablePagination
-                count={totalRecords}
-                component="div"
-                page={page - 1}
-                onPageChange={() => {}}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                rowsPerPage={rowsPerPage}
-                size="small"
-                slotProps={{
-                  actions: {
-                    nextButton: {
-                      style: { display: "none" },
-                    },
-                    previousButton: {
-                      style: { display: "none" },
-                    },
-                  },
-                }}
-              />
-              <Pagination
-                count={pages}
-                onChange={handleChangePage}
-                shape="circular"
-                showFirstButton
-                showLastButton
-                size="small"
-              />
-            </div>
+                  </TableHead>
+                  <TableBody>
+                    {institutions?.map(
+                      ({ aggregatorIntegrations, logo, name, id }) => (
+                        <TableRow
+                          data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
+                          key={id}
+                        >
+                          <TableCell>
+                            <div className={styles.institutionCell}>
+                              <SkeletonIfLoading
+                                height="100%"
+                                isLoading={isInstitutionsLoading}
+                              >
+                                <img
+                                  className={styles.institutionLogo}
+                                  src={logo}
+                                />
+                              </SkeletonIfLoading>
+                              <TextSkeletonIfLoading
+                                isLoading={isInstitutionsLoading}
+                              >
+                                <div>{name}</div>
+                              </TextSkeletonIfLoading>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <TextSkeletonIfLoading
+                              isLoading={isInstitutionsLoading}
+                            >
+                              <div>{id}</div>
+                            </TextSkeletonIfLoading>
+                          </TableCell>
+                          <TableCell>
+                            <div className={styles.aggregatorsCell}>
+                              {[...aggregatorIntegrations]
+                                .sort((a, b) =>
+                                  a.aggregator.displayName.localeCompare(
+                                    b.aggregator.displayName,
+                                  ),
+                                )
+                                .map((aggregatorInregration) => {
+                                  const {
+                                    aggregator: { displayName },
+                                    isActive,
+                                  } = aggregatorInregration;
+
+                                  if (!isActive) {
+                                    return null;
+                                  }
+
+                                  const supportedTypes = Object.values(
+                                    supportsJobTypeMap,
+                                  ).filter(
+                                    ({ prop }) =>
+                                      (
+                                        aggregatorInregration as AggregatorIntegration
+                                      )[prop],
+                                  );
+
+                                  const namesSupported = supportedTypes
+                                    .map(({ displayName }) => displayName)
+                                    .join(", ");
+                                  const numberSupported = supportedTypes.length;
+
+                                  return (
+                                    <SkeletonIfLoading
+                                      isLoading={isInstitutionsLoading}
+                                      key={displayName}
+                                      sx={{ borderRadius: "16px" }}
+                                    >
+                                      <Tooltip
+                                        disableInteractive
+                                        title={
+                                          numberSupported
+                                            ? namesSupported
+                                            : null
+                                        }
+                                      >
+                                        <Chip
+                                          avatar={
+                                            <Avatar
+                                              className={styles.chipAvatar}
+                                            >
+                                              {numberSupported}
+                                            </Avatar>
+                                          }
+                                          data-testid={
+                                            INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
+                                          }
+                                          label={displayName}
+                                          size="small"
+                                        />
+                                      </Tooltip>
+                                    </SkeletonIfLoading>
+                                  );
+                                })}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ),
+                    )}
+                  </TableBody>
+                </Table>
+                <div className={styles.paginationContainer}>
+                  <TablePagination
+                    count={totalRecords}
+                    component="div"
+                    page={page - 1}
+                    onPageChange={() => {}}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    rowsPerPage={rowsPerPage}
+                    size="small"
+                    slotProps={{
+                      actions: {
+                        nextButton: {
+                          style: { display: "none" },
+                        },
+                        previousButton: {
+                          style: { display: "none" },
+                        },
+                      },
+                    }}
+                  />
+                  <Pagination
+                    count={pages}
+                    onChange={handleChangePage}
+                    shape="circular"
+                    showFirstButton
+                    showLastButton
+                    size="small"
+                  />
+                </div>
+              </>
+            )}
           </TableContainer>
         </div>
       </PageContent>

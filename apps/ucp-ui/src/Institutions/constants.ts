@@ -13,3 +13,6 @@ export const INSTITUTION_TEST_INSTITUTION_TOOLTIP =
 
 export const INSTITUTIONS_PERMISSIONS_ERROR_TEXT =
   "Something went wrong while loading institution permissions. Please try again in a few moments.";
+
+export const INSTITUTIONS_ERROR_TEXT =
+  "We cannot load the Institution list right now.";
