@@ -13,13 +13,38 @@ import {
 } from "../../src/Institutions/ChangeInstitution/constants";
 
 describe("institutions", () => {
-  it("renders institutions", () => {
+  it("renders institutions, changes rows per page, and paginates", () => {
     cy.loginWithoutWidgetRole();
 
-    cy.findAllByTestId(new RegExp(INSTITUTIONS_ROW_TEST_ID)).should(
-      "have.length.above",
-      0,
-    );
+    const rowRegex = new RegExp(INSTITUTIONS_ROW_TEST_ID);
+
+    cy.findAllByTestId(rowRegex).should("exist");
+
+    cy.waitForLoad();
+
+    cy.findAllByTestId(rowRegex).should("have.length", 10);
+
+    cy.findByText("10").click();
+
+    cy.findByText("25").click();
+
+    cy.waitForLoad();
+
+    cy.findAllByTestId(rowRegex).should("have.length", 25);
+
+    cy.findAllByTestId(rowRegex)
+      .eq(0)
+      .invoke("attr", "data-testid")
+      .then((firstPageTestId) => {
+        cy.findByTestId("NavigateNextIcon").click();
+
+        cy.waitForLoad();
+
+        cy.findAllByTestId(rowRegex)
+          .eq(0)
+          .invoke("attr", "data-testid")
+          .should("not.eq", firstPageTestId);
+      });
   });
 
   it("creates an institution and navigates to its page", () => {
