@@ -2,6 +2,7 @@ import { UiUserPermissions } from "@repo/shared-utils";
 import { NextFunction, Request, Response } from "express";
 import Joi, { ObjectSchema } from "joi";
 import jwt from "jsonwebtoken";
+import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
 
 export const validate = (schema: ObjectSchema) => {
@@ -36,6 +37,16 @@ export const institutionSchema = Joi.object({
       "string.pattern.base": "Each routing number must be exactly 9 digits",
       "array.base": "Routing numbers must be an array of strings",
     }),
+});
+
+export const aggregatorIntegrationUpdateSchema = Joi.object({
+  aggregator_institution_id: Joi.string(),
+  supports_oauth: Joi.boolean(),
+  supports_identification: Joi.boolean(),
+  supports_verification: Joi.boolean(),
+  supports_aggregation: Joi.boolean(),
+  supports_history: Joi.boolean(),
+  isActive: Joi.boolean(),
 });
 
 export interface DecodedToken {
@@ -78,6 +89,50 @@ export const validateUserCanEditInstitution = async (
       return res.status(403).json({
         error:
           "Aggregator cannot edit an institution used by other aggregators",
+      });
+    }
+
+    next();
+  } catch (err) {
+    return res.status(500).json({ error: "Error validating user permission" });
+  }
+};
+
+export const validateUserCanEditAggregatorIntegration = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const token = req.headers.authorization?.split(" ")?.[1];
+    const decodedToken = jwt.decode(token as string) as DecodedToken;
+    const permissions = decodedToken.permissions;
+    if (permissions.includes(UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION)) {
+      return next();
+    } else if (
+      !permissions.includes(
+        UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+      )
+    ) {
+      return res.status(403).json({ error: "Insufficient permissions" });
+    }
+
+    const aggregatorIntegration = await AggregatorIntegration.findByPk(
+      req.params.id,
+    );
+    if (!aggregatorIntegration) {
+      return res
+        .status(404)
+        .json({ error: "Aggregator Integration not found" });
+    }
+
+    const aggregatorName = decodedToken["ucw/appMetaData"].aggregatorId;
+    const aggregator = await aggregatorIntegration?.getAggregator();
+
+    if (aggregatorName !== aggregator.name) {
+      return res.status(403).json({
+        error:
+          "An Aggregator cannot edit an aggregatorIntegration belonging to another aggregator",
       });
     }
 

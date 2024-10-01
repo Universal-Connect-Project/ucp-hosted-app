@@ -4,6 +4,7 @@ import express, { Request, Response } from "express";
 import logger from "morgan";
 
 import { rateLimit } from "express-rate-limit";
+import aggregatorIntegrationRoutes from "./routes/aggregatorIntegrationRoutes";
 import institutionRoutes from "./routes/institutionRoutes";
 import permissionsRoutes from "./routes/permissionRoutes";
 import { PORT } from "./shared/const";
@@ -64,6 +65,7 @@ app.get("/ping", (_req: Request, res: Response) => {
 // Routes
 app.use("/institutions", institutionRoutes);
 app.use("/permissions", permissionsRoutes);
+app.use("/aggregatorIntegrations", aggregatorIntegrationRoutes);
 
 app.listen(PORT, () => {
   console.info(`App listening on port ${PORT}`);
