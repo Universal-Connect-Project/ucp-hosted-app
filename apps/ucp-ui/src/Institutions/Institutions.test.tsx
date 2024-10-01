@@ -23,7 +23,7 @@ import {
   testInstitution,
 } from "./testData/institutions";
 import { server } from "../shared/test/testServer";
-import { http, HttpResponse } from "msw";
+import { delay, http, HttpResponse } from "msw";
 import {
   INSTITUTION_SERVICE_INSTITUTIONS_URL,
   INSTITUTION_SERVICE_PERMISSIONS_URL,
@@ -109,6 +109,14 @@ describe("<Institutions />", () => {
   });
 
   it("shows a loading state with skeletons before data arrives and while paginating", async () => {
+    server.use(
+      http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, async () => {
+        await delay();
+
+        return HttpResponse.json(institutionsPage1);
+      }),
+    );
+
     render(<Institutions />);
 
     await expectSkeletonLoader();
