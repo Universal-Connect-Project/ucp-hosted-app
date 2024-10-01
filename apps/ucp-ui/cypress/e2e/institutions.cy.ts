@@ -40,6 +40,10 @@ describe("institutions", () => {
 
         cy.waitForLoad();
 
+        cy.findByTestId("NavigateNextIcon").click();
+
+        cy.waitForLoad();
+
         cy.findAllByTestId(rowRegex)
           .eq(0)
           .invoke("attr", "data-testid")
