@@ -78,7 +78,7 @@ Cypress.Commands.add("getAccessToken", () =>
 );
 
 Cypress.Commands.add("waitForLoad", () => {
-  cy.findByTestId(SKELETON_LOADER_TEST_ID).should("not.exist");
+  cy.findAllByTestId(SKELETON_LOADER_TEST_ID).should("have.length", 0);
 });
 
 declare global {
