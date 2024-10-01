@@ -2,11 +2,6 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import { Provider as ReduxProvider } from "react-redux";
 import React from "react";
 import Routes from "./Routes";
-
-import "@fontsource/work-sans/300.css";
-import "@fontsource/work-sans/400.css";
-import "@fontsource/work-sans/500.css";
-import "@fontsource/work-sans/700.css";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material";
 import { muiTheme } from "./theme";
 import { store } from "./store";

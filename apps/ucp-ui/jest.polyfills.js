@@ -29,6 +29,10 @@ Object.defineProperty(globalThis, "crypto", {
   },
 });
 
+Object.defineProperty(globalThis, "scrollTo", {
+  value: () => {},
+});
+
 Object.defineProperty(navigator, "clipboard", {
   value: {
     writeText: async () => {},

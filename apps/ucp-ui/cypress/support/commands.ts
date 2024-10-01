@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
 import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "../../src/shared/constants/authentication";
+import { SKELETON_LOADER_TEST_ID } from "../../src/shared/components/constants";
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -76,6 +77,10 @@ Cypress.Commands.add("getAccessToken", () =>
   cy.wrap(localStorage).invoke("getItem", ACCESS_TOKEN_LOCAL_STORAGE_KEY),
 );
 
+Cypress.Commands.add("waitForLoad", () => {
+  cy.findAllByTestId(SKELETON_LOADER_TEST_ID).should("have.length", 0);
+});
+
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
@@ -84,6 +89,7 @@ declare global {
       loginSuperAdmin(): Chainable<void>;
       loginWithWidgetRole(): Chainable<void>;
       loginWithoutWidgetRole(): Chainable<void>;
+      waitForLoad(): Chainable<void>;
     }
   }
 }

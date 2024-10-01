@@ -6,11 +6,14 @@ export const testInstitution = {
   url: "https://wellsoffice.ceo.wellsfargo.com/portal/signon/index.jsp?TYPE=33554433&REALMOID=06-ca0b23b0-76b2-100e-be13-83e731d90080&GUID=&SMAUTHREASON=0&METHOD=GET&SMAGENTNAME=$SM$4KNRToX6JXEuRTeu3lGJM%2fAg",
   is_test_bank: false,
   routing_numbers: [],
-  aggregators: [
+  aggregatorIntegrations: [
     {
+      aggregator: {
+        displayName: "Sophtron",
+        name: "sophtron",
+      },
       id: "60d097a9-65c4-449a-b4ce-cfa4aab224f3",
-      displayName: "Sophtron",
-      name: "sophtron",
+      isActive: true,
       supports_oauth: false,
       supports_identification: true,
       supports_verification: true,
@@ -18,9 +21,12 @@ export const testInstitution = {
       supports_history: false,
     },
     {
+      aggregator: {
+        displayName: "MX",
+        name: "mx",
+      },
       id: "f10c1eea-abb6-4d98-8867-e0b5711e1c15",
-      displayName: "MX",
-      name: "mx",
+      isActive: true,
       supports_oauth: false,
       supports_identification: true,
       supports_verification: true,
@@ -30,195 +36,38 @@ export const testInstitution = {
   ],
 };
 
-export const institutions = [
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    id: "9dfbd80b-137c-445b-8a0a-dd106d09df7e",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Supports 3",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    id: "9721a415-05e1-4250-a866-41d5f6c40815",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: false,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    id: "2038a437-1e58-4f8f-9d09-29544f0f50c2",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    id: "eb069cd6-144a-4bf5-a83a-69a6848525b9",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    id: "3c3ee26d-5391-4706-80c5-24a0ee9be0f3",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    id: "1b052901-5d2c-4d54-9fb8-c161234fc566",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    id: "b45b911f-c108-4e8b-ab55-a9f5ef33f5cf",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    name: "TestExampleA Bank",
-    keywords: "test, example, tex",
-    logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-    url: "https://test-example.com",
-    id: "12e80d81-ae8d-491f-acbf-798b854742a7",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "TestExampleA",
-        id: "testExampleA",
-        name: "testExampleA",
-        supports_oauth: true,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  {
-    id: "b7859f65-5617-490e-bbbb-141852025057",
-    name: "MX Bank",
-    keywords: "Gringotts, MX Bank",
-    logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
-    url: "https://mx.com",
-    is_test_bank: true,
-    routing_numbers: [],
-    aggregators: [
-      {
-        displayName: "MX",
-        name: "mx",
-        id: "mxbank",
-        supports_oauth: false,
-        supports_identification: true,
-        supports_verification: true,
-        supports_aggregation: true,
-        supports_history: true,
-      },
-    ],
-  },
-  testInstitution,
-];
+export const institutions = [testInstitution];
+
+export const institutionsPage1 = {
+  currentPage: 1,
+  pageSize: 10,
+  totalRecords: 13057,
+  totalPages: 262,
+  institutions,
+};
+
+export const institutionsBiggerPage = {
+  currentPage: 1,
+  pageSize: 25,
+  totalRecords: 13057,
+  totalPages: 262,
+  institutions: [
+    {
+      ...testInstitution,
+      id: "bbbbbbbbbbbb",
+    },
+  ],
+};
+
+export const institutionsPage2 = {
+  currentPage: 1,
+  pageSize: 10,
+  totalRecords: 13057,
+  totalPages: 262,
+  institutions: [
+    {
+      ...testInstitution,
+      id: "aaaaaaaaaaa",
+    },
+  ],
+};
