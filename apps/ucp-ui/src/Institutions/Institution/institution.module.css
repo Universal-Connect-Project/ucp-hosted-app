@@ -57,6 +57,18 @@
   max-width: 32px;
 }
 
+.aggregatorlogoSkeleton {
+  &:global(.MuiSkeleton-root) {
+    height: 32px;
+    width: 32px;
+    max-width: unset;
+  }
+}
+
+.chipSkeleton {
+  border-radius: 16px;
+}
+
 .nameLogoCell {
   align-items: center;
   display: flex;

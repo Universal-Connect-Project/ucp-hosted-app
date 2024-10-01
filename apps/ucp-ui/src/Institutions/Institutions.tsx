@@ -247,9 +247,9 @@ const Institutions = () => {
 
                                   return (
                                     <SkeletonIfLoading
+                                      className={styles.chipSkeleton}
                                       isLoading={isInstitutionsLoading}
                                       key={displayName}
-                                      sx={{ borderRadius: "16px" }}
                                     >
                                       <Tooltip
                                         disableInteractive

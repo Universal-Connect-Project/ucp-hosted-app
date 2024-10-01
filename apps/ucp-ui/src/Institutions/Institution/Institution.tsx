@@ -60,16 +60,25 @@ const Institution = () => {
     id: institutionId as string,
   });
 
-  const {
-    id,
-    is_test_bank,
-    keywords,
-    logo,
-    name,
-    routing_numbers,
-    url,
-    aggregatorIntegrations,
-  } = data?.institution || {};
+  const { id, is_test_bank, keywords, logo, name, routing_numbers, url } =
+    data?.institution || {};
+
+  const fakeAggregatorIntegrations = [
+    {
+      aggregator: { displayName: "Test Name", logo },
+      id: "testId",
+      isActive: true,
+      supports_oauth: true,
+      supports_aggregation: true,
+      supports_history: false,
+      supports_identification: false,
+      supports_verification: true,
+    },
+  ];
+
+  const aggregatorIntegrations = isLoading
+    ? fakeAggregatorIntegrations
+    : data?.institution?.aggregatorIntegrations;
 
   const tableHeadCells = [
     { name: "Aggregator" },
@@ -108,7 +117,13 @@ const Institution = () => {
             >
               Institutions
             </Link>
-            <Typography>{name}</Typography>
+            <Typography>
+              {isLoading ? (
+                <TextSkeletonIfLoading isLoading width="200px" />
+              ) : (
+                name
+              )}
+            </Typography>
           </Breadcrumbs>
           <div className={styles.nameLogoContainer}>
             <SkeletonIfLoading
@@ -199,32 +214,66 @@ const Institution = () => {
                   >
                     <TableCell>
                       <div className={styles.nameLogoCell}>
-                        <img className={styles.aggregatorLogo} src={logo} />
-                        {displayName}
+                        <SkeletonIfLoading
+                          className={styles.aggregatorlogoSkeleton}
+                          isLoading={isLoading}
+                        >
+                          <img className={styles.aggregatorLogo} src={logo} />
+                        </SkeletonIfLoading>
+                        {isLoading ? (
+                          <TextSkeletonIfLoading
+                            isLoading={isLoading}
+                            width="100px"
+                          />
+                        ) : (
+                          displayName
+                        )}
                       </div>
                     </TableCell>
-                    <TableCell>{id}</TableCell>
+                    <TableCell>
+                      {isLoading ? (
+                        <TextSkeletonIfLoading isLoading width="200px" />
+                      ) : (
+                        id
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className={styles.jobTypesCell}>
                         {jobTypes.map(
                           ({ name, supportsField }) =>
                             aggregatorIntegration[supportsField] && (
-                              <Chip key={name} label={name} />
+                              <SkeletonIfLoading
+                                className={styles.chipSkeleton}
+                                key={name}
+                                isLoading={isLoading}
+                              >
+                                <Chip label={name} />
+                              </SkeletonIfLoading>
                             ),
                         )}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Chip
-                        color={supports_oauth ? "success" : "default"}
-                        label={supports_oauth ? "Yes" : "No"}
-                      />
+                      <SkeletonIfLoading
+                        className={styles.chipSkeleton}
+                        isLoading={isLoading}
+                      >
+                        <Chip
+                          color={supports_oauth ? "success" : "default"}
+                          label={supports_oauth ? "Yes" : "No"}
+                        />
+                      </SkeletonIfLoading>
                     </TableCell>
                     <TableCell>
-                      <Chip
-                        color={isActive ? "success" : "default"}
-                        label={isActive ? "Active" : "Inactive"}
-                      />
+                      <SkeletonIfLoading
+                        className={styles.chipSkeleton}
+                        isLoading={isLoading}
+                      >
+                        <Chip
+                          color={isActive ? "success" : "default"}
+                          label={isActive ? "Active" : "Inactive"}
+                        />
+                      </SkeletonIfLoading>
                     </TableCell>
                   </TableRow>
                 );
