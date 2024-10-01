@@ -73,6 +73,15 @@
     color: var(--mui-palette-text-disabled);
   }
 
+  :global(.MuiChip-root) {
+    background-color: unset;
+    color: inherit;
+
+    :global(.MuiChip-label) {
+      color: inherit;
+    }
+  }
+
   .aggregatorLogo {
     opacity: 50%;
   }
