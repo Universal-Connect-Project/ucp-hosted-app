@@ -8,10 +8,11 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  white-space: wrap;
 }
 
 .nameLogoContainer {
-  align-items: flex-end;
+  align-items: center;
   display: flex;
   gap: 24px;
 }
@@ -32,6 +33,7 @@
 
 .institutionFields {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
 }
 
@@ -48,7 +50,6 @@
   align-items: center;
   display: flex;
   gap: 4px;
-  white-space: nowrap;
 }
 
 .aggregatorLogo {
@@ -78,6 +79,7 @@
 .jobTypesCell {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
 }
 
 .inactiveTableRow {
