@@ -3,11 +3,37 @@ import "dotenv/config";
 import express, { Request, Response } from "express";
 import logger from "morgan";
 
+import { rateLimit } from "express-rate-limit";
 import institutionRoutes from "./routes/institutionRoutes";
-import { PORT } from "./shared/const";
 import permissionsRoutes from "./routes/permissionRoutes";
+import { PORT } from "./shared/const";
+
+const createLimiter = (
+  options: { timeIntervalInMinutes: number; requestLimit: number } = {
+    timeIntervalInMinutes: 1,
+    requestLimit: 100,
+  },
+) => {
+  const { timeIntervalInMinutes, requestLimit } = options;
+  return rateLimit({
+    windowMs: timeIntervalInMinutes * 60 * 1000, // 1 minute
+    limit: requestLimit, // Limit to 100 requests per windowMs
+    handler: (_req, res, _next, _options) =>
+      res.status(429).json({ message: "Too many requests" }),
+  });
+};
+
+const defaultLimiter = createLimiter();
+
+const cacheListLimiter = createLimiter({
+  timeIntervalInMinutes: 1,
+  requestLimit: 3,
+});
 
 const app = express();
+
+app.use(defaultLimiter);
+app.use("/institutions/cacheList", cacheListLimiter);
 
 app.set("etag", "strong");
 app.use(express.json()); // http://expressjs.com/en/api.html#express.json
@@ -26,6 +52,14 @@ app.use(
     maxAge: 86400,
   }),
 );
+
+app.get("/ping", (_req: Request, res: Response) => {
+  res.send(
+    JSON.stringify({
+      message: "pong",
+    }),
+  );
+});
 
 // Routes
 app.use("/institutions", institutionRoutes);

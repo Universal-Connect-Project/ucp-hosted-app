@@ -3,7 +3,9 @@ import { RequestHandler, Router } from "express";
 import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import {
   createInstitution,
+  getInstitution,
   getInstitutionCachedList,
+  getPaginatedInstitutions,
   updateInstitution,
 } from "../controllers/institutionController";
 import {
@@ -25,6 +27,12 @@ router.get(
   getInstitutionCachedList as RequestHandler,
 );
 
+router.get(
+  "/",
+  [validateUIAudience],
+  getPaginatedInstitutions as RequestHandler,
+);
+
 router.post(
   "/",
   [validateUIAudience, validate(institutionSchema)],
@@ -33,6 +41,8 @@ router.post(
   ),
   createInstitution as RequestHandler,
 );
+
+router.get("/:id", [validateUIAudience], getInstitution as RequestHandler);
 
 router.put(
   "/:id",

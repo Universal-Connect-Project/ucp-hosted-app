@@ -11,6 +11,8 @@ export default defineConfig({
     SUPER_ADMIN_USERNAME: process.env.SUPER_ADMIN_USERNAME,
     SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD,
     WEB_UI_CLIENT_ID: process.env.WEB_UI_CLIENT_ID,
+    WIDGET_CLIENT_ID: process.env.WIDGET_CLIENT_ID,
+    WIDGET_CLIENT_SECRET: process.env.WIDGET_CLIENT_SECRET,
   },
   e2e: {
     setupNodeEvents(on, config) {
