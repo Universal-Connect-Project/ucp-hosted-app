@@ -181,7 +181,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
       order: [
         ["createdAt", "DESC"],
         ["name", "ASC"],
-      ], // Optional: Order by created date in descending order
+      ],
     });
 
     return res.status(200).json({
