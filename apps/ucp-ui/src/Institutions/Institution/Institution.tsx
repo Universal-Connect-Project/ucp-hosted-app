@@ -19,63 +19,11 @@ import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 import styles from "./institution.module.css";
 import InstitutionField from "./InstitutionField";
 import { InfoOutlined } from "@mui/icons-material";
-
-const institution = {
-  id: "UCP-a4f437a6454f7b5",
-  is_test_bank: false,
-  keywords: ["amex", "axp"],
-  name: "American Express",
-  logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-aa65b215-42d3-a6eb-d9c0-4427d744a2bc_100x100.png",
-  url: "https://www.americanexpress.com",
-  routing_numbers: [121000248, 121000249],
-  aggregatorIntegrations: [
-    {
-      id: "aafae3bd-4801-4720-be66-a41d81a74b6c",
-      isActive: true,
-      supports_oauth: true,
-      supports_identification: true,
-      supports_verification: true,
-      supports_aggregation: true,
-      supports_history: true,
-      aggregator: {
-        name: "mx",
-        id: 1,
-        displayName: "MX",
-        logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
-      },
-    },
-    {
-      id: "bbfae3bd-4801-4720-be66-a41d81a74b6c",
-      isActive: true,
-      supports_oauth: true,
-      supports_identification: false,
-      supports_verification: false,
-      supports_aggregation: true,
-      supports_history: false,
-      aggregator: {
-        name: "sophtron",
-        id: 1,
-        displayName: "Sophtron",
-        logo: "https://sophtron.com/Images/logo.png",
-      },
-    },
-    {
-      id: "ccfae3bd-4801-4720-be66-a41d81a74b6c",
-      isActive: false,
-      supports_oauth: false,
-      supports_identification: true,
-      supports_verification: false,
-      supports_aggregation: false,
-      supports_history: false,
-      aggregator: {
-        name: "textExampleA",
-        id: 1,
-        displayName: "TextExampleA",
-        logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-      },
-    },
-  ],
-};
+import { useGetInstitutionQuery } from "../api";
+import {
+  SkeletonIfLoading,
+  TextSkeletonIfLoading,
+} from "../../shared/components/Skeleton";
 
 interface JobType {
   name: string;
@@ -108,7 +56,12 @@ const Institution = () => {
     },
   ];
 
+  const { data, isLoading } = useGetInstitutionQuery({
+    id: institutionId as string,
+  });
+
   const {
+    id,
     is_test_bank,
     keywords,
     logo,
@@ -116,7 +69,7 @@ const Institution = () => {
     routing_numbers,
     url,
     aggregatorIntegrations,
-  } = institution;
+  } = data?.institution || {};
 
   const tableHeadCells = [
     { name: "Aggregator" },
@@ -158,37 +111,54 @@ const Institution = () => {
             <Typography>{name}</Typography>
           </Breadcrumbs>
           <div className={styles.nameLogoContainer}>
-            <img className={styles.logo} src={logo} />
-            <Typography variant="h4">{name}</Typography>
+            <SkeletonIfLoading
+              className={styles.logoSkeleton}
+              isLoading={isLoading}
+            >
+              <img className={styles.logo} src={logo} />
+            </SkeletonIfLoading>
+            <Typography variant="h4">
+              {isLoading ? (
+                <TextSkeletonIfLoading isLoading width="400px" />
+              ) : (
+                name
+              )}
+            </Typography>
           </div>
         </div>
         <div className={styles.institutionFields}>
           <InstitutionField
+            isLoading={isLoading}
             name="UCP ID"
             tooltip="A unique identifier for the institution."
-            value={institutionId as string}
+            value={id}
           />
           <InstitutionField
+            isLoading={isLoading}
             name="Institution URL"
             tooltip="The institution's website URL."
             value={url}
           />
           <InstitutionField
+            isLoading={isLoading}
             name="Logo URL"
             tooltip="Where the institution's logo is saved."
             value={logo}
           />
           <InstitutionField
+            isLoading={isLoading}
             name="Routing Number(s)"
             tooltip="Nine-digit identifiers for every financial institution that are used to search within the widget."
-            value={routing_numbers.join(", ")}
+            value={routing_numbers?.join(", ")}
           />
           <InstitutionField
+            isLoading={isLoading}
             name="Search Keywords"
             tooltip="Help widget users find institutions more easily."
-            value={keywords.join(", ")}
+            value={keywords?.join(", ")}
           />
           <InstitutionField
+            isLoading={isLoading}
             name="Test Institution"
             shouldDisableValueTooltip
             tooltip="Used for testing aggregator implementation and will not appear in the widget in production environments."
@@ -214,7 +184,7 @@ const Institution = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {aggregatorIntegrations.map((aggregatorIntegration) => {
+              {aggregatorIntegrations?.map((aggregatorIntegration) => {
                 const {
                   aggregator: { displayName, logo },
                   id,

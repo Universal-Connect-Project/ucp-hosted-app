@@ -22,6 +22,14 @@
   border-radius: var(--mui-shape-borderRadius);
 }
 
+.logoSkeleton {
+  &:global(.MuiSkeleton-root) {
+    height: 48px;
+    width: 48px;
+    max-width: unset;
+  }
+}
+
 .institutionFields {
   display: flex;
   gap: 20px;
