@@ -24,6 +24,8 @@ import {
   SkeletonIfLoading,
   TextSkeletonIfLoading,
 } from "../../shared/components/Skeleton";
+import FetchError from "../../shared/components/FetchError";
+import { INSTITUTION_ERROR_TEXT } from "./constants";
 
 interface JobType {
   name: string;
@@ -56,7 +58,7 @@ const Institution = () => {
     },
   ];
 
-  const { data, isLoading } = useGetInstitutionQuery({
+  const { data, isError, isLoading, refetch } = useGetInstitutionQuery({
     id: institutionId as string,
   });
 
@@ -106,182 +108,192 @@ const Institution = () => {
 
   return (
     <PageContent>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <Breadcrumbs>
-            <Link
-              color="inherit"
-              component={RouterLink}
-              to={INSTITUTIONS_ROUTE}
-              underline="hover"
-            >
-              Institutions
-            </Link>
-            <Typography>
-              {isLoading ? (
-                <TextSkeletonIfLoading isLoading width="200px" />
-              ) : (
-                name
-              )}
-            </Typography>
-          </Breadcrumbs>
-          <div className={styles.nameLogoContainer}>
-            <SkeletonIfLoading
-              className={styles.logoSkeleton}
-              isLoading={isLoading}
-            >
-              <img className={styles.logo} src={logo} />
-            </SkeletonIfLoading>
-            <Typography variant="h4">
-              {isLoading ? (
-                <TextSkeletonIfLoading isLoading width="400px" />
-              ) : (
-                name
-              )}
-            </Typography>
+      {isError ? (
+        <FetchError
+          description={INSTITUTION_ERROR_TEXT}
+          refetch={() => void refetch()}
+          title="Something went wrong"
+        />
+      ) : (
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <Breadcrumbs>
+              <Link
+                color="inherit"
+                component={RouterLink}
+                to={INSTITUTIONS_ROUTE}
+                underline="hover"
+              >
+                Institutions
+              </Link>
+              <Typography>
+                {isLoading ? (
+                  <TextSkeletonIfLoading isLoading width="200px" />
+                ) : (
+                  name
+                )}
+              </Typography>
+            </Breadcrumbs>
+            <div className={styles.nameLogoContainer}>
+              <SkeletonIfLoading
+                className={styles.logoSkeleton}
+                isLoading={isLoading}
+              >
+                <img className={styles.logo} src={logo} />
+              </SkeletonIfLoading>
+              <Typography variant="h4">
+                {isLoading ? (
+                  <TextSkeletonIfLoading isLoading width="400px" />
+                ) : (
+                  name
+                )}
+              </Typography>
+            </div>
           </div>
-        </div>
-        <div className={styles.institutionFields}>
-          <InstitutionField
-            isLoading={isLoading}
-            name="UCP ID"
-            tooltip="A unique identifier for the institution."
-            value={id}
-          />
-          <InstitutionField
-            isLoading={isLoading}
-            name="Institution URL"
-            tooltip="The institution's website URL."
-            value={url}
-          />
-          <InstitutionField
-            isLoading={isLoading}
-            name="Logo URL"
-            tooltip="Where the institution's logo is saved."
-            value={logo}
-          />
-          <InstitutionField
-            isLoading={isLoading}
-            name="Routing Number(s)"
-            tooltip="Nine-digit identifiers for every financial institution that are used to search within the widget."
-            value={routing_numbers?.join(", ")}
-          />
-          <InstitutionField
-            isLoading={isLoading}
-            name="Search Keywords"
-            tooltip="Help widget users find institutions more easily."
-            value={keywords?.join(", ")}
-          />
-          <InstitutionField
-            isLoading={isLoading}
-            name="Test Institution"
-            shouldDisableValueTooltip
-            tooltip="Used for testing aggregator implementation and will not appear in the widget in production environments."
-            value={is_test_bank ? "Yes" : "No"}
-          />
-        </div>
-        <TableContainer className={styles.table}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {tableHeadCells.map(({ name, tooltip }) => (
-                  <TableCell key={name}>
-                    <div className={styles.tableHeadCell}>
-                      {tooltip && (
-                        <Tooltip title={tooltip}>
-                          <InfoOutlined color="action" fontSize="inherit" />
-                        </Tooltip>
-                      )}
-                      {name}
-                    </div>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {aggregatorIntegrations?.map((aggregatorIntegration) => {
-                const {
-                  aggregator: { displayName, logo },
-                  id,
-                  isActive,
-                  supports_oauth,
-                } = aggregatorIntegration;
+          <div className={styles.institutionFields}>
+            <InstitutionField
+              isLoading={isLoading}
+              name="UCP ID"
+              tooltip="A unique identifier for the institution."
+              value={id}
+            />
+            <InstitutionField
+              isLoading={isLoading}
+              name="Institution URL"
+              tooltip="The institution's website URL."
+              value={url}
+            />
+            <InstitutionField
+              isLoading={isLoading}
+              name="Logo URL"
+              tooltip="Where the institution's logo is saved."
+              value={logo}
+            />
+            <InstitutionField
+              isLoading={isLoading}
+              name="Routing Number(s)"
+              tooltip="Nine-digit identifiers for every financial institution that are used to search within the widget."
+              value={routing_numbers?.join(", ")}
+            />
+            <InstitutionField
+              isLoading={isLoading}
+              name="Search Keywords"
+              tooltip="Help widget users find institutions more easily."
+              value={keywords?.join(", ")}
+            />
+            <InstitutionField
+              isLoading={isLoading}
+              name="Test Institution"
+              shouldDisableValueTooltip
+              tooltip="Used for testing aggregator implementation and will not appear in the widget in production environments."
+              value={is_test_bank ? "Yes" : "No"}
+            />
+          </div>
+          <TableContainer className={styles.table}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {tableHeadCells.map(({ name, tooltip }) => (
+                    <TableCell key={name}>
+                      <div className={styles.tableHeadCell}>
+                        {tooltip && (
+                          <Tooltip title={tooltip}>
+                            <InfoOutlined color="action" fontSize="inherit" />
+                          </Tooltip>
+                        )}
+                        {name}
+                      </div>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {aggregatorIntegrations?.map((aggregatorIntegration) => {
+                  const {
+                    aggregator: { displayName, logo },
+                    id,
+                    isActive,
+                    supports_oauth,
+                  } = aggregatorIntegration;
 
-                return (
-                  <TableRow
-                    className={!isActive ? styles.inactiveTableRow : undefined}
-                    key={id}
-                  >
-                    <TableCell>
-                      <div className={styles.nameLogoCell}>
+                  return (
+                    <TableRow
+                      className={
+                        !isActive ? styles.inactiveTableRow : undefined
+                      }
+                      key={id}
+                    >
+                      <TableCell>
+                        <div className={styles.nameLogoCell}>
+                          <SkeletonIfLoading
+                            className={styles.aggregatorlogoSkeleton}
+                            isLoading={isLoading}
+                          >
+                            <img className={styles.aggregatorLogo} src={logo} />
+                          </SkeletonIfLoading>
+                          {isLoading ? (
+                            <TextSkeletonIfLoading
+                              isLoading={isLoading}
+                              width="100px"
+                            />
+                          ) : (
+                            displayName
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {isLoading ? (
+                          <TextSkeletonIfLoading isLoading width="200px" />
+                        ) : (
+                          id
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className={styles.jobTypesCell}>
+                          {jobTypes.map(
+                            ({ name, supportsField }) =>
+                              aggregatorIntegration[supportsField] && (
+                                <SkeletonIfLoading
+                                  className={styles.chipSkeleton}
+                                  key={name}
+                                  isLoading={isLoading}
+                                >
+                                  <Chip label={name} />
+                                </SkeletonIfLoading>
+                              ),
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
                         <SkeletonIfLoading
-                          className={styles.aggregatorlogoSkeleton}
+                          className={styles.chipSkeleton}
                           isLoading={isLoading}
                         >
-                          <img className={styles.aggregatorLogo} src={logo} />
-                        </SkeletonIfLoading>
-                        {isLoading ? (
-                          <TextSkeletonIfLoading
-                            isLoading={isLoading}
-                            width="100px"
+                          <Chip
+                            color={supports_oauth ? "success" : "default"}
+                            label={supports_oauth ? "Yes" : "No"}
                           />
-                        ) : (
-                          displayName
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {isLoading ? (
-                        <TextSkeletonIfLoading isLoading width="200px" />
-                      ) : (
-                        id
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className={styles.jobTypesCell}>
-                        {jobTypes.map(
-                          ({ name, supportsField }) =>
-                            aggregatorIntegration[supportsField] && (
-                              <SkeletonIfLoading
-                                className={styles.chipSkeleton}
-                                key={name}
-                                isLoading={isLoading}
-                              >
-                                <Chip label={name} />
-                              </SkeletonIfLoading>
-                            ),
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <SkeletonIfLoading
-                        className={styles.chipSkeleton}
-                        isLoading={isLoading}
-                      >
-                        <Chip
-                          color={supports_oauth ? "success" : "default"}
-                          label={supports_oauth ? "Yes" : "No"}
-                        />
-                      </SkeletonIfLoading>
-                    </TableCell>
-                    <TableCell>
-                      <SkeletonIfLoading
-                        className={styles.chipSkeleton}
-                        isLoading={isLoading}
-                      >
-                        <Chip
-                          color={isActive ? "success" : "default"}
-                          label={isActive ? "Active" : "Inactive"}
-                        />
-                      </SkeletonIfLoading>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+                        </SkeletonIfLoading>
+                      </TableCell>
+                      <TableCell>
+                        <SkeletonIfLoading
+                          className={styles.chipSkeleton}
+                          isLoading={isLoading}
+                        >
+                          <Chip
+                            color={isActive ? "success" : "default"}
+                            label={isActive ? "Active" : "Inactive"}
+                          />
+                        </SkeletonIfLoading>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      )}
     </PageContent>
   );
 };
