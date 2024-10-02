@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  expectLocation,
   expectSkeletonLoader,
   render,
   screen,
@@ -17,6 +18,7 @@ import {
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
 } from "./constants";
 import {
+  institutions,
   institutionsBiggerPage,
   institutionsPage1,
   institutionsPage2,
@@ -31,6 +33,7 @@ import {
 import { institutionPermissionsResponse } from "../shared/test/testData/institution";
 import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
 import { INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT } from "./ChangeInstitution/constants";
+import { institutionRoute } from "../shared/constants/routes";
 
 const findRowById = async (id: string) => {
   expect(
@@ -199,5 +202,19 @@ describe("<Institutions />", () => {
     expect(
       await screen.findByText(INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP),
     ).toBeInTheDocument();
+  });
+
+  it("navigates to an institution when clicking on a row", async () => {
+    render(<Institutions />);
+
+    await waitForLoad();
+
+    await userEvent.click(
+      screen.getAllByTestId(new RegExp(INSTITUTIONS_ROW_TEST_ID))[0],
+    );
+
+    expectLocation(
+      institutionRoute.createPath({ institutionId: institutions[0].id }),
+    );
   });
 });
