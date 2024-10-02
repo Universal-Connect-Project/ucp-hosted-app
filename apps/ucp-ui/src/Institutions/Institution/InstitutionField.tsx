@@ -9,18 +9,24 @@ const InstitutionField = ({
   name,
   shouldDisableValueTooltip,
   tooltip,
+  tooltipTestId,
   value,
 }: {
   isLoading: boolean;
   name: string;
   shouldDisableValueTooltip?: boolean;
   tooltip: string;
+  tooltipTestId: string;
   value?: string;
 }) => (
   <div className={styles.container}>
     <div className={styles.header}>
       <Tooltip title={tooltip}>
-        <InfoOutlined color="action" fontSize="inherit" />
+        <InfoOutlined
+          color="action"
+          data-testid={tooltipTestId}
+          fontSize="inherit"
+        />
       </Tooltip>
       <Typography variant="subtitle2">{name}</Typography>
     </div>

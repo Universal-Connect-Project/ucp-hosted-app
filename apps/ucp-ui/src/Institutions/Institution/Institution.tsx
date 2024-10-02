@@ -25,7 +25,29 @@ import {
   TextSkeletonIfLoading,
 } from "../../shared/components/Skeleton";
 import FetchError from "../../shared/components/FetchError";
-import { INSTITUTION_ERROR_TEXT } from "./constants";
+import {
+  INSTITUTION_ACTIVE_TOOLTIP_TEST_ID,
+  INSTITUTION_ACTIVE_TOOLTIP_TEXT,
+  INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
+  INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
+  INSTITUTION_ERROR_TEXT,
+  INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
+  INSTITUTION_JOB_TYPES_TOOLTIP_TEXT,
+  INSTITUTION_KEYWORDS_TOOLTIP_TEST_ID,
+  INSTITUTION_KEYWORDS_TOOLTIP_TEXT,
+  INSTITUTION_LOGO_TOOLTIP_TEST_ID,
+  INSTITUTION_LOGO_TOOLTIP_TEXT,
+  INSTITUTION_OAUTH_TOOLTIP_TEST_ID,
+  INSTITUTION_OAUTH_TOOLTIP_TEXT,
+  INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID,
+  INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT,
+  INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID,
+  INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEXT,
+  INSTITUTION_UCP_ID_TOOLTIP_TEST_ID,
+  INSTITUTION_UCP_ID_TOOLTIP_TEXT,
+  INSTITUTION_URL_TOOLTIP_TEST_ID,
+  INSTITUTION_URL_TOOLTIP_TEXT,
+} from "./constants";
 
 interface JobType {
   name: string;
@@ -86,23 +108,23 @@ const Institution = () => {
     { name: "Aggregator" },
     {
       name: "Aggregator Institution ID",
-      tooltip:
-        "A unique identifier linking the Aggregator with the Institution.",
+      tooltip: INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
+      tooltipTestId: INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
     },
     {
       name: "Job Types",
-      tooltip:
-        "Types of jobs the Aggregator supports for this Institution: aggregation, identification, verification, and/or full history.",
+      tooltip: INSTITUTION_JOB_TYPES_TOOLTIP_TEXT,
+      tooltipTestId: INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
     },
     {
       name: "OAuth",
-      tooltip:
-        "Indicates whether the aggregator supports OAuth for secure user authentication.",
+      tooltip: INSTITUTION_OAUTH_TOOLTIP_TEXT,
+      tooltipTestId: INSTITUTION_OAUTH_TOOLTIP_TEST_ID,
     },
     {
       name: "Status",
-      tooltip:
-        "Indicates whether a connection between aggregator and institution is active.",
+      tooltip: INSTITUTION_ACTIVE_TOOLTIP_TEXT,
+      tooltipTestId: INSTITUTION_ACTIVE_TOOLTIP_TEST_ID,
     },
   ];
 
@@ -154,38 +176,44 @@ const Institution = () => {
             <InstitutionField
               isLoading={isLoading}
               name="UCP ID"
-              tooltip="A unique identifier for the institution."
+              tooltip={INSTITUTION_UCP_ID_TOOLTIP_TEXT}
+              tooltipTestId={INSTITUTION_UCP_ID_TOOLTIP_TEST_ID}
               value={id}
             />
             <InstitutionField
               isLoading={isLoading}
               name="Institution URL"
-              tooltip="The institution's website URL."
+              tooltip={INSTITUTION_URL_TOOLTIP_TEXT}
+              tooltipTestId={INSTITUTION_URL_TOOLTIP_TEST_ID}
               value={url}
             />
             <InstitutionField
               isLoading={isLoading}
               name="Logo URL"
-              tooltip="Where the institution's logo is saved."
+              tooltip={INSTITUTION_LOGO_TOOLTIP_TEXT}
+              tooltipTestId={INSTITUTION_LOGO_TOOLTIP_TEST_ID}
               value={logo}
             />
             <InstitutionField
               isLoading={isLoading}
               name="Routing Number(s)"
-              tooltip="Nine-digit identifiers for every financial institution that are used to search within the widget."
+              tooltip={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT}
+              tooltipTestId={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID}
               value={routing_numbers?.join(", ")}
             />
             <InstitutionField
               isLoading={isLoading}
               name="Search Keywords"
-              tooltip="Help widget users find institutions more easily."
+              tooltip={INSTITUTION_KEYWORDS_TOOLTIP_TEXT}
+              tooltipTestId={INSTITUTION_KEYWORDS_TOOLTIP_TEST_ID}
               value={keywords?.join(", ")}
             />
             <InstitutionField
               isLoading={isLoading}
               name="Test Institution"
               shouldDisableValueTooltip
-              tooltip="Used for testing aggregator implementation and will not appear in the widget in production environments."
+              tooltip={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEXT}
+              tooltipTestId={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID}
               value={is_test_bank ? "Yes" : "No"}
             />
           </div>
@@ -193,12 +221,16 @@ const Institution = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  {tableHeadCells.map(({ name, tooltip }) => (
+                  {tableHeadCells.map(({ name, tooltip, tooltipTestId }) => (
                     <TableCell key={name}>
                       <div className={styles.tableHeadCell}>
                         {tooltip && (
                           <Tooltip title={tooltip}>
-                            <InfoOutlined color="action" fontSize="inherit" />
+                            <InfoOutlined
+                              color="action"
+                              data-testid={tooltipTestId}
+                              fontSize="inherit"
+                            />
                           </Tooltip>
                         )}
                         {name}
