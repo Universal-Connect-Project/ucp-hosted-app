@@ -82,7 +82,7 @@ export const validateUserCanEditInstitution = async (
 
     const aggregators = await institution?.getAggregators({ raw: true });
     const hasOtherAggregators = aggregators?.some(
-      (aggregator) => aggregator.name !== aggregatorId,
+      (aggregator) => aggregator?.name !== aggregatorId,
     );
 
     if (hasOtherAggregators) {
@@ -126,10 +126,10 @@ export const validateUserCanEditAggregatorIntegration = async (
         .json({ error: "Aggregator Integration not found" });
     }
 
-    const aggregatorName = decodedToken["ucw/appMetaData"].aggregatorId;
+    const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
     const aggregator = await aggregatorIntegration?.getAggregator();
 
-    if (aggregatorName !== aggregator.name) {
+    if (aggregatorName !== aggregator?.name) {
       return res.status(403).json({
         error:
           "An Aggregator cannot edit an aggregatorIntegration belonging to another aggregator",
