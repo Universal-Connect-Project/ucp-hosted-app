@@ -5,6 +5,7 @@ import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
+import { validateUserCanEditInstitution } from "../shared/utils/permissionValidation";
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -127,6 +128,15 @@ export interface InstitutionDetail {
   updatedAt: string;
   aggregatorIntegrations: AggregatorIntegration[];
 }
+
+export interface InstitutionDetailWithPermissions extends InstitutionDetail {
+  canEditInstitution: boolean;
+}
+
+export interface InstitutionResponse {
+  institution: InstitutionDetailWithPermissions;
+}
+
 export interface PaginatedInstitutionsResponse {
   currentPage: number;
   pageSize: number;
@@ -237,7 +247,16 @@ export const getInstitution = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Institution not found" });
     }
 
-    return res.status(200).json({ institution });
+    const institutionWithPermissions = {
+      ...institution.toJSON(),
+      canEditInstitution:
+        (await validateUserCanEditInstitution({
+          institutionId,
+          req,
+        })) === true,
+    };
+
+    return res.status(200).json({ institution: institutionWithPermissions });
   } catch (error) {
     return res
       .status(500)

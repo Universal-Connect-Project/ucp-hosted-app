@@ -1,8 +1,9 @@
-import { UiUserPermissions } from "@repo/shared-utils";
 import { NextFunction, Request, Response } from "express";
 import Joi, { ObjectSchema } from "joi";
-import jwt from "jsonwebtoken";
-import { Institution } from "../models/institution";
+import {
+  validateUserCanEditInstitution as editInstitutionValidation,
+  EditInstitutionValidationErrorReason,
+} from "../shared/utils/permissionValidation";
 
 export const validate = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -50,39 +51,39 @@ export const validateUserCanEditInstitution = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const token = req.headers.authorization?.split(" ")?.[1];
-    const decodedToken = jwt.decode(token as string) as DecodedToken;
-    const permissions = decodedToken.permissions;
-    if (permissions.includes(UiUserPermissions.UPDATE_INSTITUTION)) {
-      return next();
-    } else if (
-      !permissions.includes(UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR)
-    ) {
-      return res.status(403).json({ error: "Insufficient permissions" });
-    }
+  const canUserEditInstitution = await editInstitutionValidation({
+    institutionId: req.params.id,
+    req,
+  });
 
-    const institution = await Institution.findByPk(req.params.id);
-    if (!institution) {
-      return res.status(404).json({ error: "Institution not found" });
-    }
+  const errorMap = {
+    [EditInstitutionValidationErrorReason.GenericError]: {
+      error: "Error validating user permission",
+      status: 500,
+    },
+    [EditInstitutionValidationErrorReason.InsufficientScope]: {
+      error: "Insufficient permissions",
+      status: 403,
+    },
+    [EditInstitutionValidationErrorReason.InvalidInstitutionId]: {
+      error: "Institution not found",
+      status: 404,
+    },
+    [EditInstitutionValidationErrorReason.UsedByOtherAggregators]: {
+      error: "Aggregator cannot edit an institution used by other aggregators",
+      status: 403,
+    },
+  };
 
-    const aggregatorId = decodedToken["ucw/appMetaData"].aggregatorId;
-
-    const aggregators = await institution?.getAggregators({ raw: true });
-    const hasOtherAggregators = aggregators?.some(
-      (aggregator) => aggregator.name !== aggregatorId,
-    );
-
-    if (hasOtherAggregators) {
-      return res.status(403).json({
-        error:
-          "Aggregator cannot edit an institution used by other aggregators",
-      });
-    }
-
-    next();
-  } catch (err) {
-    return res.status(500).json({ error: "Error validating user permission" });
+  if (canUserEditInstitution === true) {
+    return next();
   }
+
+  const { error, status } =
+    errorMap[canUserEditInstitution] ||
+    errorMap[EditInstitutionValidationErrorReason.GenericError];
+
+  return res.status(status).json({
+    error,
+  });
 };
