@@ -10,7 +10,6 @@ import {
 } from "sequelize";
 import sequelize from "../database";
 import { AggregatorIntegration } from "./aggregatorIntegration";
-import { Institution } from "./institution";
 
 export class Aggregator extends Model<
   InferAttributes<Aggregator, { omit: "aggregatorIntegrations" }>,
@@ -50,31 +49,31 @@ Aggregator.init(
   },
 );
 
-Aggregator.hasMany(AggregatorIntegration, {
-  sourceKey: "id",
-  foreignKey: "aggregatorId",
-  as: "aggregatorIntegrations",
-});
+// Aggregator.hasMany(AggregatorIntegration, {
+//   sourceKey: "id",
+//   foreignKey: "aggregatorId",
+//   as: "aggregatorIntegrations",
+// });
 
-Aggregator.belongsToMany(Institution, {
-  through: "AggregatorIntegration",
-  sourceKey: "id",
-  foreignKey: "aggregatorId",
-  as: "aggregators",
-});
+// Aggregator.belongsToMany(Institution, {
+//   through: "AggregatorIntegration",
+//   sourceKey: "id",
+//   foreignKey: "aggregatorId",
+//   as: "aggregators",
+// });
 
-Institution.belongsToMany(Aggregator, {
-  through: "AggregatorIntegration",
-  sourceKey: "id",
-  foreignKey: "institution_id",
-});
+// Institution.belongsToMany(Aggregator, {
+//   through: "AggregatorIntegration",
+//   sourceKey: "id",
+//   foreignKey: "institution_id",
+// });
 
-AggregatorIntegration.belongsTo(Institution, {
-  foreignKey: "institution_id",
-  as: "institution",
-});
+// AggregatorIntegration.belongsTo(Institution, {
+//   foreignKey: "institution_id",
+//   as: "institution",
+// });
 
-AggregatorIntegration.belongsTo(Aggregator, {
-  foreignKey: "aggregatorId",
-  as: "aggregator",
-});
+// AggregatorIntegration.belongsTo(Aggregator, {
+//   foreignKey: "aggregatorId",
+//   as: "aggregator",
+// });
