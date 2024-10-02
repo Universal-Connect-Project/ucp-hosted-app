@@ -48,32 +48,3 @@ Aggregator.init(
     sequelize,
   },
 );
-
-// Aggregator.hasMany(AggregatorIntegration, {
-//   sourceKey: "id",
-//   foreignKey: "aggregatorId",
-//   as: "aggregatorIntegrations",
-// });
-
-// Aggregator.belongsToMany(Institution, {
-//   through: "AggregatorIntegration",
-//   sourceKey: "id",
-//   foreignKey: "aggregatorId",
-//   as: "aggregators",
-// });
-
-// Institution.belongsToMany(Aggregator, {
-//   through: "AggregatorIntegration",
-//   sourceKey: "id",
-//   foreignKey: "institution_id",
-// });
-
-// AggregatorIntegration.belongsTo(Institution, {
-//   foreignKey: "institution_id",
-//   as: "institution",
-// });
-
-// AggregatorIntegration.belongsTo(Aggregator, {
-//   foreignKey: "aggregatorId",
-//   as: "aggregator",
-// });

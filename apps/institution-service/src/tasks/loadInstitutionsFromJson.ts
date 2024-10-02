@@ -3,6 +3,7 @@ import path from "path";
 import db from "../database";
 import { Aggregator } from "../models/aggregator";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
+import { defineAssociations } from "../models/associations";
 import { Institution } from "../models/institution";
 
 export interface CachedInstitution {
@@ -32,7 +33,10 @@ export interface InstitutionAggregator {
 }
 
 async function loadInstitutionData() {
-  await db.authenticate();
+  await db.authenticate().then(() => {
+    defineAssociations();
+  });
+
   const institutions = JSON.parse(
     fs.readFileSync(
       path.join(__dirname, "../../config/ucwInstitutionsMapping.json"),
