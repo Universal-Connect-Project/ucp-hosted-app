@@ -2,21 +2,24 @@ import { Skeleton, SkeletonOwnProps } from "@mui/material";
 import React, { ReactNode } from "react";
 import styles from "./skeleton.module.css";
 import { SKELETON_LOADER_TEST_ID } from "./constants";
+import classnames from "classnames";
 
 interface SkeletonProps extends SkeletonOwnProps {
-  children: ReactNode;
+  children?: ReactNode;
+  className?: string;
   isLoading: boolean;
 }
 
 export const SkeletonIfLoading = ({
   children,
+  className,
   isLoading,
   ...props
 }: SkeletonProps) => {
   if (isLoading) {
     return (
       <Skeleton
-        className={styles.hideChildren}
+        className={classnames(styles.hideChildren, className)}
         data-testid={SKELETON_LOADER_TEST_ID}
         variant="rectangular"
         {...props}

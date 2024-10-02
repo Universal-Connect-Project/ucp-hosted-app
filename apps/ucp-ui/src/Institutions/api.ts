@@ -14,6 +14,7 @@ interface Aggregator {
 export interface AggregatorIntegration {
   aggregator_institution_id: string;
   aggregator: Aggregator;
+  id: string;
   isActive: boolean;
   supports_aggregation: boolean;
   supports_history: boolean;
@@ -41,9 +42,17 @@ interface InstitutionsResponse {
   totalRecords: number;
 }
 
+interface InstitutionResponse {
+  institution: Institution;
+}
+
 interface PaginationOptions {
   pageSize: number;
   page: number;
+}
+
+interface GetInstitution {
+  id: string;
 }
 
 const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
@@ -53,6 +62,12 @@ export const INSTITUTION_SERVICE_INSTITUTIONS_URL = `${INSTITUTION_SERVICE_BASE_
 
 export const institutionsApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    getInstitution: builder.query<InstitutionResponse, GetInstitution>({
+      query: ({ id }) => ({
+        url: `${INSTITUTION_SERVICE_INSTITUTIONS_URL}/${id}`,
+      }),
+      providesTags: [TagTypes.INSTITUTIONS],
+    }),
     getInstitutionPermissions: builder.query<InstitutionPermissions, void>({
       query: () => INSTITUTION_SERVICE_PERMISSIONS_URL,
       providesTags: [TagTypes.INSTITUTION_PERMISSIONS],
@@ -68,5 +83,8 @@ export const institutionsApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useGetInstitutionPermissionsQuery, useGetInstitutionsQuery } =
-  institutionsApi;
+export const {
+  useGetInstitutionQuery,
+  useGetInstitutionPermissionsQuery,
+  useGetInstitutionsQuery,
+} = institutionsApi;

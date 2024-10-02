@@ -20,6 +20,10 @@
   }
 }
 
+.chipSkeleton {
+  border-radius: 16px;
+}
+
 .institutionLogo {
   height: 32px;
   width: 32px;
@@ -62,4 +66,8 @@
   align-items: center;
   display: flex;
   gap: 4px;
+}
+
+.tableRowHover {
+  cursor: pointer;
 }

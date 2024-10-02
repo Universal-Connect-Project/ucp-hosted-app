@@ -1,0 +1,15 @@
+.container {
+  white-space: nowrap;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+.value {
+  max-width: 156px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

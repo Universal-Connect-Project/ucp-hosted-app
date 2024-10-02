@@ -22,6 +22,7 @@
     "@mui/material": "^5.16.6",
     "@reduxjs/toolkit": "^2.2.7",
     "@repo/shared-utils": "*",
+    "classnames": "^2.5.1",
     "launchdarkly-react-client-sdk": "^3.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

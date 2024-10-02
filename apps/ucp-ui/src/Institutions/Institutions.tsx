@@ -33,11 +33,13 @@ import {
 import PageContent from "../shared/components/PageContent";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import { InfoOutlined } from "@mui/icons-material";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   SkeletonIfLoading,
   TextSkeletonIfLoading,
 } from "../shared/components/Skeleton";
+import { institutionRoute } from "../shared/constants/routes";
+import classNames from "classnames";
 
 const generateFakeInstitutionData = (rowsPerPage: number) => {
   return new Array(rowsPerPage).fill(0).map(() => ({
@@ -64,6 +66,8 @@ const generateFakeInstitutionData = (rowsPerPage: number) => {
 };
 
 const Institutions = () => {
+  const navigate = useNavigate();
+
   const tableHeadCells = [
     { label: "Institution" },
     { label: "UCP ID" },
@@ -174,8 +178,19 @@ const Institutions = () => {
                     {institutions?.map(
                       ({ aggregatorIntegrations, logo, name, id }) => (
                         <TableRow
+                          className={classNames({
+                            [styles.tableRowHover]: !isInstitutionsLoading,
+                          })}
                           data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
+                          hover={!isInstitutionsLoading}
                           key={id}
+                          onClick={() =>
+                            navigate(
+                              institutionRoute.createPath({
+                                institutionId: id,
+                              }),
+                            )
+                          }
                         >
                           <TableCell>
                             <div className={styles.institutionCell}>
@@ -236,9 +251,9 @@ const Institutions = () => {
 
                                   return (
                                     <SkeletonIfLoading
+                                      className={styles.chipSkeleton}
                                       isLoading={isInstitutionsLoading}
                                       key={displayName}
-                                      sx={{ borderRadius: "16px" }}
                                     >
                                       <Tooltip
                                         disableInteractive

@@ -22,7 +22,7 @@ const SectionHeader = ({
         <InfoOutlined
           color="action"
           data-testid={SECTION_HEADER_INFO_ICON_TEST_ID}
-          fontSize="small"
+          fontSize="inherit"
         />
       </Tooltip>
     </div>
