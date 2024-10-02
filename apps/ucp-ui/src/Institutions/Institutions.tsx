@@ -39,6 +39,7 @@ import {
   TextSkeletonIfLoading,
 } from "../shared/components/Skeleton";
 import { institutionRoute } from "../shared/constants/routes";
+import classNames from "classnames";
 
 const generateFakeInstitutionData = (rowsPerPage: number) => {
   return new Array(rowsPerPage).fill(0).map(() => ({
@@ -177,6 +178,9 @@ const Institutions = () => {
                     {institutions?.map(
                       ({ aggregatorIntegrations, logo, name, id }) => (
                         <TableRow
+                          className={classNames({
+                            [styles.tableRowHover]: !isInstitutionsLoading,
+                          })}
                           data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
                           hover={!isInstitutionsLoading}
                           key={id}

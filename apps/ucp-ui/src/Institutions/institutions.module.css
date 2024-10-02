@@ -67,3 +67,7 @@
   display: flex;
   gap: 4px;
 }
+
+.tableRowHover {
+  cursor: pointer;
+}
