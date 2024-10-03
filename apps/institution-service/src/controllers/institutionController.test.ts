@@ -272,6 +272,7 @@ describe("institutionController", () => {
               updatedAt: expect.any(Date),
               aggregatorIntegrations: expect.arrayContaining([
                 expect.objectContaining({
+                  id: expect.any(Number),
                   aggregator_institution_id: expect.any(String),
                   supports_oauth: expect.any(Boolean),
                   supports_identification: expect.any(Boolean),

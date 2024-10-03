@@ -648,6 +648,120 @@
           }
         }
       }
+    },
+    "/aggregatorIntegrations/:id": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Update an aggregatorIntegration",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "number"
+            },
+            "required": true,
+            "description": "ID of the aggregatorIntegration to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "aggregator_institution_id": {
+                    "type": "string",
+                    "example": "test_bank_1"
+                  },
+                  "isActive": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "supports_oauth": {
+                    "type": "boolean"
+                  },
+                  "supports_identification": {
+                    "type": "boolean"
+                  },
+                  "supports_verification": {
+                    "type": "boolean"
+                  },
+                  "supports_aggregation": {
+                    "type": "boolean"
+                  },
+                  "supports_history": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "AggregatorIntegration updated successfully",
+                    "aggregatorIntegration": {
+                      "id": 29478,
+                      "isActive": false,
+                      "aggregator_institution_id": "testExampleA",
+                      "aggregatorId": 4,
+                      "supports_oauth": true,
+                      "supports_identification": false,
+                      "supports_verification": false,
+                      "supports_aggregation": false,
+                      "supports_history": false,
+                      "createdAt": "2024-09-23T15:33:58.173Z",
+                      "updatedAt": "2024-10-01T17:20:34.740Z",
+                      "institution_id": "7a909e62-98b6-4a34-8725-b2a6a63e830a"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "\"institution_id\" is not allowed"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "An Aggregator cannot edit an aggregatorIntegration belonging to another aggregator"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

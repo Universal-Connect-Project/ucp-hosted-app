@@ -72,9 +72,3 @@ Institution.init(
     sequelize,
   },
 );
-
-Institution.hasMany(AggregatorIntegration, {
-  sourceKey: "id",
-  foreignKey: "institution_id",
-  as: "aggregatorIntegrations",
-});
