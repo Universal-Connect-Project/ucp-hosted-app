@@ -5,7 +5,10 @@ import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
-import { validateUserCanEditInstitution } from "../shared/utils/permissionValidation";
+import {
+  validateUserCanEditAggregatorIntegration,
+  validateUserCanEditInstitution,
+} from "../shared/utils/permissionValidation";
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -102,6 +105,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
 
 interface AggregatorIntegration {
   aggregator_institution_id: string;
+  id: number;
   supports_oauth: boolean;
   supports_identification: boolean;
   supports_verification: boolean;
@@ -129,8 +133,14 @@ export interface InstitutionDetail {
   aggregatorIntegrations: AggregatorIntegration[];
 }
 
+export interface AggregatorIntegrationWithPermissions
+  extends AggregatorIntegration {
+  canEditAggregatorIntegration: boolean;
+}
+
 export interface InstitutionDetailWithPermissions extends InstitutionDetail {
   canEditInstitution: boolean;
+  aggregatorIntegrations: AggregatorIntegrationWithPermissions[];
 }
 
 export interface InstitutionResponse {
@@ -248,13 +258,26 @@ export const getInstitution = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Institution not found" });
     }
 
+    const institutionJson =
+      institution.toJSON() as unknown as InstitutionDetail;
+
     const institutionWithPermissions = {
-      ...institution.toJSON(),
+      ...institutionJson,
       canEditInstitution:
         (await validateUserCanEditInstitution({
           institutionId,
           req,
         })) === true,
+      aggregatorIntegrations: await Promise.all(
+        institutionJson.aggregatorIntegrations?.map(async (integration) => ({
+          ...integration,
+          canEditAggregatorIntegration:
+            (await validateUserCanEditAggregatorIntegration({
+              aggregatorIntegrationId: `${integration.id}`,
+              req,
+            })) === true,
+        })),
+      ),
     };
 
     return res.status(200).json({ institution: institutionWithPermissions });
