@@ -5,6 +5,10 @@ import { Aggregator } from "../models/aggregator";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { defineAssociations } from "../models/associations";
 import { Institution } from "../models/institution";
+import {
+  testExampleAAggregatorId,
+  testExampleBAggregatorId,
+} from "../test/testData/aggregators";
 
 export interface CachedInstitution {
   name: string;
@@ -69,11 +73,19 @@ async function loadInstitutionData() {
   });
   const [testExampleAAggregator, _testExampleACreated] =
     await Aggregator.findOrCreate({
-      where: { name: "testExampleA", displayName: "Test Example A" },
+      where: {
+        name: "testExampleA",
+        displayName: "Test Example A",
+        id: testExampleAAggregatorId,
+      },
     });
   const [testExampleBAggregator, _testExampleBCreated] =
     await Aggregator.findOrCreate({
-      where: { name: "testExampleB", displayName: "Test Example B" },
+      where: {
+        name: "testExampleB",
+        displayName: "Test Example B",
+        id: testExampleBAggregatorId,
+      },
     });
 
   institutions.forEach((institution: CachedInstitution) => {
