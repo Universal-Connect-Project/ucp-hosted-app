@@ -168,6 +168,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
         {
           association: Institution.associations.aggregatorIntegrations,
           attributes: [
+            "id",
             "aggregator_institution_id",
             "supports_oauth",
             "supports_identification",

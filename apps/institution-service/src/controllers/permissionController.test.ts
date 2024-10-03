@@ -1,23 +1,7 @@
-import { testRSAToken, UiUserPermissions } from "@repo/shared-utils";
-import { getPermissions } from "./permissionController";
+import { UiUserPermissions } from "@repo/shared-utils";
 import { Request, Response } from "express";
-import { Algorithm, JwtPayload, sign, SignOptions } from "jsonwebtoken";
-
-const createTestAuthorization = (permissions: string[] = []) => {
-  const options: SignOptions = {
-    header: {
-      alg: "RS256" as Algorithm,
-      kid: "0",
-    },
-    algorithm: "RS256" as Algorithm,
-  };
-
-  const payload: JwtPayload = {
-    permissions,
-  };
-
-  return `Bearer ${sign(payload, testRSAToken, options)}`;
-};
+import { createTestAuthorization } from "../test/utils";
+import { getPermissions } from "./permissionController";
 
 describe("permissionController", () => {
   describe("getPermissions", () => {

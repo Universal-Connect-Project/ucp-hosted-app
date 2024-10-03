@@ -1,5 +1,6 @@
 import {
   Association,
+  BelongsToGetAssociationMixin,
   CreationOptional,
   DataTypes,
   ForeignKey,
@@ -29,6 +30,7 @@ export class AggregatorIntegration extends Model<
 
   declare institution?: NonAttribute<Institution>;
   declare aggregator?: NonAttribute<Aggregator>;
+  declare getAggregator: BelongsToGetAssociationMixin<Aggregator>;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;

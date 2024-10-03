@@ -130,11 +130,13 @@ describe("/institutions/cacheList", () => {
           },
         })
           .then((response: Cypress.Response<CachedInstitution[]>) => {
-            const institution = response.body[1];
+            const institution = response.body[0];
             const aggregator =
               institution.mx ??
               institution.sophtron ??
               institution.finicity ??
+              institution.testExampleA ??
+              institution.testExampleB ??
               {};
 
             expect(response.status).to.eq(200);
