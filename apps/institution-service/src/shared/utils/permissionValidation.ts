@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { auth } from "express-oauth2-jwt-bearer";
 import { Institution } from "../../models/institution";
 import { Request } from "express";
+import { AggregatorIntegration } from "../../models/aggregatorIntegration";
 
 const validateAccessToken = (audience: string | undefined) =>
   auth({
@@ -75,5 +76,54 @@ export const validateUserCanEditInstitution = async ({
     return true;
   } catch {
     return EditInstitutionValidationErrorReason.GenericError;
+  }
+};
+
+export enum EditAggregatorIntegrationValidationErrorReason {
+  GenericError,
+  InsufficientScope,
+  InvalidAggregatorIntegrationId,
+  NotYourAggregator,
+}
+
+export const validateUserCanEditAggregatorIntegration = async ({
+  aggregatorIntegrationId,
+  req,
+}: {
+  aggregatorIntegrationId: string;
+  req: Request;
+}) => {
+  try {
+    const token = req.headers.authorization?.split(" ")?.[1];
+    const decodedToken = jwt.decode(token as string) as DecodedToken;
+    const permissions = decodedToken.permissions;
+
+    if (permissions.includes(UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION)) {
+      return true;
+    } else if (
+      !permissions.includes(
+        UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+      )
+    ) {
+      return EditAggregatorIntegrationValidationErrorReason.InsufficientScope;
+    }
+
+    const aggregatorIntegration = await AggregatorIntegration.findByPk(
+      aggregatorIntegrationId,
+    );
+    if (!aggregatorIntegration) {
+      return EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId;
+    }
+
+    const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
+    const aggregator = await aggregatorIntegration?.getAggregator();
+
+    if (aggregatorName !== aggregator?.name) {
+      return EditAggregatorIntegrationValidationErrorReason.NotYourAggregator;
+    }
+
+    return true;
+  } catch (err) {
+    return EditAggregatorIntegrationValidationErrorReason.GenericError;
   }
 };

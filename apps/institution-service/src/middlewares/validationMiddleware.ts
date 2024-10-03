@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import Joi, { ObjectSchema } from "joi";
 import {
+  EditAggregatorIntegrationValidationErrorReason,
   validateUserCanEditInstitution as editInstitutionValidation,
+  validateUserCanEditAggregatorIntegration as editAggregatorIntegrationValidation,
   EditInstitutionValidationErrorReason,
 } from "../shared/utils/permissionValidation";
-import jwt from "jsonwebtoken";
-import { AggregatorIntegration } from "../models/aggregatorIntegration";
-import { UiUserPermissions } from "@repo/shared-utils";
 
 export const validate = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -106,41 +105,42 @@ export const validateUserCanEditAggregatorIntegration = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const token = req.headers.authorization?.split(" ")?.[1];
-    const decodedToken = jwt.decode(token as string) as DecodedToken;
-    const permissions = decodedToken.permissions;
-    if (permissions.includes(UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION)) {
-      return next();
-    } else if (
-      !permissions.includes(
-        UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-      )
-    ) {
-      return res.status(403).json({ error: "Insufficient permissions" });
-    }
+  const canUserEditAggregatorIntegration =
+    await editAggregatorIntegrationValidation({
+      aggregatorIntegrationId: req.params.id,
+      req,
+    });
 
-    const aggregatorIntegration = await AggregatorIntegration.findByPk(
-      req.params.id,
-    );
-    if (!aggregatorIntegration) {
-      return res
-        .status(404)
-        .json({ error: "Aggregator Integration not found" });
-    }
+  const errorMap = {
+    [EditAggregatorIntegrationValidationErrorReason.GenericError]: {
+      error: "Error validating user permission",
+      status: 500,
+    },
+    [EditAggregatorIntegrationValidationErrorReason.InsufficientScope]: {
+      error: "Insufficient permissions",
+      status: 403,
+    },
+    [EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId]:
+      {
+        error: "Aggregator Integration not found",
+        status: 404,
+      },
+    [EditAggregatorIntegrationValidationErrorReason.NotYourAggregator]: {
+      error:
+        "An Aggregator cannot edit an aggregatorIntegration belonging to another aggregator",
+      status: 403,
+    },
+  };
 
-    const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
-    const aggregator = await aggregatorIntegration?.getAggregator();
-
-    if (aggregatorName !== aggregator?.name) {
-      return res.status(403).json({
-        error:
-          "An Aggregator cannot edit an aggregatorIntegration belonging to another aggregator",
-      });
-    }
-
-    next();
-  } catch (err) {
-    return res.status(500).json({ error: "Error validating user permission" });
+  if (canUserEditAggregatorIntegration === true) {
+    return next();
   }
+
+  const { error, status } =
+    errorMap[canUserEditAggregatorIntegration] ||
+    errorMap[EditAggregatorIntegrationValidationErrorReason.GenericError];
+
+  return res.status(status).json({
+    error,
+  });
 };
