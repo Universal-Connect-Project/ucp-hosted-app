@@ -64,7 +64,7 @@ export const validateUserCanEditInstitution = async (
   next: NextFunction,
 ) => {
   const canUserEditInstitution = await editInstitutionValidation({
-    institutionId: req.params.id,
+    institutionId: req?.params?.id,
     req,
   });
 
@@ -107,7 +107,7 @@ export const validateUserCanEditAggregatorIntegration = async (
 ) => {
   const canUserEditAggregatorIntegration =
     await editAggregatorIntegrationValidation({
-      aggregatorIntegrationId: req.params.id,
+      aggregatorIntegrationId: req?.params?.id,
       req,
     });
 
