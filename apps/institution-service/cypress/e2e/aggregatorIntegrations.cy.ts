@@ -230,7 +230,7 @@ describe("PUT /aggregatorIntegrations/:id (AggregatorIntegration update)", () =>
   });
 });
 
-describe.only("POST /aggregatorIntegrations (Create)", () => {
+describe("POST /aggregatorIntegrations (Create)", () => {
   it("should create an aggregatorIntegration with super admin user", () => {
     cy.request({
       url: `http://localhost:${PORT}/aggregatorIntegrations`,

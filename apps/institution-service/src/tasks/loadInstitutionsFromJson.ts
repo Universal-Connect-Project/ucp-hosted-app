@@ -6,6 +6,7 @@ import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { defineAssociations } from "../models/associations";
 import { Institution } from "../models/institution";
 import {
+  mxAggregatorId,
   testExampleAAggregatorId,
   testExampleBAggregatorId,
 } from "../test/testData/aggregators";
@@ -55,6 +56,7 @@ async function loadInstitutionData() {
       name: "mx",
       displayName: "MX",
       logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
+      id: mxAggregatorId,
     },
   });
   const [sophtronAggregator, _sophtronCreated] = await Aggregator.findOrCreate({

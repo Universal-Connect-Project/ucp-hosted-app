@@ -761,7 +761,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/aggregatorIntegrations": {
       "post": {
         "security": [
           {

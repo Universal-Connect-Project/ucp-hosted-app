@@ -1,6 +1,6 @@
 import { UUID } from "crypto";
 import { Request, Response } from "express";
-import { Error, ValidationError } from "sequelize";
+import { Error } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 
 interface AggregatorIntegrationParams {
@@ -57,15 +57,10 @@ export const createAggregatorIntegration = async (
       aggregatorIntegration,
     });
   } catch (error) {
-    if (error instanceof ValidationError) {
-      res.status(400).json({
-        error: "Invalid aggregatorIntegration Data",
-        message: error.errors[0]?.message,
-      });
-    } else if (error instanceof Error) {
+    if (error instanceof Error) {
       res.status(400).json({ error: "Database Error", message: error.message });
     } else {
-      res.status(500).json({ error: "Error", message: "something went wrong" });
+      res.status(500).json({ error: "Error", message: "Something went wrong" });
     }
   }
 };
