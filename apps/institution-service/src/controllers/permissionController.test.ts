@@ -47,7 +47,9 @@ describe("permissionController", () => {
     it(`returns the correct permissions for someone with no scopes`, () => {
       const req = {
         headers: {
-          authorization: createTestAuthorization(),
+          authorization: createTestAuthorization({
+            permissions: [],
+          }),
         },
       } as Request;
       const res = {

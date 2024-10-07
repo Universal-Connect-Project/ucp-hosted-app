@@ -105,8 +105,6 @@ describe("updateAggregatorIntegration", () => {
     expect(res.json).toHaveBeenCalledWith({
       error: "An error occurred while updating the AggregatorIntegration",
     });
-
-    jest.restoreAllMocks();
   });
 });
 

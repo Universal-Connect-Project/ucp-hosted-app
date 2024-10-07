@@ -5,6 +5,10 @@ import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
+import {
+  validateUserCanEditAggregatorIntegration,
+  validateUserCanEditInstitution,
+} from "../shared/utils/permissionValidation";
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -101,6 +105,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
 
 interface AggregatorIntegration {
   aggregator_institution_id: string;
+  id: number;
   supports_oauth: boolean;
   supports_identification: boolean;
   supports_verification: boolean;
@@ -127,6 +132,21 @@ export interface InstitutionDetail {
   updatedAt: string;
   aggregatorIntegrations: AggregatorIntegration[];
 }
+
+export interface AggregatorIntegrationWithPermissions
+  extends AggregatorIntegration {
+  canEditAggregatorIntegration: boolean;
+}
+
+export interface InstitutionDetailWithPermissions extends InstitutionDetail {
+  canEditInstitution: boolean;
+  aggregatorIntegrations: AggregatorIntegrationWithPermissions[];
+}
+
+export interface InstitutionResponse {
+  institution: InstitutionDetailWithPermissions;
+}
+
 export interface PaginatedInstitutionsResponse {
   currentPage: number;
   pageSize: number;
@@ -238,7 +258,29 @@ export const getInstitution = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Institution not found" });
     }
 
-    return res.status(200).json({ institution });
+    const institutionJson =
+      institution.toJSON() as unknown as InstitutionDetail;
+
+    const institutionWithPermissions = {
+      ...institutionJson,
+      canEditInstitution:
+        (await validateUserCanEditInstitution({
+          institutionId,
+          req,
+        })) === true,
+      aggregatorIntegrations: await Promise.all(
+        institutionJson.aggregatorIntegrations?.map(async (integration) => ({
+          ...integration,
+          canEditAggregatorIntegration:
+            (await validateUserCanEditAggregatorIntegration({
+              aggregatorIntegrationId: `${integration.id}`,
+              req,
+            })) === true,
+        })),
+      ),
+    };
+
+    return res.status(200).json({ institution: institutionWithPermissions });
   } catch (error) {
     return res
       .status(500)

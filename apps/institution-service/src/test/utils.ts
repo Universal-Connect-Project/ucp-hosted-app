@@ -1,13 +1,13 @@
 import { testRSAToken } from "@repo/shared-utils";
 import { Algorithm, JwtPayload, sign, SignOptions } from "jsonwebtoken";
 
-export const createTestAuthorization = (
-  args: {
-    permissions?: string[];
-    aggregatorId?: string;
-  } = {},
-) => {
-  const { permissions = [], aggregatorId = "mx" } = args;
+export const createTestAuthorization = ({
+  aggregatorId = "mx",
+  permissions = [],
+}: {
+  aggregatorId?: string;
+  permissions: string[];
+}) => {
   const options: SignOptions = {
     header: {
       alg: "RS256" as Algorithm,
@@ -19,7 +19,7 @@ export const createTestAuthorization = (
   const payload: JwtPayload = {
     permissions,
     "ucw/appMetaData": {
-      aggregatorId: aggregatorId,
+      aggregatorId,
     },
   };
 

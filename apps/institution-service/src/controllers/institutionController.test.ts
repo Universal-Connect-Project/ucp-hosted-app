@@ -130,10 +130,6 @@ describe("institutionController", () => {
   });
 
   describe("updateInstitution", () => {
-    beforeEach(() => {
-      jest.restoreAllMocks();
-    });
-
     it("responds with 404 when institutionId is invalid", async () => {
       const invalidInstitutionId = "invalidInstitutionId";
       const req = {
@@ -334,10 +330,6 @@ describe("institutionController", () => {
   });
 
   describe("getInstitution", () => {
-    beforeEach(() => {
-      jest.restoreAllMocks();
-    });
-
     it("responds with an institution and has the expected attributes", async () => {
       const req = {
         params: { id: seedInstitutionId },
@@ -354,6 +346,7 @@ describe("institutionController", () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
           institution: expect.objectContaining({
+            canEditInstitution: expect.any(Boolean),
             id: seedInstitutionId,
             name: "Wells Fargo",
             keywords: ["wells", "fargo"],
@@ -365,6 +358,7 @@ describe("institutionController", () => {
             updatedAt: expect.any(Date),
             aggregatorIntegrations: expect.arrayContaining([
               expect.objectContaining({
+                canEditAggregatorIntegration: expect.any(Boolean),
                 id: expect.any(Number),
                 aggregator_institution_id: expect.any(String),
                 supports_oauth: expect.any(Boolean),
