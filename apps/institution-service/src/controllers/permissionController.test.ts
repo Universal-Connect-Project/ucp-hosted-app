@@ -8,9 +8,9 @@ describe("permissionController", () => {
     it(`returns the correct permissions for someone with ${UiUserPermissions.CREATE_INSTITUTION}`, () => {
       const req = {
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.CREATE_INSTITUTION,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [UiUserPermissions.CREATE_INSTITUTION],
+          }),
         },
       } as Request;
       const res = {
@@ -27,9 +27,9 @@ describe("permissionController", () => {
     it(`returns the correct permissions for someone with ${UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR}`, () => {
       const req = {
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR],
+          }),
         },
       } as Request;
       const res = {
