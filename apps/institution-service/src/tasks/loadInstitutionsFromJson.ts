@@ -5,6 +5,11 @@ import { Aggregator } from "../models/aggregator";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { defineAssociations } from "../models/associations";
 import { Institution } from "../models/institution";
+import {
+  mxAggregatorId,
+  testExampleAAggregatorId,
+  testExampleBAggregatorId,
+} from "../test/testData/aggregators";
 
 export interface CachedInstitution {
   name: string;
@@ -51,6 +56,7 @@ async function loadInstitutionData() {
       name: "mx",
       displayName: "MX",
       logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
+      id: mxAggregatorId,
     },
   });
   const [sophtronAggregator, _sophtronCreated] = await Aggregator.findOrCreate({
@@ -69,11 +75,19 @@ async function loadInstitutionData() {
   });
   const [testExampleAAggregator, _testExampleACreated] =
     await Aggregator.findOrCreate({
-      where: { name: "testExampleA", displayName: "Test Example A" },
+      where: {
+        name: "testExampleA",
+        displayName: "Test Example A",
+        id: testExampleAAggregatorId,
+      },
     });
   const [testExampleBAggregator, _testExampleBCreated] =
     await Aggregator.findOrCreate({
-      where: { name: "testExampleB", displayName: "Test Example B" },
+      where: {
+        name: "testExampleB",
+        displayName: "Test Example B",
+        id: testExampleBAggregatorId,
+      },
     });
 
   institutions.forEach((institution: CachedInstitution) => {

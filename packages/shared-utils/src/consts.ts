@@ -24,6 +24,9 @@ export const UiUserPermissions = {
   UPDATE_AGGREGATOR_INTEGRATION: "update:aggregatorIntegration",
   UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR:
     "update:aggregatorIntegration:aggregator",
+  CREATE_AGGREGATOR_INTEGRATION: "create:aggregatorIntegration",
+  CREATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR:
+    "create:aggregatorIntegration:aggregator",
 };
 
 export const AUTH0_CLIENT_AUDIENCE = "ucp-hosted-apps";

@@ -3,7 +3,15 @@ import { Request, Response } from "express";
 import { Model } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { createTestAggregatorIntegrationBody } from "../test/testData/aggregatorIntegrations";
-import { updateAggregatorIntegration } from "./aggregatorIntegrationController";
+import {
+  defaultTestAggregator,
+  mxAggregatorId,
+} from "../test/testData/aggregators";
+import { seedInstitutionId } from "../test/testData/institutions";
+import {
+  createAggregatorIntegration,
+  updateAggregatorIntegration,
+} from "./aggregatorIntegrationController";
 
 describe("updateAggregatorIntegration", () => {
   let aggregatorIntegration: AggregatorIntegration;
@@ -97,5 +105,93 @@ describe("updateAggregatorIntegration", () => {
     expect(res.json).toHaveBeenCalledWith({
       error: "An error occurred while updating the AggregatorIntegration",
     });
+  });
+});
+
+describe("createAggregatorIntegration", () => {
+  it("creates an aggregatorIntegration with default values", async () => {
+    const testBankId = "testBankId";
+    const req = {
+      body: {
+        institution_id: seedInstitutionId,
+        aggregatorId: mxAggregatorId,
+        aggregator_institution_id: testBankId,
+      },
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await createAggregatorIntegration(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "AggregatorIntegration created successfully",
+      aggregatorIntegration: expect.objectContaining({
+        ...defaultTestAggregator,
+        aggregator_institution_id: testBankId,
+      }),
+    });
+  });
+
+  it("creates an aggregatorIntegration with custom values", async () => {
+    const customValues = {
+      isActive: false,
+      supports_oauth: true,
+      supports_identification: true,
+      supports_verification: true,
+      supports_aggregation: false,
+      supports_history: true,
+      institution_id: seedInstitutionId,
+      aggregatorId: mxAggregatorId,
+      aggregator_institution_id: "testBankId",
+    };
+    const req = {
+      body: customValues,
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await createAggregatorIntegration(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "AggregatorIntegration created successfully",
+      aggregatorIntegration: expect.objectContaining({
+        ...customValues,
+      }),
+    });
+  });
+
+  it("returns 400 for invalid data", async () => {
+    const req = {
+      body: {
+        institution_id: seedInstitutionId,
+        aggregatorId: mxAggregatorId,
+        aggregator_institution_id: null,
+      },
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await createAggregatorIntegration(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: "Database Error",
+      }),
+    );
   });
 });

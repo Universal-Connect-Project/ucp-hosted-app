@@ -1,7 +1,11 @@
+import { UUID } from "crypto";
 import { Request, Response } from "express";
+import { Error } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 
-interface updateAggregatorIntegrationParams {
+interface AggregatorIntegrationParams {
+  institution_id?: UUID;
+  aggregatorId?: number;
   aggregator_institution_id: string;
   supports_oauth: boolean;
   supports_identification: boolean;
@@ -16,7 +20,7 @@ export const updateAggregatorIntegration = async (
   res: Response,
 ) => {
   try {
-    const updateData = req.body as updateAggregatorIntegrationParams;
+    const updateData = req.body as AggregatorIntegrationParams;
 
     const aggregatorIntegration = await AggregatorIntegration.findByPk(
       req.params.id,
@@ -36,5 +40,27 @@ export const updateAggregatorIntegration = async (
     return res.status(500).json({
       error: "An error occurred while updating the AggregatorIntegration",
     });
+  }
+};
+
+export const createAggregatorIntegration = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const aggregatorIntegration = await AggregatorIntegration.create(
+      req.body as AggregatorIntegrationParams,
+    );
+
+    return res.status(201).json({
+      message: "AggregatorIntegration created successfully",
+      aggregatorIntegration,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ error: "Database Error", message: error.message });
+    } else {
+      res.status(500).json({ error: "Error", message: "Something went wrong" });
+    }
   }
 };

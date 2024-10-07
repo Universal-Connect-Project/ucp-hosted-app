@@ -47,7 +47,7 @@ module.exports = {
     ]);
 
     // Add Aggregators
-    const mxAggregatorId = 99;
+    const mxAggregatorId = 98;
     const sophtronAggregatorId = 100;
     const finicityAggregatorId = 101;
     await queryInterface.bulkInsert("aggregators", [

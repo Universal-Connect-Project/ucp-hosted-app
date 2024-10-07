@@ -6,6 +6,9 @@ import {
   validateUserCanEditAggregatorIntegration as editAggregatorIntegrationValidation,
   EditInstitutionValidationErrorReason,
 } from "../shared/utils/permissionValidation";
+import jwt from "jsonwebtoken";
+import { Aggregator } from "../models/aggregator";
+import { UiUserPermissions } from "@repo/shared-utils";
 
 export const validate = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -50,6 +53,13 @@ export const aggregatorIntegrationUpdateSchema = Joi.object({
   supports_history: Joi.boolean(),
   isActive: Joi.boolean(),
 });
+
+export const aggregatorIntegrationCreateSchema =
+  aggregatorIntegrationUpdateSchema.append({
+    institution_id: Joi.string().required(),
+    aggregatorId: Joi.number().required(),
+    aggregator_institution_id: Joi.string().required(),
+  });
 
 export interface DecodedToken {
   permissions: string[];
@@ -143,4 +153,51 @@ export const validateUserCanEditAggregatorIntegration = async (
   return res.status(status).json({
     error,
   });
+};
+
+interface AggregatorIntegrationRequestBody {
+  aggregatorId: number;
+}
+export const validateUserCanCreateAggregatorIntegration = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const token = req.headers.authorization?.split(" ")?.[1];
+  const decodedToken = jwt.decode(token as string) as DecodedToken;
+  const permissions = decodedToken.permissions;
+  const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
+
+  if (permissions.includes(UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION)) {
+    return next();
+  } else if (
+    !permissions.includes(
+      UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+    )
+  ) {
+    return res.status(403).json({ error: "Insufficient permissions" });
+  }
+
+  const aggregators = await Aggregator.findAll({
+    where: { name: aggregatorName },
+    raw: true,
+  });
+
+  const aggregator = aggregators[0];
+  if (!aggregator) {
+    return res.status(500).json({
+      error:
+        "This user doesn't have the required aggregatorId in their metadata",
+    });
+  }
+  const aggregatorRequestBody = req.body as AggregatorIntegrationRequestBody;
+
+  if (aggregator.id === aggregatorRequestBody.aggregatorId) {
+    next();
+  } else {
+    return res.status(403).json({
+      error:
+        "An Aggregator cannot create an aggregatorIntegration belonging to another aggregator",
+    });
+  }
 };
