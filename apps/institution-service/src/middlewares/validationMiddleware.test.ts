@@ -16,9 +16,9 @@ describe("validationMiddleware", () => {
 
       const req = {
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.UPDATE_INSTITUTION,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [UiUserPermissions.UPDATE_INSTITUTION],
+          }),
         },
       } as Request;
       const res = {} as unknown as Response;
@@ -35,9 +35,9 @@ describe("validationMiddleware", () => {
 
       const req = {
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+          }),
         },
       } as Request;
       const res = {
@@ -59,7 +59,9 @@ describe("validationMiddleware", () => {
 
       const req = {
         headers: {
-          authorization: createTestAuthorization([]),
+          authorization: createTestAuthorization({
+            permissions: [],
+          }),
         },
       } as Request;
       const res = {
@@ -81,9 +83,9 @@ describe("validationMiddleware", () => {
 
       const req = {
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+          }),
         },
         params: {
           id: crypto.randomUUID(),
@@ -111,9 +113,9 @@ describe("validationMiddleware", () => {
 
       const req = {
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+          }),
         },
         params: {
           id: institutionIdWithOtherAggregators,
@@ -141,9 +143,9 @@ describe("validationMiddleware", () => {
 
       const req = {
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION],
+          }),
         },
       } as Request;
       const res = {} as unknown as Response;
@@ -158,9 +160,9 @@ describe("validationMiddleware", () => {
 
       const req = {
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.CREATE_INSTITUTION,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [UiUserPermissions.CREATE_INSTITUTION],
+          }),
         },
       } as Request;
       const res = {
@@ -185,9 +187,11 @@ describe("validationMiddleware", () => {
           id: -1,
         },
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [
+              UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+            ],
+          }),
         },
       } as unknown as Request;
       const res = {
@@ -220,9 +224,11 @@ describe("validationMiddleware", () => {
           id: sophtronAggregatorIntegration?.id,
         },
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [
+              UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+            ],
+          }),
         },
       } as unknown as Request;
       const res = {
@@ -256,9 +262,11 @@ describe("validationMiddleware", () => {
           id: mxAggregatorIntegration?.id,
         },
         headers: {
-          authorization: createTestAuthorization([
-            UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-          ]),
+          authorization: createTestAuthorization({
+            permissions: [
+              UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+            ],
+          }),
         },
       } as unknown as Request;
       const res = {

@@ -7,6 +7,9 @@ module.exports = {
     const seedInstitutionId = "c14e9877-c1e3-4d3a-b449-585086d14845";
 
     const secondSeedInstitutionId = "7ad26dbb-78ee-4d06-b67d-bb71c11de653";
+
+    const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
+
     await queryInterface.bulkInsert("institutions", [
       {
         id: seedInstitutionId,
@@ -27,6 +30,17 @@ module.exports = {
         url: "https://chase.com",
         is_test_bank: false,
         routing_numbers: ["888888888", "222222222"],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: mxOnlyInstitutionId,
+        name: "MX Only",
+        keywords: ["mx", "only"],
+        logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-78c7b591-6512-9c17-b092-1cddbd3c85ba_100x100.png",
+        url: "https://chase.com",
+        is_test_bank: false,
+        routing_numbers: ["222222222"],
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -93,6 +107,18 @@ module.exports = {
         supports_aggregation: true,
         supports_history: true,
         institution_id: secondSeedInstitutionId,
+        createdAt: new Date(),
+      },
+      {
+        isActive: false,
+        aggregatorId: mxAggregatorId,
+        aggregator_institution_id: "mx_only",
+        supports_oauth: true,
+        supports_identification: true,
+        supports_verification: true,
+        supports_aggregation: true,
+        supports_history: true,
+        institution_id: mxOnlyInstitutionId,
         createdAt: new Date(),
       },
     ]);
