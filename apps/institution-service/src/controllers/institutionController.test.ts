@@ -130,10 +130,6 @@ describe("institutionController", () => {
   });
 
   describe("updateInstitution", () => {
-    beforeEach(() => {
-      jest.restoreAllMocks();
-    });
-
     it("responds with 404 when institutionId is invalid", async () => {
       const invalidInstitutionId = "invalidInstitutionId";
       const req = {
@@ -334,10 +330,6 @@ describe("institutionController", () => {
   });
 
   describe("getInstitution", () => {
-    beforeEach(() => {
-      jest.restoreAllMocks();
-    });
-
     it("responds with an institution and has the expected attributes", async () => {
       const req = {
         params: { id: seedInstitutionId },

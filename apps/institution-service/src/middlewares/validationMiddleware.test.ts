@@ -54,9 +54,85 @@ describe("validationMiddleware", () => {
       });
     });
 
-    it("handles insufficient scope", () => {});
-    it("handles missing institution", () => {});
-    it("handles used by other aggregators", () => {});
+    it("handles insufficient scope", async () => {
+      const next = jest.fn();
+
+      const req = {
+        headers: {
+          authorization: createTestAuthorization([]),
+        },
+      } as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await validateUserCanEditInstitution(req, res, next);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Insufficient permissions",
+      });
+    });
+
+    it("handles missing institution", async () => {
+      const next = jest.fn();
+
+      const req = {
+        headers: {
+          authorization: createTestAuthorization([
+            UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
+          ]),
+        },
+        params: {
+          id: crypto.randomUUID(),
+        },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await validateUserCanEditInstitution(req, res, next);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Institution not found",
+      });
+    });
+
+    it("handles used by other aggregators", async () => {
+      const next = jest.fn();
+
+      const institutionIdWithOtherAggregators =
+        "c14e9877-c1e3-4d3a-b449-585086d14845";
+
+      const req = {
+        headers: {
+          authorization: createTestAuthorization([
+            UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
+          ]),
+        },
+        params: {
+          id: institutionIdWithOtherAggregators,
+        },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await validateUserCanEditInstitution(req, res, next);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        error:
+          "Aggregator cannot edit an institution used by other aggregators",
+      });
+    });
   });
 
   describe("validateUserCanEditAggregatorIntegration", () => {
