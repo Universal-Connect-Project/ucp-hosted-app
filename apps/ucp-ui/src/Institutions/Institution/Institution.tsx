@@ -181,55 +181,57 @@ const Institution = () => {
               </Typography>
             </div>
           </div>
-          <div className={styles.institutionFields}>
+          <div className={styles.editAndInstitutionFieldsContainer}>
             {canEditInstitution && (
               <IconButton>
                 <Edit />
               </IconButton>
             )}
-            <InstitutionField
-              isLoading={isLoading}
-              name="UCP ID"
-              tooltip={INSTITUTION_UCP_ID_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_UCP_ID_TOOLTIP_TEST_ID}
-              value={id}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Institution URL"
-              tooltip={INSTITUTION_URL_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_URL_TOOLTIP_TEST_ID}
-              value={url}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Logo URL"
-              tooltip={INSTITUTION_LOGO_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_LOGO_TOOLTIP_TEST_ID}
-              value={logo}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Routing Number(s)"
-              tooltip={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID}
-              value={routing_numbers?.join(", ")}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Search Keywords"
-              tooltip={INSTITUTION_KEYWORDS_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_KEYWORDS_TOOLTIP_TEST_ID}
-              value={keywords?.join(", ")}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Test Institution"
-              shouldDisableValueTooltip
-              tooltip={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID}
-              value={is_test_bank ? "Yes" : "No"}
-            />
+            <div className={styles.institutionFields}>
+              <InstitutionField
+                isLoading={isLoading}
+                name="UCP ID"
+                tooltip={INSTITUTION_UCP_ID_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_UCP_ID_TOOLTIP_TEST_ID}
+                value={id}
+              />
+              <InstitutionField
+                isLoading={isLoading}
+                name="Institution URL"
+                tooltip={INSTITUTION_URL_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_URL_TOOLTIP_TEST_ID}
+                value={url}
+              />
+              <InstitutionField
+                isLoading={isLoading}
+                name="Logo URL"
+                tooltip={INSTITUTION_LOGO_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_LOGO_TOOLTIP_TEST_ID}
+                value={logo}
+              />
+              <InstitutionField
+                isLoading={isLoading}
+                name="Routing Number(s)"
+                tooltip={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID}
+                value={routing_numbers?.join(", ")}
+              />
+              <InstitutionField
+                isLoading={isLoading}
+                name="Search Keywords"
+                tooltip={INSTITUTION_KEYWORDS_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_KEYWORDS_TOOLTIP_TEST_ID}
+                value={keywords?.join(", ")}
+              />
+              <InstitutionField
+                isLoading={isLoading}
+                name="Test Institution"
+                shouldDisableValueTooltip
+                tooltip={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID}
+                value={is_test_bank ? "Yes" : "No"}
+              />
+            </div>
           </div>
           <TableContainer className={styles.table}>
             <Table>
