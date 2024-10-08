@@ -545,7 +545,7 @@ describe("validationMiddleware", () => {
       });
     });
 
-    it(`passes when sophtron attempts to create an aggregatorIntegration of their own but then fails 
+    it(`passes when sophtron attempts to create an aggregatorIntegration of their own, but then fails 
         to create another because one is the limit per aggregator`, async () => {
       const aggregators = await Aggregator.findAll({ raw: true });
       const sophtronAggregator = aggregators.find(
