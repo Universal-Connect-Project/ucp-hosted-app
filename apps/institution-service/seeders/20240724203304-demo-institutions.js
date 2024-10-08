@@ -136,7 +136,7 @@ module.exports = {
       },
       ...[mxAggregatorId, sophtronAggregatorId, finicityAggregatorId].map(
         (aggregatorId) => ({
-          isActive: true,
+          isActive: false,
           aggregatorId,
           aggregator_institution_id: "all_aggregators_id",
           supports_oauth: true,
