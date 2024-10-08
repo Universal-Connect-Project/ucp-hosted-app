@@ -140,21 +140,21 @@ export const validateUserCanCreateAggregatorIntegration = async ({
   const token = req.headers.authorization?.split(" ")?.[1];
   const decodedToken = jwt.decode(token as string) as DecodedToken;
   const permissions = decodedToken.permissions;
-  // const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
+  const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
 
   const aggregators = await Aggregator.findAll({
     raw: true,
   });
 
-  if (permissions.includes(UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION)) {
-    const aggregatorIntegrationsForInstitution =
-      await AggregatorIntegration.findAll({
-        where: {
-          institution_id: institutionId,
-        },
-        raw: true,
-      });
+  const aggregatorIntegrationsForInstitution =
+    await AggregatorIntegration.findAll({
+      where: {
+        institution_id: institutionId,
+      },
+      raw: true,
+    });
 
+  if (permissions.includes(UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION)) {
     const areThereAnyAggregatorsWithoutIntegrations =
       aggregators.length > aggregatorIntegrationsForInstitution.length;
 
@@ -167,22 +167,19 @@ export const validateUserCanCreateAggregatorIntegration = async ({
     return false;
   }
 
-  return false;
+  const aggregatorId = aggregators?.find(
+    ({ name }) => name === aggregatorName,
+  )?.id;
 
-  // const aggregator = aggregators[0];
-  // if (!aggregator) {
-  //   return res.status(500).json({
-  //     error:
-  //       "This user doesn't have the required aggregatorId in their metadata",
-  //   });
-  // }
-  // const aggregatorRequestBody = req.body as AggregatorIntegrationRequestBody;
+  if (!aggregatorId) {
+    return false;
+  }
 
-  // if (aggregator.id === aggregatorRequestBody.aggregatorId) {
-  //   next();
-  // } else {
-  //   return res.status(403).json({
-  //     error:
-  //       "An Aggregator cannot create an aggregatorIntegration belonging to another aggregator",
-  //   });
+  const isTheirAggregatorMissingAnIntegration =
+    !aggregatorIntegrationsForInstitution.some(
+      (aggregatorIntegration) =>
+        aggregatorIntegration.aggregatorId === aggregatorId,
+    );
+
+  return isTheirAggregatorMissingAnIntegration;
 };
