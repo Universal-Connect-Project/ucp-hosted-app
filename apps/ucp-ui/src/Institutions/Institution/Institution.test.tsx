@@ -6,6 +6,7 @@ import {
   render,
   screen,
   userEvent,
+  waitForLoad,
 } from "../../shared/test/testUtils";
 import {
   institutionResponse,
@@ -16,6 +17,7 @@ import {
   INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
+  INSTITUTION_EDIT_DETAILS_TEST_ID,
   INSTITUTION_ERROR_TEXT,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEXT,
@@ -42,6 +44,27 @@ import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 
 describe("<Institution />", () => {
+  it("doesn't render the edit button if canEditInstitution is false", async () => {
+    server.use(
+      http.get(`${INSTITUTION_SERVICE_INSTITUTIONS_URL}/:institutionId`, () =>
+        HttpResponse.json({
+          institution: {
+            ...institutionResponse.institution,
+            canEditInstitution: false,
+          },
+        }),
+      ),
+    );
+
+    render(<Institution />);
+
+    await waitForLoad();
+
+    expect(
+      screen.queryByTestId(INSTITUTION_EDIT_DETAILS_TEST_ID),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows a loading state and renders all the fields", async () => {
     render(<Institution />);
 

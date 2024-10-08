@@ -31,6 +31,7 @@ import {
   INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
+  INSTITUTION_EDIT_DETAILS_TEST_ID,
   INSTITUTION_ERROR_TEXT,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEXT,
@@ -183,7 +184,7 @@ const Institution = () => {
           </div>
           <div className={styles.editAndInstitutionFieldsContainer}>
             {canEditInstitution && (
-              <IconButton>
+              <IconButton data-testid={INSTITUTION_EDIT_DETAILS_TEST_ID}>
                 <Edit />
               </IconButton>
             )}
