@@ -256,6 +256,8 @@
                   "type": "object",
                   "example": {
                     "institution": {
+                      "canEditInstitution": false,
+                      "canCreateAggregatorIntegration": false,
                       "id": "ee6d71dc-e693-4fc3-a775-53c378bc5066",
                       "name": "Alabama Credit Union",
                       "keywords": ["ACU", "Alabama CU", "Alabama Credit Union"],
@@ -267,6 +269,7 @@
                       "updatedAt": "2024-09-23T15:33:58.485Z",
                       "aggregatorIntegrations": [
                         {
+                          "canEditAggregatorIntegration": true,
                           "id": 3,
                           "aggregator_institution_id": "alabamacreditunion",
                           "supports_oauth": false,
@@ -285,6 +288,7 @@
                           }
                         },
                         {
+                          "canEditAggregatorIntegration": false,
                           "id": 4,
                           "aggregator_institution_id": "4D1C263B-D291-4DF7-9F22-79E445E59526",
                           "supports_oauth": false,
@@ -303,6 +307,7 @@
                           }
                         },
                         {
+                          "canEditAggregatorIntegration": false,
                           "id": 5,
                           "aggregator_institution_id": "5411",
                           "supports_oauth": false,
