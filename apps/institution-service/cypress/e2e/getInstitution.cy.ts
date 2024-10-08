@@ -299,7 +299,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       });
     });
 
-    it("returns that a super admin can't create an aggregator integration if there aren't aggregators without integrations", () => {
+    it("returns that a super admin can't create an aggregator integration if all aggregators already have integrations", () => {
       checkCreateAggregatorIntegrationPermissions({
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: false,

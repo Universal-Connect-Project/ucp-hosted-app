@@ -235,7 +235,7 @@ describe("permissionValidation", () => {
   });
 
   describe("validateUserCanCreateAggregatorIntegration", () => {
-    it("returns true if they are a super admin and they there are aggregators without an integration", async () => {
+    it("returns true if they are a super admin and there are aggregators without an integration", async () => {
       expect(
         await validateUserCanCreateAggregatorIntegration({
           institutionId: mxOnlyInstitutionId,
@@ -250,7 +250,7 @@ describe("permissionValidation", () => {
       ).toBe(true);
     });
 
-    it("returns false if they are a super admin and they there aren't aggregators without an integration", async () => {
+    it("returns false if they are a super admin and there aren't aggregators without an integration", async () => {
       expect(
         await validateUserCanCreateAggregatorIntegration({
           institutionId: allAggregatorsInstitutionId,
