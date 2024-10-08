@@ -18,6 +18,7 @@ import {
   getPaginatedInstitutions,
   updateInstitution,
 } from "./institutionController";
+import { createTestAuthorization } from "../test/utils";
 
 const createNewInstitution = async () => {
   return await Institution.create(testInstitution);
@@ -332,6 +333,11 @@ describe("institutionController", () => {
   describe("getInstitution", () => {
     it("responds with an institution and has the expected attributes", async () => {
       const req = {
+        headers: {
+          authorization: createTestAuthorization({
+            permissions: [],
+          }),
+        },
         params: { id: seedInstitutionId },
       } as unknown as Request;
       const res = {
@@ -346,6 +352,7 @@ describe("institutionController", () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
           institution: expect.objectContaining({
+            canCreateAggregatorIntegration: expect.any(Boolean),
             canEditInstitution: expect.any(Boolean),
             id: seedInstitutionId,
             name: "Wells Fargo",
