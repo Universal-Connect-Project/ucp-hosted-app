@@ -8,6 +8,8 @@ import { auth } from "express-oauth2-jwt-bearer";
 import { Institution } from "../../models/institution";
 import { Request } from "express";
 import { AggregatorIntegration } from "../../models/aggregatorIntegration";
+import { UUID } from "crypto";
+import { Aggregator } from "../../models/aggregator";
 
 const validateAccessToken = (audience: string | undefined) =>
   auth({
@@ -126,4 +128,58 @@ export const validateUserCanEditAggregatorIntegration = async ({
   } catch (err) {
     return EditAggregatorIntegrationValidationErrorReason.GenericError;
   }
+};
+
+export const validateUserCanCreateAggregatorIntegration = async ({
+  institutionId,
+  req,
+}: {
+  institutionId: UUID;
+  req: Request;
+}) => {
+  const token = req.headers.authorization?.split(" ")?.[1];
+  const decodedToken = jwt.decode(token as string) as DecodedToken;
+  const permissions = decodedToken.permissions;
+  const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
+
+  const aggregators = await Aggregator.findAll({
+    raw: true,
+  });
+
+  const aggregatorIntegrationsForInstitution =
+    await AggregatorIntegration.findAll({
+      where: {
+        institution_id: institutionId,
+      },
+      raw: true,
+    });
+
+  if (permissions.includes(UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION)) {
+    const areThereAnyAggregatorsWithoutIntegrations =
+      aggregators.length > aggregatorIntegrationsForInstitution.length;
+
+    return areThereAnyAggregatorsWithoutIntegrations;
+  } else if (
+    !permissions.includes(
+      UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+    )
+  ) {
+    return false;
+  }
+
+  const aggregatorId = aggregators?.find(
+    ({ name }) => name === aggregatorName,
+  )?.id;
+
+  if (!aggregatorId) {
+    return false;
+  }
+
+  const isTheirAggregatorMissingAnIntegration =
+    !aggregatorIntegrationsForInstitution.some(
+      (aggregatorIntegration) =>
+        aggregatorIntegration.aggregatorId === aggregatorId,
+    );
+
+  return isTheirAggregatorMissingAnIntegration;
 };

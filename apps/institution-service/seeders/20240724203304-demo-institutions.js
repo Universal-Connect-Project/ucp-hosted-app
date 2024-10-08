@@ -10,6 +10,8 @@ module.exports = {
 
     const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
 
+    const allAggregatorsInstitutionId = "d7b98242-3645-4de4-b770-f59a197942cb";
+
     await queryInterface.bulkInsert("institutions", [
       {
         id: seedInstitutionId,
@@ -37,6 +39,17 @@ module.exports = {
         id: mxOnlyInstitutionId,
         name: "MX Only",
         keywords: ["mx", "only"],
+        logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-78c7b591-6512-9c17-b092-1cddbd3c85ba_100x100.png",
+        url: "https://chase.com",
+        is_test_bank: false,
+        routing_numbers: ["222222222"],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: allAggregatorsInstitutionId,
+        name: "All Aggregators",
+        keywords: ["all", "aggregators"],
         logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-78c7b591-6512-9c17-b092-1cddbd3c85ba_100x100.png",
         url: "https://chase.com",
         is_test_bank: false,
@@ -121,6 +134,20 @@ module.exports = {
         institution_id: mxOnlyInstitutionId,
         createdAt: new Date(),
       },
+      ...[mxAggregatorId, sophtronAggregatorId, finicityAggregatorId].map(
+        (aggregatorId) => ({
+          isActive: false,
+          aggregatorId,
+          aggregator_institution_id: "all_aggregators_id",
+          supports_oauth: true,
+          supports_identification: true,
+          supports_verification: true,
+          supports_aggregation: true,
+          supports_history: true,
+          institution_id: allAggregatorsInstitutionId,
+          createdAt: new Date(),
+        }),
+      ),
     ]);
   },
 

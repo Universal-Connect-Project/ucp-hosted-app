@@ -6,9 +6,11 @@ import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
+  validateUserCanCreateAggregatorIntegration,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "../shared/utils/permissionValidation";
+import { UUID } from "crypto";
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -139,6 +141,7 @@ export interface AggregatorIntegrationWithPermissions
 }
 
 export interface InstitutionDetailWithPermissions extends InstitutionDetail {
+  canCreateAggregatorIntegration: boolean;
   canEditInstitution: boolean;
   aggregatorIntegrations: AggregatorIntegrationWithPermissions[];
 }
@@ -268,6 +271,11 @@ export const getInstitution = async (req: Request, res: Response) => {
           institutionId,
           req,
         })) === true,
+      canCreateAggregatorIntegration:
+        await validateUserCanCreateAggregatorIntegration({
+          institutionId: institution.id as UUID,
+          req,
+        }),
       aggregatorIntegrations: await Promise.all(
         institutionJson.aggregatorIntegrations?.map(async (integration) => ({
           ...integration,
