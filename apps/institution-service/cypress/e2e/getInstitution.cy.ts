@@ -41,6 +41,43 @@ const checkEditInstitutionPermissions = ({
   );
 };
 
+const checkCreateAggregatorIntegrationPermissions = ({
+  accessTokenEnv,
+  canCreateAggregatorIntegration,
+  institutionId,
+}: {
+  accessTokenEnv: string;
+  canCreateAggregatorIntegration: boolean;
+  institutionId: string;
+}) => {
+  cy.request({
+    url: `http://localhost:${PORT}/institutions/${institutionId}`,
+    method: "GET",
+    headers: {
+      Authorization: createAuthorizationHeader(accessTokenEnv),
+    },
+  }).then(
+    (
+      response: Cypress.Response<{
+        institution: InstitutionDetailWithPermissions;
+        0;
+      }>,
+    ) => {
+      expect(response.body.institution.canCreateAggregatorIntegration).to.eq(
+        canCreateAggregatorIntegration,
+      );
+    },
+  );
+};
+
+const institutionIdWithOnlyTestExampleBAggregator =
+  "aeab64a9-7a78-4c5f-bd27-687f3c8b8492";
+
+const allAggregatorsInstitutionId = "3b561893-e969-4a2c-9e58-3b81b203cdc1";
+
+const institutionIdWithOnlyTestExampleAAggregator =
+  "5e498f60-3496-4299-96ed-f8eb328ae8af";
+
 describe("GET /institutions/:id (Institution Details)", () => {
   it("gets Alabama Credit Union in the response on success", () => {
     cy.request({
@@ -129,9 +166,6 @@ describe("GET /institutions/:id (Institution Details)", () => {
   });
 
   describe("edit permissions", () => {
-    const institutionIdWithOnlyTestExampleAAggregator =
-      "5e498f60-3496-4299-96ed-f8eb328ae8af";
-
     it("returns that a regular user can't edit the institution", () => {
       checkEditInstitutionPermissions({
         accessTokenEnv: USER_ACCESS_TOKEN_ENV,
@@ -157,9 +191,6 @@ describe("GET /institutions/:id (Institution Details)", () => {
     });
 
     it("returns that an aggregator can't edit the institution if there are other aggregator integrations", () => {
-      const institutionIdWithOnlyTestExampleBAggregator =
-        "aeab64a9-7a78-4c5f-bd27-687f3c8b8492";
-
       checkEditInstitutionPermissions({
         accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
         canEditInstitution: false,
@@ -256,6 +287,40 @@ describe("GET /institutions/:id (Institution Details)", () => {
           );
         },
       );
+    });
+  });
+
+  describe("create aggregatorIntegration permissions", () => {
+    it("returns that a super admin can create an aggregator integration if there are aggregators without integrations", () => {
+      checkCreateAggregatorIntegrationPermissions({
+        accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
+        canCreateAggregatorIntegration: true,
+        institutionId: institutionIdWithOnlyTestExampleAAggregator,
+      });
+    });
+
+    it("returns that a super admin can't create an aggregator integration if there aren't aggregators without integrations", () => {
+      checkCreateAggregatorIntegrationPermissions({
+        accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
+        canCreateAggregatorIntegration: false,
+        institutionId: allAggregatorsInstitutionId,
+      });
+    });
+
+    it("returns that an aggregator can create an aggregator integration if there isn't an integration for their aggregator", () => {
+      checkCreateAggregatorIntegrationPermissions({
+        accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+        canCreateAggregatorIntegration: true,
+        institutionId: institutionIdWithOnlyTestExampleBAggregator,
+      });
+    });
+
+    it("returns that an aggregator can't create an aggregator integration if there is an integration for their aggregator", () => {
+      checkCreateAggregatorIntegrationPermissions({
+        accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+        canCreateAggregatorIntegration: false,
+        institutionId: institutionIdWithOnlyTestExampleAAggregator,
+      });
     });
   });
 

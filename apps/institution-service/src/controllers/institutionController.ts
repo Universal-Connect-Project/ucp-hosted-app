@@ -141,6 +141,7 @@ export interface AggregatorIntegrationWithPermissions
 }
 
 export interface InstitutionDetailWithPermissions extends InstitutionDetail {
+  canCreateAggregatorIntegration: boolean;
   canEditInstitution: boolean;
   aggregatorIntegrations: AggregatorIntegrationWithPermissions[];
 }
