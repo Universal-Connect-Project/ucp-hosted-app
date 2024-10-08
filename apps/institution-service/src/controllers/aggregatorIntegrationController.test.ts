@@ -10,6 +10,7 @@ import {
 import { seedInstitutionId } from "../test/testData/institutions";
 import {
   createAggregatorIntegration,
+  deleteAggregatorIntegration,
   updateAggregatorIntegration,
 } from "./aggregatorIntegrationController";
 
@@ -193,5 +194,43 @@ describe("createAggregatorIntegration", () => {
         error: "Database Error",
       }),
     );
+  });
+});
+
+describe("deleteAggregatorIntegration", () => {
+  it("returns 204 when an aggregatorIntegration is deleted", async () => {
+    const newAggregatorIntegration = await AggregatorIntegration.create(
+      defaultTestAggregator,
+    );
+
+    const req = {
+      params: { id: newAggregatorIntegration.id },
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await deleteAggregatorIntegration(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(204);
+  });
+
+  it("returns 404 when an aggregatorIntegration is not found", async () => {
+    const req = {
+      params: { id: -1 },
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await deleteAggregatorIntegration(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 });

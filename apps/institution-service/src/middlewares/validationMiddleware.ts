@@ -1,14 +1,15 @@
+import { UiUserPermissions } from "@repo/shared-utils";
 import { NextFunction, Request, Response } from "express";
 import Joi, { ObjectSchema } from "joi";
+import jwt from "jsonwebtoken";
+import { Aggregator } from "../models/aggregator";
 import {
   EditAggregatorIntegrationValidationErrorReason,
   validateUserCanEditInstitution as editInstitutionValidation,
-  validateUserCanEditAggregatorIntegration as editAggregatorIntegrationValidation,
   EditInstitutionValidationErrorReason,
+  UserAction,
+  validateUserCanActOnAggregatorIntegration,
 } from "../shared/utils/permissionValidation";
-import jwt from "jsonwebtoken";
-import { Aggregator } from "../models/aggregator";
-import { UiUserPermissions } from "@repo/shared-utils";
 
 export const validate = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -115,10 +116,38 @@ export const validateUserCanEditAggregatorIntegration = async (
   res: Response,
   next: NextFunction,
 ) => {
+  await validateUserCanDoActionOnAggregatorIntegration(
+    req,
+    res,
+    next,
+    UserAction.EDIT,
+  );
+};
+
+export const validateUserCanDeleteAggregatorIntegration = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  await validateUserCanDoActionOnAggregatorIntegration(
+    req,
+    res,
+    next,
+    UserAction.DELETE,
+  );
+};
+
+const validateUserCanDoActionOnAggregatorIntegration = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  action: UserAction,
+) => {
   const canUserEditAggregatorIntegration =
-    await editAggregatorIntegrationValidation({
+    await validateUserCanActOnAggregatorIntegration({
       aggregatorIntegrationId: req?.params?.id,
       req,
+      action,
     });
 
   const errorMap = {
@@ -137,7 +166,7 @@ export const validateUserCanEditAggregatorIntegration = async (
       },
     [EditAggregatorIntegrationValidationErrorReason.NotYourAggregator]: {
       error:
-        "An Aggregator cannot edit an aggregatorIntegration belonging to another aggregator",
+        "An Aggregator cannot edit or delete an aggregatorIntegration belonging to another aggregator",
       status: 403,
     },
   };

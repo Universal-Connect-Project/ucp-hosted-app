@@ -3,13 +3,13 @@ import {
   AUTH0_WIDGET_AUDIENCE,
   UiUserPermissions,
 } from "@repo/shared-utils";
-import jwt from "jsonwebtoken";
-import { auth } from "express-oauth2-jwt-bearer";
-import { Institution } from "../../models/institution";
-import { Request } from "express";
-import { AggregatorIntegration } from "../../models/aggregatorIntegration";
 import { UUID } from "crypto";
+import { Request } from "express";
+import { auth } from "express-oauth2-jwt-bearer";
+import jwt from "jsonwebtoken";
 import { Aggregator } from "../../models/aggregator";
+import { AggregatorIntegration } from "../../models/aggregatorIntegration";
+import { Institution } from "../../models/institution";
 
 const validateAccessToken = (audience: string | undefined) =>
   auth({
@@ -88,25 +88,46 @@ export enum EditAggregatorIntegrationValidationErrorReason {
   NotYourAggregator,
 }
 
-export const validateUserCanEditAggregatorIntegration = async ({
+export enum UserAction {
+  EDIT,
+  DELETE,
+}
+
+export const validateUserCanActOnAggregatorIntegration = async ({
   aggregatorIntegrationId,
   req,
+  action,
 }: {
   aggregatorIntegrationId: string;
   req: Request;
+  action: UserAction;
 }) => {
   try {
     const token = req.headers.authorization?.split(" ")?.[1];
     const decodedToken = jwt.decode(token as string) as DecodedToken;
     const permissions = decodedToken.permissions;
 
-    if (permissions.includes(UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION)) {
-      return true;
-    } else if (
-      !permissions.includes(
+    let isAdmin: boolean;
+    let isAggregator: boolean;
+    if (action === UserAction.EDIT) {
+      isAdmin = permissions.includes(
+        UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION,
+      );
+      isAggregator = permissions.includes(
         UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-      )
-    ) {
+      );
+    } else {
+      isAdmin = permissions.includes(
+        UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION,
+      );
+      isAggregator = permissions.includes(
+        UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+      );
+    }
+
+    if (isAdmin) {
+      return true;
+    } else if (!isAggregator) {
       return EditAggregatorIntegrationValidationErrorReason.InsufficientScope;
     }
 

@@ -3,6 +3,7 @@ import {
   InstitutionDetail,
   InstitutionDetailWithPermissions,
 } from "controllers/institutionController";
+import { PORT } from "shared/const";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
@@ -10,7 +11,6 @@ import {
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { runTokenInvalidCheck } from "../support/utils";
-import { PORT } from "shared/const";
 
 const checkEditInstitutionPermissions = ({
   accessTokenEnv,
@@ -199,11 +199,11 @@ describe("GET /institutions/:id (Institution Details)", () => {
     });
   });
 
-  describe("edit aggregatorIntegration permissions", () => {
+  describe("edit/delete aggregatorIntegration permissions", () => {
     const institutionIdWithTestExampleAAndB =
       "7a909e62-98b6-4a34-8725-b2a6a63e830a";
 
-    it("returns that a super admin can edit an aggregator integration", () => {
+    it("returns that a super admin can edit or delete an aggregator integration", () => {
       cy.request({
         url: `http://localhost:${PORT}/institutions/${institutionIdWithTestExampleAAndB}`,
         method: "GET",
@@ -218,15 +218,19 @@ describe("GET /institutions/:id (Institution Details)", () => {
           }>,
         ) => {
           response.body.institution.aggregatorIntegrations.forEach(
-            ({ canEditAggregatorIntegration }) => {
+            ({
+              canEditAggregatorIntegration,
+              canDeleteAggregatorIntegration,
+            }) => {
               expect(canEditAggregatorIntegration).to.eq(true);
+              expect(canDeleteAggregatorIntegration).to.eq(true);
             },
           );
         },
       );
     });
 
-    it("returns that an aggregator can edit an aggregator integration that is their own, but not for those that aren't their own", () => {
+    it("returns that an aggregator can edit/delete an aggregator integration that is their own, but not for those that aren't their own", () => {
       cy.request({
         url: `http://localhost:${PORT}/institutions/${institutionIdWithTestExampleAAndB}`,
         method: "GET",
@@ -259,14 +263,20 @@ describe("GET /institutions/:id (Institution Details)", () => {
           expect(testExampleAIntegration.canEditAggregatorIntegration).to.eq(
             true,
           );
+          expect(testExampleAIntegration.canDeleteAggregatorIntegration).to.eq(
+            true,
+          );
           expect(testExampleBIntegration.canEditAggregatorIntegration).to.eq(
+            false,
+          );
+          expect(testExampleBIntegration.canDeleteAggregatorIntegration).to.eq(
             false,
           );
         },
       );
     });
 
-    it("returns that a regular user can't edit an aggregator integration", () => {
+    it("returns that a regular user can't edit/delete an aggregator integration", () => {
       cy.request({
         url: `http://localhost:${PORT}/institutions/${institutionIdWithTestExampleAAndB}`,
         method: "GET",
@@ -281,8 +291,12 @@ describe("GET /institutions/:id (Institution Details)", () => {
           }>,
         ) => {
           response.body.institution.aggregatorIntegrations.forEach(
-            ({ canEditAggregatorIntegration }) => {
+            ({
+              canEditAggregatorIntegration,
+              canDeleteAggregatorIntegration,
+            }) => {
               expect(canEditAggregatorIntegration).to.eq(false);
+              expect(canDeleteAggregatorIntegration).to.eq(false);
             },
           );
         },

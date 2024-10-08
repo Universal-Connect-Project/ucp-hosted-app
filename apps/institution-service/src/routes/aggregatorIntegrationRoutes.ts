@@ -3,6 +3,7 @@ import { RequestHandler, Router } from "express";
 import { scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import {
   createAggregatorIntegration,
+  deleteAggregatorIntegration,
   updateAggregatorIntegration,
 } from "../controllers/aggregatorIntegrationController";
 import {
@@ -10,6 +11,7 @@ import {
   aggregatorIntegrationUpdateSchema,
   validate,
   validateUserCanCreateAggregatorIntegration,
+  validateUserCanDeleteAggregatorIntegration,
   validateUserCanEditAggregatorIntegration,
 } from "../middlewares/validationMiddleware";
 import { validateUIAudience } from "../shared/utils/permissionValidation";
@@ -40,6 +42,15 @@ router.post(
     `${UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION} ${UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR}`,
   ),
   createAggregatorIntegration as RequestHandler,
+);
+
+router.delete(
+  "/:id",
+  [validateUIAudience, validateUserCanDeleteAggregatorIntegration],
+  scopeIncludesAny(
+    `${UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION} ${UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR}`,
+  ),
+  deleteAggregatorIntegration as RequestHandler,
 );
 
 export default router;
