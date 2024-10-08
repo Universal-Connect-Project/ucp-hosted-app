@@ -34,6 +34,10 @@ interface Institution {
   url: string;
 }
 
+interface InstitutionWithPermissions extends Institution {
+  canEditInstitution: boolean;
+}
+
 interface InstitutionsResponse {
   currentPage: number;
   institutions: Institution[];
@@ -43,7 +47,7 @@ interface InstitutionsResponse {
 }
 
 interface InstitutionResponse {
-  institution: Institution;
+  institution: InstitutionWithPermissions;
 }
 
 interface PaginationOptions {

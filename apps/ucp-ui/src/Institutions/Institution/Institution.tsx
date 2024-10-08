@@ -4,6 +4,7 @@ import PageContent from "../../shared/components/PageContent";
 import {
   Breadcrumbs,
   Chip,
+  IconButton,
   Link,
   Table,
   TableBody,
@@ -18,7 +19,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 import styles from "./institution.module.css";
 import InstitutionField from "./InstitutionField";
-import { InfoOutlined } from "@mui/icons-material";
+import { Edit, InfoOutlined } from "@mui/icons-material";
 import { useGetInstitutionQuery } from "../api";
 import {
   SkeletonIfLoading,
@@ -84,8 +85,16 @@ const Institution = () => {
     id: institutionId as string,
   });
 
-  const { id, is_test_bank, keywords, logo, name, routing_numbers, url } =
-    data?.institution || {};
+  const {
+    canEditInstitution,
+    id,
+    is_test_bank,
+    keywords,
+    logo,
+    name,
+    routing_numbers,
+    url,
+  } = data?.institution || {};
 
   const fakeAggregatorIntegrations = [
     {
@@ -173,6 +182,11 @@ const Institution = () => {
             </div>
           </div>
           <div className={styles.institutionFields}>
+            {canEditInstitution && (
+              <IconButton>
+                <Edit />
+              </IconButton>
+            )}
             <InstitutionField
               isLoading={isLoading}
               name="UCP ID"
