@@ -7,9 +7,9 @@ import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
-  UserAction,
-  validateUserCanActOnAggregatorIntegration,
   validateUserCanCreateAggregatorIntegration,
+  validateUserCanDeleteAggregatorIntegration,
+  validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "../shared/utils/permissionValidation";
 
@@ -282,16 +282,14 @@ export const getInstitution = async (req: Request, res: Response) => {
         institutionJson.aggregatorIntegrations?.map(async (integration) => ({
           ...integration,
           canEditAggregatorIntegration:
-            (await validateUserCanActOnAggregatorIntegration({
+            (await validateUserCanEditAggregatorIntegration({
               aggregatorIntegrationId: `${integration.id}`,
               req,
-              action: UserAction.EDIT,
             })) === true,
           canDeleteAggregatorIntegration:
-            (await validateUserCanActOnAggregatorIntegration({
+            (await validateUserCanDeleteAggregatorIntegration({
               aggregatorIntegrationId: `${integration.id}`,
               req,
-              action: UserAction.DELETE,
             })) === true,
         })),
       ),

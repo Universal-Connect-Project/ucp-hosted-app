@@ -9,6 +9,7 @@ import {
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import {
+  deleteAggregatorIntegration,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
@@ -256,6 +257,14 @@ describe("POST /aggregatorIntegrations (Create)", () => {
         expect(response.body.message).to.eq(
           "AggregatorIntegration created successfully",
         );
+
+        // cleanup
+        deleteAggregatorIntegration({
+          aggregatorIntegrationId: response.body.aggregatorIntegration.id,
+          token: SUPER_USER_ACCESS_TOKEN_ENV,
+        }).then((response: Cypress.Response<object>) => {
+          expect(response.status).to.eq(204);
+        });
       },
     );
   });
@@ -311,6 +320,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
       (
         response: Cypress.Response<{
           message: string;
+          aggregatorIntegration: AggregatorIntegration;
         }>,
       ) => {
         expect(response.status).to.eq(201);
@@ -318,6 +328,14 @@ describe("POST /aggregatorIntegrations (Create)", () => {
         expect(response.body.message).to.eq(
           "AggregatorIntegration created successfully",
         );
+
+        // cleanup
+        deleteAggregatorIntegration({
+          aggregatorIntegrationId: response.body.aggregatorIntegration.id,
+          token: SUPER_USER_ACCESS_TOKEN_ENV,
+        }).then((response: Cypress.Response<object>) => {
+          expect(response.status).to.eq(204);
+        });
       },
     );
   });
@@ -352,7 +370,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
 });
 
 describe("DELETE /aggregatorIntegrations/:id", () => {
-  let aggregatorIntegrationId;
+  let aggregatorIntegrationId: number;
 
   beforeEach(() => {
     cy.request({
@@ -385,22 +403,15 @@ describe("DELETE /aggregatorIntegrations/:id", () => {
   });
 
   it("should return 204 when aggregatorIntegration is sucessfully deleted and 404 when not found", () => {
-    cy.request({
-      url: `http://localhost:${PORT}/aggregatorIntegrations/${aggregatorIntegrationId}`,
-      method: "DELETE",
-      headers: {
-        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-      },
+    deleteAggregatorIntegration({
+      aggregatorIntegrationId,
+      token: SUPER_USER_ACCESS_TOKEN_ENV,
     }).then((response: Cypress.Response<object>) => {
       expect(response.status).to.eq(204);
 
-      cy.request({
-        url: `http://localhost:${PORT}/aggregatorIntegrations/${aggregatorIntegrationId}`,
-        method: "DELETE",
-        headers: {
-          Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-        },
-        failOnStatusCode: false,
+      deleteAggregatorIntegration({
+        aggregatorIntegrationId,
+        token: SUPER_USER_ACCESS_TOKEN_ENV,
       }).then((response: Cypress.Response<{ error: string }>) => {
         expect(response.status).to.eq(404);
         expect(response.body.error).to.eq("AggregatorIntegration not found");
@@ -409,20 +420,22 @@ describe("DELETE /aggregatorIntegrations/:id", () => {
   });
 
   it("shouldn't allow deleting of other aggregator's aggregatorIntegrations", () => {
-    cy.request({
-      url: `http://localhost:${PORT}/aggregatorIntegrations/${aggregatorIntegrationId}`,
-      method: "DELETE",
-      headers: {
-        Authorization: createAuthorizationHeader(
-          AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-        ),
-      },
-      failOnStatusCode: false,
+    deleteAggregatorIntegration({
+      aggregatorIntegrationId,
+      token: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
     }).then((response: Cypress.Response<{ error: string }>) => {
       expect(response.status).to.eq(403);
       expect(response.body.error).to.eq(
         "An Aggregator cannot edit or delete an aggregatorIntegration belonging to another aggregator",
       );
+    });
+
+    // cleanup
+    deleteAggregatorIntegration({
+      aggregatorIntegrationId,
+      token: SUPER_USER_ACCESS_TOKEN_ENV,
+    }).then((response: Cypress.Response<{ error: string }>) => {
+      expect(response.status).to.eq(204);
     });
   });
 });

@@ -88,68 +88,65 @@ export enum EditAggregatorIntegrationValidationErrorReason {
   NotYourAggregator,
 }
 
-export enum UserAction {
-  EDIT,
-  DELETE,
-}
+export const createValidateUserCanActOnAggregatorIntegration =
+  ({
+    adminPermission,
+    aggregatorPermission,
+  }: {
+    adminPermission: string;
+    aggregatorPermission: string;
+  }) =>
+  async ({
+    aggregatorIntegrationId,
+    req,
+  }: {
+    aggregatorIntegrationId: string;
+    req: Request;
+  }) => {
+    try {
+      const token = req.headers.authorization?.split(" ")?.[1];
+      const decodedToken = jwt.decode(token as string) as DecodedToken;
+      const permissions = decodedToken.permissions;
 
-export const validateUserCanActOnAggregatorIntegration = async ({
-  aggregatorIntegrationId,
-  req,
-  action,
-}: {
-  aggregatorIntegrationId: string;
-  req: Request;
-  action: UserAction;
-}) => {
-  try {
-    const token = req.headers.authorization?.split(" ")?.[1];
-    const decodedToken = jwt.decode(token as string) as DecodedToken;
-    const permissions = decodedToken.permissions;
+      if (permissions.includes(adminPermission)) {
+        return true;
+      } else if (!permissions.includes(aggregatorPermission)) {
+        return EditAggregatorIntegrationValidationErrorReason.InsufficientScope;
+      }
 
-    let isAdmin: boolean;
-    let isAggregator: boolean;
-    if (action === UserAction.EDIT) {
-      isAdmin = permissions.includes(
-        UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION,
+      const aggregatorIntegration = await AggregatorIntegration.findByPk(
+        aggregatorIntegrationId,
       );
-      isAggregator = permissions.includes(
-        UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-      );
-    } else {
-      isAdmin = permissions.includes(
-        UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION,
-      );
-      isAggregator = permissions.includes(
-        UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-      );
-    }
+      if (!aggregatorIntegration) {
+        return EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId;
+      }
 
-    if (isAdmin) {
+      const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
+      const aggregator = await aggregatorIntegration?.getAggregator();
+
+      if (aggregatorName !== aggregator?.name) {
+        return EditAggregatorIntegrationValidationErrorReason.NotYourAggregator;
+      }
+
       return true;
-    } else if (!isAggregator) {
-      return EditAggregatorIntegrationValidationErrorReason.InsufficientScope;
+    } catch (err) {
+      return EditAggregatorIntegrationValidationErrorReason.GenericError;
     }
+  };
 
-    const aggregatorIntegration = await AggregatorIntegration.findByPk(
-      aggregatorIntegrationId,
-    );
-    if (!aggregatorIntegration) {
-      return EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId;
-    }
+export const validateUserCanEditAggregatorIntegration =
+  createValidateUserCanActOnAggregatorIntegration({
+    adminPermission: UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION,
+    aggregatorPermission:
+      UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+  });
 
-    const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
-    const aggregator = await aggregatorIntegration?.getAggregator();
-
-    if (aggregatorName !== aggregator?.name) {
-      return EditAggregatorIntegrationValidationErrorReason.NotYourAggregator;
-    }
-
-    return true;
-  } catch (err) {
-    return EditAggregatorIntegrationValidationErrorReason.GenericError;
-  }
-};
+export const validateUserCanDeleteAggregatorIntegration =
+  createValidateUserCanActOnAggregatorIntegration({
+    adminPermission: UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION,
+    aggregatorPermission:
+      UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+  });
 
 export const validateUserCanCreateAggregatorIntegration = async ({
   institutionId,

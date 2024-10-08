@@ -5,9 +5,9 @@ import { createTestAuthorization } from "../../test/utils";
 import {
   EditAggregatorIntegrationValidationErrorReason,
   EditInstitutionValidationErrorReason,
-  UserAction,
-  validateUserCanActOnAggregatorIntegration,
   validateUserCanCreateAggregatorIntegration,
+  validateUserCanDeleteAggregatorIntegration,
+  validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "./permissionValidation";
 
@@ -115,7 +115,7 @@ describe("permissionValidation", () => {
   describe("validateUserCanActOnAggregatorIntegration", () => {
     it("returns true if they're a super admin", async () => {
       expect(
-        await validateUserCanActOnAggregatorIntegration({
+        await validateUserCanEditAggregatorIntegration({
           aggregatorIntegrationId: "test",
           req: {
             headers: {
@@ -124,7 +124,6 @@ describe("permissionValidation", () => {
               }),
             },
           } as Request,
-          action: UserAction.EDIT,
         }),
       ).toBe(true);
     });
@@ -140,7 +139,7 @@ describe("permissionValidation", () => {
       });
 
       expect(
-        await validateUserCanActOnAggregatorIntegration({
+        await validateUserCanEditAggregatorIntegration({
           aggregatorIntegrationId: `${institution?.aggregatorIntegrations?.[0]?.id}`,
           req: {
             headers: {
@@ -151,7 +150,6 @@ describe("permissionValidation", () => {
               }),
             },
           } as Request,
-          action: UserAction.EDIT,
         }),
       ).toBe(true);
     });
@@ -167,7 +165,7 @@ describe("permissionValidation", () => {
       });
 
       expect(
-        await validateUserCanActOnAggregatorIntegration({
+        await validateUserCanDeleteAggregatorIntegration({
           aggregatorIntegrationId: `${institution?.aggregatorIntegrations?.[0]?.id}`,
           req: {
             headers: {
@@ -178,14 +176,13 @@ describe("permissionValidation", () => {
               }),
             },
           } as Request,
-          action: UserAction.DELETE,
         }),
       ).toBe(true);
     });
 
     it("returns InsufficientScope if they're not an aggregator or super admin", async () => {
       expect(
-        await validateUserCanActOnAggregatorIntegration({
+        await validateUserCanEditAggregatorIntegration({
           aggregatorIntegrationId: "test",
           req: {
             headers: {
@@ -194,14 +191,13 @@ describe("permissionValidation", () => {
               }),
             },
           } as Request,
-          action: UserAction.EDIT,
         }),
       ).toBe(EditAggregatorIntegrationValidationErrorReason.InsufficientScope);
     });
 
     it("returns InsufficientScope if they're trying to delete but only have edit permission", async () => {
       expect(
-        await validateUserCanActOnAggregatorIntegration({
+        await validateUserCanDeleteAggregatorIntegration({
           aggregatorIntegrationId: "test",
           req: {
             headers: {
@@ -212,14 +208,13 @@ describe("permissionValidation", () => {
               }),
             },
           } as Request,
-          action: UserAction.DELETE,
         }),
       ).toBe(EditAggregatorIntegrationValidationErrorReason.InsufficientScope);
     });
 
     it("returns InvalidAggregatorIntegrationId if the integration isn't found", async () => {
       expect(
-        await validateUserCanActOnAggregatorIntegration({
+        await validateUserCanEditAggregatorIntegration({
           aggregatorIntegrationId: `${-1}`,
           req: {
             headers: {
@@ -230,7 +225,6 @@ describe("permissionValidation", () => {
               }),
             },
           } as Request,
-          action: UserAction.EDIT,
         }),
       ).toBe(
         EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId,
@@ -241,7 +235,7 @@ describe("permissionValidation", () => {
       jest.spyOn(Institution, "findByPk").mockRejectedValue(new Error());
 
       expect(
-        await validateUserCanActOnAggregatorIntegration({
+        await validateUserCanEditAggregatorIntegration({
           aggregatorIntegrationId: "test",
           req: {
             headers: {
@@ -252,7 +246,6 @@ describe("permissionValidation", () => {
               }),
             },
           } as Request,
-          action: UserAction.EDIT,
         }),
       ).toBe(EditAggregatorIntegrationValidationErrorReason.GenericError);
     });
@@ -268,7 +261,7 @@ describe("permissionValidation", () => {
       });
 
       expect(
-        await validateUserCanActOnAggregatorIntegration({
+        await validateUserCanEditAggregatorIntegration({
           aggregatorIntegrationId: `${institution?.aggregatorIntegrations?.[0]?.id}`,
           req: {
             headers: {
@@ -280,7 +273,6 @@ describe("permissionValidation", () => {
               }),
             },
           } as Request,
-          action: UserAction.EDIT,
         }),
       ).toBe(EditAggregatorIntegrationValidationErrorReason.NotYourAggregator);
     });
