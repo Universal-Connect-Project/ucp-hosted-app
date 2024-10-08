@@ -322,6 +322,14 @@ describe("GET /institutions/:id (Institution Details)", () => {
         institutionId: institutionIdWithOnlyTestExampleAAggregator,
       });
     });
+
+    it("returns that a regular user can't create an aggregator integration", () => {
+      checkCreateAggregatorIntegrationPermissions({
+        accessTokenEnv: USER_ACCESS_TOKEN_ENV,
+        canCreateAggregatorIntegration: false,
+        institutionId: institutionIdWithOnlyTestExampleAAggregator,
+      });
+    });
   });
 
   runTokenInvalidCheck({

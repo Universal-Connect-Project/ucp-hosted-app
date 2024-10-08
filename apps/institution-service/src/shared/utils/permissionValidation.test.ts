@@ -318,5 +318,20 @@ describe("permissionValidation", () => {
         }),
       ).toBe(false);
     });
+
+    it("returns false if they aren't an aggregator or super admin", async () => {
+      expect(
+        await validateUserCanCreateAggregatorIntegration({
+          institutionId: mxOnlyInstitutionId,
+          req: {
+            headers: {
+              authorization: createTestAuthorization({
+                permissions: [],
+              }),
+            },
+          } as Request,
+        }),
+      ).toBe(false);
+    });
   });
 });
