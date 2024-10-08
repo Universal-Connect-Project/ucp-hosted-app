@@ -3,6 +3,7 @@ import {
   testExampleAAggregatorId,
   testExampleBAggregatorId,
 } from "test/testData/aggregators";
+import { InstitutionAttrs, testInstitution } from "test/testData/institutions";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
@@ -232,6 +233,25 @@ describe("PUT /aggregatorIntegrations/:id (AggregatorIntegration update)", () =>
 });
 
 describe("POST /aggregatorIntegrations (Create)", () => {
+  let testCaseInstitution: InstitutionAttrs;
+
+  beforeEach(() => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions`,
+      method: "POST",
+      body: {
+        ...testInstitution,
+      },
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<InstitutionAttrs>) => {
+      expect(response.status).to.eq(201);
+
+      testCaseInstitution = response.body;
+    });
+  });
+
   it("should create an aggregatorIntegration with super admin user", () => {
     cy.request({
       url: `http://localhost:${PORT}/aggregatorIntegrations`,
@@ -240,7 +260,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
         Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
       },
       body: {
-        institution_id: testExampleBankToHideId,
+        institution_id: testCaseInstitution.id,
         aggregatorId: testExampleBAggregatorId,
         aggregator_institution_id: "test_cypress",
         supports_oauth: true,
@@ -279,7 +299,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
         ),
       },
       body: {
-        institution_id: testExampleBankToHideId,
+        institution_id: testCaseInstitution.id,
         aggregatorId: testExampleBAggregatorId,
         aggregator_institution_id: "test_cypress",
         supports_oauth: true,
@@ -300,7 +320,9 @@ describe("POST /aggregatorIntegrations (Create)", () => {
     );
   });
 
-  it("should allow an aggregator to create if it belongs to their aggregator", () => {
+  it(`should allow an aggregator to create an integration if it belongs to their aggregator but then 
+      prevents creating another integration for the same aggregator/institution`, () => {
+    let createdAggregatorIntegrationId: number;
     cy.request({
       url: `http://localhost:${PORT}/aggregatorIntegrations`,
       method: "POST",
@@ -310,7 +332,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
         ),
       },
       body: {
-        institution_id: testExampleBankToHideId,
+        institution_id: testCaseInstitution.id,
         aggregatorId: testExampleAAggregatorId,
         aggregator_institution_id: "test_cypress",
         supports_oauth: true,
@@ -329,13 +351,44 @@ describe("POST /aggregatorIntegrations (Create)", () => {
           "AggregatorIntegration created successfully",
         );
 
-        // cleanup
-        deleteAggregatorIntegration({
-          aggregatorIntegrationId: response.body.aggregatorIntegration.id,
-          token: SUPER_USER_ACCESS_TOKEN_ENV,
-        }).then((response: Cypress.Response<object>) => {
-          expect(response.status).to.eq(204);
-        });
+        createdAggregatorIntegrationId = response.body.aggregatorIntegration.id;
+
+        cy.request({
+          url: `http://localhost:${PORT}/aggregatorIntegrations`,
+          method: "POST",
+          headers: {
+            Authorization: createAuthorizationHeader(
+              AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+            ),
+          },
+          body: {
+            institution_id: testCaseInstitution.id,
+            aggregatorId: testExampleAAggregatorId,
+            aggregator_institution_id: "test_cypress",
+            supports_oauth: true,
+          },
+          failOnStatusCode: false,
+        }).then(
+          (
+            response: Cypress.Response<{
+              error: string;
+            }>,
+          ) => {
+            expect(response.status).to.eq(400);
+
+            expect(response.body.error).to.eq(
+              "An integration already exists for this Institution and Aggregator combo",
+            );
+
+            // cleanup
+            deleteAggregatorIntegration({
+              aggregatorIntegrationId: createdAggregatorIntegrationId,
+              token: SUPER_USER_ACCESS_TOKEN_ENV,
+            }).then((response: Cypress.Response<object>) => {
+              expect(response.status).to.eq(204);
+            });
+          },
+        );
       },
     );
   });

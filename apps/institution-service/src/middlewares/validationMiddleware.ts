@@ -1,8 +1,10 @@
 import { UiUserPermissions } from "@repo/shared-utils";
+import { UUID } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import Joi, { ObjectSchema } from "joi";
 import jwt from "jsonwebtoken";
 import { Aggregator } from "../models/aggregator";
+import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import {
   validateUserCanDeleteAggregatorIntegration as deleteAggIntValidation,
   validateUserCanEditAggregatorIntegration as editAggIntValidation,
@@ -168,6 +170,7 @@ export const validateUserCanEditAggregatorIntegration =
 
 interface AggregatorIntegrationRequestBody {
   aggregatorId: number;
+  institution_id: UUID;
 }
 export const validateUserCanCreateAggregatorIntegration = async (
   req: Request,
@@ -202,6 +205,28 @@ export const validateUserCanCreateAggregatorIntegration = async (
     });
   }
   const aggregatorRequestBody = req.body as AggregatorIntegrationRequestBody;
+
+  if (aggregator.id !== aggregatorRequestBody.aggregatorId) {
+    return res.status(403).json({
+      error:
+        "An Aggregator cannot create an aggregatorIntegration belonging to another aggregator",
+    });
+  }
+
+  const aggregatorIntegrationForThisInstitutionAndAggregator =
+    await AggregatorIntegration.findAll({
+      where: {
+        institution_id: aggregatorRequestBody.institution_id,
+        aggregatorId: aggregatorRequestBody.aggregatorId,
+      },
+    });
+
+  if (aggregatorIntegrationForThisInstitutionAndAggregator.length > 0) {
+    return res.status(400).json({
+      error:
+        "An integration already exists for this Institution and Aggregator combo",
+    });
+  }
 
   if (aggregator.id === aggregatorRequestBody.aggregatorId) {
     next();

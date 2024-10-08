@@ -3,7 +3,10 @@ import { Request, Response } from "express";
 import { Aggregator } from "../models/aggregator";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
-import { seedInstitutionId } from "../test/testData/institutions";
+import {
+  secondSeedInstitutionId,
+  seedInstitutionId,
+} from "../test/testData/institutions";
 import { createTestAuthorization } from "../test/utils";
 import {
   validateUserCanCreateAggregatorIntegration,
@@ -542,16 +545,25 @@ describe("validationMiddleware", () => {
       });
     });
 
-    it("passes when an sophtron attempts to create an aggregatorIntegration of their own", async () => {
+    it(`passes when sophtron attempts to create an aggregatorIntegration of their own but then fails 
+        to create another because one is the limit per aggregator`, async () => {
       const aggregators = await Aggregator.findAll({ raw: true });
       const sophtronAggregator = aggregators.find(
         (aggregator) => aggregator.name === "sophtron",
       );
+
+      await AggregatorIntegration.destroy({
+        where: {
+          institution_id: secondSeedInstitutionId,
+          aggregatorId: sophtronAggregator?.id,
+        },
+      });
+
       const next = jest.fn();
 
       const req = {
         body: {
-          instituion_id: seedInstitutionId,
+          institution_id: secondSeedInstitutionId,
           aggregatorId: sophtronAggregator?.id,
           supports_oauth: true,
         },
@@ -571,7 +583,21 @@ describe("validationMiddleware", () => {
 
       await validateUserCanCreateAggregatorIntegration(req, res, next);
 
-      expect(next).toHaveBeenCalled();
+      await AggregatorIntegration.create({
+        institution_id: secondSeedInstitutionId,
+        aggregatorId: sophtronAggregator?.id,
+        aggregator_institution_id: "test_sophtron_bank",
+      });
+
+      await validateUserCanCreateAggregatorIntegration(req, res, next);
+
+      expect(next).toHaveBeenCalledTimes(1);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error:
+          "An integration already exists for this Institution and Aggregator combo",
+      });
     });
   });
 });
