@@ -11,6 +11,12 @@
   white-space: wrap;
 }
 
+.editNameLogoContainer {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
 .nameLogoContainer {
   align-items: center;
   display: flex;
@@ -99,11 +105,4 @@
   .aggregatorLogo {
     opacity: 50%;
   }
-}
-
-.editAndInstitutionFieldsContainer {
-  align-items: flex-start;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
 }

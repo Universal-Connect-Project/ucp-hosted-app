@@ -39,4 +39,4 @@ export const INSTITUTION_OAUTH_TOOLTIP_TEXT =
 export const INSTITUTION_ACTIVE_TOOLTIP_TEXT =
   "Indicates whether a connection between aggregator and institution is active.";
 
-export const INSTITUTION_EDIT_DETAILS_TEST_ID = "institutionEditDetails";
+export const INSTITUTION_EDIT_DETAILS_BUTTON_TEXT = "EDIT";
