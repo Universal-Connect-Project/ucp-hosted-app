@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import PageContent from "../../shared/components/PageContent";
 import {
   Breadcrumbs,
-  Button,
   Chip,
   Link,
   Table,
@@ -19,7 +18,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 import styles from "./institution.module.css";
 import InstitutionField from "./InstitutionField";
-import { Edit, InfoOutlined } from "@mui/icons-material";
+import { InfoOutlined } from "@mui/icons-material";
 import { AggregatorIntegration, useGetInstitutionQuery } from "../api";
 import {
   SkeletonIfLoading,
@@ -32,7 +31,6 @@ import {
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
-  INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
   INSTITUTION_ERROR_TEXT,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEXT,
@@ -53,6 +51,7 @@ import {
 } from "./constants";
 import InstitutionSection from "./InstitutionSection";
 import { aggregatorIntegrationsSortByName } from "../utils";
+import EditInstitution from "../ChangeInstitution/EditInstitution";
 
 interface JobType {
   name: string;
@@ -89,16 +88,10 @@ const Institution = () => {
     id: institutionId as string,
   });
 
-  const {
-    canEditInstitution,
-    id,
-    is_test_bank,
-    keywords,
-    logo,
-    name,
-    routing_numbers,
-    url,
-  } = data?.institution || {};
+  const institution = data?.institution;
+
+  const { id, is_test_bank, keywords, logo, name, routing_numbers, url } =
+    institution || {};
 
   const fakeAggregatorIntegrations = [
     {
@@ -185,11 +178,7 @@ const Institution = () => {
                   )}
                 </Typography>
               </div>
-              {canEditInstitution && (
-                <Button startIcon={<Edit />} variant="contained">
-                  {INSTITUTION_EDIT_DETAILS_BUTTON_TEXT}
-                </Button>
-              )}
+              <EditInstitution institution={institution} />
             </div>
           </div>
           <InstitutionSection title="INSTITUTION DETAILS">

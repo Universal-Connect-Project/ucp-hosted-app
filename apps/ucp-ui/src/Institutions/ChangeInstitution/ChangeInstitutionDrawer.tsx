@@ -1,5 +1,5 @@
 import { Drawer, Switch, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   INSTITUTION_CHANGE_ERROR_TEXT,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
@@ -77,7 +77,6 @@ const ChangeInstitutionDrawer = ({
   setIsOpen: (arg: boolean) => void;
 }) => {
   const handleCloseDrawer = () => {
-    reset();
     setIsOpen(false);
   };
 
@@ -90,8 +89,8 @@ const ChangeInstitutionDrawer = ({
       value,
     }));
 
-  const { control, handleSubmit, reset } = useForm<Inputs>({
-    defaultValues: {
+  const defaultValues = useMemo(
+    () => ({
       isTestInstitution: institution?.is_test_bank || false,
       keywords: transformInstitutionArray(institution?.keywords) || [],
       name: institution?.name || "",
@@ -99,9 +98,18 @@ const ChangeInstitutionDrawer = ({
       routingNumbers:
         transformInstitutionArray(institution?.routing_numbers) || [],
       url: institution?.url || "",
-    },
+    }),
+    [institution],
+  );
+
+  const { control, handleSubmit, reset } = useForm<Inputs>({
+    defaultValues,
     mode: "onTouched",
   });
+
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues, isOpen, reset, institution]);
 
   const useMutationFunction = isEditForm
     ? useEditInstitutionMutation
@@ -127,6 +135,8 @@ const ChangeInstitutionDrawer = ({
       .unwrap()
       .then(({ id }) => {
         dispatch(displaySnackbar(saveSuccessMessage));
+
+        handleCloseDrawer();
 
         if (!isEditForm) {
           navigate(institutionRoute.createPath({ institutionId: id }));

@@ -19,7 +19,6 @@ import {
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
-  INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
   INSTITUTION_ERROR_TEXT,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEXT,
@@ -44,6 +43,7 @@ import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_INSTITUTIONS_URL } from "../api";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
+import { INSTITUTION_EDIT_DETAILS_BUTTON_TEXT } from "../ChangeInstitution/constants";
 
 describe("<Institution />", () => {
   it("doesn't render the edit button if canEditInstitution is false", async () => {
