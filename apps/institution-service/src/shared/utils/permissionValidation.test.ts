@@ -1,14 +1,15 @@
 import { UiUserPermissions } from "@repo/shared-utils";
+import { Request } from "express";
+import { Institution } from "../../models/institution";
 import { createTestAuthorization } from "../../test/utils";
 import {
   EditAggregatorIntegrationValidationErrorReason,
   EditInstitutionValidationErrorReason,
   validateUserCanCreateAggregatorIntegration,
+  validateUserCanDeleteAggregatorIntegration,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "./permissionValidation";
-import { Request } from "express";
-import { Institution } from "../../models/institution";
 
 const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
 const allAggregatorsInstitutionId = "d7b98242-3645-4de4-b770-f59a197942cb";
@@ -111,7 +112,7 @@ describe("permissionValidation", () => {
     });
   });
 
-  describe("validateUserCanEditAggregatorIntegration", () => {
+  describe("validateUserCanActOnAggregatorIntegration", () => {
     it("returns true if they're a super admin", async () => {
       expect(
         await validateUserCanEditAggregatorIntegration({
@@ -153,6 +154,32 @@ describe("permissionValidation", () => {
       ).toBe(true);
     });
 
+    it("returns true if they're an aggregator and are deleting their own integration", async () => {
+      const institution = await Institution.findByPk(mxOnlyInstitutionId, {
+        include: [
+          {
+            association: Institution.associations.aggregatorIntegrations,
+            attributes: ["id"],
+          },
+        ],
+      });
+
+      expect(
+        await validateUserCanDeleteAggregatorIntegration({
+          aggregatorIntegrationId: `${institution?.aggregatorIntegrations?.[0]?.id}`,
+          req: {
+            headers: {
+              authorization: createTestAuthorization({
+                permissions: [
+                  UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+                ],
+              }),
+            },
+          } as Request,
+        }),
+      ).toBe(true);
+    });
+
     it("returns InsufficientScope if they're not an aggregator or super admin", async () => {
       expect(
         await validateUserCanEditAggregatorIntegration({
@@ -161,6 +188,23 @@ describe("permissionValidation", () => {
             headers: {
               authorization: createTestAuthorization({
                 permissions: [],
+              }),
+            },
+          } as Request,
+        }),
+      ).toBe(EditAggregatorIntegrationValidationErrorReason.InsufficientScope);
+    });
+
+    it("returns InsufficientScope if they're trying to delete but only have edit permission", async () => {
+      expect(
+        await validateUserCanDeleteAggregatorIntegration({
+          aggregatorIntegrationId: "test",
+          req: {
+            headers: {
+              authorization: createTestAuthorization({
+                permissions: [
+                  UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+                ],
               }),
             },
           } as Request,

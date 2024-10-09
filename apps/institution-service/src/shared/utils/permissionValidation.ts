@@ -3,13 +3,13 @@ import {
   AUTH0_WIDGET_AUDIENCE,
   UiUserPermissions,
 } from "@repo/shared-utils";
-import jwt from "jsonwebtoken";
-import { auth } from "express-oauth2-jwt-bearer";
-import { Institution } from "../../models/institution";
-import { Request } from "express";
-import { AggregatorIntegration } from "../../models/aggregatorIntegration";
 import { UUID } from "crypto";
+import { Request } from "express";
+import { auth } from "express-oauth2-jwt-bearer";
+import jwt from "jsonwebtoken";
 import { Aggregator } from "../../models/aggregator";
+import { AggregatorIntegration } from "../../models/aggregatorIntegration";
+import { Institution } from "../../models/institution";
 
 const validateAccessToken = (audience: string | undefined) =>
   auth({
@@ -88,47 +88,65 @@ export enum EditAggregatorIntegrationValidationErrorReason {
   NotYourAggregator,
 }
 
-export const validateUserCanEditAggregatorIntegration = async ({
-  aggregatorIntegrationId,
-  req,
-}: {
-  aggregatorIntegrationId: string;
-  req: Request;
-}) => {
-  try {
-    const token = req.headers.authorization?.split(" ")?.[1];
-    const decodedToken = jwt.decode(token as string) as DecodedToken;
-    const permissions = decodedToken.permissions;
+export const createValidateUserCanActOnAggregatorIntegration =
+  ({
+    adminPermission,
+    aggregatorPermission,
+  }: {
+    adminPermission: string;
+    aggregatorPermission: string;
+  }) =>
+  async ({
+    aggregatorIntegrationId,
+    req,
+  }: {
+    aggregatorIntegrationId: string;
+    req: Request;
+  }) => {
+    try {
+      const token = req.headers.authorization?.split(" ")?.[1];
+      const decodedToken = jwt.decode(token as string) as DecodedToken;
+      const permissions = decodedToken.permissions;
 
-    if (permissions.includes(UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION)) {
+      if (permissions.includes(adminPermission)) {
+        return true;
+      } else if (!permissions.includes(aggregatorPermission)) {
+        return EditAggregatorIntegrationValidationErrorReason.InsufficientScope;
+      }
+
+      const aggregatorIntegration = await AggregatorIntegration.findByPk(
+        aggregatorIntegrationId,
+      );
+      if (!aggregatorIntegration) {
+        return EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId;
+      }
+
+      const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
+      const aggregator = await aggregatorIntegration?.getAggregator();
+
+      if (aggregatorName !== aggregator?.name) {
+        return EditAggregatorIntegrationValidationErrorReason.NotYourAggregator;
+      }
+
       return true;
-    } else if (
-      !permissions.includes(
-        UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-      )
-    ) {
-      return EditAggregatorIntegrationValidationErrorReason.InsufficientScope;
+    } catch (err) {
+      return EditAggregatorIntegrationValidationErrorReason.GenericError;
     }
+  };
 
-    const aggregatorIntegration = await AggregatorIntegration.findByPk(
-      aggregatorIntegrationId,
-    );
-    if (!aggregatorIntegration) {
-      return EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId;
-    }
+export const validateUserCanEditAggregatorIntegration =
+  createValidateUserCanActOnAggregatorIntegration({
+    adminPermission: UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION,
+    aggregatorPermission:
+      UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+  });
 
-    const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
-    const aggregator = await aggregatorIntegration?.getAggregator();
-
-    if (aggregatorName !== aggregator?.name) {
-      return EditAggregatorIntegrationValidationErrorReason.NotYourAggregator;
-    }
-
-    return true;
-  } catch (err) {
-    return EditAggregatorIntegrationValidationErrorReason.GenericError;
-  }
-};
+export const validateUserCanDeleteAggregatorIntegration =
+  createValidateUserCanActOnAggregatorIntegration({
+    adminPermission: UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION,
+    aggregatorPermission:
+      UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+  });
 
 export const validateUserCanCreateAggregatorIntegration = async ({
   institutionId,

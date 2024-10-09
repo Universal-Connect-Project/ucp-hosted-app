@@ -366,6 +366,7 @@ describe("institutionController", () => {
             aggregatorIntegrations: expect.arrayContaining([
               expect.objectContaining({
                 canEditAggregatorIntegration: expect.any(Boolean),
+                canDeleteAggregatorIntegration: expect.any(Boolean),
                 id: expect.any(Number),
                 aggregator_institution_id: expect.any(String),
                 supports_oauth: expect.any(Boolean),

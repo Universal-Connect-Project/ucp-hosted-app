@@ -9,6 +9,7 @@ import {
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import {
+  deleteAggregatorIntegration,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
@@ -183,7 +184,7 @@ describe("PUT /aggregatorIntegrations/:id (AggregatorIntegration update)", () =>
         expect(response.status).to.eq(403);
 
         expect(response.body.error).to.eq(
-          "An Aggregator cannot edit an aggregatorIntegration belonging to another aggregator",
+          "An Aggregator cannot edit or delete an aggregatorIntegration belonging to another aggregator",
         );
       },
     );
@@ -256,6 +257,14 @@ describe("POST /aggregatorIntegrations (Create)", () => {
         expect(response.body.message).to.eq(
           "AggregatorIntegration created successfully",
         );
+
+        // cleanup
+        deleteAggregatorIntegration({
+          aggregatorIntegrationId: response.body.aggregatorIntegration.id,
+          token: SUPER_USER_ACCESS_TOKEN_ENV,
+        }).then((response: Cypress.Response<object>) => {
+          expect(response.status).to.eq(204);
+        });
       },
     );
   });
@@ -311,6 +320,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
       (
         response: Cypress.Response<{
           message: string;
+          aggregatorIntegration: AggregatorIntegration;
         }>,
       ) => {
         expect(response.status).to.eq(201);
@@ -318,6 +328,14 @@ describe("POST /aggregatorIntegrations (Create)", () => {
         expect(response.body.message).to.eq(
           "AggregatorIntegration created successfully",
         );
+
+        // cleanup
+        deleteAggregatorIntegration({
+          aggregatorIntegrationId: response.body.aggregatorIntegration.id,
+          token: SUPER_USER_ACCESS_TOKEN_ENV,
+        }).then((response: Cypress.Response<object>) => {
+          expect(response.status).to.eq(204);
+        });
       },
     );
   });
@@ -348,5 +366,76 @@ describe("POST /aggregatorIntegrations (Create)", () => {
         expect(response.body.error).to.eq("Database Error");
       },
     );
+  });
+});
+
+describe("DELETE /aggregatorIntegrations/:id", () => {
+  let aggregatorIntegrationId: number;
+
+  beforeEach(() => {
+    cy.request({
+      url: `http://localhost:${PORT}/aggregatorIntegrations`,
+      method: "POST",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+      body: {
+        institution_id: testExampleBankToHideId,
+        aggregatorId: testExampleBAggregatorId,
+        aggregator_institution_id: "test_cypress_delete",
+        supports_oauth: true,
+      },
+    }).then(
+      (
+        response: Cypress.Response<{
+          message: string;
+          aggregatorIntegration: AggregatorIntegration;
+        }>,
+      ) => {
+        expect(response.status).to.eq(201);
+
+        expect(response.body.message).to.eq(
+          "AggregatorIntegration created successfully",
+        );
+        aggregatorIntegrationId = response.body.aggregatorIntegration.id;
+      },
+    );
+  });
+
+  it("should return 204 when aggregatorIntegration is sucessfully deleted and 404 when not found", () => {
+    deleteAggregatorIntegration({
+      aggregatorIntegrationId,
+      token: SUPER_USER_ACCESS_TOKEN_ENV,
+    }).then((response: Cypress.Response<object>) => {
+      expect(response.status).to.eq(204);
+
+      deleteAggregatorIntegration({
+        aggregatorIntegrationId,
+        token: SUPER_USER_ACCESS_TOKEN_ENV,
+      }).then((response: Cypress.Response<{ error: string }>) => {
+        expect(response.status).to.eq(404);
+        expect(response.body.error).to.eq("AggregatorIntegration not found");
+      });
+    });
+  });
+
+  it("shouldn't allow deleting of other aggregator's aggregatorIntegrations", () => {
+    deleteAggregatorIntegration({
+      aggregatorIntegrationId,
+      token: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+    }).then((response: Cypress.Response<{ error: string }>) => {
+      expect(response.status).to.eq(403);
+      expect(response.body.error).to.eq(
+        "An Aggregator cannot edit or delete an aggregatorIntegration belonging to another aggregator",
+      );
+    });
+
+    // cleanup
+    deleteAggregatorIntegration({
+      aggregatorIntegrationId,
+      token: SUPER_USER_ACCESS_TOKEN_ENV,
+    }).then((response: Cypress.Response<{ error: string }>) => {
+      expect(response.status).to.eq(204);
+    });
   });
 });
