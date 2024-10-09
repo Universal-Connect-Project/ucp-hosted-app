@@ -7,6 +7,7 @@ import {
   screen,
   userEvent,
   waitForLoad,
+  within,
 } from "../../shared/test/testUtils";
 import {
   institutionResponse,
@@ -17,6 +18,7 @@ import {
   INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
+  INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
   INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
   INSTITUTION_ERROR_TEXT,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
@@ -67,7 +69,7 @@ describe("<Institution />", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows a loading state and renders all the fields", async () => {
+  it("shows a loading state, renders all the fields, and sorts the aggregator integrations by display name", async () => {
     render(<Institution />);
 
     await expectSkeletonLoader();
@@ -81,11 +83,7 @@ describe("<Institution />", () => {
         testInstitutionActiveAndInactive.keywords.join(", "),
         testInstitutionActiveAndInactive.routing_numbers.join(", "),
         testInstitutionActiveAndInactive.aggregatorIntegrations[0].id,
-        testInstitutionActiveAndInactive.aggregatorIntegrations[0].aggregator
-          .displayName,
         testInstitutionActiveAndInactive.aggregatorIntegrations[1].id,
-        testInstitutionActiveAndInactive.aggregatorIntegrations[1].aggregator
-          .displayName,
         "Active",
         "Inactive",
         "Yes",
@@ -98,6 +96,23 @@ describe("<Institution />", () => {
         expect((await screen.findAllByText(text)).length).toBeGreaterThan(0),
       ),
     );
+
+    const aggregatorIntegrationTableRows = screen.getAllByTestId(
+      INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
+    );
+
+    expect(
+      within(aggregatorIntegrationTableRows[0]).getByText(
+        testInstitutionActiveAndInactive.aggregatorIntegrations[1].aggregator
+          .displayName,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(aggregatorIntegrationTableRows[1]).getByText(
+        testInstitutionActiveAndInactive.aggregatorIntegrations[0].aggregator
+          .displayName,
+      ),
+    ).toBeInTheDocument();
   });
 
   it("shows an error and allows retry", async () => {

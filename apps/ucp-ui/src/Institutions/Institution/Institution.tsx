@@ -31,6 +31,7 @@ import {
   INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
+  INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
   INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
   INSTITUTION_ERROR_TEXT,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
@@ -277,6 +278,9 @@ const Institution = () => {
                         <TableRow
                           className={
                             !isActive ? styles.inactiveTableRow : undefined
+                          }
+                          data-testid={
+                            INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW
                           }
                           key={id}
                         >
