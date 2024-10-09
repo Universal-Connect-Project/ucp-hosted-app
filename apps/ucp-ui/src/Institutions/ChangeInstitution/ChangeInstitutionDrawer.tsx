@@ -217,28 +217,42 @@ const ChangeInstitutionDrawer = ({
                 />
               )}
               <DrawerTitle>{drawerTitle}</DrawerTitle>
-              <Controller
-                name="name"
-                control={control}
-                rules={{ required: REQUIRED_ERROR_TEXT }}
-                render={({
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  field: { ref, ...fieldProps },
-                  fieldState: { error },
-                }) => (
-                  <TextField
-                    error={!!error}
-                    fullWidth
-                    helperText={error?.message}
-                    InputLabelProps={{ required: true }}
-                    label={INSTITUTION_FORM_NAME_LABEL_TEXT}
-                    variant="filled"
-                    {...fieldProps}
-                  />
+              <div className={styles.nameLogoContainer}>
+                {isEditForm && (
+                  <img className={styles.logo} src={institution.logo} />
                 )}
-              />
+                <Controller
+                  name="name"
+                  control={control}
+                  rules={{ required: REQUIRED_ERROR_TEXT }}
+                  render={({
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    field: { ref, ...fieldProps },
+                    fieldState: { error },
+                  }) => (
+                    <TextField
+                      error={!!error}
+                      fullWidth
+                      helperText={error?.message}
+                      InputLabelProps={{ required: true }}
+                      label={INSTITUTION_FORM_NAME_LABEL_TEXT}
+                      variant="filled"
+                      {...fieldProps}
+                    />
+                  )}
+                />
+              </div>
               <div className={styles.inputStack}>
                 <Typography variant="body1">Institution Details</Typography>
+                {isEditForm && (
+                  <TextField
+                    disabled
+                    fullWidth
+                    label="UCP ID"
+                    value={institution?.id}
+                    variant="filled"
+                  />
+                )}
                 <Controller
                   name="url"
                   control={control}
