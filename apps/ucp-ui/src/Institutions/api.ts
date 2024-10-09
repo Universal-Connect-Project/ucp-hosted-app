@@ -34,7 +34,7 @@ interface Institution {
   url: string;
 }
 
-interface InstitutionWithPermissions extends Institution {
+export interface InstitutionWithPermissions extends Institution {
   canEditInstitution: boolean;
 }
 

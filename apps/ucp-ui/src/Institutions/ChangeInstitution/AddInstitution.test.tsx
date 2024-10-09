@@ -9,7 +9,7 @@ import {
 } from "../../shared/test/testUtils";
 import AddInstitution from "./AddInstitution";
 import {
-  INSTITUTION_ADD_ERROR_TEXT,
+  INSTITUTION_CHANGE_ERROR_TEXT,
   INSTITUTION_ADD_SUCCESS_TEXT,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
@@ -123,7 +123,7 @@ describe("<AddInstitution />", () => {
     await renderAndSubmit();
 
     expect(
-      await screen.findByText(INSTITUTION_ADD_ERROR_TEXT),
+      await screen.findByText(INSTITUTION_CHANGE_ERROR_TEXT),
     ).toBeInTheDocument();
 
     server.use(
