@@ -7,7 +7,10 @@ import {
   defaultTestAggregator,
   mxAggregatorId,
 } from "../test/testData/aggregators";
-import { seedInstitutionId } from "../test/testData/institutions";
+import {
+  secondSeedInstitutionId,
+  seedInstitutionId,
+} from "../test/testData/institutions";
 import {
   createAggregatorIntegration,
   deleteAggregatorIntegration,
@@ -111,6 +114,13 @@ describe("updateAggregatorIntegration", () => {
 
 describe("createAggregatorIntegration", () => {
   it("creates an aggregatorIntegration with default values", async () => {
+    await AggregatorIntegration.destroy({
+      where: {
+        aggregatorId: mxAggregatorId,
+        institution_id: seedInstitutionId,
+      },
+    });
+
     const testBankId = "testBankId";
     const req = {
       body: {
@@ -139,6 +149,13 @@ describe("createAggregatorIntegration", () => {
   });
 
   it("creates an aggregatorIntegration with custom values", async () => {
+    await AggregatorIntegration.destroy({
+      where: {
+        aggregatorId: mxAggregatorId,
+        institution_id: secondSeedInstitutionId,
+      },
+    });
+
     const customValues = {
       isActive: false,
       supports_oauth: true,
@@ -146,7 +163,7 @@ describe("createAggregatorIntegration", () => {
       supports_verification: true,
       supports_aggregation: false,
       supports_history: true,
-      institution_id: seedInstitutionId,
+      institution_id: secondSeedInstitutionId,
       aggregatorId: mxAggregatorId,
       aggregator_institution_id: "testBankId",
     };
@@ -199,6 +216,13 @@ describe("createAggregatorIntegration", () => {
 
 describe("deleteAggregatorIntegration", () => {
   it("returns 204 when an aggregatorIntegration is deleted", async () => {
+    await AggregatorIntegration.destroy({
+      where: {
+        institution_id: defaultTestAggregator.institution_id,
+        aggregatorId: defaultTestAggregator.aggregatorId,
+      },
+    });
+
     const newAggregatorIntegration = await AggregatorIntegration.create(
       defaultTestAggregator,
     );

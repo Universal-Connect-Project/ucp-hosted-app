@@ -1,3 +1,4 @@
+import { UUID } from "crypto";
 import { PORT } from "shared/const";
 import {
   testExampleAAggregatorId,
@@ -10,6 +11,7 @@ import {
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import {
+  createTestInstitution,
   deleteAggregatorIntegration,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
@@ -424,35 +426,44 @@ describe("POST /aggregatorIntegrations (Create)", () => {
 
 describe("DELETE /aggregatorIntegrations/:id", () => {
   let aggregatorIntegrationId: number;
+  let testInstitutionId: UUID;
 
   beforeEach(() => {
-    cy.request({
-      url: `http://localhost:${PORT}/aggregatorIntegrations`,
-      method: "POST",
-      headers: {
-        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-      },
-      body: {
-        institution_id: testExampleBankToHideId,
-        aggregatorId: testExampleBAggregatorId,
-        aggregator_institution_id: "test_cypress_delete",
-        supports_oauth: true,
-      },
-    }).then(
-      (
-        response: Cypress.Response<{
-          message: string;
-          aggregatorIntegration: AggregatorIntegration;
-        }>,
-      ) => {
-        expect(response.status).to.eq(201);
+    createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV)
+      .then((response: Cypress.Response<{ id: UUID }>) => {
+        testInstitutionId = response.body.id;
+      })
+      .then(() => {
+        cy.request({
+          url: `http://localhost:${PORT}/aggregatorIntegrations`,
+          method: "POST",
+          headers: {
+            Authorization: createAuthorizationHeader(
+              SUPER_USER_ACCESS_TOKEN_ENV,
+            ),
+          },
+          body: {
+            institution_id: testInstitutionId,
+            aggregatorId: testExampleBAggregatorId,
+            aggregator_institution_id: "test_cypress_delete",
+            supports_oauth: true,
+          },
+        }).then(
+          (
+            response: Cypress.Response<{
+              message: string;
+              aggregatorIntegration: AggregatorIntegration;
+            }>,
+          ) => {
+            expect(response.status).to.eq(201);
 
-        expect(response.body.message).to.eq(
-          "AggregatorIntegration created successfully",
+            expect(response.body.message).to.eq(
+              "AggregatorIntegration created successfully",
+            );
+            aggregatorIntegrationId = response.body.aggregatorIntegration.id;
+          },
         );
-        aggregatorIntegrationId = response.body.aggregatorIntegration.id;
-      },
-    );
+      });
   });
 
   it("should return 204 when aggregatorIntegration is sucessfully deleted and 404 when not found", () => {
