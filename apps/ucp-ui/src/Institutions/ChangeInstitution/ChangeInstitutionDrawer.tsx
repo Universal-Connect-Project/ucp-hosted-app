@@ -40,14 +40,13 @@ import TextField from "../../shared/components/Forms/TextField";
 import {
   CreateInstitution,
   EditInstitutionParams,
+  Institution,
   useCreateInstitutionMutation,
   useEditInstitutionMutation,
 } from "./api";
 import { LoadingButton } from "@mui/lab";
 import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
-import { useNavigate } from "react-router-dom";
-import { institutionRoute } from "../../shared/constants/routes";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
 import { InstitutionWithPermissions } from "../api";
 
@@ -67,22 +66,24 @@ const ChangeInstitutionDrawer = ({
   drawerTitle,
   institution,
   isOpen,
+  onSuccess = () => {},
   saveSuccessMessage,
   setIsOpen,
+  useMutationFunction,
 }: {
   drawerTitle: string;
   institution?: InstitutionWithPermissions;
   isOpen: boolean;
+  onSuccess?: (arg: Institution) => void;
   saveSuccessMessage: string;
   setIsOpen: (arg: boolean) => void;
+  useMutationFunction:
+    | typeof useEditInstitutionMutation
+    | typeof useCreateInstitutionMutation;
 }) => {
   const handleCloseDrawer = () => {
     setIsOpen(false);
   };
-
-  const isEditForm = !!institution;
-
-  const navigate = useNavigate();
 
   const transformInstitutionArray = (array?: string[]) =>
     array?.map((value) => ({
@@ -111,10 +112,6 @@ const ChangeInstitutionDrawer = ({
     reset(defaultValues);
   }, [defaultValues, isOpen, reset, institution]);
 
-  const useMutationFunction = isEditForm
-    ? useEditInstitutionMutation
-    : useCreateInstitutionMutation;
-
   const [
     mutateChangeInstitution,
     {
@@ -133,14 +130,12 @@ const ChangeInstitutionDrawer = ({
       institutionId: institution?.id as string,
     })
       .unwrap()
-      .then(({ id }) => {
+      .then((args) => {
         dispatch(displaySnackbar(saveSuccessMessage));
 
         handleCloseDrawer();
 
-        if (!isEditForm) {
-          navigate(institutionRoute.createPath({ institutionId: id }));
-        }
+        onSuccess(args);
       })
       .catch(() => {});
   };
@@ -239,7 +234,7 @@ const ChangeInstitutionDrawer = ({
               />
               <div className={styles.inputStack}>
                 <Typography variant="body1">Institution Details</Typography>
-                {isEditForm && (
+                {institution?.id && (
                   <TextField
                     disabled
                     fullWidth

@@ -8,6 +8,7 @@ import {
 import ChangeInstitutionDrawer from "./ChangeInstitutionDrawer";
 import { InstitutionWithPermissions } from "../api";
 import { Edit } from "@mui/icons-material";
+import { useEditInstitutionMutation } from "./api";
 
 const EditInstitution = ({
   institution,
@@ -34,6 +35,7 @@ const EditInstitution = ({
           isOpen={isOpen}
           saveSuccessMessage={INSTITUTION_EDIT_SUCCESS_TEXT}
           setIsOpen={setIsOpen}
+          useMutationFunction={useEditInstitutionMutation}
         />
       )}
     </>

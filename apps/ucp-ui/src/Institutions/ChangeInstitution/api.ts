@@ -14,7 +14,7 @@ export interface EditInstitutionParams extends CreateInstitution {
   institutionId: string;
 }
 
-interface Institution {
+export interface Institution {
   id: string;
 }
 
