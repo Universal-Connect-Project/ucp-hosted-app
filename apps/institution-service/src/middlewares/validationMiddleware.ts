@@ -4,7 +4,8 @@ import Joi, { ObjectSchema } from "joi";
 import jwt from "jsonwebtoken";
 import { Aggregator } from "../models/aggregator";
 import {
-  createValidateUserCanActOnAggregatorIntegration,
+  validateUserCanDeleteAggregatorIntegration as deleteAggIntValidation,
+  validateUserCanEditAggregatorIntegration as editAggIntValidation,
   EditAggregatorIntegrationValidationErrorReason,
   validateUserCanEditInstitution as editInstitutionValidation,
   EditInstitutionValidationErrorReason,
@@ -110,48 +111,17 @@ export const validateUserCanEditInstitution = async (
   });
 };
 
-export const validateUserCanEditAggregatorIntegration = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const validateUserCanEdit =
-    createValidateUserCanDoActionOnAggregatorIntegration({
-      adminPermission: UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION,
-      aggregatorPermission:
-        UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-    });
-  await validateUserCanEdit(req, res, next);
-};
-
-export const validateUserCanDeleteAggregatorIntegration = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const validateUserCanDelete =
-    createValidateUserCanDoActionOnAggregatorIntegration({
-      adminPermission: UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION,
-      aggregatorPermission:
-        UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-    });
-  await validateUserCanDelete(req, res, next);
-};
-
 const createValidateUserCanDoActionOnAggregatorIntegration =
-  ({
-    adminPermission,
-    aggregatorPermission,
-  }: {
-    adminPermission: string;
-    aggregatorPermission: string;
-  }) =>
+  (
+    validateFunction: ({
+      aggregatorIntegrationId,
+      req,
+    }: {
+      aggregatorIntegrationId: string;
+      req: Request;
+    }) => Promise<true | EditAggregatorIntegrationValidationErrorReason>,
+  ) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    const validateFunction = createValidateUserCanActOnAggregatorIntegration({
-      adminPermission,
-      aggregatorPermission,
-    });
-
     const canUserEditAggregatorIntegration = await validateFunction({
       aggregatorIntegrationId: req?.params?.id,
       req,
@@ -190,6 +160,11 @@ const createValidateUserCanDoActionOnAggregatorIntegration =
       error,
     });
   };
+
+export const validateUserCanDeleteAggregatorIntegration =
+  createValidateUserCanDoActionOnAggregatorIntegration(deleteAggIntValidation);
+export const validateUserCanEditAggregatorIntegration =
+  createValidateUserCanDoActionOnAggregatorIntegration(editAggIntValidation);
 
 interface AggregatorIntegrationRequestBody {
   aggregatorId: number;
