@@ -23,15 +23,3 @@
 .form {
   height: 100%;
 }
-
-.nameLogoContainer {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-  width: 100%;
-}
-
-.logo {
-  height: 40px;
-  width: 40px;
-}
