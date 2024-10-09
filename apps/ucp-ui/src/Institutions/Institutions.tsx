@@ -40,6 +40,7 @@ import {
 } from "../shared/components/Skeleton";
 import { institutionRoute } from "../shared/constants/routes";
 import classNames from "classnames";
+import { aggregatorIntegrationsSortByName } from "./utils";
 
 const generateFakeInstitutionData = (rowsPerPage: number) => {
   return new Array(rowsPerPage).fill(0).map(() => ({
@@ -61,7 +62,7 @@ const generateFakeInstitutionData = (rowsPerPage: number) => {
         aggregator: {
           displayName: (Math.random() + 1).toString(36).substring(7),
         },
-      })),
+      })) as unknown as AggregatorIntegration[],
   }));
 };
 
@@ -220,11 +221,7 @@ const Institutions = () => {
                           <TableCell>
                             <div className={styles.aggregatorsCell}>
                               {[...aggregatorIntegrations]
-                                .sort((a, b) =>
-                                  a.aggregator.displayName.localeCompare(
-                                    b.aggregator.displayName,
-                                  ),
-                                )
+                                .sort(aggregatorIntegrationsSortByName)
                                 .map((aggregatorInregration) => {
                                   const {
                                     aggregator: { displayName },
@@ -238,10 +235,7 @@ const Institutions = () => {
                                   const supportedTypes = Object.values(
                                     supportsJobTypeMap,
                                   ).filter(
-                                    ({ prop }) =>
-                                      (
-                                        aggregatorInregration as AggregatorIntegration
-                                      )[prop],
+                                    ({ prop }) => aggregatorInregration[prop],
                                   );
 
                                   const namesSupported = supportedTypes
