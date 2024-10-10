@@ -52,6 +52,7 @@ import {
 import InstitutionSection from "./InstitutionSection";
 import { aggregatorIntegrationsSortByName } from "../utils";
 import EditInstitution from "../ChangeInstitution/EditInstitution";
+import AddAggregatorIntegration from "../ChangeAggregatorIntegration/AddAggregatorIntegration";
 
 interface JobType {
   name: string;
@@ -229,124 +230,132 @@ const Institution = () => {
               />
             </div>
           </InstitutionSection>
-          <InstitutionSection title="AGGREGATOR INTEGRATIONS">
-            <TableContainer className={styles.table}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    {tableHeadCells.map(({ name, tooltip, tooltipTestId }) => (
-                      <TableCell key={name}>
-                        <div className={styles.tableHeadCell}>
-                          {tooltip && (
-                            <Tooltip title={tooltip}>
-                              <InfoOutlined
-                                color="action"
-                                data-testid={tooltipTestId}
-                                fontSize="inherit"
-                              />
-                            </Tooltip>
-                          )}
-                          {name}
-                        </div>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {aggregatorIntegrations
-                    ?.slice()
-                    ?.sort(aggregatorIntegrationsSortByName)
-                    ?.map((aggregatorIntegration: AggregatorIntegration) => {
-                      const {
-                        aggregator: { displayName, logo },
-                        id,
-                        isActive,
-                        supports_oauth,
-                      } = aggregatorIntegration;
+          <div className={styles.aggregatorIntegrationsContainer}>
+            <InstitutionSection title="AGGREGATOR INTEGRATIONS">
+              <TableContainer className={styles.table}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      {tableHeadCells.map(
+                        ({ name, tooltip, tooltipTestId }) => (
+                          <TableCell key={name}>
+                            <div className={styles.tableHeadCell}>
+                              {tooltip && (
+                                <Tooltip title={tooltip}>
+                                  <InfoOutlined
+                                    color="action"
+                                    data-testid={tooltipTestId}
+                                    fontSize="inherit"
+                                  />
+                                </Tooltip>
+                              )}
+                              {name}
+                            </div>
+                          </TableCell>
+                        ),
+                      )}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {aggregatorIntegrations
+                      ?.slice()
+                      ?.sort(aggregatorIntegrationsSortByName)
+                      ?.map((aggregatorIntegration: AggregatorIntegration) => {
+                        const {
+                          aggregator: { displayName, logo },
+                          id,
+                          isActive,
+                          supports_oauth,
+                        } = aggregatorIntegration;
 
-                      return (
-                        <TableRow
-                          className={
-                            !isActive ? styles.inactiveTableRow : undefined
-                          }
-                          data-testid={
-                            INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW
-                          }
-                          key={id}
-                        >
-                          <TableCell>
-                            <div className={styles.nameLogoCell}>
-                              <SkeletonIfLoading
-                                className={styles.aggregatorlogoSkeleton}
-                                isLoading={isFetching}
-                              >
-                                <img
-                                  className={styles.aggregatorLogo}
-                                  src={logo}
-                                />
-                              </SkeletonIfLoading>
+                        return (
+                          <TableRow
+                            className={
+                              !isActive ? styles.inactiveTableRow : undefined
+                            }
+                            data-testid={
+                              INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW
+                            }
+                            key={id}
+                          >
+                            <TableCell>
+                              <div className={styles.nameLogoCell}>
+                                <SkeletonIfLoading
+                                  className={styles.aggregatorlogoSkeleton}
+                                  isLoading={isFetching}
+                                >
+                                  <img
+                                    className={styles.aggregatorLogo}
+                                    src={logo}
+                                  />
+                                </SkeletonIfLoading>
+                                {isFetching ? (
+                                  <TextSkeletonIfLoading
+                                    isLoading={isFetching}
+                                    width="100px"
+                                  />
+                                ) : (
+                                  displayName
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
                               {isFetching ? (
                                 <TextSkeletonIfLoading
-                                  isLoading={isFetching}
-                                  width="100px"
+                                  isLoading
+                                  width="200px"
                                 />
                               ) : (
-                                displayName
+                                id
                               )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {isFetching ? (
-                              <TextSkeletonIfLoading isLoading width="200px" />
-                            ) : (
-                              id
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <div className={styles.jobTypesCell}>
-                              {jobTypes.map(
-                                ({ name, supportsField }) =>
-                                  aggregatorIntegration[supportsField] && (
-                                    <SkeletonIfLoading
-                                      className={styles.chipSkeleton}
-                                      key={name}
-                                      isLoading={isFetching}
-                                    >
-                                      <Chip label={name} />
-                                    </SkeletonIfLoading>
-                                  ),
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <SkeletonIfLoading
-                              className={styles.chipSkeleton}
-                              isLoading={isFetching}
-                            >
-                              <Chip
-                                color={supports_oauth ? "success" : "default"}
-                                label={supports_oauth ? "Yes" : "No"}
-                              />
-                            </SkeletonIfLoading>
-                          </TableCell>
-                          <TableCell>
-                            <SkeletonIfLoading
-                              className={styles.chipSkeleton}
-                              isLoading={isFetching}
-                            >
-                              <Chip
-                                color={isActive ? "success" : "default"}
-                                label={isActive ? "Active" : "Inactive"}
-                              />
-                            </SkeletonIfLoading>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </InstitutionSection>
+                            </TableCell>
+                            <TableCell>
+                              <div className={styles.jobTypesCell}>
+                                {jobTypes.map(
+                                  ({ name, supportsField }) =>
+                                    aggregatorIntegration[supportsField] && (
+                                      <SkeletonIfLoading
+                                        className={styles.chipSkeleton}
+                                        key={name}
+                                        isLoading={isFetching}
+                                      >
+                                        <Chip label={name} />
+                                      </SkeletonIfLoading>
+                                    ),
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <SkeletonIfLoading
+                                className={styles.chipSkeleton}
+                                isLoading={isFetching}
+                              >
+                                <Chip
+                                  color={supports_oauth ? "success" : "default"}
+                                  label={supports_oauth ? "Yes" : "No"}
+                                />
+                              </SkeletonIfLoading>
+                            </TableCell>
+                            <TableCell>
+                              <SkeletonIfLoading
+                                className={styles.chipSkeleton}
+                                isLoading={isFetching}
+                              >
+                                <Chip
+                                  color={isActive ? "success" : "default"}
+                                  label={isActive ? "Active" : "Inactive"}
+                                />
+                              </SkeletonIfLoading>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </InstitutionSection>
+            <AddAggregatorIntegration institution={institution} />
+          </div>
         </div>
       )}
     </PageContent>

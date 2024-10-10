@@ -36,6 +36,7 @@ interface Institution {
 
 export interface InstitutionWithPermissions extends Institution {
   canEditInstitution: boolean;
+  canCreateAggregatorIntegration: boolean;
 }
 
 interface InstitutionsResponse {
