@@ -208,7 +208,46 @@ describe("createAggregatorIntegration", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        error: "Database Error",
+        error:
+          'null value in column "aggregator_institution_id" of relation "aggregatorIntegrations" violates not-null constraint',
+      }),
+    );
+  });
+
+  it("returns 409 for trying to create an integration when one already exists on the Institution/Aggregator combo", async () => {
+    const createBody = {
+      institution_id: seedInstitutionId,
+      aggregatorId: mxAggregatorId,
+      aggregator_institution_id: "mx_bank",
+    };
+
+    await AggregatorIntegration.findOrCreate({
+      where: {
+        institution_id: seedInstitutionId,
+        aggregatorId: mxAggregatorId,
+      },
+      defaults: {
+        aggregator_institution_id: "mx_bank",
+      },
+    });
+
+    const req = {
+      body: createBody,
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await createAggregatorIntegration(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error:
+          "An AggregatorIntegration for that Institution/Aggregator already exists. Cannot duplicate",
       }),
     );
   });

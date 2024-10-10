@@ -376,10 +376,10 @@ describe("POST /aggregatorIntegrations (Create)", () => {
               error: string;
             }>,
           ) => {
-            expect(response.status).to.eq(400);
+            expect(response.status).to.eq(409);
 
             expect(response.body.error).to.eq(
-              "An integration already exists for this Institution and Aggregator combo",
+              "An AggregatorIntegration for that Institution/Aggregator already exists. Cannot duplicate",
             );
 
             // cleanup
@@ -418,7 +418,9 @@ describe("POST /aggregatorIntegrations (Create)", () => {
       ) => {
         expect(response.status).to.eq(400);
 
-        expect(response.body.error).to.eq("Database Error");
+        expect(response.body.error).to.eq(
+          "Invalid reference in the field: providers_institution_id_fkey.",
+        );
       },
     );
   });
