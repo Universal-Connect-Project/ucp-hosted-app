@@ -11,6 +11,7 @@ import {
   INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT,
   INSTITUTION_FORM_SUBMIT_BUTTON_TEXT,
   INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT,
+  INSTITUTION_FORM_UCP_ID_LABEL_TEXT,
   INSTITUTION_FORM_URL_LABEL_TEXT,
 } from "./constants";
 import {
@@ -238,7 +239,7 @@ const ChangeInstitutionDrawer = ({
                   <TextField
                     disabled
                     fullWidth
-                    label="UCP ID"
+                    label={INSTITUTION_FORM_UCP_ID_LABEL_TEXT}
                     value={institution?.id}
                     variant="filled"
                   />

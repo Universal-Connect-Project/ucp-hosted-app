@@ -21,6 +21,7 @@ export interface Institution {
 const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
 export const INSTITUTION_SERVICE_CREATE_INSTITUTION_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions`;
+export const INSTITUTION_SERVICE_EDIT_INSTITUTION_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions/:institutionId`;
 
 const filterJunk = (array: string[]) =>
   Array.from(new Set(array.filter((value) => value)));

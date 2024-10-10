@@ -1,3 +1,5 @@
+import { InstitutionWithPermissions } from "../api";
+
 export const testInstitution = {
   canEditInstitution: true,
   id: "cb5b312f-bd10-44d8-a982-ddd8f25b5fb2",
@@ -35,7 +37,7 @@ export const testInstitution = {
       supports_history: true,
     },
   ],
-};
+} as unknown as InstitutionWithPermissions;
 
 export const testInstitutionActiveAndInactive = {
   ...testInstitution,

@@ -6,7 +6,6 @@ import {
   render,
   screen,
   userEvent,
-  waitForLoad,
   within,
 } from "../../shared/test/testUtils";
 import {
@@ -46,30 +45,7 @@ import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 import { INSTITUTION_EDIT_DETAILS_BUTTON_TEXT } from "../ChangeInstitution/constants";
 
 describe("<Institution />", () => {
-  it("doesn't render the edit button if canEditInstitution is false", async () => {
-    server.use(
-      http.get(`${INSTITUTION_SERVICE_INSTITUTIONS_URL}/:institutionId`, () =>
-        HttpResponse.json({
-          institution: {
-            ...institutionResponse.institution,
-            canEditInstitution: false,
-          },
-        }),
-      ),
-    );
-
-    render(<Institution />);
-
-    await waitForLoad();
-
-    expect(
-      screen.queryByRole("button", {
-        name: INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
-      }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("shows a loading state, renders all the fields, and sorts the aggregator integrations by display name", async () => {
+  it("shows a loading state, renders all the fields, renders an edit button, and sorts the aggregator integrations by display name", async () => {
     render(<Institution />);
 
     await expectSkeletonLoader();
@@ -96,6 +72,12 @@ describe("<Institution />", () => {
         expect((await screen.findAllByText(text)).length).toBeGreaterThan(0),
       ),
     );
+
+    expect(
+      screen.getByRole("button", {
+        name: INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
+      }),
+    ).toBeInTheDocument();
 
     const aggregatorIntegrationTableRows = screen.getAllByTestId(
       INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,

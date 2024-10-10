@@ -8,6 +8,7 @@ import {
 } from "../../shared/test/testUtils";
 import {
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
+  INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT,
   INSTITUTION_FORM_KEYWORD_LABEL_TEXT,
@@ -15,12 +16,15 @@ import {
   INSTITUTION_FORM_NAME_LABEL_TEXT,
   INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT,
   INSTITUTION_FORM_SUBMIT_BUTTON_TEXT,
+  INSTITUTION_FORM_UCP_ID_LABEL_TEXT,
   INSTITUTION_FORM_URL_LABEL_TEXT,
   INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
   REMOVE_INPUT_TEST_ID,
 } from "./constants";
 import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
 import { INVALID_URL_TEXT } from "../../shared/utils/validation";
+import EditInstitution from "./EditInstitution";
+import { testInstitution } from "../testData/institutions";
 
 describe("<ChangeInstitution />", () => {
   it("resets the form when the drawer is closed and reopened", async () => {
@@ -172,6 +176,20 @@ describe("<ChangeInstitution />", () => {
 
     expect(
       await screen.findByText("Must be a 9 digit number"),
+    ).toBeInTheDocument();
+  });
+
+  it("shows a UCP id field if there is an institution", async () => {
+    render(<EditInstitution institution={testInstitution} />);
+
+    await userEvent.click(
+      await screen.findByRole("button", {
+        name: INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
+      }),
+    );
+
+    expect(
+      await screen.findByLabelText(INSTITUTION_FORM_UCP_ID_LABEL_TEXT),
     ).toBeInTheDocument();
   });
 });

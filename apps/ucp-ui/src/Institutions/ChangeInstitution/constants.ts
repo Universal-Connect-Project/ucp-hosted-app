@@ -10,6 +10,7 @@ export const INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT = "Routing Number";
 export const INSTITUTION_FORM_KEYWORD_LABEL_TEXT = "Keyword";
 export const INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT =
   "Is this a Test Institution?";
+export const INSTITUTION_FORM_UCP_ID_LABEL_TEXT = "UCP ID";
 
 export const INSTITUTION_FORM_SUBMIT_BUTTON_TEXT = "SAVE";
 
