@@ -19,7 +19,7 @@ import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 import styles from "./institution.module.css";
 import InstitutionField from "./InstitutionField";
 import { InfoOutlined } from "@mui/icons-material";
-import { useGetInstitutionQuery } from "../api";
+import { AggregatorIntegration, useGetInstitutionQuery } from "../api";
 import {
   SkeletonIfLoading,
   TextSkeletonIfLoading,
@@ -30,6 +30,7 @@ import {
   INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
+  INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
   INSTITUTION_ERROR_TEXT,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEXT,
@@ -48,6 +49,9 @@ import {
   INSTITUTION_URL_TOOLTIP_TEST_ID,
   INSTITUTION_URL_TOOLTIP_TEXT,
 } from "./constants";
+import InstitutionSection from "./InstitutionSection";
+import { aggregatorIntegrationsSortByName } from "../utils";
+import EditInstitution from "../ChangeInstitution/EditInstitution";
 
 interface JobType {
   name: string;
@@ -80,12 +84,14 @@ const Institution = () => {
     },
   ];
 
-  const { data, isError, isLoading, refetch } = useGetInstitutionQuery({
+  const { data, isError, isFetching, refetch } = useGetInstitutionQuery({
     id: institutionId as string,
   });
 
+  const institution = data?.institution;
+
   const { id, is_test_bank, keywords, logo, name, routing_numbers, url } =
-    data?.institution || {};
+    institution || {};
 
   const fakeAggregatorIntegrations = [
     {
@@ -98,11 +104,12 @@ const Institution = () => {
       supports_identification: false,
       supports_verification: true,
     },
-  ];
+  ] as AggregatorIntegration[];
 
-  const aggregatorIntegrations = isLoading
-    ? fakeAggregatorIntegrations
-    : data?.institution?.aggregatorIntegrations;
+  const aggregatorIntegrations =
+    isFetching && !data?.institution?.aggregatorIntegrations
+      ? fakeAggregatorIntegrations
+      : data?.institution?.aggregatorIntegrations;
 
   const tableHeadCells = [
     { name: "Aggregator" },
@@ -149,181 +156,197 @@ const Institution = () => {
                 Institutions
               </Link>
               <Typography>
-                {isLoading ? (
+                {isFetching ? (
                   <TextSkeletonIfLoading isLoading width="200px" />
                 ) : (
                   name
                 )}
               </Typography>
             </Breadcrumbs>
-            <div className={styles.nameLogoContainer}>
-              <SkeletonIfLoading
-                className={styles.logoSkeleton}
-                isLoading={isLoading}
-              >
-                <img className={styles.logo} src={logo} />
-              </SkeletonIfLoading>
-              <Typography variant="h4">
-                {isLoading ? (
-                  <TextSkeletonIfLoading isLoading width="400px" />
-                ) : (
-                  name
-                )}
-              </Typography>
+            <div className={styles.editNameLogoContainer}>
+              <div className={styles.nameLogoContainer}>
+                <SkeletonIfLoading
+                  className={styles.logoSkeleton}
+                  isLoading={isFetching}
+                >
+                  <img className={styles.logo} src={logo} />
+                </SkeletonIfLoading>
+                <Typography variant="h4">
+                  {isFetching ? (
+                    <TextSkeletonIfLoading isLoading width="400px" />
+                  ) : (
+                    name
+                  )}
+                </Typography>
+              </div>
+              {!isFetching && <EditInstitution institution={institution} />}
             </div>
           </div>
-          <div className={styles.institutionFields}>
-            <InstitutionField
-              isLoading={isLoading}
-              name="UCP ID"
-              tooltip={INSTITUTION_UCP_ID_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_UCP_ID_TOOLTIP_TEST_ID}
-              value={id}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Institution URL"
-              tooltip={INSTITUTION_URL_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_URL_TOOLTIP_TEST_ID}
-              value={url}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Logo URL"
-              tooltip={INSTITUTION_LOGO_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_LOGO_TOOLTIP_TEST_ID}
-              value={logo}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Routing Number(s)"
-              tooltip={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID}
-              value={routing_numbers?.join(", ")}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Search Keywords"
-              tooltip={INSTITUTION_KEYWORDS_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_KEYWORDS_TOOLTIP_TEST_ID}
-              value={keywords?.join(", ")}
-            />
-            <InstitutionField
-              isLoading={isLoading}
-              name="Test Institution"
-              shouldDisableValueTooltip
-              tooltip={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEXT}
-              tooltipTestId={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID}
-              value={is_test_bank ? "Yes" : "No"}
-            />
-          </div>
-          <TableContainer className={styles.table}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {tableHeadCells.map(({ name, tooltip, tooltipTestId }) => (
-                    <TableCell key={name}>
-                      <div className={styles.tableHeadCell}>
-                        {tooltip && (
-                          <Tooltip title={tooltip}>
-                            <InfoOutlined
-                              color="action"
-                              data-testid={tooltipTestId}
-                              fontSize="inherit"
-                            />
-                          </Tooltip>
-                        )}
-                        {name}
-                      </div>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {aggregatorIntegrations?.map((aggregatorIntegration) => {
-                  const {
-                    aggregator: { displayName, logo },
-                    id,
-                    isActive,
-                    supports_oauth,
-                  } = aggregatorIntegration;
+          <InstitutionSection title="INSTITUTION DETAILS">
+            <div className={styles.institutionFields}>
+              <InstitutionField
+                isLoading={isFetching}
+                name="UCP ID"
+                tooltip={INSTITUTION_UCP_ID_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_UCP_ID_TOOLTIP_TEST_ID}
+                value={id}
+              />
+              <InstitutionField
+                isLoading={isFetching}
+                name="Institution URL"
+                tooltip={INSTITUTION_URL_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_URL_TOOLTIP_TEST_ID}
+                value={url}
+              />
+              <InstitutionField
+                isLoading={isFetching}
+                name="Logo URL"
+                tooltip={INSTITUTION_LOGO_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_LOGO_TOOLTIP_TEST_ID}
+                value={logo}
+              />
+              <InstitutionField
+                isLoading={isFetching}
+                name="Routing Number(s)"
+                tooltip={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID}
+                value={routing_numbers?.join(", ")}
+              />
+              <InstitutionField
+                isLoading={isFetching}
+                name="Search Keywords"
+                tooltip={INSTITUTION_KEYWORDS_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_KEYWORDS_TOOLTIP_TEST_ID}
+                value={keywords?.join(", ")}
+              />
+              <InstitutionField
+                isLoading={isFetching}
+                name="Test Institution"
+                shouldDisableValueTooltip
+                tooltip={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEXT}
+                tooltipTestId={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID}
+                value={is_test_bank ? "Yes" : "No"}
+              />
+            </div>
+          </InstitutionSection>
+          <InstitutionSection title="AGGREGATOR INTEGRATIONS">
+            <TableContainer className={styles.table}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    {tableHeadCells.map(({ name, tooltip, tooltipTestId }) => (
+                      <TableCell key={name}>
+                        <div className={styles.tableHeadCell}>
+                          {tooltip && (
+                            <Tooltip title={tooltip}>
+                              <InfoOutlined
+                                color="action"
+                                data-testid={tooltipTestId}
+                                fontSize="inherit"
+                              />
+                            </Tooltip>
+                          )}
+                          {name}
+                        </div>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {aggregatorIntegrations
+                    ?.slice()
+                    ?.sort(aggregatorIntegrationsSortByName)
+                    ?.map((aggregatorIntegration: AggregatorIntegration) => {
+                      const {
+                        aggregator: { displayName, logo },
+                        id,
+                        isActive,
+                        supports_oauth,
+                      } = aggregatorIntegration;
 
-                  return (
-                    <TableRow
-                      className={
-                        !isActive ? styles.inactiveTableRow : undefined
-                      }
-                      key={id}
-                    >
-                      <TableCell>
-                        <div className={styles.nameLogoCell}>
-                          <SkeletonIfLoading
-                            className={styles.aggregatorlogoSkeleton}
-                            isLoading={isLoading}
-                          >
-                            <img className={styles.aggregatorLogo} src={logo} />
-                          </SkeletonIfLoading>
-                          {isLoading ? (
-                            <TextSkeletonIfLoading
-                              isLoading={isLoading}
-                              width="100px"
-                            />
-                          ) : (
-                            displayName
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {isLoading ? (
-                          <TextSkeletonIfLoading isLoading width="200px" />
-                        ) : (
-                          id
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className={styles.jobTypesCell}>
-                          {jobTypes.map(
-                            ({ name, supportsField }) =>
-                              aggregatorIntegration[supportsField] && (
-                                <SkeletonIfLoading
-                                  className={styles.chipSkeleton}
-                                  key={name}
-                                  isLoading={isLoading}
-                                >
-                                  <Chip label={name} />
-                                </SkeletonIfLoading>
-                              ),
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <SkeletonIfLoading
-                          className={styles.chipSkeleton}
-                          isLoading={isLoading}
+                      return (
+                        <TableRow
+                          className={
+                            !isActive ? styles.inactiveTableRow : undefined
+                          }
+                          data-testid={
+                            INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW
+                          }
+                          key={id}
                         >
-                          <Chip
-                            color={supports_oauth ? "success" : "default"}
-                            label={supports_oauth ? "Yes" : "No"}
-                          />
-                        </SkeletonIfLoading>
-                      </TableCell>
-                      <TableCell>
-                        <SkeletonIfLoading
-                          className={styles.chipSkeleton}
-                          isLoading={isLoading}
-                        >
-                          <Chip
-                            color={isActive ? "success" : "default"}
-                            label={isActive ? "Active" : "Inactive"}
-                          />
-                        </SkeletonIfLoading>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                          <TableCell>
+                            <div className={styles.nameLogoCell}>
+                              <SkeletonIfLoading
+                                className={styles.aggregatorlogoSkeleton}
+                                isLoading={isFetching}
+                              >
+                                <img
+                                  className={styles.aggregatorLogo}
+                                  src={logo}
+                                />
+                              </SkeletonIfLoading>
+                              {isFetching ? (
+                                <TextSkeletonIfLoading
+                                  isLoading={isFetching}
+                                  width="100px"
+                                />
+                              ) : (
+                                displayName
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {isFetching ? (
+                              <TextSkeletonIfLoading isLoading width="200px" />
+                            ) : (
+                              id
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <div className={styles.jobTypesCell}>
+                              {jobTypes.map(
+                                ({ name, supportsField }) =>
+                                  aggregatorIntegration[supportsField] && (
+                                    <SkeletonIfLoading
+                                      className={styles.chipSkeleton}
+                                      key={name}
+                                      isLoading={isFetching}
+                                    >
+                                      <Chip label={name} />
+                                    </SkeletonIfLoading>
+                                  ),
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <SkeletonIfLoading
+                              className={styles.chipSkeleton}
+                              isLoading={isFetching}
+                            >
+                              <Chip
+                                color={supports_oauth ? "success" : "default"}
+                                label={supports_oauth ? "Yes" : "No"}
+                              />
+                            </SkeletonIfLoading>
+                          </TableCell>
+                          <TableCell>
+                            <SkeletonIfLoading
+                              className={styles.chipSkeleton}
+                              isLoading={isFetching}
+                            >
+                              <Chip
+                                color={isActive ? "success" : "default"}
+                                label={isActive ? "Active" : "Inactive"}
+                              />
+                            </SkeletonIfLoading>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </InstitutionSection>
         </div>
       )}
     </PageContent>

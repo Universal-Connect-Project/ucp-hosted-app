@@ -13,5 +13,6 @@ export const muiTheme = extendTheme({
     h6: { fontWeight: 500 },
     subtitle1: { fontWeight: 400 },
     subtitle2: { fontWeight: 400 },
+    overline: { letterSpacing: "1px" },
   },
 });

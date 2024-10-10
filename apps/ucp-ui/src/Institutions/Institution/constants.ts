@@ -38,3 +38,6 @@ export const INSTITUTION_OAUTH_TOOLTIP_TEXT =
   "Indicates whether the aggregator supports OAuth for secure user authentication.";
 export const INSTITUTION_ACTIVE_TOOLTIP_TEXT =
   "Indicates whether a connection between aggregator and institution is active.";
+
+export const INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW =
+  "institution-aggregator-integration-table-row";

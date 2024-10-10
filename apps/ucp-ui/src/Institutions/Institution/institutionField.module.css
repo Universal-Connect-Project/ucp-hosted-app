@@ -9,6 +9,7 @@
 }
 
 .value {
+  color: var(--mui-palette-text-secondary);
   max-width: 156px;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -11,6 +11,12 @@
   white-space: wrap;
 }
 
+.editNameLogoContainer {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
 .nameLogoContainer {
   align-items: center;
   display: flex;

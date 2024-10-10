@@ -6,6 +6,7 @@ import {
   render,
   screen,
   userEvent,
+  within,
 } from "../../shared/test/testUtils";
 import {
   institutionResponse,
@@ -16,6 +17,7 @@ import {
   INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
+  INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
   INSTITUTION_ERROR_TEXT,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEXT,
@@ -40,9 +42,10 @@ import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_INSTITUTIONS_URL } from "../api";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
+import { INSTITUTION_EDIT_DETAILS_BUTTON_TEXT } from "../ChangeInstitution/constants";
 
 describe("<Institution />", () => {
-  it("shows a loading state and renders all the fields", async () => {
+  it("shows a loading state, renders all the fields, renders an edit button, and sorts the aggregator integrations by display name", async () => {
     render(<Institution />);
 
     await expectSkeletonLoader();
@@ -56,11 +59,7 @@ describe("<Institution />", () => {
         testInstitutionActiveAndInactive.keywords.join(", "),
         testInstitutionActiveAndInactive.routing_numbers.join(", "),
         testInstitutionActiveAndInactive.aggregatorIntegrations[0].id,
-        testInstitutionActiveAndInactive.aggregatorIntegrations[0].aggregator
-          .displayName,
         testInstitutionActiveAndInactive.aggregatorIntegrations[1].id,
-        testInstitutionActiveAndInactive.aggregatorIntegrations[1].aggregator
-          .displayName,
         "Active",
         "Inactive",
         "Yes",
@@ -73,6 +72,29 @@ describe("<Institution />", () => {
         expect((await screen.findAllByText(text)).length).toBeGreaterThan(0),
       ),
     );
+
+    expect(
+      screen.getByRole("button", {
+        name: INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
+      }),
+    ).toBeInTheDocument();
+
+    const aggregatorIntegrationTableRows = screen.getAllByTestId(
+      INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
+    );
+
+    expect(
+      within(aggregatorIntegrationTableRows[0]).getByText(
+        testInstitutionActiveAndInactive.aggregatorIntegrations[1].aggregator
+          .displayName,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(aggregatorIntegrationTableRows[1]).getByText(
+        testInstitutionActiveAndInactive.aggregatorIntegrations[0].aggregator
+          .displayName,
+      ),
+    ).toBeInTheDocument();
   });
 
   it("shows an error and allows retry", async () => {
