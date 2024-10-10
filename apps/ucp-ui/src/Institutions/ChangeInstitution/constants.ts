@@ -29,6 +29,4 @@ export const INSTITUTION_CHANGE_ERROR_TEXT =
 
 export const REMOVE_INPUT_TEST_ID = "removeInput";
 
-export const SECTION_HEADER_INFO_ICON_TEST_ID = "sectionHeaderInfoIcon";
-
 export const INSTITUTION_EDIT_DETAILS_BUTTON_TEXT = "EDIT";

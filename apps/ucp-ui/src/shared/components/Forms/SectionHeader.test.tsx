@@ -1,6 +1,6 @@
 import React from "react";
 import SectionHeader from "./SectionHeader";
-import { render, screen, userEvent } from "../../shared/test/testUtils";
+import { render, screen, userEvent } from "../../test/testUtils";
 import { SECTION_HEADER_INFO_ICON_TEST_ID } from "./constants";
 
 describe("<SectionHeader />", () => {

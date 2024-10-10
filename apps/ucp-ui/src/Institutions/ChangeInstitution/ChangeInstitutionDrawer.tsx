@@ -34,7 +34,6 @@ import styles from "./changeInstitution.module.css";
 import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
 import RoutingNumberInput from "../RoutingNumberInput";
 import { validateUrlRule } from "../../shared/utils/validation";
-import SectionHeader from "./SectionHeader";
 import RemoveInput from "./RemoveInput";
 import AddInputButton from "./AddInputButton";
 import TextField from "../../shared/components/Forms/TextField";
@@ -50,6 +49,7 @@ import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
 import { InstitutionWithPermissions } from "../api";
+import SectionHeader from "../../shared/components/Forms/SectionHeader";
 
 interface Inputs {
   name: string;

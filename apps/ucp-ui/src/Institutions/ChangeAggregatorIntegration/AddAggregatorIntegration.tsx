@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { InstitutionWithPermissions } from "../api";
-import { Button, Drawer, Typography } from "@mui/material";
+import { Button, Divider, Drawer, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import {
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
@@ -102,6 +102,7 @@ const AddAggregatorIntegration = ({
                   <Typography>{name}</Typography>
                 </div>
               </div>
+              <Divider className={styles.divider} />
               <Controller
                 name="aggregatorInstitutionId"
                 control={control}
