@@ -247,7 +247,7 @@ describe("createAggregatorIntegration", () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
         error:
-          "An AggregatorIntegration for that Institution/Aggregator already exists. Cannot duplicate",
+          "An AggregatorIntegration for that Institution/Aggregator already exists.",
       }),
     );
   });

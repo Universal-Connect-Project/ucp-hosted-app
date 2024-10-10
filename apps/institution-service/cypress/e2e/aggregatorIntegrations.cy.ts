@@ -379,7 +379,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
             expect(response.status).to.eq(409);
 
             expect(response.body.error).to.eq(
-              "An AggregatorIntegration for that Institution/Aggregator already exists. Cannot duplicate",
+              "An AggregatorIntegration for that Institution/Aggregator already exists.",
             );
 
             // cleanup

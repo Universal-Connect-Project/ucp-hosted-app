@@ -20,7 +20,7 @@ function getErrorCodeAndMessage(error: Error): [number, string] {
     if (error.name === "SequelizeUniqueConstraintError") {
       return [
         409,
-        "An AggregatorIntegration for that Institution/Aggregator already exists. Cannot duplicate",
+        "An AggregatorIntegration for that Institution/Aggregator already exists.",
       ];
     } else {
       return [
