@@ -1,6 +1,8 @@
 import { INSTITUTIONS_ROW_TEST_ID } from "../../src/Institutions/constants";
 import {
   INSTITUTION_ADD_SUCCESS_TEXT,
+  INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
+  INSTITUTION_EDIT_SUCCESS_TEXT,
   INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT,
   INSTITUTION_FORM_KEYWORD_LABEL_TEXT,
@@ -51,7 +53,7 @@ describe("institutions", () => {
       });
   });
 
-  it("creates an institution and navigates to its page", () => {
+  it("creates an institution, navigates to its page, and edits the institution", () => {
     cy.loginSuperAdmin();
 
     cy.findByRole("button", {
@@ -91,5 +93,19 @@ describe("institutions", () => {
 
       cy.findByText(institutionId).should("exist");
     });
+
+    cy.findByRole("button", {
+      name: INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
+    }).click();
+
+    cy.findByLabelText(new RegExp(INSTITUTION_FORM_NAME_LABEL_TEXT)).type(
+      " Edited",
+    );
+
+    cy.findByRole("button", {
+      name: INSTITUTION_FORM_SUBMIT_BUTTON_TEXT,
+    }).click();
+
+    cy.findByText(INSTITUTION_EDIT_SUCCESS_TEXT).should("exist");
   });
 });

@@ -84,7 +84,7 @@ const Institution = () => {
     },
   ];
 
-  const { data, isError, isLoading, refetch } = useGetInstitutionQuery({
+  const { data, isError, isFetching, refetch } = useGetInstitutionQuery({
     id: institutionId as string,
   });
 
@@ -106,9 +106,10 @@ const Institution = () => {
     },
   ] as AggregatorIntegration[];
 
-  const aggregatorIntegrations = isLoading
-    ? fakeAggregatorIntegrations
-    : data?.institution?.aggregatorIntegrations;
+  const aggregatorIntegrations =
+    isFetching && !data?.institution?.aggregatorIntegrations
+      ? fakeAggregatorIntegrations
+      : data?.institution?.aggregatorIntegrations;
 
   const tableHeadCells = [
     { name: "Aggregator" },
@@ -155,7 +156,7 @@ const Institution = () => {
                 Institutions
               </Link>
               <Typography>
-                {isLoading ? (
+                {isFetching ? (
                   <TextSkeletonIfLoading isLoading width="200px" />
                 ) : (
                   name
@@ -166,60 +167,60 @@ const Institution = () => {
               <div className={styles.nameLogoContainer}>
                 <SkeletonIfLoading
                   className={styles.logoSkeleton}
-                  isLoading={isLoading}
+                  isLoading={isFetching}
                 >
                   <img className={styles.logo} src={logo} />
                 </SkeletonIfLoading>
                 <Typography variant="h4">
-                  {isLoading ? (
+                  {isFetching ? (
                     <TextSkeletonIfLoading isLoading width="400px" />
                   ) : (
                     name
                   )}
                 </Typography>
               </div>
-              <EditInstitution institution={institution} />
+              {!isFetching && <EditInstitution institution={institution} />}
             </div>
           </div>
           <InstitutionSection title="INSTITUTION DETAILS">
             <div className={styles.institutionFields}>
               <InstitutionField
-                isLoading={isLoading}
+                isLoading={isFetching}
                 name="UCP ID"
                 tooltip={INSTITUTION_UCP_ID_TOOLTIP_TEXT}
                 tooltipTestId={INSTITUTION_UCP_ID_TOOLTIP_TEST_ID}
                 value={id}
               />
               <InstitutionField
-                isLoading={isLoading}
+                isLoading={isFetching}
                 name="Institution URL"
                 tooltip={INSTITUTION_URL_TOOLTIP_TEXT}
                 tooltipTestId={INSTITUTION_URL_TOOLTIP_TEST_ID}
                 value={url}
               />
               <InstitutionField
-                isLoading={isLoading}
+                isLoading={isFetching}
                 name="Logo URL"
                 tooltip={INSTITUTION_LOGO_TOOLTIP_TEXT}
                 tooltipTestId={INSTITUTION_LOGO_TOOLTIP_TEST_ID}
                 value={logo}
               />
               <InstitutionField
-                isLoading={isLoading}
+                isLoading={isFetching}
                 name="Routing Number(s)"
                 tooltip={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT}
                 tooltipTestId={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID}
                 value={routing_numbers?.join(", ")}
               />
               <InstitutionField
-                isLoading={isLoading}
+                isLoading={isFetching}
                 name="Search Keywords"
                 tooltip={INSTITUTION_KEYWORDS_TOOLTIP_TEXT}
                 tooltipTestId={INSTITUTION_KEYWORDS_TOOLTIP_TEST_ID}
                 value={keywords?.join(", ")}
               />
               <InstitutionField
-                isLoading={isLoading}
+                isLoading={isFetching}
                 name="Test Institution"
                 shouldDisableValueTooltip
                 tooltip={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEXT}
@@ -277,16 +278,16 @@ const Institution = () => {
                             <div className={styles.nameLogoCell}>
                               <SkeletonIfLoading
                                 className={styles.aggregatorlogoSkeleton}
-                                isLoading={isLoading}
+                                isLoading={isFetching}
                               >
                                 <img
                                   className={styles.aggregatorLogo}
                                   src={logo}
                                 />
                               </SkeletonIfLoading>
-                              {isLoading ? (
+                              {isFetching ? (
                                 <TextSkeletonIfLoading
-                                  isLoading={isLoading}
+                                  isLoading={isFetching}
                                   width="100px"
                                 />
                               ) : (
@@ -295,7 +296,7 @@ const Institution = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {isLoading ? (
+                            {isFetching ? (
                               <TextSkeletonIfLoading isLoading width="200px" />
                             ) : (
                               id
@@ -309,7 +310,7 @@ const Institution = () => {
                                     <SkeletonIfLoading
                                       className={styles.chipSkeleton}
                                       key={name}
-                                      isLoading={isLoading}
+                                      isLoading={isFetching}
                                     >
                                       <Chip label={name} />
                                     </SkeletonIfLoading>
@@ -320,7 +321,7 @@ const Institution = () => {
                           <TableCell>
                             <SkeletonIfLoading
                               className={styles.chipSkeleton}
-                              isLoading={isLoading}
+                              isLoading={isFetching}
                             >
                               <Chip
                                 color={supports_oauth ? "success" : "default"}
@@ -331,7 +332,7 @@ const Institution = () => {
                           <TableCell>
                             <SkeletonIfLoading
                               className={styles.chipSkeleton}
-                              isLoading={isLoading}
+                              isLoading={isFetching}
                             >
                               <Chip
                                 color={isActive ? "success" : "default"}
