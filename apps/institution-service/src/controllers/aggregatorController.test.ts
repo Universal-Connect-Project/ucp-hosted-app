@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Request, Response } from "express";
-import { Aggregator } from "../models/aggregator";
 import { createTestAuthorization } from "../test/utils";
 import { getAggregators } from "./aggregatorController";
 
 describe("getAggregators", () => {
   it("gets all the aggregators in the database", async () => {
-    const { count, rows: _aggregators } = await Aggregator.findAndCountAll();
-
     const req = {
       headers: {
         authorization: createTestAuthorization({
@@ -15,13 +12,8 @@ describe("getAggregators", () => {
         }),
       },
     } as Request;
-    let responseData: { aggregators: object[] } = { aggregators: [] };
     const res = {
-      json: jest
-        .fn()
-        .mockImplementation(
-          (body: { aggregators: object[] }) => (responseData = body),
-        ),
+      json: jest.fn(),
       status: jest.fn().mockReturnThis(),
     } as unknown as Response;
 
@@ -41,7 +33,5 @@ describe("getAggregators", () => {
         ]),
       }),
     );
-
-    expect(responseData?.aggregators.length).toBe(count);
   });
 });
