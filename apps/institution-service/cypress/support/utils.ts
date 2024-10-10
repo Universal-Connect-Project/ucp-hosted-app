@@ -1,5 +1,5 @@
 import { PORT } from "shared/const";
-import { InstitutionAttrs } from "test/testData/institutions";
+import { InstitutionAttrs, testInstitution } from "test/testData/institutions";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 
 interface runTokenInvalidCheckArgs {
@@ -51,13 +51,13 @@ export const runInvalidPermissionCheck = (
   });
 };
 
-export function deleteAggregatorIntegration({
+export const deleteAggregatorIntegration = ({
   aggregatorIntegrationId,
   token,
 }: {
   aggregatorIntegrationId: number;
   token: string;
-}) {
+}) => {
   return cy.request({
     url: `http://localhost:${PORT}/aggregatorIntegrations/${aggregatorIntegrationId}`,
     method: "DELETE",
@@ -66,4 +66,18 @@ export function deleteAggregatorIntegration({
     },
     failOnStatusCode: false,
   });
-}
+};
+
+export const createTestInstitution = (token: string) => {
+  return cy.request({
+    url: `http://localhost:${PORT}/institutions`,
+    method: "POST",
+    body: {
+      ...testInstitution,
+    },
+    headers: {
+      Authorization: createAuthorizationHeader(token),
+    },
+    failOnStatusCode: false,
+  });
+};

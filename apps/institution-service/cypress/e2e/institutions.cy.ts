@@ -11,6 +11,7 @@ import {
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import {
+  createTestInstitution,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
@@ -219,42 +220,26 @@ describe("POST /institutions (Institution create)", () => {
 
   it("gets 201 created when user has permission to create", () => {
     // Create as SUPER USER
-    cy.request({
-      url: `http://localhost:${PORT}/institutions`,
-      method: "POST",
-      body: {
-        ...testInstitution,
-      },
-      headers: {
-        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-      },
-    }).then((response: Cypress.Response<{ message: string }>) => {
-      expect(response.status).to.eq(201);
+    createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
+      (response: Cypress.Response<{ message: string }>) => {
+        expect(response.status).to.eq(201);
 
-      institutionAttributes.forEach((attribute) => {
-        expect(response.body).to.haveOwnProperty(attribute);
-      });
-    });
+        institutionAttributes.forEach((attribute) => {
+          expect(response.body).to.haveOwnProperty(attribute);
+        });
+      },
+    );
 
     // Create as Aggregator admin
-    cy.request({
-      url: `http://localhost:${PORT}/institutions`,
-      method: "POST",
-      body: {
-        ...testInstitution,
-      },
-      headers: {
-        Authorization: createAuthorizationHeader(
-          AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-        ),
-      },
-    }).then((response: Cypress.Response<{ message: string }>) => {
-      expect(response.status).to.eq(201);
+    createTestInstitution(AGGREGATOR_USER_ACCESS_TOKEN_ENV).then(
+      (response: Cypress.Response<{ message: string }>) => {
+        expect(response.status).to.eq(201);
 
-      institutionAttributes.forEach((attribute) => {
-        expect(response.body).to.haveOwnProperty(attribute);
-      });
-    });
+        institutionAttributes.forEach((attribute) => {
+          expect(response.body).to.haveOwnProperty(attribute);
+        });
+      },
+    );
   });
 });
 
@@ -262,18 +247,11 @@ let newInstitutionData: { id: string };
 
 describe("PUT /institutions/:id (Institution update)", () => {
   before(() => {
-    cy.request({
-      url: `http://localhost:${PORT}/institutions`,
-      method: "POST",
-      body: {
-        ...testInstitution,
+    createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
+      (response: Cypress.Response<{ id: string }>) => {
+        newInstitutionData = response.body;
       },
-      headers: {
-        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-      },
-    }).then((response: Cypress.Response<{ id: string }>) => {
-      newInstitutionData = response.body;
-    });
+    );
   });
 
   runTokenInvalidCheck({

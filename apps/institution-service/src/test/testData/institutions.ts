@@ -3,6 +3,7 @@ import { AggregatorIntegration } from "../../models/aggregatorIntegration";
 import { Institution } from "../../models/institution";
 
 export const seedInstitutionId = "c14e9877-c1e3-4d3a-b449-585086d14845";
+export const secondSeedInstitutionId = "7ad26dbb-78ee-4d06-b67d-bb71c11de653";
 export const seedInstitutionName = "Wells Fargo";
 
 export interface InstitutionAttrs {
