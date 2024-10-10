@@ -1,3 +1,4 @@
+import { UUID } from "crypto";
 import { Request, Response } from "express";
 import { ValidationError } from "sequelize";
 import { validate } from "uuid";
@@ -7,10 +8,10 @@ import { transformInstitutionToCachedInstitution } from "../services/institution
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
   validateUserCanCreateAggregatorIntegration,
+  validateUserCanDeleteAggregatorIntegration,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "../shared/utils/permissionValidation";
-import { UUID } from "crypto";
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -138,6 +139,7 @@ export interface InstitutionDetail {
 export interface AggregatorIntegrationWithPermissions
   extends AggregatorIntegration {
   canEditAggregatorIntegration: boolean;
+  canDeleteAggregatorIntegration: boolean;
 }
 
 export interface InstitutionDetailWithPermissions extends InstitutionDetail {
@@ -281,6 +283,11 @@ export const getInstitution = async (req: Request, res: Response) => {
           ...integration,
           canEditAggregatorIntegration:
             (await validateUserCanEditAggregatorIntegration({
+              aggregatorIntegrationId: `${integration.id}`,
+              req,
+            })) === true,
+          canDeleteAggregatorIntegration:
+            (await validateUserCanDeleteAggregatorIntegration({
               aggregatorIntegrationId: `${integration.id}`,
               req,
             })) === true,

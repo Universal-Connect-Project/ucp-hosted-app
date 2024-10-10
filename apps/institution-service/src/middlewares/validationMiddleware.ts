@@ -1,14 +1,15 @@
+import { UiUserPermissions } from "@repo/shared-utils";
 import { NextFunction, Request, Response } from "express";
 import Joi, { ObjectSchema } from "joi";
-import {
-  EditAggregatorIntegrationValidationErrorReason,
-  validateUserCanEditInstitution as editInstitutionValidation,
-  validateUserCanEditAggregatorIntegration as editAggregatorIntegrationValidation,
-  EditInstitutionValidationErrorReason,
-} from "../shared/utils/permissionValidation";
 import jwt from "jsonwebtoken";
 import { Aggregator } from "../models/aggregator";
-import { UiUserPermissions } from "@repo/shared-utils";
+import {
+  validateUserCanDeleteAggregatorIntegration as deleteAggIntValidation,
+  validateUserCanEditAggregatorIntegration as editAggIntValidation,
+  EditAggregatorIntegrationValidationErrorReason,
+  validateUserCanEditInstitution as editInstitutionValidation,
+  EditInstitutionValidationErrorReason,
+} from "../shared/utils/permissionValidation";
 
 export const validate = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -110,50 +111,60 @@ export const validateUserCanEditInstitution = async (
   });
 };
 
-export const validateUserCanEditAggregatorIntegration = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const canUserEditAggregatorIntegration =
-    await editAggregatorIntegrationValidation({
+const createValidateUserCanDoActionOnAggregatorIntegration =
+  (
+    validateFunction: ({
+      aggregatorIntegrationId,
+      req,
+    }: {
+      aggregatorIntegrationId: string;
+      req: Request;
+    }) => Promise<true | EditAggregatorIntegrationValidationErrorReason>,
+  ) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    const canUserEditAggregatorIntegration = await validateFunction({
       aggregatorIntegrationId: req?.params?.id,
       req,
     });
 
-  const errorMap = {
-    [EditAggregatorIntegrationValidationErrorReason.GenericError]: {
-      error: "Error validating user permission",
-      status: 500,
-    },
-    [EditAggregatorIntegrationValidationErrorReason.InsufficientScope]: {
-      error: "Insufficient permissions",
-      status: 403,
-    },
-    [EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId]:
-      {
-        error: "Aggregator Integration not found",
-        status: 404,
+    const errorMap = {
+      [EditAggregatorIntegrationValidationErrorReason.GenericError]: {
+        error: "Error validating user permission",
+        status: 500,
       },
-    [EditAggregatorIntegrationValidationErrorReason.NotYourAggregator]: {
-      error:
-        "An Aggregator cannot edit an aggregatorIntegration belonging to another aggregator",
-      status: 403,
-    },
+      [EditAggregatorIntegrationValidationErrorReason.InsufficientScope]: {
+        error: "Insufficient permissions",
+        status: 403,
+      },
+      [EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId]:
+        {
+          error: "Aggregator Integration not found",
+          status: 404,
+        },
+      [EditAggregatorIntegrationValidationErrorReason.NotYourAggregator]: {
+        error:
+          "An Aggregator cannot edit or delete an aggregatorIntegration belonging to another aggregator",
+        status: 403,
+      },
+    };
+
+    if (canUserEditAggregatorIntegration === true) {
+      return next();
+    }
+
+    const { error, status } =
+      errorMap[canUserEditAggregatorIntegration] ||
+      errorMap[EditAggregatorIntegrationValidationErrorReason.GenericError];
+
+    return res.status(status).json({
+      error,
+    });
   };
 
-  if (canUserEditAggregatorIntegration === true) {
-    return next();
-  }
-
-  const { error, status } =
-    errorMap[canUserEditAggregatorIntegration] ||
-    errorMap[EditAggregatorIntegrationValidationErrorReason.GenericError];
-
-  return res.status(status).json({
-    error,
-  });
-};
+export const validateUserCanDeleteAggregatorIntegration =
+  createValidateUserCanDoActionOnAggregatorIntegration(deleteAggIntValidation);
+export const validateUserCanEditAggregatorIntegration =
+  createValidateUserCanDoActionOnAggregatorIntegration(editAggIntValidation);
 
 interface AggregatorIntegrationRequestBody {
   aggregatorId: number;

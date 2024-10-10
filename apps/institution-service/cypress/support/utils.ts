@@ -1,3 +1,4 @@
+import { PORT } from "shared/const";
 import { InstitutionAttrs } from "test/testData/institutions";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 
@@ -49,3 +50,20 @@ export const runInvalidPermissionCheck = (
     });
   });
 };
+
+export function deleteAggregatorIntegration({
+  aggregatorIntegrationId,
+  token,
+}: {
+  aggregatorIntegrationId: number;
+  token: string;
+}) {
+  return cy.request({
+    url: `http://localhost:${PORT}/aggregatorIntegrations/${aggregatorIntegrationId}`,
+    method: "DELETE",
+    headers: {
+      Authorization: createAuthorizationHeader(token),
+    },
+    failOnStatusCode: false,
+  });
+}

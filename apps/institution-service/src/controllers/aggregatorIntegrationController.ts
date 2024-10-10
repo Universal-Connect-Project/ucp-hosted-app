@@ -64,3 +64,25 @@ export const createAggregatorIntegration = async (
     }
   }
 };
+
+export const deleteAggregatorIntegration = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const aggregatorIntegration = await AggregatorIntegration.findByPk(
+      req.params.id,
+    );
+
+    if (!aggregatorIntegration) {
+      return res.status(404).json({ error: "AggregatorIntegration not found" });
+    }
+
+    await aggregatorIntegration.destroy();
+    res.status(204).json({});
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "System Error", message: "Something went wrong" });
+  }
+};
