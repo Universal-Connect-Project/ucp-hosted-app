@@ -6,81 +6,44 @@ import {
   USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
+import { runTokenInvalidCheck } from "../support/utils";
 
-const getAggregators = (token: string) => {
-  return cy.request({
+const checkGetAggregatorsWithToken = (token: string) => {
+  cy.request({
     url: `http://localhost:${PORT}/aggregators`,
     method: "GET",
     headers: {
       Authorization: createAuthorizationHeader(token),
     },
+  }).then((response: Cypress.Response<{ aggregators: Aggregator[] }>) => {
+    expect(response.status).to.eq(200);
+
+    expect(response.body.aggregators.length).to.be.greaterThan(0);
+    response.body.aggregators.forEach((aggregator) => {
+      ["id", "name", "displayName", "logo", "createdAt", "updatedAt"].forEach(
+        (attribute) => {
+          expect(aggregator).to.haveOwnProperty(attribute);
+        },
+      );
+    });
   });
 };
 
 describe("/aggregators GET", () => {
   it("returns a list of aggregators for a super admin", () => {
-    getAggregators(SUPER_USER_ACCESS_TOKEN_ENV).then(
-      (response: Cypress.Response<{ aggregators: Aggregator[] }>) => {
-        expect(response.status).to.eq(200);
-
-        expect(response.body.aggregators.length).to.be.greaterThan(0);
-        response.body.aggregators.forEach((aggregator) => {
-          [
-            "id",
-            "name",
-            "displayName",
-            "logo",
-            "createdAt",
-            "updatedAt",
-          ].forEach((attribute) => {
-            expect(aggregator).to.haveOwnProperty(attribute);
-          });
-        });
-      },
-    );
+    checkGetAggregatorsWithToken(SUPER_USER_ACCESS_TOKEN_ENV);
   });
 
   it("returns a list of aggregators for a aggregator admin", () => {
-    getAggregators(AGGREGATOR_USER_ACCESS_TOKEN_ENV).then(
-      (response: Cypress.Response<{ aggregators: Aggregator[] }>) => {
-        expect(response.status).to.eq(200);
-
-        expect(response.body.aggregators.length).to.be.greaterThan(0);
-        response.body.aggregators.forEach((aggregator) => {
-          [
-            "id",
-            "name",
-            "displayName",
-            "logo",
-            "createdAt",
-            "updatedAt",
-          ].forEach((attribute) => {
-            expect(aggregator).to.haveOwnProperty(attribute);
-          });
-        });
-      },
-    );
+    checkGetAggregatorsWithToken(AGGREGATOR_USER_ACCESS_TOKEN_ENV);
   });
 
   it("returns a list of aggregators for a regular user", () => {
-    getAggregators(USER_ACCESS_TOKEN_ENV).then(
-      (response: Cypress.Response<{ aggregators: Aggregator[] }>) => {
-        expect(response.status).to.eq(200);
+    checkGetAggregatorsWithToken(USER_ACCESS_TOKEN_ENV);
+  });
 
-        expect(response.body.aggregators.length).to.be.greaterThan(0);
-        response.body.aggregators.forEach((aggregator) => {
-          [
-            "id",
-            "name",
-            "displayName",
-            "logo",
-            "createdAt",
-            "updatedAt",
-          ].forEach((attribute) => {
-            expect(aggregator).to.haveOwnProperty(attribute);
-          });
-        });
-      },
-    );
+  runTokenInvalidCheck({
+    url: `http://localhost:${PORT}/aggregators`,
+    method: "GET",
   });
 });
