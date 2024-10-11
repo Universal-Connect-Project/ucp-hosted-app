@@ -1,10 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { InstitutionWithPermissions } from "../api";
-import { Button, Divider, Drawer, Typography } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Drawer,
+  FormControlLabel,
+  Typography,
+} from "@mui/material";
 import { Add } from "@mui/icons-material";
 import {
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+  INSTITUTION_AGGREGATOR_INTEGRATION_FORM_ACTIVE_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
 } from "./constants";
 import DrawerContainer from "../../shared/components/Drawer/DrawerContainer";
@@ -18,12 +26,29 @@ import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
 import TextField from "../../shared/components/Forms/TextField";
 import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
 import { LoadingButton } from "@mui/lab";
+import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
+import SectionHeaderSwitch from "../../shared/components/Forms/SectionHeaderSwitch";
+import { INSTITUTION_ACTIVE_TOOLTIP_TEXT } from "../../shared/constants/institution";
 
 interface Inputs {
   aggregatorInstitutionId: string;
+  isActive: boolean;
+  supportsAggregation: boolean;
+  supportsIdentification: boolean;
+  supportsFullHistory: boolean;
+  supportsVerification: boolean;
 }
 
 const formId = "changeAggregatorIntegration";
+
+interface Checkbox {
+  displayName: string;
+  name:
+    | "supportsAggregation"
+    | "supportsIdentification"
+    | "supportsFullHistory"
+    | "supportsVerification";
+}
 
 const AddAggregatorIntegration = ({
   institution,
@@ -43,9 +68,33 @@ const AddAggregatorIntegration = ({
   const defaultValues = useMemo(
     () => ({
       aggregatorInstitutionId: "",
+      isActive: false,
+      supportsAggregation: false,
+      supportsIdentification: false,
+      supportsFullHistory: false,
+      supportsVerification: false,
     }),
     [],
   );
+
+  const checkboxes: Checkbox[] = [
+    {
+      name: "supportsAggregation",
+      displayName: supportsJobTypeMap.aggregation.displayName,
+    },
+    {
+      name: "supportsIdentification",
+      displayName: supportsJobTypeMap.identification.displayName,
+    },
+    {
+      name: "supportsFullHistory",
+      displayName: supportsJobTypeMap.fullHistory.displayName,
+    },
+    {
+      name: "supportsVerification",
+      displayName: supportsJobTypeMap.verification.displayName,
+    },
+  ];
 
   const { control, handleSubmit, reset } = useForm<Inputs>({
     defaultValues,
@@ -94,7 +143,7 @@ const AddAggregatorIntegration = ({
             }
           >
             <DrawerContent>
-              <DrawerTitle>Add Aggregator</DrawerTitle>
+              <DrawerTitle>Add Aggregator Integration</DrawerTitle>
               <div className={styles.nameLogoContainer}>
                 <img className={styles.institutionLogo} src={logo} />
                 <div className={styles.nameContainer}>
@@ -102,6 +151,14 @@ const AddAggregatorIntegration = ({
                   <Typography>{name}</Typography>
                 </div>
               </div>
+              <SectionHeaderSwitch
+                control={control}
+                label={
+                  INSTITUTION_AGGREGATOR_INTEGRATION_FORM_ACTIVE_LABEL_TEXT
+                }
+                name="isActive"
+                tooltipTitle={INSTITUTION_ACTIVE_TOOLTIP_TEXT}
+              />
               <Divider className={styles.divider} />
               <Controller
                 name="aggregatorInstitutionId"
@@ -125,6 +182,33 @@ const AddAggregatorIntegration = ({
                   />
                 )}
               />
+              <div className={styles.jobTypesContainer}>
+                <div>
+                  <Typography variant="body1">Job types supported*</Typography>
+                  <Typography variant="caption">
+                    *At least one type required
+                  </Typography>
+                </div>
+                {checkboxes.map(({ name, displayName }) => (
+                  <Controller
+                    key={name}
+                    name={name}
+                    control={control}
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    render={({ field: { ref, ...fieldProps } }) => (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            // inputProps={{ id: testInstitutionSwitchId }}
+                            {...fieldProps}
+                          />
+                        }
+                        label={displayName}
+                      />
+                    )}
+                  />
+                ))}
+              </div>
             </DrawerContent>
           </DrawerContainer>
         </form>

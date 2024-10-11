@@ -222,11 +222,11 @@ const Institutions = () => {
                             <div className={styles.aggregatorsCell}>
                               {[...aggregatorIntegrations]
                                 .sort(aggregatorIntegrationsSortByName)
-                                .map((aggregatorInregration) => {
+                                .map((aggregatorIntegration) => {
                                   const {
                                     aggregator: { displayName },
                                     isActive,
-                                  } = aggregatorInregration;
+                                  } = aggregatorIntegration;
 
                                   if (!isActive) {
                                     return null;
@@ -235,7 +235,7 @@ const Institutions = () => {
                                   const supportedTypes = Object.values(
                                     supportsJobTypeMap,
                                   ).filter(
-                                    ({ prop }) => aggregatorInregration[prop],
+                                    ({ prop }) => aggregatorIntegration[prop],
                                   );
 
                                   const namesSupported = supportedTypes

@@ -27,7 +27,6 @@ import {
 import FetchError from "../../shared/components/FetchError";
 import {
   INSTITUTION_ACTIVE_TOOLTIP_TEST_ID,
-  INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
@@ -53,37 +52,11 @@ import InstitutionSection from "./InstitutionSection";
 import { aggregatorIntegrationsSortByName } from "../utils";
 import EditInstitution from "../ChangeInstitution/EditInstitution";
 import AddAggregatorIntegration from "../ChangeAggregatorIntegration/AddAggregatorIntegration";
-
-interface JobType {
-  name: string;
-  supportsField:
-    | "supports_aggregation"
-    | "supports_identification"
-    | "supports_verification"
-    | "supports_history";
-}
+import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
+import { INSTITUTION_ACTIVE_TOOLTIP_TEXT } from "../../shared/constants/institution";
 
 const Institution = () => {
   const { institutionId } = useParams();
-
-  const jobTypes: JobType[] = [
-    {
-      name: "Aggregation",
-      supportsField: "supports_aggregation",
-    },
-    {
-      name: "Identification",
-      supportsField: "supports_identification",
-    },
-    {
-      name: "Verification",
-      supportsField: "supports_verification",
-    },
-    {
-      name: "Full History",
-      supportsField: "supports_history",
-    },
-  ];
 
   const { data, isError, isFetching, refetch } = useGetInstitutionQuery({
     id: institutionId as string,
@@ -311,15 +284,15 @@ const Institution = () => {
                             </TableCell>
                             <TableCell>
                               <div className={styles.jobTypesCell}>
-                                {jobTypes.map(
-                                  ({ name, supportsField }) =>
-                                    aggregatorIntegration[supportsField] && (
+                                {Object.values(supportsJobTypeMap).map(
+                                  ({ displayName, prop }) =>
+                                    aggregatorIntegration[prop] && (
                                       <SkeletonIfLoading
                                         className={styles.chipSkeleton}
-                                        key={name}
+                                        key={displayName}
                                         isLoading={isFetching}
                                       >
-                                        <Chip label={name} />
+                                        <Chip label={displayName} />
                                       </SkeletonIfLoading>
                                     ),
                                 )}

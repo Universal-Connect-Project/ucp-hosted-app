@@ -22,3 +22,9 @@
 .divider {
   width: 100%;
 }
+
+.jobTypesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

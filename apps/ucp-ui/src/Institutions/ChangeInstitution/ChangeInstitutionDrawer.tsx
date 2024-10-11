@@ -1,4 +1,4 @@
-import { Drawer, Switch, Typography } from "@mui/material";
+import { Drawer, Typography } from "@mui/material";
 import React, { useEffect, useMemo } from "react";
 import {
   INSTITUTION_CHANGE_ERROR_TEXT,
@@ -50,6 +50,7 @@ import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
 import { InstitutionWithPermissions } from "../api";
 import SectionHeader from "../../shared/components/Forms/SectionHeader";
+import SectionHeaderSwitch from "../../shared/components/Forms/SectionHeaderSwitch";
 
 interface Inputs {
   name: string;
@@ -61,7 +62,6 @@ interface Inputs {
 }
 
 const formId = "changeInstitution";
-const testInstitutionSwitchId = "testInstitutionSwitch";
 
 const ChangeInstitutionDrawer = ({
   drawerTitle,
@@ -368,27 +368,12 @@ const ChangeInstitutionDrawer = ({
                   {INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT}
                 </AddInputButton>
               </div>
-              <div className={styles.testInstitutionContainer}>
-                <SectionHeader
-                  sectionTitle={INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT}
-                  tooltipTitle={INSTITUTION_TEST_INSTITUTION_TOOLTIP}
-                  typographyProps={{
-                    component: "label",
-                    htmlFor: testInstitutionSwitchId,
-                  }}
-                />
-                <Controller
-                  name="isTestInstitution"
-                  control={control}
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  render={({ field: { ref, ...fieldProps } }) => (
-                    <Switch
-                      inputProps={{ id: testInstitutionSwitchId }}
-                      {...fieldProps}
-                    />
-                  )}
-                />
-              </div>
+              <SectionHeaderSwitch
+                control={control}
+                label={INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT}
+                name="isTestInstitution"
+                tooltipTitle={INSTITUTION_TEST_INSTITUTION_TOOLTIP}
+              />
             </DrawerContent>
           </DrawerContainer>
         </form>
