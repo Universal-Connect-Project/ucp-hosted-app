@@ -1,0 +1,13 @@
+.container {
+  align-items: center;
+  display: flex;
+}
+
+.textContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.description {
+  color: var(--mui-palette-text-secondary);
+}

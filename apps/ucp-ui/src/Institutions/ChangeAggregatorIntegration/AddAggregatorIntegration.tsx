@@ -1,13 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { InstitutionWithPermissions } from "../api";
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Drawer,
-  FormControlLabel,
-  Typography,
-} from "@mui/material";
+import { Button, Divider, Drawer, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import {
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
@@ -33,6 +26,7 @@ import {
   INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_OAUTH_TOOLTIP_TEXT,
 } from "../../shared/constants/institution";
+import SupportsCheckbox from "./SupportsCheckbox";
 
 interface Inputs {
   aggregatorInstitutionId: string;
@@ -47,6 +41,7 @@ interface Inputs {
 const formId = "changeAggregatorIntegration";
 
 interface Checkbox {
+  description: string;
   displayName: string;
   name:
     | "supportsAggregation"
@@ -85,18 +80,22 @@ const AddAggregatorIntegration = ({
 
   const checkboxes: Checkbox[] = [
     {
+      description: supportsJobTypeMap.aggregation.description,
       name: "supportsAggregation",
       displayName: supportsJobTypeMap.aggregation.displayName,
     },
     {
+      description: supportsJobTypeMap.identification.description,
       name: "supportsIdentification",
       displayName: supportsJobTypeMap.identification.displayName,
     },
     {
+      description: supportsJobTypeMap.fullHistory.description,
       name: "supportsFullHistory",
       displayName: supportsJobTypeMap.fullHistory.displayName,
     },
     {
+      description: supportsJobTypeMap.verification.displayName,
       name: "supportsVerification",
       displayName: supportsJobTypeMap.verification.displayName,
     },
@@ -198,23 +197,13 @@ const AddAggregatorIntegration = ({
                     *At least one type required
                   </Typography>
                 </div>
-                {checkboxes.map(({ name, displayName }) => (
-                  <Controller
-                    key={name}
-                    name={name}
+                {checkboxes.map(({ description, name, displayName }) => (
+                  <SupportsCheckbox
                     control={control}
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    render={({ field: { ref, ...fieldProps } }) => (
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            // inputProps={{ id: testInstitutionSwitchId }}
-                            {...fieldProps}
-                          />
-                        }
-                        label={displayName}
-                      />
-                    )}
+                    description={description}
+                    key={name}
+                    label={displayName}
+                    name={name}
                   />
                 ))}
               </div>
