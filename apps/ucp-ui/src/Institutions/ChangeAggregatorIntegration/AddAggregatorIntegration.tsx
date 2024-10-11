@@ -14,6 +14,7 @@ import {
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_ACTIVE_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
+  INSTITUTION_AGGREGATOR_INTEGRATION_FORM_OAUTH_LABEL_TEXT,
 } from "./constants";
 import DrawerContainer from "../../shared/components/Drawer/DrawerContainer";
 import DrawerContent from "../../shared/components/Drawer/DrawerContent";
@@ -28,7 +29,10 @@ import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFoote
 import { LoadingButton } from "@mui/lab";
 import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
 import SectionHeaderSwitch from "../../shared/components/Forms/SectionHeaderSwitch";
-import { INSTITUTION_ACTIVE_TOOLTIP_TEXT } from "../../shared/constants/institution";
+import {
+  INSTITUTION_ACTIVE_TOOLTIP_TEXT,
+  INSTITUTION_OAUTH_TOOLTIP_TEXT,
+} from "../../shared/constants/institution";
 
 interface Inputs {
   aggregatorInstitutionId: string;
@@ -36,6 +40,7 @@ interface Inputs {
   supportsAggregation: boolean;
   supportsIdentification: boolean;
   supportsFullHistory: boolean;
+  supportsOauth: boolean;
   supportsVerification: boolean;
 }
 
@@ -71,6 +76,7 @@ const AddAggregatorIntegration = ({
       isActive: false,
       supportsAggregation: false,
       supportsIdentification: false,
+      supportsOauth: false,
       supportsFullHistory: false,
       supportsVerification: false,
     }),
@@ -185,7 +191,10 @@ const AddAggregatorIntegration = ({
               <div className={styles.jobTypesContainer}>
                 <div>
                   <Typography variant="body1">Job types supported*</Typography>
-                  <Typography variant="caption">
+                  <Typography
+                    className={styles.textSecondary}
+                    variant="caption"
+                  >
                     *At least one type required
                   </Typography>
                 </div>
@@ -209,6 +218,12 @@ const AddAggregatorIntegration = ({
                   />
                 ))}
               </div>
+              <SectionHeaderSwitch
+                control={control}
+                label={INSTITUTION_AGGREGATOR_INTEGRATION_FORM_OAUTH_LABEL_TEXT}
+                name="supportsOauth"
+                tooltipTitle={INSTITUTION_OAUTH_TOOLTIP_TEXT}
+              />
             </DrawerContent>
           </DrawerContainer>
         </form>

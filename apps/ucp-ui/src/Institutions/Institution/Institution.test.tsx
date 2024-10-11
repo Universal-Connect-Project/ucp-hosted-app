@@ -25,7 +25,6 @@ import {
   INSTITUTION_LOGO_TOOLTIP_TEST_ID,
   INSTITUTION_LOGO_TOOLTIP_TEXT,
   INSTITUTION_OAUTH_TOOLTIP_TEST_ID,
-  INSTITUTION_OAUTH_TOOLTIP_TEXT,
   INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID,
   INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT,
   INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID,
@@ -42,7 +41,10 @@ import { INSTITUTION_SERVICE_INSTITUTIONS_URL } from "../api";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 import { INSTITUTION_EDIT_DETAILS_BUTTON_TEXT } from "../ChangeInstitution/constants";
-import { INSTITUTION_ACTIVE_TOOLTIP_TEXT } from "../../shared/constants/institution";
+import {
+  INSTITUTION_ACTIVE_TOOLTIP_TEXT,
+  INSTITUTION_OAUTH_TOOLTIP_TEXT,
+} from "../../shared/constants/institution";
 
 describe("<Institution />", () => {
   it("shows a loading state, renders all the fields, renders an edit button, and sorts the aggregator integrations by display name", async () => {

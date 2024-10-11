@@ -28,3 +28,7 @@
   flex-direction: column;
   gap: 8px;
 }
+
+.textSecondary {
+  color: var(--mui-palette-text-secondary);
+}
