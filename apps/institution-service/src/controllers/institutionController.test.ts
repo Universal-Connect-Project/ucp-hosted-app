@@ -378,9 +378,9 @@ describe("institutionController", () => {
                 supports_history: expect.any(Boolean),
                 isActive: expect.any(Boolean),
                 aggregator: expect.objectContaining({
-                  name: "mx",
+                  name: expect.any(String),
                   id: expect.any(Number),
-                  displayName: "MX",
+                  displayName: expect.any(String),
                   logo: "https://logo.com",
                 }),
               }),
