@@ -5,7 +5,7 @@ import { createTestAuthorization } from "../../test/utils";
 import {
   EditAggregatorIntegrationValidationErrorReason,
   EditInstitutionValidationErrorReason,
-  validateUserCanCreateAggregatorIntegration,
+  getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
@@ -278,25 +278,26 @@ describe("permissionValidation", () => {
     });
   });
 
-  describe("validateUserCanCreateAggregatorIntegration", () => {
-    it("returns true if they are a super admin and there are aggregators without an integration", async () => {
-      expect(
-        await validateUserCanCreateAggregatorIntegration({
-          institutionId: mxOnlyInstitutionId,
-          req: {
-            headers: {
-              authorization: createTestAuthorization({
-                permissions: [UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION],
-              }),
-            },
-          } as Request,
-        }),
-      ).toBe(true);
+  describe("getUsersAggregatorIntegrationCreationPermissions", () => {
+    it("returns an array of aggregators with hasAccessToAllAggregators if they are a super admin and there are aggregators without an integration", async () => {
+      const response = await getUsersAggregatorIntegrationCreationPermissions({
+        institutionId: mxOnlyInstitutionId,
+        req: {
+          headers: {
+            authorization: createTestAuthorization({
+              permissions: [UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION],
+            }),
+          },
+        } as Request,
+      });
+
+      expect(response.hasAccessToAllAggregators).toBe(true);
+      expect(response.aggregatorsThatCanBeAdded.length).toBeGreaterThan(0);
     });
 
-    it("returns false if they are a super admin and there aren't aggregators without an integration", async () => {
+    it("returns an empty array if they are a super admin and there aren't aggregators without an integration", async () => {
       expect(
-        await validateUserCanCreateAggregatorIntegration({
+        await getUsersAggregatorIntegrationCreationPermissions({
           institutionId: allAggregatorsInstitutionId,
           req: {
             headers: {
@@ -306,30 +307,34 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(false);
+      ).toEqual({
+        aggregatorsThatCanBeAdded: [],
+        hasAccessToAllAggregators: true,
+      });
     });
 
-    it("returns true if they are an aggregator and there isn't an integration for their aggregator", async () => {
-      expect(
-        await validateUserCanCreateAggregatorIntegration({
-          institutionId: mxOnlyInstitutionId,
-          req: {
-            headers: {
-              authorization: createTestAuthorization({
-                aggregatorId: "sophtron",
-                permissions: [
-                  UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
-                ],
-              }),
-            },
-          } as Request,
-        }),
-      ).toBe(true);
+    it("returns an array of aggregators if they are an aggregator and there isn't an integration for their aggregator", async () => {
+      const response = await getUsersAggregatorIntegrationCreationPermissions({
+        institutionId: mxOnlyInstitutionId,
+        req: {
+          headers: {
+            authorization: createTestAuthorization({
+              aggregatorId: "sophtron",
+              permissions: [
+                UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
+              ],
+            }),
+          },
+        } as Request,
+      });
+
+      expect(response.hasAccessToAllAggregators).toBeFalsy();
+      expect(response.aggregatorsThatCanBeAdded.length).toBeGreaterThan(0);
     });
 
-    it("returns false if they are an aggregator and there is an integration for their aggregator", async () => {
+    it("returns an empty array if they are an aggregator and there is an integration for their aggregator", async () => {
       expect(
-        await validateUserCanCreateAggregatorIntegration({
+        await getUsersAggregatorIntegrationCreationPermissions({
           institutionId: mxOnlyInstitutionId,
           req: {
             headers: {
@@ -342,12 +347,14 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(false);
+      ).toEqual({
+        aggregatorsThatCanBeAdded: [],
+      });
     });
 
-    it("returns false if they are an aggregator, but they don't have a valid aggregatorName", async () => {
+    it("returns an empty array if they are an aggregator, but they don't have a valid aggregatorName", async () => {
       expect(
-        await validateUserCanCreateAggregatorIntegration({
+        await getUsersAggregatorIntegrationCreationPermissions({
           institutionId: mxOnlyInstitutionId,
           req: {
             headers: {
@@ -360,12 +367,14 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(false);
+      ).toEqual({
+        aggregatorsThatCanBeAdded: [],
+      });
     });
 
-    it("returns false if they aren't an aggregator or super admin", async () => {
+    it("returns an empty array if they aren't an aggregator or super admin", async () => {
       expect(
-        await validateUserCanCreateAggregatorIntegration({
+        await getUsersAggregatorIntegrationCreationPermissions({
           institutionId: mxOnlyInstitutionId,
           req: {
             headers: {
@@ -375,7 +384,9 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(false);
+      ).toEqual({
+        aggregatorsThatCanBeAdded: [],
+      });
     });
   });
 });

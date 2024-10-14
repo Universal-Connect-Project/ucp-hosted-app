@@ -52,8 +52,9 @@ export interface InstitutionDetailPermissions {
     string,
     AggregatorIntegrationPermissions
   >;
-  canCreateAggregatorIntegration: boolean;
+  aggregatorsThatCanBeAdded: Aggregator[];
   canEditInstitution: boolean;
+  hasAccessToAllAggregators: boolean;
 }
 
 interface InstitutionResponse {

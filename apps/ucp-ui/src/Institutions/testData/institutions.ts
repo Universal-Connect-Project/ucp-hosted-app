@@ -40,7 +40,12 @@ export const testInstitution = {
 
 export const testInstitutionPermissions = {
   aggregatorIntegrationPermissionsMap: {},
-  canCreateAggregatorIntegration: true,
+  aggregatorsThatCanBeAdded: [
+    {
+      id: 50,
+      displayName: "TestExampleA",
+    },
+  ],
   canEditInstitution: true,
 } as InstitutionDetailPermissions;
 

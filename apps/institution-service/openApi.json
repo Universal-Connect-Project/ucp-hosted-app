@@ -391,7 +391,13 @@
                         }
                       },
                       "canEditInstitution": false,
-                      "canCreateAggregatorIntegration": false
+                      "aggregatorsThatCanBeAdded": [
+                        {
+                          "displayName": "testExampleA",
+                          "id": 10
+                        }
+                      ],
+                      "hasAccessToAllAggregators": true
                     }
                   }
                 }

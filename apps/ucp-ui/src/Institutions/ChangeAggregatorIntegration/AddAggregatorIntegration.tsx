@@ -115,11 +115,11 @@ const AddAggregatorIntegration = ({
   const onSubmit: SubmitHandler<Inputs> = (values) => console.log(values);
 
   const { logo, name } = institution || {};
-  const { canCreateAggregatorIntegration } = permissions || {};
+  const { aggregatorsThatCanBeAdded } = permissions || {};
 
   return (
     <>
-      {canCreateAggregatorIntegration && (
+      {!!aggregatorsThatCanBeAdded?.length && (
         <Button onClick={handleOpenDrawer} startIcon={<Add />}>
           {INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT}
         </Button>

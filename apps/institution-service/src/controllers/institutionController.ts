@@ -7,7 +7,7 @@ import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
-  validateUserCanCreateAggregatorIntegration,
+  getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
@@ -146,8 +146,9 @@ export interface InstitutionPermissions {
     string,
     AggregatorIntegrationPermissions
   >;
-  canCreateAggregatorIntegration: boolean;
+  aggregatorsThatCanBeAdded: Aggregator[];
   canEditInstitution: boolean;
+  hasAccessToAllAggregators?: boolean;
 }
 
 export interface InstitutionResponse {
@@ -306,11 +307,10 @@ export const getInstitution = async (req: Request, res: Response) => {
             institutionId,
             req,
           })) === true,
-        canCreateAggregatorIntegration:
-          await validateUserCanCreateAggregatorIntegration({
-            institutionId: institution.id as UUID,
-            req,
-          }),
+        ...(await getUsersAggregatorIntegrationCreationPermissions({
+          institutionId: institution.id as UUID,
+          req,
+        })),
       },
     });
   } catch (error) {

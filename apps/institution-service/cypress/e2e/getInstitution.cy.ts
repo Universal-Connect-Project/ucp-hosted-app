@@ -45,10 +45,12 @@ const checkEditInstitutionPermissions = ({
 const checkCreateAggregatorIntegrationPermissions = ({
   accessTokenEnv,
   canCreateAggregatorIntegration,
+  hasAccessToAllAggregators,
   institutionId,
 }: {
   accessTokenEnv: string;
   canCreateAggregatorIntegration: boolean;
+  hasAccessToAllAggregators?: boolean;
   institutionId: string;
 }) => {
   cy.request({
@@ -64,8 +66,18 @@ const checkCreateAggregatorIntegrationPermissions = ({
         permissions: InstitutionPermissions;
       }>,
     ) => {
-      expect(response.body.permissions.canCreateAggregatorIntegration).to.eq(
-        canCreateAggregatorIntegration,
+      if (canCreateAggregatorIntegration) {
+        expect(
+          response.body.permissions.aggregatorsThatCanBeAdded.length,
+        ).to.be.greaterThan(0);
+      } else {
+        expect(
+          response.body.permissions.aggregatorsThatCanBeAdded.length,
+        ).to.eq(0);
+      }
+
+      expect(response.body.permissions.hasAccessToAllAggregators).to.eq(
+        hasAccessToAllAggregators,
       );
     },
   );
@@ -316,6 +328,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkCreateAggregatorIntegrationPermissions({
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: true,
+        hasAccessToAllAggregators: true,
         institutionId: institutionIdWithOnlyTestExampleAAggregator,
       });
     });
@@ -324,6 +337,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkCreateAggregatorIntegrationPermissions({
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: false,
+        hasAccessToAllAggregators: true,
         institutionId: allAggregatorsInstitutionId,
       });
     });
