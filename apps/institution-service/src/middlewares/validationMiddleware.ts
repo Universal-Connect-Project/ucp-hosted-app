@@ -1,4 +1,5 @@
 import { UiUserPermissions } from "@repo/shared-utils";
+import { UUID } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import Joi, { ObjectSchema } from "joi";
 import jwt from "jsonwebtoken";
@@ -168,6 +169,7 @@ export const validateUserCanEditAggregatorIntegration =
 
 interface AggregatorIntegrationRequestBody {
   aggregatorId: number;
+  institution_id: UUID;
 }
 export const validateUserCanCreateAggregatorIntegration = async (
   req: Request,
@@ -202,6 +204,13 @@ export const validateUserCanCreateAggregatorIntegration = async (
     });
   }
   const aggregatorRequestBody = req.body as AggregatorIntegrationRequestBody;
+
+  if (aggregator.id !== aggregatorRequestBody.aggregatorId) {
+    return res.status(403).json({
+      error:
+        "An Aggregator cannot create an aggregatorIntegration belonging to another aggregator",
+    });
+  }
 
   if (aggregator.id === aggregatorRequestBody.aggregatorId) {
     next();

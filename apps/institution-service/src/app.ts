@@ -7,6 +7,7 @@ import { rateLimit } from "express-rate-limit";
 import sequelize from "./database";
 import { defineAssociations } from "./models/associations";
 import aggregatorIntegrationRoutes from "./routes/aggregatorIntegrationRoutes";
+import aggregatorRoutes from "./routes/aggregatorRoutes";
 import institutionRoutes from "./routes/institutionRoutes";
 import permissionsRoutes from "./routes/permissionRoutes";
 import { PORT } from "./shared/const";
@@ -78,6 +79,7 @@ app.get("/ping", (_req: Request, res: Response) => {
 app.use("/institutions", institutionRoutes);
 app.use("/permissions", permissionsRoutes);
 app.use("/aggregatorIntegrations", aggregatorIntegrationRoutes);
+app.use("/aggregators", aggregatorRoutes);
 
 app.listen(PORT, () => {
   console.info(`App listening on port ${PORT}`);

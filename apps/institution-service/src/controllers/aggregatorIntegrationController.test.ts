@@ -7,7 +7,10 @@ import {
   defaultTestAggregator,
   mxAggregatorId,
 } from "../test/testData/aggregators";
-import { seedInstitutionId } from "../test/testData/institutions";
+import {
+  secondSeedInstitutionId,
+  seedInstitutionId,
+} from "../test/testData/institutions";
 import {
   createAggregatorIntegration,
   deleteAggregatorIntegration,
@@ -111,6 +114,13 @@ describe("updateAggregatorIntegration", () => {
 
 describe("createAggregatorIntegration", () => {
   it("creates an aggregatorIntegration with default values", async () => {
+    await AggregatorIntegration.destroy({
+      where: {
+        aggregatorId: mxAggregatorId,
+        institution_id: seedInstitutionId,
+      },
+    });
+
     const testBankId = "testBankId";
     const req = {
       body: {
@@ -139,6 +149,13 @@ describe("createAggregatorIntegration", () => {
   });
 
   it("creates an aggregatorIntegration with custom values", async () => {
+    await AggregatorIntegration.destroy({
+      where: {
+        aggregatorId: mxAggregatorId,
+        institution_id: secondSeedInstitutionId,
+      },
+    });
+
     const customValues = {
       isActive: false,
       supports_oauth: true,
@@ -146,7 +163,7 @@ describe("createAggregatorIntegration", () => {
       supports_verification: true,
       supports_aggregation: false,
       supports_history: true,
-      institution_id: seedInstitutionId,
+      institution_id: secondSeedInstitutionId,
       aggregatorId: mxAggregatorId,
       aggregator_institution_id: "testBankId",
     };
@@ -191,7 +208,46 @@ describe("createAggregatorIntegration", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        error: "Database Error",
+        error:
+          'null value in column "aggregator_institution_id" of relation "aggregatorIntegrations" violates not-null constraint',
+      }),
+    );
+  });
+
+  it("returns 409 for trying to create an integration when one already exists on the Institution/Aggregator combo", async () => {
+    const createBody = {
+      institution_id: seedInstitutionId,
+      aggregatorId: mxAggregatorId,
+      aggregator_institution_id: "mx_bank",
+    };
+
+    await AggregatorIntegration.findOrCreate({
+      where: {
+        institution_id: seedInstitutionId,
+        aggregatorId: mxAggregatorId,
+      },
+      defaults: {
+        aggregator_institution_id: "mx_bank",
+      },
+    });
+
+    const req = {
+      body: createBody,
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await createAggregatorIntegration(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error:
+          "An AggregatorIntegration for that Institution/Aggregator already exists.",
       }),
     );
   });
@@ -199,6 +255,13 @@ describe("createAggregatorIntegration", () => {
 
 describe("deleteAggregatorIntegration", () => {
   it("returns 204 when an aggregatorIntegration is deleted", async () => {
+    await AggregatorIntegration.destroy({
+      where: {
+        institution_id: defaultTestAggregator.institution_id,
+        aggregatorId: defaultTestAggregator.aggregatorId,
+      },
+    });
+
     const newAggregatorIntegration = await AggregatorIntegration.create(
       defaultTestAggregator,
     );

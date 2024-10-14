@@ -1,6 +1,6 @@
 import { UUID } from "crypto";
 import { Request, Response } from "express";
-import { Error } from "sequelize";
+import { Error, ForeignKeyConstraintError, ValidationError } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 
 interface AggregatorIntegrationParams {
@@ -13,6 +13,30 @@ interface AggregatorIntegrationParams {
   supports_aggregation: boolean;
   supports_history: boolean;
   isActive: boolean;
+}
+
+function getErrorCodeAndMessage(error: Error): [number, string] {
+  if (error instanceof ValidationError) {
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return [
+        409,
+        "An AggregatorIntegration for that Institution/Aggregator already exists.",
+      ];
+    } else {
+      return [
+        400,
+        error.errors.map((err: { message: string }) => err.message).join(", "),
+      ];
+    }
+  }
+  if (error instanceof ForeignKeyConstraintError) {
+    return [400, `Invalid reference in the field: ${error.index}.`];
+  }
+  if (error.name === "SequelizeDatabaseError") {
+    return [400, error.message];
+  }
+
+  return [400, "An unexpected error occurred. Please try again later."];
 }
 
 export const updateAggregatorIntegration = async (
@@ -58,9 +82,13 @@ export const createAggregatorIntegration = async (
     });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: "Database Error", message: error.message });
+      const [code, message] = getErrorCodeAndMessage(error);
+
+      res.status(code).json({
+        error: message,
+      });
     } else {
-      res.status(500).json({ error: "Error", message: "Something went wrong" });
+      res.status(500).json({ error: "Error: Something went wrong" });
     }
   }
 };
@@ -81,8 +109,6 @@ export const deleteAggregatorIntegration = async (
     await aggregatorIntegration.destroy();
     res.status(204).json({});
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "System Error", message: "Something went wrong" });
+    res.status(500).json({ error: "System Error" });
   }
 };

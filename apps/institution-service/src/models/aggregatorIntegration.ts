@@ -72,5 +72,11 @@ AggregatorIntegration.init(
     tableName: "aggregatorIntegrations",
     modelName: "AggregatorIntegration",
     sequelize,
+    indexes: [
+      {
+        unique: true,
+        fields: ["institution_id", "aggregatorId"],
+      },
+    ],
   },
 );

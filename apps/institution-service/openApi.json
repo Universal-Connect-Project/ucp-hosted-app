@@ -21,6 +21,59 @@
     }
   ],
   "paths": {
+    "/aggregators": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Get Aggregators",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "aggregators": [
+                      {
+                        "id": 2,
+                        "name": "finicity",
+                        "displayName": "Finicity",
+                        "logo": "https://universalconnectproject.org/images/ucp-logo-icon.svg",
+                        "createdAt": "2024-10-09T17:01:07.593Z",
+                        "updatedAt": "2024-10-09T17:01:07.593Z"
+                      },
+                      {
+                        "id": 1,
+                        "name": "sophtron",
+                        "displayName": "Sophtron",
+                        "logo": "https://sophtron.com/Images/logo.png",
+                        "createdAt": "2024-10-09T17:01:07.587Z",
+                        "updatedAt": "2024-10-09T17:01:07.587Z"
+                      },
+                      {
+                        "id": 98,
+                        "name": "mx",
+                        "displayName": "MX",
+                        "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
+                        "createdAt": "2024-10-09T17:01:07.537Z",
+                        "updatedAt": "2024-10-09T17:01:07.537Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/institutions/cacheList": {
       "get": {
         "security": [

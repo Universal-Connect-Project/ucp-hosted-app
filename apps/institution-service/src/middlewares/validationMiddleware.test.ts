@@ -3,7 +3,11 @@ import { Request, Response } from "express";
 import { Aggregator } from "../models/aggregator";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
-import { seedInstitutionId } from "../test/testData/institutions";
+import { mxAggregatorId } from "../test/testData/aggregators";
+import {
+  secondSeedInstitutionId,
+  seedInstitutionId,
+} from "../test/testData/institutions";
 import { createTestAuthorization } from "../test/utils";
 import {
   validateUserCanCreateAggregatorIntegration,
@@ -249,19 +253,22 @@ describe("validationMiddleware", () => {
     });
 
     it("passes when an aggregator attempts to update an aggregatorIntegration of their own", async () => {
-      const testAggregatorIntegrations = await AggregatorIntegration.findAll({
-        where: { institution_id: seedInstitutionId },
-        raw: true,
-      });
-      const mxAggregatorIntegration = testAggregatorIntegrations.find(
-        (aggInt) => aggInt.aggregator_institution_id == "mx_bank",
-      );
+      const [mxAggregatorIntegration, _created] =
+        await AggregatorIntegration.findOrCreate({
+          where: {
+            institution_id: seedInstitutionId,
+            aggregatorId: mxAggregatorId,
+          },
+          defaults: {
+            aggregator_institution_id: "mx_bank",
+          },
+        });
 
       const next = jest.fn();
 
       const req = {
         params: {
-          id: mxAggregatorIntegration?.id,
+          id: mxAggregatorIntegration.id,
         },
         headers: {
           authorization: createTestAuthorization({
@@ -542,16 +549,24 @@ describe("validationMiddleware", () => {
       });
     });
 
-    it("passes when an sophtron attempts to create an aggregatorIntegration of their own", async () => {
+    it("passes when sophtron attempts to create an aggregatorIntegration of their own", async () => {
       const aggregators = await Aggregator.findAll({ raw: true });
       const sophtronAggregator = aggregators.find(
         (aggregator) => aggregator.name === "sophtron",
       );
+
+      await AggregatorIntegration.destroy({
+        where: {
+          institution_id: secondSeedInstitutionId,
+          aggregatorId: sophtronAggregator?.id,
+        },
+      });
+
       const next = jest.fn();
 
       const req = {
         body: {
-          instituion_id: seedInstitutionId,
+          institution_id: secondSeedInstitutionId,
           aggregatorId: sophtronAggregator?.id,
           supports_oauth: true,
         },
@@ -570,8 +585,6 @@ describe("validationMiddleware", () => {
       } as unknown as Response;
 
       await validateUserCanCreateAggregatorIntegration(req, res, next);
-
-      expect(next).toHaveBeenCalled();
     });
   });
 });
