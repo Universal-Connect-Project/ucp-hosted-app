@@ -32,7 +32,7 @@ export const institutionSchema = Joi.object({
     .messages({
       "string.uri": "The url must be a valid URL",
     })
-    .allow(null, ""),
+    .allow(null),
   url: Joi.string()
     .uri({ scheme: ["http", "https"] })
     .messages({

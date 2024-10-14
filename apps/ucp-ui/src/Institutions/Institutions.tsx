@@ -41,7 +41,7 @@ import {
 } from "./constants";
 import { DEFAULT_LOGO_URL } from "./Institution/constants";
 import styles from "./institutions.module.css";
-import { aggregatorIntegrationsSortByName, isEmptyStr } from "./utils";
+import { aggregatorIntegrationsSortByName } from "./utils";
 
 const generateFakeInstitutionData = (rowsPerPage: number) => {
   return new Array(rowsPerPage).fill(0).map(() => ({
@@ -202,9 +202,7 @@ const Institutions = () => {
                               >
                                 <img
                                   className={styles.institutionLogo}
-                                  src={
-                                    isEmptyStr(logo) ? DEFAULT_LOGO_URL : logo
-                                  }
+                                  src={logo ?? DEFAULT_LOGO_URL}
                                 />
                               </SkeletonIfLoading>
                               <TextSkeletonIfLoading

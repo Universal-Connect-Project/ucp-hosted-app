@@ -1,5 +1,6 @@
 import { api, TagTypes } from "../../baseApi";
 import { HttpMethods } from "../../shared/constants/http";
+import { isEmptyStr } from "../utils";
 
 export interface CreateInstitution {
   name: string;
@@ -39,7 +40,7 @@ const transformBody = ({
   is_test_bank: isTestInstitution,
   keywords: filterJunk(keywords),
   name,
-  logo: logoUrl,
+  logo: isEmptyStr(logoUrl) ? null : logoUrl,
   url,
   routing_numbers: filterJunk(routingNumbers),
 });
