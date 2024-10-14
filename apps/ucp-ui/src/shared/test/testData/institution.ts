@@ -1,5 +1,7 @@
 export const createInstitutionResponse = {
-  id: "createdId",
+  institution: {
+    id: "createdId",
+  },
 };
 
 export const institutionPermissionsResponse = {

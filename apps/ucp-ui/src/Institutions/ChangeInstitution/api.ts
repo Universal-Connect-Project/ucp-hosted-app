@@ -15,7 +15,9 @@ export interface EditInstitutionParams extends CreateInstitution {
 }
 
 export interface Institution {
-  id: string;
+  institution: {
+    id: string;
+  };
 }
 
 const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;

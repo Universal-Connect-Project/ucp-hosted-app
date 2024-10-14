@@ -1,5 +1,6 @@
 import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
+import { Institution } from "models/institution";
 import { PaginatedInstitutionsResponse } from "../../src/controllers/institutionController";
 import { DEFAULT_PAGINATION_PAGE_SIZE, PORT } from "../../src/shared/const";
 import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
@@ -36,7 +37,7 @@ const institutionAttributes = [
 const validUpdateParams = {
   name: "newName",
   keywords: ["newKeywords"],
-  logo: "https://logo.com",
+  logo: null,
   url: "https://url.com",
   is_test_bank: true,
   routing_numbers: ["123456789"],
@@ -54,7 +55,7 @@ interface institutionTestCase {
     routing_numbers: string[];
   };
   expectedStatus: number;
-  expectedMessage: string;
+  expectedResponse: { error?: string; message?: string };
 }
 
 const institutionValidationTestCases: institutionTestCase[] = [
@@ -65,8 +66,10 @@ const institutionValidationTestCases: institutionTestCase[] = [
       routing_numbers: ["123"],
     },
     expectedStatus: 400,
-    expectedMessage:
-      '"routing_numbers[0]" with value "123" fails to match the 9 digits pattern',
+    expectedResponse: {
+      error:
+        '"routing_numbers[0]" with value "123" fails to match the 9 digits pattern',
+    },
   },
   {
     description: "logo is invalid",
@@ -75,8 +78,10 @@ const institutionValidationTestCases: institutionTestCase[] = [
       logo: "junk",
     },
     expectedStatus: 400,
-    expectedMessage:
-      '"logo" must be a valid uri with a scheme matching the http|https pattern',
+    expectedResponse: {
+      error:
+        '"logo" must be a valid uri with a scheme matching the http|https pattern',
+    },
   },
   {
     description: "url is invalid",
@@ -85,8 +90,10 @@ const institutionValidationTestCases: institutionTestCase[] = [
       url: "junk",
     },
     expectedStatus: 400,
-    expectedMessage:
-      '"url" must be a valid uri with a scheme matching the http|https pattern',
+    expectedResponse: {
+      error:
+        '"url" must be a valid uri with a scheme matching the http|https pattern',
+    },
   },
 ];
 
@@ -211,45 +218,57 @@ describe("POST /institutions (Institution create)", () => {
           Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
         },
         failOnStatusCode: false,
-      }).then((response: Cypress.Response<{ error: string }>) => {
-        expect(response.status).to.eq(testCase.expectedStatus);
-        expect(response.body.error).to.include(testCase.expectedMessage);
-      });
+      }).then(
+        (response: Cypress.Response<{ error?: string; message?: string }>) => {
+          expect(response.status).to.eq(testCase.expectedStatus);
+          expect(response.body).to.include(testCase.expectedResponse);
+        },
+      );
     });
   });
 
   it("gets 201 created when user has permission to create", () => {
     // Create as SUPER USER
     createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
-      (response: Cypress.Response<{ message: string }>) => {
+      (
+        response: Cypress.Response<{
+          message: string;
+          institution: Institution;
+        }>,
+      ) => {
         expect(response.status).to.eq(201);
 
         institutionAttributes.forEach((attribute) => {
-          expect(response.body).to.haveOwnProperty(attribute);
+          expect(response.body.institution).to.haveOwnProperty(attribute);
         });
       },
     );
 
     // Create as Aggregator admin
     createTestInstitution(AGGREGATOR_USER_ACCESS_TOKEN_ENV).then(
-      (response: Cypress.Response<{ message: string }>) => {
+      (
+        response: Cypress.Response<{
+          message: string;
+          institution: Institution;
+        }>,
+      ) => {
         expect(response.status).to.eq(201);
 
         institutionAttributes.forEach((attribute) => {
-          expect(response.body).to.haveOwnProperty(attribute);
+          expect(response.body.institution).to.haveOwnProperty(attribute);
         });
       },
     );
   });
 });
 
-let newInstitutionData: { id: string };
+let newInstitutionData: Institution;
 
 describe("PUT /institutions/:id (Institution update)", () => {
   before(() => {
     createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
-      (response: Cypress.Response<{ id: string }>) => {
-        newInstitutionData = response.body;
+      (response: Cypress.Response<{ institution: Institution }>) => {
+        newInstitutionData = response.body.institution;
       },
     );
   });
@@ -320,7 +339,7 @@ describe("PUT /institutions/:id (Institution update)", () => {
         failOnStatusCode: false,
       }).then((response: Cypress.Response<{ error: string }>) => {
         expect(response.status).to.eq(testCase.expectedStatus);
-        expect(response.body.error).to.include(testCase.expectedMessage);
+        expect(response.body).to.include(testCase.expectedResponse);
       });
     });
   });
