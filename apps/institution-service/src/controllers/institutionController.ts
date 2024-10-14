@@ -106,7 +106,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
   }
 };
 
-interface AggregatorIntegration {
+export interface AggregatorIntegration {
   aggregator_institution_id: string;
   id: number;
   supports_oauth: boolean;
@@ -136,20 +136,23 @@ export interface InstitutionDetail {
   aggregatorIntegrations: AggregatorIntegration[];
 }
 
-export interface AggregatorIntegrationWithPermissions
-  extends AggregatorIntegration {
-  canEditAggregatorIntegration: boolean;
-  canDeleteAggregatorIntegration: boolean;
+interface AggregatorIntegrationPermissions {
+  canDelete: boolean;
+  canEdit: boolean;
 }
 
-export interface InstitutionDetailWithPermissions extends InstitutionDetail {
+export interface InstitutionPermissions {
+  aggregatorIntegrationPermissionsMap: Record<
+    string,
+    AggregatorIntegrationPermissions
+  >;
   canCreateAggregatorIntegration: boolean;
   canEditInstitution: boolean;
-  aggregatorIntegrations: AggregatorIntegrationWithPermissions[];
 }
 
 export interface InstitutionResponse {
-  institution: InstitutionDetailWithPermissions;
+  institution: InstitutionDetail;
+  permissions: InstitutionPermissions;
 }
 
 export interface PaginatedInstitutionsResponse {
