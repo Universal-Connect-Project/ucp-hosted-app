@@ -266,36 +266,50 @@ export const getInstitution = async (req: Request, res: Response) => {
     const institutionJson =
       institution.toJSON() as unknown as InstitutionDetail;
 
-    const institutionWithPermissions = {
-      ...institutionJson,
-      canEditInstitution:
-        (await validateUserCanEditInstitution({
-          institutionId,
-          req,
-        })) === true,
-      canCreateAggregatorIntegration:
-        await validateUserCanCreateAggregatorIntegration({
-          institutionId: institution.id as UUID,
-          req,
-        }),
-      aggregatorIntegrations: await Promise.all(
-        institutionJson.aggregatorIntegrations?.map(async (integration) => ({
-          ...integration,
-          canEditAggregatorIntegration:
-            (await validateUserCanEditAggregatorIntegration({
-              aggregatorIntegrationId: `${integration.id}`,
-              req,
-            })) === true,
-          canDeleteAggregatorIntegration:
-            (await validateUserCanDeleteAggregatorIntegration({
-              aggregatorIntegrationId: `${integration.id}`,
-              req,
-            })) === true,
-        })),
-      ),
-    };
+    const aggregatorIntegrationsPermissions = await Promise.all(
+      institutionJson.aggregatorIntegrations?.map(async (integration) => ({
+        integrationId: integration.id,
+        canEdit:
+          (await validateUserCanEditAggregatorIntegration({
+            aggregatorIntegrationId: `${integration.id}`,
+            req,
+          })) === true,
+        canDelete:
+          (await validateUserCanDeleteAggregatorIntegration({
+            aggregatorIntegrationId: `${integration.id}`,
+            req,
+          })) === true,
+      })),
+    );
 
-    return res.status(200).json({ institution: institutionWithPermissions });
+    const aggregatorIntegrationPermissionsMap =
+      aggregatorIntegrationsPermissions.reduce(
+        (acc, { canDelete, canEdit, integrationId }) => ({
+          ...acc,
+          [integrationId]: {
+            canDelete,
+            canEdit,
+          },
+        }),
+        {},
+      );
+
+    return res.status(200).json({
+      institution: institutionJson,
+      permissions: {
+        aggregatorIntegrationPermissionsMap,
+        canEditInstitution:
+          (await validateUserCanEditInstitution({
+            institutionId,
+            req,
+          })) === true,
+        canCreateAggregatorIntegration:
+          await validateUserCanCreateAggregatorIntegration({
+            institutionId: institution.id as UUID,
+            req,
+          }),
+      },
+    });
   } catch (error) {
     return res
       .status(500)

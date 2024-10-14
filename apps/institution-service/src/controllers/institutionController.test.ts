@@ -352,8 +352,6 @@ describe("institutionController", () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
           institution: expect.objectContaining({
-            canCreateAggregatorIntegration: expect.any(Boolean),
-            canEditInstitution: expect.any(Boolean),
             id: seedInstitutionId,
             name: "Wells Fargo",
             keywords: ["wells", "fargo"],
@@ -365,8 +363,6 @@ describe("institutionController", () => {
             updatedAt: expect.any(Date),
             aggregatorIntegrations: expect.arrayContaining([
               expect.objectContaining({
-                canEditAggregatorIntegration: expect.any(Boolean),
-                canDeleteAggregatorIntegration: expect.any(Boolean),
                 id: expect.any(Number),
                 aggregator_institution_id: expect.any(String),
                 supports_oauth: expect.any(Boolean),
@@ -384,6 +380,24 @@ describe("institutionController", () => {
               }),
             ]),
           }),
+          permissions: expect.objectContaining({
+            aggregatorIntegrationPermissionsMap: expect.any(Object),
+            canCreateAggregatorIntegration: expect.any(Boolean),
+            canEditInstitution: expect.any(Boolean),
+          }),
+        }),
+      );
+
+      const aggregatorIntegrationPermissionsMap =
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        (res.json as jest.Mock).mock.calls[0]?.[0]?.permissions
+          ?.aggregatorIntegrationPermissionsMap;
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      expect(Object.values(aggregatorIntegrationPermissionsMap)[0]).toEqual(
+        expect.objectContaining({
+          canDelete: expect.any(Boolean),
+          canEdit: expect.any(Boolean),
         }),
       );
     });
