@@ -1,7 +1,6 @@
-import { InstitutionWithPermissions } from "../api";
+import { Institution, InstitutionDetailPermissions } from "../api";
 
 export const testInstitution = {
-  canEditInstitution: true,
   id: "cb5b312f-bd10-44d8-a982-ddd8f25b5fb2",
   name: "Wells Fargo CEO",
   keywords: ["abc", "def"],
@@ -37,7 +36,13 @@ export const testInstitution = {
       supports_history: true,
     },
   ],
-} as unknown as InstitutionWithPermissions;
+} as unknown as Institution;
+
+export const testInstitutionPermissions = {
+  aggregatorIntegrationPermissionsMap: {},
+  canCreateAggregatorIntegration: true,
+  canEditInstitution: true,
+} as InstitutionDetailPermissions;
 
 export const testInstitutionActiveAndInactive = {
   ...testInstitution,
@@ -61,6 +66,7 @@ export const testInstitutionActiveAndInactive = {
 
 export const institutionResponse = {
   institution: testInstitutionActiveAndInactive,
+  permissions: testInstitutionPermissions,
 };
 
 export const institutions = [testInstitution];

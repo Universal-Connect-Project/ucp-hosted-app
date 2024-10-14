@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { InstitutionWithPermissions } from "../api";
+import { Institution, InstitutionDetailPermissions } from "../api";
 import { Button, Divider, Drawer, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import {
@@ -52,8 +52,10 @@ interface Checkbox {
 
 const AddAggregatorIntegration = ({
   institution,
+  permissions,
 }: {
-  institution?: InstitutionWithPermissions;
+  institution?: Institution;
+  permissions?: InstitutionDetailPermissions;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -112,7 +114,8 @@ const AddAggregatorIntegration = ({
 
   const onSubmit: SubmitHandler<Inputs> = (values) => console.log(values);
 
-  const { canCreateAggregatorIntegration, logo, name } = institution || {};
+  const { logo, name } = institution || {};
+  const { canCreateAggregatorIntegration } = permissions || {};
 
   return (
     <>

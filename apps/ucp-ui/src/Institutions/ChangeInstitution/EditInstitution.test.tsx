@@ -17,13 +17,20 @@ import { server } from "../../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_EDIT_INSTITUTION_URL } from "./api";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
-import { testInstitution } from "../testData/institutions";
+import {
+  testInstitution,
+  testInstitutionPermissions,
+} from "../testData/institutions";
 
 describe("<EditInstitution />", () => {
   it("doesn't show the edit button if you don't have access", async () => {
     render(
       <EditInstitution
-        institution={{ ...testInstitution, canEditInstitution: false }}
+        institution={testInstitution}
+        permissions={{
+          ...testInstitutionPermissions,
+          canEditInstitution: false,
+        }}
       />,
     );
 
@@ -44,7 +51,12 @@ describe("<EditInstitution />", () => {
       ),
     );
 
-    render(<EditInstitution institution={testInstitution} />);
+    render(
+      <EditInstitution
+        institution={testInstitution}
+        permissions={testInstitutionPermissions}
+      />,
+    );
 
     await userEvent.click(
       await screen.findByRole("button", {

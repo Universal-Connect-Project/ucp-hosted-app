@@ -24,7 +24,10 @@ import {
 import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
 import { INVALID_URL_TEXT } from "../../shared/utils/validation";
 import EditInstitution from "./EditInstitution";
-import { testInstitution } from "../testData/institutions";
+import {
+  testInstitution,
+  testInstitutionPermissions,
+} from "../testData/institutions";
 
 describe("<ChangeInstitution />", () => {
   it("resets the form when the drawer is closed and reopened", async () => {
@@ -180,7 +183,12 @@ describe("<ChangeInstitution />", () => {
   });
 
   it("shows a UCP id field if there is an institution", async () => {
-    render(<EditInstitution institution={testInstitution} />);
+    render(
+      <EditInstitution
+        institution={testInstitution}
+        permissions={testInstitutionPermissions}
+      />,
+    );
 
     await userEvent.click(
       await screen.findByRole("button", {

@@ -65,6 +65,7 @@ const Institution = () => {
   });
 
   const institution = data?.institution;
+  const permissions = data?.permissions;
 
   const { id, is_test_bank, keywords, logo, name, routing_numbers, url } =
     institution || {};
@@ -155,7 +156,12 @@ const Institution = () => {
                   )}
                 </Typography>
               </div>
-              {!isFetching && <EditInstitution institution={institution} />}
+              {!isFetching && (
+                <EditInstitution
+                  institution={institution}
+                  permissions={permissions}
+                />
+              )}
             </div>
           </div>
           <InstitutionSection title="INSTITUTION DETAILS">
@@ -329,7 +335,10 @@ const Institution = () => {
                 </Table>
               </TableContainer>
             </InstitutionSection>
-            <AddAggregatorIntegration institution={institution} />
+            <AddAggregatorIntegration
+              institution={institution}
+              permissions={permissions}
+            />
           </div>
         </div>
       )}

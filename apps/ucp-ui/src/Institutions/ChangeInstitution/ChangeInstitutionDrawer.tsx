@@ -48,7 +48,7 @@ import { LoadingButton } from "@mui/lab";
 import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
-import { InstitutionWithPermissions } from "../api";
+import { Institution as InstitutionDetail } from "../api";
 import SectionHeader from "../../shared/components/Forms/SectionHeader";
 import SectionHeaderSwitch from "../../shared/components/Forms/SectionHeaderSwitch";
 
@@ -73,7 +73,7 @@ const ChangeInstitutionDrawer = ({
   useMutationFunction,
 }: {
   drawerTitle: string;
-  institution?: InstitutionWithPermissions;
+  institution?: InstitutionDetail;
   isOpen: boolean;
   onSuccess?: (arg: Institution) => void;
   saveSuccessMessage: string;
