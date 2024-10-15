@@ -1,5 +1,5 @@
 import { Alert, AlertTitle, Button } from "@mui/material";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { TRY_AGAIN_BUTTON_TEXT } from "./constants";
 import styles from "./errorAlert.module.css";
 
@@ -10,6 +10,12 @@ interface Props {
 }
 
 const FormSubmissionError = ({ description, formId, title }: Props) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    ref?.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, []);
+
   return (
     <Alert
       action={
@@ -18,6 +24,7 @@ const FormSubmissionError = ({ description, formId, title }: Props) => {
         </Button>
       }
       className={styles.dontWrapAlertAction}
+      ref={ref}
       severity="error"
     >
       <AlertTitle>{title}</AlertTitle>

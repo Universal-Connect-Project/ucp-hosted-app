@@ -3,8 +3,10 @@ import { Institution, InstitutionDetailPermissions } from "../api";
 import { Button, Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import {
+  INSTITUTION_ADD_AGGREGATOR_ERROR_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+  INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_ACTIVE_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
@@ -28,6 +30,10 @@ import {
   INSTITUTION_OAUTH_TOOLTIP_TEXT,
 } from "../../shared/constants/institution";
 import SupportsCheckbox from "./SupportsCheckbox";
+import { useCreateAggregatorIntegrationMutation } from "./api";
+import { useAppDispatch } from "../../shared/utils/redux";
+import { displaySnackbar } from "../../shared/reducers/snackbar";
+import FormSubmissionError from "../../shared/components/FormSubmissionError";
 
 interface Inputs {
   aggregatorId: number | string;
@@ -120,7 +126,26 @@ const AddAggregatorIntegration = ({
     reset(defaultValues);
   }, [institution, isOpen, reset, defaultValues]);
 
-  const onSubmit: SubmitHandler<Inputs> = (values) => console.log(values);
+  const [mutateAddAggregatorIntegration, { isError, isLoading }] =
+    useCreateAggregatorIntegrationMutation();
+
+  const dispatch = useAppDispatch();
+
+  const changeInstitution = (body: Inputs) => {
+    mutateAddAggregatorIntegration({
+      ...body,
+      institutionId: institution?.id as string,
+    })
+      .unwrap()
+      .then(() => {
+        dispatch(displaySnackbar(INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT));
+
+        handleCloseDrawer();
+      })
+      .catch(() => {});
+  };
+
+  const onSubmit: SubmitHandler<Inputs> = changeInstitution;
 
   const { logo, name } = institution || {};
   const { aggregatorsThatCanBeAdded } = permissions || {};
@@ -148,7 +173,7 @@ const AddAggregatorIntegration = ({
             footer={
               <DrawerStickyFooter>
                 <LoadingButton
-                  // loading={isChangeInstitutionLoading}
+                  loading={isLoading}
                   form={formId}
                   type="submit"
                   variant="contained"
@@ -159,6 +184,13 @@ const AddAggregatorIntegration = ({
             }
           >
             <DrawerContent>
+              {isError && (
+                <FormSubmissionError
+                  description={INSTITUTION_ADD_AGGREGATOR_ERROR_TEXT}
+                  formId={formId}
+                  title="Something went wrong"
+                />
+              )}
               <DrawerTitle>Add Aggregator Integration</DrawerTitle>
               <div className={styles.nameLogoContainer}>
                 <img className={styles.institutionLogo} src={logo} />

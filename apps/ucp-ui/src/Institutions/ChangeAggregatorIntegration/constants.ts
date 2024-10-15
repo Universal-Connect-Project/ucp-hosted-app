@@ -13,3 +13,9 @@ export const INSTITUTION_AGGREGATOR_INTEGRATION_FORM_OAUTH_LABEL_TEXT =
 
 export const INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT =
   "Aggregator";
+
+export const INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT =
+  "Aggregator has been added to this Institution.";
+
+export const INSTITUTION_ADD_AGGREGATOR_ERROR_TEXT =
+  "We couldn’t save your changes. Please try again in a few moments.";
