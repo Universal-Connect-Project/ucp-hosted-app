@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Institution, InstitutionDetailPermissions } from "../api";
-import { Button, Divider, Drawer, Typography } from "@mui/material";
+import { Button, Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import {
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_ACTIVE_LABEL_TEXT,
+  INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_OAUTH_LABEL_TEXT,
 } from "./constants";
@@ -29,6 +30,7 @@ import {
 import SupportsCheckbox from "./SupportsCheckbox";
 
 interface Inputs {
+  aggregatorId: number | string;
   aggregatorInstitutionId: string;
   isActive: boolean;
   supportsAggregation: boolean;
@@ -67,8 +69,14 @@ const AddAggregatorIntegration = ({
     setIsOpen(true);
   };
 
+  const canSelectAnAggregator = permissions?.hasAccessToAllAggregators;
+
   const defaultValues = useMemo(
     () => ({
+      aggregatorId:
+        (!canSelectAnAggregator &&
+          permissions?.aggregatorsThatCanBeAdded?.[0]?.id) ||
+        "",
       aggregatorInstitutionId: "",
       isActive: false,
       supportsAggregation: false,
@@ -77,7 +85,7 @@ const AddAggregatorIntegration = ({
       supportsFullHistory: false,
       supportsVerification: false,
     }),
-    [],
+    [permissions, canSelectAnAggregator],
   );
 
   const checkboxes: Checkbox[] = [
@@ -159,6 +167,39 @@ const AddAggregatorIntegration = ({
                   <Typography>{name}</Typography>
                 </div>
               </div>
+              <Controller
+                name="aggregatorId"
+                control={control}
+                rules={{ required: REQUIRED_ERROR_TEXT }}
+                render={({
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  field: { ref, ...fieldProps },
+                  fieldState: { error },
+                }) => (
+                  <TextField
+                    disabled={!canSelectAnAggregator}
+                    error={!!error}
+                    fullWidth
+                    helperText={error?.message}
+                    InputProps={{}}
+                    InputLabelProps={{ required: true }}
+                    label={
+                      INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT
+                    }
+                    select
+                    variant="filled"
+                    {...fieldProps}
+                  >
+                    {permissions?.aggregatorsThatCanBeAdded?.map(
+                      ({ displayName, id }) => (
+                        <MenuItem key={id} value={id}>
+                          {displayName}
+                        </MenuItem>
+                      ),
+                    )}
+                  </TextField>
+                )}
+              />
               <SectionHeaderSwitch
                 control={control}
                 label={
