@@ -57,7 +57,9 @@ export const createInstitution = async (req: Request, res: Response) => {
   try {
     const institution = await Institution.create(req.body as Institution);
 
-    res.status(201).json(institution);
+    res
+      .status(201)
+      .json({ institution, message: "Institution successfully created" });
   } catch (error) {
     if (error instanceof ValidationError) {
       res.status(400).json({

@@ -1,4 +1,8 @@
+import { http, HttpResponse } from "msw";
 import React from "react";
+import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
+import { createInstitutionResponse } from "../../shared/test/testData/institution";
+import { server } from "../../shared/test/testServer";
 import {
   expectLocation,
   render,
@@ -6,10 +10,12 @@ import {
   userEvent,
   waitForLoad,
 } from "../../shared/test/testUtils";
+import { INSTITUTION_SERVICE_PERMISSIONS_URL } from "../api";
 import AddInstitution from "./AddInstitution";
+import { INSTITUTION_SERVICE_CREATE_INSTITUTION_URL } from "./api";
 import {
-  INSTITUTION_CHANGE_ERROR_TEXT,
   INSTITUTION_ADD_SUCCESS_TEXT,
+  INSTITUTION_CHANGE_ERROR_TEXT,
   INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT,
   INSTITUTION_FORM_KEYWORD_LABEL_TEXT,
@@ -20,12 +26,6 @@ import {
   INSTITUTION_FORM_URL_LABEL_TEXT,
   INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
 } from "./constants";
-import { createInstitutionResponse } from "../../shared/test/testData/institution";
-import { server } from "../../shared/test/testServer";
-import { http, HttpResponse } from "msw";
-import { INSTITUTION_SERVICE_CREATE_INSTITUTION_URL } from "./api";
-import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
-import { INSTITUTION_SERVICE_PERMISSIONS_URL } from "../api";
 
 const renderAndSubmit = async () => {
   render(<AddInstitution />);
@@ -104,7 +104,7 @@ describe("<AddInstitution />", () => {
       await screen.findByText(INSTITUTION_ADD_SUCCESS_TEXT),
     ).toBeInTheDocument();
 
-    expectLocation(`/institutions/${createInstitutionResponse.id}`);
+    expectLocation(`/institutions/${createInstitutionResponse.institution.id}`);
   });
 
   it("shows an error on api failure, allows retry, and shows a success snackbar", async () => {

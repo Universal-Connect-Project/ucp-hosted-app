@@ -1,3 +1,4 @@
+import { InfoOutlined } from "@mui/icons-material";
 import {
   Avatar,
   Chip,
@@ -11,8 +12,24 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
+import classNames from "classnames";
 import React from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import FetchError from "../shared/components/FetchError";
+import PageContent from "../shared/components/PageContent";
 import PageTitle from "../shared/components/PageTitle";
+import {
+  SkeletonIfLoading,
+  TextSkeletonIfLoading,
+} from "../shared/components/Skeleton";
+import { supportsJobTypeMap } from "../shared/constants/jobTypes";
+import { institutionRoute } from "../shared/constants/routes";
+import {
+  AggregatorIntegration,
+  useGetInstitutionPermissionsQuery,
+  useGetInstitutionsQuery,
+} from "./api";
+import AddInstitution from "./ChangeInstitution/AddInstitution";
 import {
   INSTITUTIONS_AGGREGATOR_INFO_ICON,
   INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP,
@@ -22,24 +39,8 @@ import {
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
 } from "./constants";
+import { DEFAULT_LOGO_URL } from "./Institution/constants";
 import styles from "./institutions.module.css";
-import AddInstitution from "./ChangeInstitution/AddInstitution";
-import FetchError from "../shared/components/FetchError";
-import {
-  AggregatorIntegration,
-  useGetInstitutionPermissionsQuery,
-  useGetInstitutionsQuery,
-} from "./api";
-import PageContent from "../shared/components/PageContent";
-import { supportsJobTypeMap } from "../shared/constants/jobTypes";
-import { InfoOutlined } from "@mui/icons-material";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  SkeletonIfLoading,
-  TextSkeletonIfLoading,
-} from "../shared/components/Skeleton";
-import { institutionRoute } from "../shared/constants/routes";
-import classNames from "classnames";
 import { aggregatorIntegrationsSortByName } from "./utils";
 
 const generateFakeInstitutionData = (rowsPerPage: number) => {
@@ -201,7 +202,7 @@ const Institutions = () => {
                               >
                                 <img
                                   className={styles.institutionLogo}
-                                  src={logo}
+                                  src={logo ?? DEFAULT_LOGO_URL}
                                 />
                               </SkeletonIfLoading>
                               <TextSkeletonIfLoading

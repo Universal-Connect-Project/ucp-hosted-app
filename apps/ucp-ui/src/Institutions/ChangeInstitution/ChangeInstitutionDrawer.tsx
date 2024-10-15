@@ -1,5 +1,39 @@
+import { LoadingButton } from "@mui/lab";
 import { Drawer, Switch, Typography } from "@mui/material";
 import React, { useEffect, useMemo } from "react";
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
+import DrawerCloseButton from "../../shared/components/Drawer/DrawerCloseButton";
+import DrawerContainer from "../../shared/components/Drawer/DrawerContainer";
+import DrawerContent from "../../shared/components/Drawer/DrawerContent";
+import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
+import DrawerTitle from "../../shared/components/Drawer/DrawerTitle";
+import TextField from "../../shared/components/Forms/TextField";
+import FormSubmissionError from "../../shared/components/FormSubmissionError";
+import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
+import { displaySnackbar } from "../../shared/reducers/snackbar";
+import { useAppDispatch } from "../../shared/utils/redux";
+import { validateUrlRule } from "../../shared/utils/validation";
+import { InstitutionWithPermissions } from "../api";
+import {
+  INSTITUTION_KEYWORDS_TOOLTIP,
+  INSTITUTION_ROUTING_NUMBERS_TOOLTIP,
+  INSTITUTION_TEST_INSTITUTION_TOOLTIP,
+} from "../constants";
+import RoutingNumberInput from "../RoutingNumberInput";
+import AddInputButton from "./AddInputButton";
+import {
+  CreateInstitution,
+  EditInstitutionParams,
+  Institution,
+  useCreateInstitutionMutation,
+  useEditInstitutionMutation,
+} from "./api";
+import styles from "./changeInstitution.module.css";
 import {
   INSTITUTION_CHANGE_ERROR_TEXT,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
@@ -14,42 +48,8 @@ import {
   INSTITUTION_FORM_UCP_ID_LABEL_TEXT,
   INSTITUTION_FORM_URL_LABEL_TEXT,
 } from "./constants";
-import {
-  INSTITUTION_KEYWORDS_TOOLTIP,
-  INSTITUTION_ROUTING_NUMBERS_TOOLTIP,
-  INSTITUTION_TEST_INSTITUTION_TOOLTIP,
-} from "../constants";
-import DrawerContainer from "../../shared/components/Drawer/DrawerContainer";
-import DrawerContent from "../../shared/components/Drawer/DrawerContent";
-import DrawerCloseButton from "../../shared/components/Drawer/DrawerCloseButton";
-import DrawerTitle from "../../shared/components/Drawer/DrawerTitle";
-import {
-  Controller,
-  SubmitHandler,
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
-import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
-import styles from "./changeInstitution.module.css";
-import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
-import RoutingNumberInput from "../RoutingNumberInput";
-import { validateUrlRule } from "../../shared/utils/validation";
-import SectionHeader from "./SectionHeader";
 import RemoveInput from "./RemoveInput";
-import AddInputButton from "./AddInputButton";
-import TextField from "../../shared/components/Forms/TextField";
-import {
-  CreateInstitution,
-  EditInstitutionParams,
-  Institution,
-  useCreateInstitutionMutation,
-  useEditInstitutionMutation,
-} from "./api";
-import { LoadingButton } from "@mui/lab";
-import { useAppDispatch } from "../../shared/utils/redux";
-import { displaySnackbar } from "../../shared/reducers/snackbar";
-import FormSubmissionError from "../../shared/components/FormSubmissionError";
-import { InstitutionWithPermissions } from "../api";
+import SectionHeader from "./SectionHeader";
 
 interface Inputs {
   name: string;
@@ -271,7 +271,6 @@ const ChangeInstitutionDrawer = ({
                   name="logoUrl"
                   control={control}
                   rules={{
-                    required: REQUIRED_ERROR_TEXT,
                     validate: validateUrlRule,
                   }}
                   render={({
@@ -283,7 +282,6 @@ const ChangeInstitutionDrawer = ({
                       error={!!error}
                       fullWidth
                       helperText={error?.message}
-                      InputLabelProps={{ required: true }}
                       label={INSTITUTION_FORM_LOGO_URL_LABEL_TEXT}
                       variant="filled"
                       {...fieldProps}
