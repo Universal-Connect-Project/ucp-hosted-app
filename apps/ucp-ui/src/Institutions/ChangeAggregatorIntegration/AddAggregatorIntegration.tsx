@@ -3,6 +3,7 @@ import { Institution, InstitutionDetailPermissions } from "../api";
 import { Button, Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import {
+  CheckboxName,
   CreateAggregatorIntegrationInputs,
   INSTITUTION_ADD_AGGREGATOR_ERROR_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
@@ -42,11 +43,7 @@ const formId = "changeAggregatorIntegration";
 interface Checkbox {
   description: string;
   displayName: string;
-  name:
-    | "supportsAggregation"
-    | "supportsIdentification"
-    | "supportsFullHistory"
-    | "supportsVerification";
+  name: CheckboxName;
 }
 
 const AddAggregatorIntegration = ({

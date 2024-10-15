@@ -33,6 +33,8 @@ Object.defineProperty(globalThis, "scrollTo", {
   value: () => {},
 });
 
+window.HTMLElement.prototype.scrollIntoView = function () {};
+
 Object.defineProperty(navigator, "clipboard", {
   value: {
     writeText: async () => {},

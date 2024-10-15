@@ -15,6 +15,7 @@ export const testInstitution = {
         name: "sophtron",
       },
       id: "60d097a9-65c4-449a-b4ce-cfa4aab224f3",
+      aggregator_institution_id: "testAggregatorInstitutionId1",
       isActive: true,
       supports_oauth: false,
       supports_identification: true,
@@ -63,6 +64,7 @@ export const testInstitutionActiveAndInactive = {
     },
     {
       ...testInstitution.aggregatorIntegrations[1],
+      aggregator_institution_id: "testAggregatorInstitutionId1",
       isActive: false,
       supports_oauth: false,
     },

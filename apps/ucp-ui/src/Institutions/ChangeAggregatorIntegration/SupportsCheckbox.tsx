@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./supportsCheckbox.module.css";
 import { Checkbox, Typography } from "@mui/material";
 import { Control, Controller } from "react-hook-form";
+import { CheckboxName, CreateAggregatorIntegrationInputs } from "./constants";
 
 const SupportsCheckbox = ({
   control,
@@ -15,9 +16,12 @@ const SupportsCheckbox = ({
   control: Control<any>;
   description: string;
   label: string;
-  name: string;
+  name: CheckboxName;
   triggerValidation: () => Promise<boolean>;
-  validate: () => boolean;
+  validate: (
+    _value: boolean,
+    formState: CreateAggregatorIntegrationInputs,
+  ) => boolean;
 }) => (
   <div className={styles.container}>
     <Controller

@@ -60,8 +60,10 @@ describe("<Institution />", () => {
         testInstitutionActiveAndInactive.name,
         testInstitutionActiveAndInactive.keywords.join(", "),
         testInstitutionActiveAndInactive.routing_numbers.join(", "),
-        testInstitutionActiveAndInactive.aggregatorIntegrations[0].id,
-        testInstitutionActiveAndInactive.aggregatorIntegrations[1].id,
+        testInstitutionActiveAndInactive.aggregatorIntegrations[0]
+          .aggregator_institution_id,
+        testInstitutionActiveAndInactive.aggregatorIntegrations[1]
+          .aggregator_institution_id,
         "Active",
         "Inactive",
         "Yes",

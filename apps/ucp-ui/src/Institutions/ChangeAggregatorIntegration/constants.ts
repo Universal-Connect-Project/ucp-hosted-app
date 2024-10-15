@@ -30,3 +30,9 @@ export interface CreateAggregatorIntegrationInputs {
   supportsOauth: boolean;
   supportsVerification: boolean;
 }
+
+export type CheckboxName =
+  | "supportsAggregation"
+  | "supportsIdentification"
+  | "supportsFullHistory"
+  | "supportsVerification";
