@@ -8,21 +8,35 @@ const SupportsCheckbox = ({
   description,
   label,
   name,
+  triggerValidation,
+  validate,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   description: string;
   label: string;
   name: string;
+  triggerValidation: () => Promise<boolean>;
+  validate: () => boolean;
 }) => (
   <div className={styles.container}>
     <Controller
       name={name}
       control={control}
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      render={({ field: { ref, ...fieldProps } }) => (
-        <Checkbox inputProps={{ id: label }} {...fieldProps} />
+      render={({ field: { ref, onChange, ...fieldProps } }) => (
+        <Checkbox
+          inputProps={{ id: label }}
+          onChange={(event) => {
+            onChange(event);
+            void triggerValidation();
+          }}
+          {...fieldProps}
+        />
       )}
+      rules={{
+        validate,
+      }}
     />
     <div className={styles.textContainer}>
       <Typography component="label" htmlFor={label} variant="body1">

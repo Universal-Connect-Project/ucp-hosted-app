@@ -3,6 +3,7 @@ import { Institution, InstitutionDetailPermissions } from "../api";
 import { Button, Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import {
+  CreateAggregatorIntegrationInputs,
   INSTITUTION_ADD_AGGREGATOR_ERROR_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
@@ -34,17 +35,7 @@ import { useCreateAggregatorIntegrationMutation } from "./api";
 import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
-
-interface Inputs {
-  aggregatorId: number | string;
-  aggregatorInstitutionId: string;
-  isActive: boolean;
-  supportsAggregation: boolean;
-  supportsIdentification: boolean;
-  supportsFullHistory: boolean;
-  supportsOauth: boolean;
-  supportsVerification: boolean;
-}
+import classNames from "classnames";
 
 const formId = "changeAggregatorIntegration";
 
@@ -117,10 +108,16 @@ const AddAggregatorIntegration = ({
     },
   ];
 
-  const { control, handleSubmit, reset } = useForm<Inputs>({
-    defaultValues,
-    mode: "onTouched",
-  });
+  const { control, formState, handleSubmit, reset, trigger } =
+    useForm<CreateAggregatorIntegrationInputs>({
+      defaultValues,
+      mode: "onTouched",
+    });
+
+  const triggerJobTypesValidation = () =>
+    trigger(checkboxes.map(({ name }) => name));
+
+  const isJobTypeError = checkboxes.some(({ name }) => formState.errors[name]);
 
   useEffect(() => {
     reset(defaultValues);
@@ -131,7 +128,7 @@ const AddAggregatorIntegration = ({
 
   const dispatch = useAppDispatch();
 
-  const changeInstitution = (body: Inputs) => {
+  const changeInstitution = (body: CreateAggregatorIntegrationInputs) => {
     mutateAddAggregatorIntegration({
       ...body,
       institutionId: institution?.id as string,
@@ -145,7 +142,13 @@ const AddAggregatorIntegration = ({
       .catch(() => {});
   };
 
-  const onSubmit: SubmitHandler<Inputs> = changeInstitution;
+  const validateAnyJobTypeSelected = (
+    _value: boolean,
+    formState: CreateAggregatorIntegrationInputs,
+  ): boolean => checkboxes.some(({ name }) => formState[name]);
+
+  const onSubmit: SubmitHandler<CreateAggregatorIntegrationInputs> =
+    changeInstitution;
 
   const { logo, name } = institution || {};
   const { aggregatorsThatCanBeAdded } = permissions || {};
@@ -265,9 +268,18 @@ const AddAggregatorIntegration = ({
               />
               <div className={styles.jobTypesContainer}>
                 <div>
-                  <Typography variant="body1">Job types supported*</Typography>
                   <Typography
-                    className={styles.textSecondary}
+                    className={classNames({
+                      [styles.textError]: isJobTypeError,
+                    })}
+                    variant="body1"
+                  >
+                    Job types supported*
+                  </Typography>
+                  <Typography
+                    className={classNames(styles.textSecondary, {
+                      [styles.textError]: isJobTypeError,
+                    })}
                     variant="caption"
                   >
                     *At least one type required
@@ -280,6 +292,8 @@ const AddAggregatorIntegration = ({
                     key={name}
                     label={displayName}
                     name={name}
+                    triggerValidation={triggerJobTypesValidation}
+                    validate={validateAnyJobTypeSelected}
                   />
                 ))}
               </div>

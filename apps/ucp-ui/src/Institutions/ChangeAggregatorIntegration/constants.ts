@@ -19,3 +19,14 @@ export const INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT =
 
 export const INSTITUTION_ADD_AGGREGATOR_ERROR_TEXT =
   "We couldn’t save your changes. Please try again in a few moments.";
+
+export interface CreateAggregatorIntegrationInputs {
+  aggregatorId: number | string;
+  aggregatorInstitutionId: string;
+  isActive: boolean;
+  supportsAggregation: boolean;
+  supportsIdentification: boolean;
+  supportsFullHistory: boolean;
+  supportsOauth: boolean;
+  supportsVerification: boolean;
+}

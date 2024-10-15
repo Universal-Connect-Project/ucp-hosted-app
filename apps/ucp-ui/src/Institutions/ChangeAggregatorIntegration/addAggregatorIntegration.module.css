@@ -32,3 +32,7 @@
 .textSecondary {
   color: var(--mui-palette-text-secondary);
 }
+
+.textError {
+  color: var(--mui-palette-error-main);
+}
