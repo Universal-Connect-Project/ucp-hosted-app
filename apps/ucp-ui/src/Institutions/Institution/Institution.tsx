@@ -244,6 +244,7 @@ const Institution = () => {
                       ?.map((aggregatorIntegration: AggregatorIntegration) => {
                         const {
                           aggregator: { displayName, logo },
+                          aggregator_institution_id,
                           id,
                           isActive,
                           supports_oauth,
@@ -287,7 +288,7 @@ const Institution = () => {
                                   width="200px"
                                 />
                               ) : (
-                                id
+                                aggregator_institution_id
                               )}
                             </TableCell>
                             <TableCell>
