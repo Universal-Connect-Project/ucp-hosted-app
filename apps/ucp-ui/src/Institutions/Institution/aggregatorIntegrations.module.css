@@ -1,0 +1,74 @@
+.container {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  :global(.MuiButton-root) {
+    margin-left: 25px;
+  }
+}
+
+.table {
+  &:global(.MuiTableContainer-root) {
+    background-color: var(--mui-palette-common-white);
+    border: solid 1px var(--mui-palette-divider);
+    border-radius: var(--mui-shape-borderRadius);
+    border-bottom: none;
+  }
+}
+
+.tableHeadCell {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+.nameLogoCell {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.jobTypesCell {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.aggregatorlogoSkeleton {
+  &:global(.MuiSkeleton-root) {
+    height: 32px;
+    width: 32px;
+    max-width: unset;
+  }
+}
+
+.chipSkeleton {
+  border-radius: 16px;
+}
+
+.aggregatorLogo {
+  border-radius: var(--mui-shape-borderRadius);
+  max-height: 32px;
+  max-width: 32px;
+}
+
+.inactiveTableRow {
+  :global(.MuiTableCell-root) {
+    color: var(--mui-palette-text-disabled);
+  }
+
+  :global(.MuiChip-root) {
+    background-color: unset;
+    color: inherit;
+
+    :global(.MuiChip-label) {
+      color: inherit;
+    }
+  }
+
+  .aggregatorLogo {
+    opacity: 50%;
+  }
+}
