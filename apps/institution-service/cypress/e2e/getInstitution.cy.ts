@@ -1,7 +1,8 @@
 import {
-  AggregatorIntegrationWithPermissions,
+  AggregatorIntegration,
   InstitutionDetail,
-  InstitutionDetailWithPermissions,
+  InstitutionPermissions,
+  InstitutionResponse,
 } from "controllers/institutionController";
 import { PORT } from "shared/const";
 import {
@@ -30,11 +31,11 @@ const checkEditInstitutionPermissions = ({
   }).then(
     (
       response: Cypress.Response<{
-        institution: InstitutionDetailWithPermissions;
-        0;
+        institution: InstitutionDetail;
+        permissions: InstitutionPermissions;
       }>,
     ) => {
-      expect(response.body.institution.canEditInstitution).to.eq(
+      expect(response.body.permissions.canEditInstitution).to.eq(
         canEditInstitution,
       );
     },
@@ -44,10 +45,12 @@ const checkEditInstitutionPermissions = ({
 const checkCreateAggregatorIntegrationPermissions = ({
   accessTokenEnv,
   canCreateAggregatorIntegration,
+  hasAccessToAllAggregators,
   institutionId,
 }: {
   accessTokenEnv: string;
   canCreateAggregatorIntegration: boolean;
+  hasAccessToAllAggregators?: boolean;
   institutionId: string;
 }) => {
   cy.request({
@@ -59,12 +62,22 @@ const checkCreateAggregatorIntegrationPermissions = ({
   }).then(
     (
       response: Cypress.Response<{
-        institution: InstitutionDetailWithPermissions;
-        0;
+        institution: InstitutionDetail;
+        permissions: InstitutionPermissions;
       }>,
     ) => {
-      expect(response.body.institution.canCreateAggregatorIntegration).to.eq(
-        canCreateAggregatorIntegration,
+      if (canCreateAggregatorIntegration) {
+        expect(
+          response.body.permissions.aggregatorsThatCanBeAdded.length,
+        ).to.be.greaterThan(0);
+      } else {
+        expect(
+          response.body.permissions.aggregatorsThatCanBeAdded.length,
+        ).to.eq(0);
+      }
+
+      expect(response.body.permissions.hasAccessToAllAggregators).to.eq(
+        hasAccessToAllAggregators,
       );
     },
   );
@@ -90,7 +103,6 @@ describe("GET /institutions/:id (Institution Details)", () => {
       (
         response: Cypress.Response<{
           institution: InstitutionDetail;
-          0;
         }>,
       ) => {
         expect(response.status).to.eq(200);
@@ -154,7 +166,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
     }).then(
       (response: Cypress.Response<{ institution: InstitutionDetail }>) => {
         const institutionResponse =
-          response.body as unknown as InstitutionDetailWithPermissions;
+          response.body as unknown as InstitutionResponse;
 
         expect(response.status).to.eq(404);
 
@@ -213,19 +225,19 @@ describe("GET /institutions/:id (Institution Details)", () => {
       }).then(
         (
           response: Cypress.Response<{
-            institution: InstitutionDetailWithPermissions;
-            0;
+            institution: InstitutionDetail;
+            permissions: InstitutionPermissions;
           }>,
         ) => {
-          response.body.institution.aggregatorIntegrations.forEach(
-            ({
-              canEditAggregatorIntegration,
-              canDeleteAggregatorIntegration,
-            }) => {
-              expect(canEditAggregatorIntegration).to.eq(true);
-              expect(canDeleteAggregatorIntegration).to.eq(true);
-            },
-          );
+          response.body.institution.aggregatorIntegrations.forEach(({ id }) => {
+            const aggregatorIntegrationPermissionsMap =
+              response.body.permissions.aggregatorIntegrationPermissionsMap;
+
+            expect(aggregatorIntegrationPermissionsMap[id].canEdit).to.eq(true);
+            expect(aggregatorIntegrationPermissionsMap[id].canDelete).to.eq(
+              true,
+            );
+          });
         },
       );
     });
@@ -242,15 +254,18 @@ describe("GET /institutions/:id (Institution Details)", () => {
       }).then(
         (
           response: Cypress.Response<{
-            institution: InstitutionDetailWithPermissions;
-            0;
+            institution: InstitutionDetail;
+            permissions: InstitutionPermissions;
           }>,
         ) => {
           const findAggregatorIntegrationByName = (name: string) =>
             response.body.institution.aggregatorIntegrations.find(
-              ({ aggregator }: AggregatorIntegrationWithPermissions) =>
+              ({ aggregator }: AggregatorIntegration) =>
                 name === aggregator.name,
             );
+
+          const aggregatorIntegrationPermissionsMap =
+            response.body.permissions.aggregatorIntegrationPermissionsMap;
 
           const testExampleAIntegration =
             findAggregatorIntegrationByName("testExampleA");
@@ -258,20 +273,22 @@ describe("GET /institutions/:id (Institution Details)", () => {
           const testExampleBIntegration =
             findAggregatorIntegrationByName("testExampleB");
 
-          console.log(testExampleAIntegration, testExampleBIntegration);
-
-          expect(testExampleAIntegration.canEditAggregatorIntegration).to.eq(
-            true,
-          );
-          expect(testExampleAIntegration.canDeleteAggregatorIntegration).to.eq(
-            true,
-          );
-          expect(testExampleBIntegration.canEditAggregatorIntegration).to.eq(
-            false,
-          );
-          expect(testExampleBIntegration.canDeleteAggregatorIntegration).to.eq(
-            false,
-          );
+          expect(
+            aggregatorIntegrationPermissionsMap[testExampleAIntegration.id]
+              .canEdit,
+          ).to.eq(true);
+          expect(
+            aggregatorIntegrationPermissionsMap[testExampleAIntegration.id]
+              .canDelete,
+          ).to.eq(true);
+          expect(
+            aggregatorIntegrationPermissionsMap[testExampleBIntegration.id]
+              .canEdit,
+          ).to.eq(false);
+          expect(
+            aggregatorIntegrationPermissionsMap[testExampleBIntegration.id]
+              .canDelete,
+          ).to.eq(false);
         },
       );
     });
@@ -286,19 +303,21 @@ describe("GET /institutions/:id (Institution Details)", () => {
       }).then(
         (
           response: Cypress.Response<{
-            institution: InstitutionDetailWithPermissions;
-            0;
+            institution: InstitutionDetail;
+            permissions: InstitutionPermissions;
           }>,
         ) => {
-          response.body.institution.aggregatorIntegrations.forEach(
-            ({
-              canEditAggregatorIntegration,
-              canDeleteAggregatorIntegration,
-            }) => {
-              expect(canEditAggregatorIntegration).to.eq(false);
-              expect(canDeleteAggregatorIntegration).to.eq(false);
-            },
-          );
+          response.body.institution.aggregatorIntegrations.forEach(({ id }) => {
+            const aggregatorIntegrationPermissionsMap =
+              response.body.permissions.aggregatorIntegrationPermissionsMap;
+
+            expect(aggregatorIntegrationPermissionsMap[id].canEdit).to.eq(
+              false,
+            );
+            expect(aggregatorIntegrationPermissionsMap[id].canDelete).to.eq(
+              false,
+            );
+          });
         },
       );
     });
@@ -309,6 +328,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkCreateAggregatorIntegrationPermissions({
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: true,
+        hasAccessToAllAggregators: true,
         institutionId: institutionIdWithOnlyTestExampleAAggregator,
       });
     });
@@ -317,6 +337,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkCreateAggregatorIntegrationPermissions({
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: false,
+        hasAccessToAllAggregators: true,
         institutionId: allAggregatorsInstitutionId,
       });
     });

@@ -1,39 +1,5 @@
-import { LoadingButton } from "@mui/lab";
-import { Drawer, Switch, Typography } from "@mui/material";
+import { Drawer, Typography } from "@mui/material";
 import React, { useEffect, useMemo } from "react";
-import {
-  Controller,
-  SubmitHandler,
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
-import DrawerCloseButton from "../../shared/components/Drawer/DrawerCloseButton";
-import DrawerContainer from "../../shared/components/Drawer/DrawerContainer";
-import DrawerContent from "../../shared/components/Drawer/DrawerContent";
-import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
-import DrawerTitle from "../../shared/components/Drawer/DrawerTitle";
-import TextField from "../../shared/components/Forms/TextField";
-import FormSubmissionError from "../../shared/components/FormSubmissionError";
-import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
-import { displaySnackbar } from "../../shared/reducers/snackbar";
-import { useAppDispatch } from "../../shared/utils/redux";
-import { validateUrlRule } from "../../shared/utils/validation";
-import { InstitutionWithPermissions } from "../api";
-import {
-  INSTITUTION_KEYWORDS_TOOLTIP,
-  INSTITUTION_ROUTING_NUMBERS_TOOLTIP,
-  INSTITUTION_TEST_INSTITUTION_TOOLTIP,
-} from "../constants";
-import RoutingNumberInput from "../RoutingNumberInput";
-import AddInputButton from "./AddInputButton";
-import {
-  CreateInstitution,
-  EditInstitutionParams,
-  Institution,
-  useCreateInstitutionMutation,
-  useEditInstitutionMutation,
-} from "./api";
-import styles from "./changeInstitution.module.css";
 import {
   INSTITUTION_CHANGE_ERROR_TEXT,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
@@ -48,8 +14,43 @@ import {
   INSTITUTION_FORM_UCP_ID_LABEL_TEXT,
   INSTITUTION_FORM_URL_LABEL_TEXT,
 } from "./constants";
+import {
+  INSTITUTION_KEYWORDS_TOOLTIP,
+  INSTITUTION_ROUTING_NUMBERS_TOOLTIP,
+  INSTITUTION_TEST_INSTITUTION_TOOLTIP,
+} from "../constants";
+import DrawerContainer from "../../shared/components/Drawer/DrawerContainer";
+import DrawerContent from "../../shared/components/Drawer/DrawerContent";
+import DrawerCloseButton from "../../shared/components/Drawer/DrawerCloseButton";
+import DrawerTitle from "../../shared/components/Drawer/DrawerTitle";
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
+import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
+import styles from "./changeInstitution.module.css";
+import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
+import RoutingNumberInput from "../RoutingNumberInput";
+import { validateUrlRule } from "../../shared/utils/validation";
 import RemoveInput from "./RemoveInput";
-import SectionHeader from "./SectionHeader";
+import AddInputButton from "./AddInputButton";
+import TextField from "../../shared/components/Forms/TextField";
+import {
+  CreateInstitution,
+  EditInstitutionParams,
+  Institution,
+  useCreateInstitutionMutation,
+  useEditInstitutionMutation,
+} from "./api";
+import { LoadingButton } from "@mui/lab";
+import { useAppDispatch } from "../../shared/utils/redux";
+import { displaySnackbar } from "../../shared/reducers/snackbar";
+import FormSubmissionError from "../../shared/components/FormSubmissionError";
+import { Institution as InstitutionDetail } from "../api";
+import SectionHeader from "../../shared/components/Forms/SectionHeader";
+import SectionHeaderSwitch from "../../shared/components/Forms/SectionHeaderSwitch";
 
 interface Inputs {
   name: string;
@@ -61,7 +62,6 @@ interface Inputs {
 }
 
 const formId = "changeInstitution";
-const testInstitutionSwitchId = "testInstitutionSwitch";
 
 const ChangeInstitutionDrawer = ({
   drawerTitle,
@@ -73,7 +73,7 @@ const ChangeInstitutionDrawer = ({
   useMutationFunction,
 }: {
   drawerTitle: string;
-  institution?: InstitutionWithPermissions;
+  institution?: InstitutionDetail;
   isOpen: boolean;
   onSuccess?: (arg: Institution) => void;
   saveSuccessMessage: string;
@@ -366,27 +366,12 @@ const ChangeInstitutionDrawer = ({
                   {INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT}
                 </AddInputButton>
               </div>
-              <div className={styles.testInstitutionContainer}>
-                <SectionHeader
-                  sectionTitle={INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT}
-                  tooltipTitle={INSTITUTION_TEST_INSTITUTION_TOOLTIP}
-                  typographyProps={{
-                    component: "label",
-                    htmlFor: testInstitutionSwitchId,
-                  }}
-                />
-                <Controller
-                  name="isTestInstitution"
-                  control={control}
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  render={({ field: { ref, ...fieldProps } }) => (
-                    <Switch
-                      inputProps={{ id: testInstitutionSwitchId }}
-                      {...fieldProps}
-                    />
-                  )}
-                />
-              </div>
+              <SectionHeaderSwitch
+                control={control}
+                label={INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT}
+                name="isTestInstitution"
+                tooltipTitle={INSTITUTION_TEST_INSTITUTION_TOOLTIP}
+              />
             </DrawerContent>
           </DrawerContainer>
         </form>

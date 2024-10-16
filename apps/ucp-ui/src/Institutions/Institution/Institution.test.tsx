@@ -14,7 +14,6 @@ import {
 } from "../testData/institutions";
 import {
   INSTITUTION_ACTIVE_TOOLTIP_TEST_ID,
-  INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
@@ -26,7 +25,6 @@ import {
   INSTITUTION_LOGO_TOOLTIP_TEST_ID,
   INSTITUTION_LOGO_TOOLTIP_TEXT,
   INSTITUTION_OAUTH_TOOLTIP_TEST_ID,
-  INSTITUTION_OAUTH_TOOLTIP_TEXT,
   INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID,
   INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT,
   INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID,
@@ -43,6 +41,10 @@ import { INSTITUTION_SERVICE_INSTITUTIONS_URL } from "../api";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 import { INSTITUTION_EDIT_DETAILS_BUTTON_TEXT } from "../ChangeInstitution/constants";
+import {
+  INSTITUTION_ACTIVE_TOOLTIP_TEXT,
+  INSTITUTION_OAUTH_TOOLTIP_TEXT,
+} from "../../shared/constants/institution";
 
 describe("<Institution />", () => {
   it("shows a loading state, renders all the fields, renders an edit button, and sorts the aggregator integrations by display name", async () => {
@@ -58,8 +60,10 @@ describe("<Institution />", () => {
         testInstitutionActiveAndInactive.name,
         testInstitutionActiveAndInactive.keywords.join(", "),
         testInstitutionActiveAndInactive.routing_numbers.join(", "),
-        testInstitutionActiveAndInactive.aggregatorIntegrations[0].id,
-        testInstitutionActiveAndInactive.aggregatorIntegrations[1].id,
+        testInstitutionActiveAndInactive.aggregatorIntegrations[0]
+          .aggregator_institution_id,
+        testInstitutionActiveAndInactive.aggregatorIntegrations[1]
+          .aggregator_institution_id,
         "Active",
         "Inactive",
         "Yes",

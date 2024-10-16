@@ -1,7 +1,6 @@
-import { InstitutionWithPermissions } from "../api";
+import { Institution, InstitutionDetailPermissions } from "../api";
 
 export const testInstitution = {
-  canEditInstitution: true,
   id: "cb5b312f-bd10-44d8-a982-ddd8f25b5fb2",
   name: "Wells Fargo CEO",
   keywords: ["abc", "def"],
@@ -16,6 +15,7 @@ export const testInstitution = {
         name: "sophtron",
       },
       id: "60d097a9-65c4-449a-b4ce-cfa4aab224f3",
+      aggregator_institution_id: "testAggregatorInstitutionId1",
       isActive: true,
       supports_oauth: false,
       supports_identification: true,
@@ -37,7 +37,18 @@ export const testInstitution = {
       supports_history: true,
     },
   ],
-} as unknown as InstitutionWithPermissions;
+} as unknown as Institution;
+
+export const testInstitutionPermissions = {
+  aggregatorIntegrationPermissionsMap: {},
+  aggregatorsThatCanBeAdded: [
+    {
+      id: 50,
+      displayName: "TestExampleA",
+    },
+  ],
+  canEditInstitution: true,
+} as InstitutionDetailPermissions;
 
 export const testInstitutionActiveAndInactive = {
   ...testInstitution,
@@ -53,6 +64,7 @@ export const testInstitutionActiveAndInactive = {
     },
     {
       ...testInstitution.aggregatorIntegrations[1],
+      aggregator_institution_id: "testAggregatorInstitutionId1",
       isActive: false,
       supports_oauth: false,
     },
@@ -61,6 +73,7 @@ export const testInstitutionActiveAndInactive = {
 
 export const institutionResponse = {
   institution: testInstitutionActiveAndInactive,
+  permissions: testInstitutionPermissions,
 };
 
 export const institutions = [testInstitution];

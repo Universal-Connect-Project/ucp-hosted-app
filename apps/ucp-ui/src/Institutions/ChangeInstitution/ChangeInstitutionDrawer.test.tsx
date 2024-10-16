@@ -7,7 +7,6 @@ import {
   waitFor,
 } from "../../shared/test/testUtils";
 import { INVALID_URL_TEXT } from "../../shared/utils/validation";
-import { testInstitution } from "../testData/institutions";
 import AddInstitution from "./AddInstitution";
 import {
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
@@ -25,6 +24,10 @@ import {
   REMOVE_INPUT_TEST_ID,
 } from "./constants";
 import EditInstitution from "./EditInstitution";
+import {
+  testInstitution,
+  testInstitutionPermissions,
+} from "../testData/institutions";
 
 describe("<ChangeInstitution />", () => {
   it("resets the form when the drawer is closed and reopened", async () => {
@@ -180,7 +183,12 @@ describe("<ChangeInstitution />", () => {
   });
 
   it("shows a UCP id field if there is an institution", async () => {
-    render(<EditInstitution institution={testInstitution} />);
+    render(
+      <EditInstitution
+        institution={testInstitution}
+        permissions={testInstitutionPermissions}
+      />,
+    );
 
     await userEvent.click(
       await screen.findByRole("button", {

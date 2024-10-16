@@ -148,13 +148,17 @@ export const validateUserCanDeleteAggregatorIntegration =
       UiUserPermissions.DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
   });
 
-export const validateUserCanCreateAggregatorIntegration = async ({
+export const getUsersAggregatorIntegrationCreationPermissions = async ({
   institutionId,
   req,
 }: {
   institutionId: UUID;
   req: Request;
 }) => {
+  const noAccessResponse = {
+    aggregatorsThatCanBeAdded: [],
+  };
+
   const token = req.headers.authorization?.split(" ")?.[1];
   const decodedToken = jwt.decode(token as string) as DecodedToken;
   const permissions = decodedToken.permissions;
@@ -173,16 +177,25 @@ export const validateUserCanCreateAggregatorIntegration = async ({
     });
 
   if (permissions.includes(UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION)) {
-    const areThereAnyAggregatorsWithoutIntegrations =
-      aggregators.length > aggregatorIntegrationsForInstitution.length;
+    const aggregatorIdsForInstitution =
+      aggregatorIntegrationsForInstitution.map(
+        ({ aggregatorId }) => aggregatorId,
+      );
 
-    return areThereAnyAggregatorsWithoutIntegrations;
+    const aggregatorsWithoutIntegrations = aggregators.filter(
+      ({ id }) => !aggregatorIdsForInstitution.includes(id),
+    );
+
+    return {
+      aggregatorsThatCanBeAdded: aggregatorsWithoutIntegrations,
+      hasAccessToAllAggregators: true,
+    };
   } else if (
     !permissions.includes(
       UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR,
     )
   ) {
-    return false;
+    return noAccessResponse;
   }
 
   const aggregatorId = aggregators?.find(
@@ -190,7 +203,7 @@ export const validateUserCanCreateAggregatorIntegration = async ({
   )?.id;
 
   if (!aggregatorId) {
-    return false;
+    return noAccessResponse;
   }
 
   const isTheirAggregatorMissingAnIntegration =
@@ -199,5 +212,13 @@ export const validateUserCanCreateAggregatorIntegration = async ({
         aggregatorIntegration.aggregatorId === aggregatorId,
     );
 
-  return isTheirAggregatorMissingAnIntegration;
+  if (isTheirAggregatorMissingAnIntegration) {
+    return {
+      aggregatorsThatCanBeAdded: aggregators.filter(
+        ({ id }) => id === aggregatorId,
+      ),
+    };
+  }
+
+  return noAccessResponse;
 };

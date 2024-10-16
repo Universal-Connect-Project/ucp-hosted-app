@@ -106,3 +106,14 @@
     opacity: 50%;
   }
 }
+
+.aggregatorIntegrationsContainer {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  :global(.MuiButton-root) {
+    margin-left: 25px;
+  }
+}

@@ -6,20 +6,22 @@ import {
   INSTITUTION_EDIT_SUCCESS_TEXT,
 } from "./constants";
 import ChangeInstitutionDrawer from "./ChangeInstitutionDrawer";
-import { InstitutionWithPermissions } from "../api";
+import { InstitutionDetailPermissions, Institution } from "../api";
 import { Edit } from "@mui/icons-material";
 import { useEditInstitutionMutation } from "./api";
 
 const EditInstitution = ({
   institution,
+  permissions,
 }: {
-  institution?: InstitutionWithPermissions;
+  institution?: Institution;
+  permissions?: InstitutionDetailPermissions;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      {institution?.canEditInstitution && (
+      {permissions?.canEditInstitution && (
         <Button
           onClick={() => setIsOpen(true)}
           startIcon={<Edit />}

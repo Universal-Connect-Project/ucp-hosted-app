@@ -1,0 +1,38 @@
+.institutionLogo {
+  height: 40px;
+  width: 40px;
+}
+
+.nameLogoContainer {
+  align-items: center;
+  display: flex;
+  gap: 24px;
+}
+
+.nameContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form {
+  height: 100%;
+}
+
+.divider {
+  width: 100%;
+}
+
+.jobTypesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textSecondary {
+  color: var(--mui-palette-text-secondary);
+}
+
+.textError {
+  color: var(--mui-palette-error-main);
+}

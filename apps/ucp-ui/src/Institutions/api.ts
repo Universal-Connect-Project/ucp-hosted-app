@@ -23,7 +23,7 @@ export interface AggregatorIntegration {
   supports_verification: boolean;
 }
 
-interface Institution {
+export interface Institution {
   aggregatorIntegrations: AggregatorIntegration[];
   id: string;
   is_test_bank: boolean;
@@ -34,10 +34,6 @@ interface Institution {
   url: string;
 }
 
-export interface InstitutionWithPermissions extends Institution {
-  canEditInstitution: boolean;
-}
-
 interface InstitutionsResponse {
   currentPage: number;
   institutions: Institution[];
@@ -46,8 +42,24 @@ interface InstitutionsResponse {
   totalRecords: number;
 }
 
+interface AggregatorIntegrationPermissions {
+  canDelete: boolean;
+  canEdit: boolean;
+}
+
+export interface InstitutionDetailPermissions {
+  aggregatorIntegrationPermissionsMap: Record<
+    string,
+    AggregatorIntegrationPermissions
+  >;
+  aggregatorsThatCanBeAdded: Aggregator[];
+  canEditInstitution: boolean;
+  hasAccessToAllAggregators: boolean;
+}
+
 interface InstitutionResponse {
-  institution: InstitutionWithPermissions;
+  institution: Institution;
+  permissions: InstitutionDetailPermissions;
 }
 
 interface PaginationOptions {

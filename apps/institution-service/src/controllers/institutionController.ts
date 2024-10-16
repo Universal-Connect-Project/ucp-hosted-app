@@ -7,7 +7,7 @@ import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
-  validateUserCanCreateAggregatorIntegration,
+  getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
@@ -108,7 +108,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
   }
 };
 
-interface AggregatorIntegration {
+export interface AggregatorIntegration {
   aggregator_institution_id: string;
   id: number;
   supports_oauth: boolean;
@@ -138,20 +138,24 @@ export interface InstitutionDetail {
   aggregatorIntegrations: AggregatorIntegration[];
 }
 
-export interface AggregatorIntegrationWithPermissions
-  extends AggregatorIntegration {
-  canEditAggregatorIntegration: boolean;
-  canDeleteAggregatorIntegration: boolean;
+interface AggregatorIntegrationPermissions {
+  canDelete: boolean;
+  canEdit: boolean;
 }
 
-export interface InstitutionDetailWithPermissions extends InstitutionDetail {
-  canCreateAggregatorIntegration: boolean;
+export interface InstitutionPermissions {
+  aggregatorIntegrationPermissionsMap: Record<
+    string,
+    AggregatorIntegrationPermissions
+  >;
+  aggregatorsThatCanBeAdded: Aggregator[];
   canEditInstitution: boolean;
-  aggregatorIntegrations: AggregatorIntegrationWithPermissions[];
+  hasAccessToAllAggregators?: boolean;
 }
 
 export interface InstitutionResponse {
-  institution: InstitutionDetailWithPermissions;
+  institution: InstitutionDetail;
+  permissions: InstitutionPermissions;
 }
 
 export interface PaginatedInstitutionsResponse {
@@ -268,36 +272,49 @@ export const getInstitution = async (req: Request, res: Response) => {
     const institutionJson =
       institution.toJSON() as unknown as InstitutionDetail;
 
-    const institutionWithPermissions = {
-      ...institutionJson,
-      canEditInstitution:
-        (await validateUserCanEditInstitution({
-          institutionId,
-          req,
-        })) === true,
-      canCreateAggregatorIntegration:
-        await validateUserCanCreateAggregatorIntegration({
+    const aggregatorIntegrationsPermissions = await Promise.all(
+      institutionJson.aggregatorIntegrations?.map(async (integration) => ({
+        integrationId: integration.id,
+        canEdit:
+          (await validateUserCanEditAggregatorIntegration({
+            aggregatorIntegrationId: `${integration.id}`,
+            req,
+          })) === true,
+        canDelete:
+          (await validateUserCanDeleteAggregatorIntegration({
+            aggregatorIntegrationId: `${integration.id}`,
+            req,
+          })) === true,
+      })),
+    );
+
+    const aggregatorIntegrationPermissionsMap =
+      aggregatorIntegrationsPermissions.reduce(
+        (acc, { canDelete, canEdit, integrationId }) => ({
+          ...acc,
+          [integrationId]: {
+            canDelete,
+            canEdit,
+          },
+        }),
+        {},
+      );
+
+    return res.status(200).json({
+      institution: institutionJson,
+      permissions: {
+        aggregatorIntegrationPermissionsMap,
+        canEditInstitution:
+          (await validateUserCanEditInstitution({
+            institutionId,
+            req,
+          })) === true,
+        ...(await getUsersAggregatorIntegrationCreationPermissions({
           institutionId: institution.id as UUID,
           req,
-        }),
-      aggregatorIntegrations: await Promise.all(
-        institutionJson.aggregatorIntegrations?.map(async (integration) => ({
-          ...integration,
-          canEditAggregatorIntegration:
-            (await validateUserCanEditAggregatorIntegration({
-              aggregatorIntegrationId: `${integration.id}`,
-              req,
-            })) === true,
-          canDeleteAggregatorIntegration:
-            (await validateUserCanDeleteAggregatorIntegration({
-              aggregatorIntegrationId: `${integration.id}`,
-              req,
-            })) === true,
         })),
-      ),
-    };
-
-    return res.status(200).json({ institution: institutionWithPermissions });
+      },
+    });
   } catch (error) {
     return res
       .status(500)

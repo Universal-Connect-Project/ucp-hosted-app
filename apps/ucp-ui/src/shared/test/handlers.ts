@@ -17,10 +17,14 @@ import {
   institutionResponse,
   institutionsPage1,
 } from "../../Institutions/testData/institutions";
+import { INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL } from "../../Institutions/ChangeAggregatorIntegration/api";
 
 export const handlers = [
   http.post(INSTITUTION_SERVICE_CREATE_INSTITUTION_URL, () =>
     HttpResponse.json(createInstitutionResponse),
+  ),
+  http.post(INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL, () =>
+    HttpResponse.json({}),
   ),
   http.get(INSTITUTION_SERVICE_PERMISSIONS_URL, () =>
     HttpResponse.json(institutionPermissionsResponse),

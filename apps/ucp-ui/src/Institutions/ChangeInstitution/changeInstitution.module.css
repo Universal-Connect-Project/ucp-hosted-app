@@ -14,12 +14,6 @@
   width: 100%;
 }
 
-.testInstitutionContainer {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
 .form {
   height: 100%;
 }

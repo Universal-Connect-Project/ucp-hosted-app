@@ -13,6 +13,13 @@ import {
   INSTITUTION_FORM_URL_LABEL_TEXT,
   INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
 } from "../../src/Institutions/ChangeInstitution/constants";
+import {
+  INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
+  INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+  INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT,
+  INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
+  INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
+} from "../../src/Institutions/ChangeAggregatorIntegration/constants";
 
 describe("institutions", () => {
   it("renders institutions, changes rows per page, and paginates", () => {
@@ -53,7 +60,7 @@ describe("institutions", () => {
       });
   });
 
-  it("creates an institution, navigates to its page, and edits the institution", () => {
+  it("creates an institution, navigates to its page, edits the institution, and adds an aggregator integration", () => {
     cy.loginSuperAdmin();
 
     cy.findByRole("button", {
@@ -107,5 +114,33 @@ describe("institutions", () => {
     }).click();
 
     cy.findByText(INSTITUTION_EDIT_SUCCESS_TEXT).should("exist");
+
+    cy.findByRole("button", {
+      name: INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
+    }).click();
+
+    cy.findAllByLabelText(
+      new RegExp(
+        INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
+      ),
+    )
+      .eq(0)
+      .click();
+
+    cy.findByRole("option", { name: "Test Example A" }).click();
+
+    cy.findByRole("checkbox", { name: "Aggregation" }).click();
+
+    cy.findByLabelText(
+      new RegExp(
+        INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
+      ),
+    ).type("test");
+
+    cy.findByRole("button", {
+      name: INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+    }).click();
+
+    cy.findByText(INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT).should("exist");
   });
 });
