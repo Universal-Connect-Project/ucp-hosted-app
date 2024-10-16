@@ -7,7 +7,7 @@ import {
 } from "../../shared/test/testUtils";
 import AddAggregatorIntegration from "./AddAggregatorIntegration";
 import {
-  INSTITUTION_ADD_AGGREGATOR_ERROR_TEXT,
+  INSTITUTION_CHANGE_AGGREGATOR_ERROR_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
   INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT,
@@ -183,7 +183,7 @@ describe("<AddAggregatorIntegration />", () => {
     await submitForm();
 
     expect(
-      await screen.findByText(INSTITUTION_ADD_AGGREGATOR_ERROR_TEXT),
+      await screen.findByText(INSTITUTION_CHANGE_AGGREGATOR_ERROR_TEXT),
     ).toBeInTheDocument();
 
     server.use(
