@@ -502,7 +502,7 @@
                           "id": "94b05c68-bab7-4694-9695-5934d8adf722",
                           "name": "Preferred Trust ",
                           "keywords": [],
-                          "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
+                          "logo": null,
                           "url": "https://preferredtrustcompany.com/",
                           "is_test_bank": false,
                           "routing_numbers": [],
@@ -588,7 +588,7 @@
                           "id": "e8d0a555-fc75-4e5a-9453-cad84bc0c8a4",
                           "name": "Andrews Federal Credit Union DMI ",
                           "keywords": [],
-                          "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png",
+                          "logo": null,
                           "url": "https://andrewsfcu.mtgsvc.com/Account/UserLogin?conn=Q67%7B52609b13-69a0-4acd-8e5a-c3bc366bb7bd%7D",
                           "is_test_bank": false,
                           "routing_numbers": [],
@@ -701,7 +701,8 @@
                       "routing_numbers": ["123456789"],
                       "createdAt": "2024-09-10T16:07:46.038Z",
                       "updatedAt": "2024-09-11T17:22:35.653Z"
-                    }
+                    },
+                    "message": "Institution successfully created"
                   }
                 }
               }

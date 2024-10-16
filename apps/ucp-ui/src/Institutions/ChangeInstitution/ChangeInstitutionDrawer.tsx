@@ -271,7 +271,6 @@ const ChangeInstitutionDrawer = ({
                   name="logoUrl"
                   control={control}
                   rules={{
-                    required: REQUIRED_ERROR_TEXT,
                     validate: validateUrlRule,
                   }}
                   render={({
@@ -283,7 +282,6 @@ const ChangeInstitutionDrawer = ({
                       error={!!error}
                       fullWidth
                       helperText={error?.message}
-                      InputLabelProps={{ required: true }}
                       label={INSTITUTION_FORM_LOGO_URL_LABEL_TEXT}
                       variant="filled"
                       {...fieldProps}

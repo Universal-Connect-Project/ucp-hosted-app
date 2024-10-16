@@ -1,11 +1,13 @@
 import React from "react";
-import AddInstitution from "./AddInstitution";
+import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
 import {
   render,
   screen,
   userEvent,
   waitFor,
 } from "../../shared/test/testUtils";
+import { INVALID_URL_TEXT } from "../../shared/utils/validation";
+import AddInstitution from "./AddInstitution";
 import {
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
   INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
@@ -21,8 +23,6 @@ import {
   INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
   REMOVE_INPUT_TEST_ID,
 } from "./constants";
-import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
-import { INVALID_URL_TEXT } from "../../shared/utils/validation";
 import EditInstitution from "./EditInstitution";
 import {
   testInstitution,
@@ -124,7 +124,7 @@ describe("<ChangeInstitution />", () => {
       screen.getByRole("button", { name: INSTITUTION_FORM_SUBMIT_BUTTON_TEXT }),
     );
 
-    expect(await screen.findAllByText(REQUIRED_ERROR_TEXT)).toHaveLength(3);
+    expect(await screen.findAllByText(REQUIRED_ERROR_TEXT)).toHaveLength(2);
   });
 
   it("shows url validation errors", async () => {

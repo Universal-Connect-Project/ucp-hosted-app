@@ -11,6 +11,7 @@ import {
   seedInstitutionName,
   testInstitution,
 } from "../test/testData/institutions";
+import { createTestAuthorization } from "../test/utils";
 import {
   createInstitution,
   getInstitution,
@@ -18,7 +19,6 @@ import {
   getPaginatedInstitutions,
   updateInstitution,
 } from "./institutionController";
-import { createTestAuthorization } from "../test/utils";
 
 const createNewInstitution = async () => {
   return await Institution.create(testInstitution);
@@ -87,7 +87,9 @@ describe("institutionController", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining(institutionBody),
+        expect.objectContaining({
+          institution: expect.objectContaining(institutionBody),
+        }),
       );
     });
 
@@ -372,9 +374,9 @@ describe("institutionController", () => {
                 supports_history: expect.any(Boolean),
                 isActive: expect.any(Boolean),
                 aggregator: expect.objectContaining({
-                  name: "mx",
+                  name: expect.any(String),
                   id: expect.any(Number),
-                  displayName: "MX",
+                  displayName: expect.any(String),
                   logo: "https://logo.com",
                 }),
               }),

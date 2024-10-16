@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import { Institution } from "models/institution";
 import { PORT } from "shared/const";
 import {
   testExampleAAggregatorId,
@@ -247,10 +248,10 @@ describe("POST /aggregatorIntegrations (Create)", () => {
       headers: {
         Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
       },
-    }).then((response: Cypress.Response<InstitutionAttrs>) => {
+    }).then((response: Cypress.Response<{ institution: InstitutionAttrs }>) => {
       expect(response.status).to.eq(201);
 
-      testCaseInstitution = response.body;
+      testCaseInstitution = response.body.institution;
     });
   });
 
@@ -432,8 +433,8 @@ describe("DELETE /aggregatorIntegrations/:id", () => {
 
   beforeEach(() => {
     createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV)
-      .then((response: Cypress.Response<{ id: UUID }>) => {
-        testInstitutionId = response.body.id;
+      .then((response: Cypress.Response<{ institution: Institution }>) => {
+        testInstitutionId = response.body.institution.id;
       })
       .then(() => {
         cy.request({

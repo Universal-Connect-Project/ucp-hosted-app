@@ -15,7 +15,9 @@ export interface EditInstitutionParams extends CreateInstitution {
 }
 
 export interface Institution {
-  id: string;
+  institution: {
+    id: string;
+  };
 }
 
 const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
@@ -37,7 +39,7 @@ const transformBody = ({
   is_test_bank: isTestInstitution,
   keywords: filterJunk(keywords),
   name,
-  logo: logoUrl,
+  logo: logoUrl || null,
   url,
   routing_numbers: filterJunk(routingNumbers),
 });

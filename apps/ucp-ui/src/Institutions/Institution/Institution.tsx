@@ -1,6 +1,4 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import PageContent from "../../shared/components/PageContent";
+import { InfoOutlined } from "@mui/icons-material";
 import {
   Breadcrumbs,
   Chip,
@@ -14,18 +12,20 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
-import styles from "./institution.module.css";
-import InstitutionField from "./InstitutionField";
-import { InfoOutlined } from "@mui/icons-material";
-import { AggregatorIntegration, useGetInstitutionQuery } from "../api";
+import React from "react";
+import { Link as RouterLink, useParams } from "react-router-dom";
+import FetchError from "../../shared/components/FetchError";
+import PageContent from "../../shared/components/PageContent";
 import {
   SkeletonIfLoading,
   TextSkeletonIfLoading,
 } from "../../shared/components/Skeleton";
-import FetchError from "../../shared/components/FetchError";
+import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
+import { AggregatorIntegration, useGetInstitutionQuery } from "../api";
+import EditInstitution from "../ChangeInstitution/EditInstitution";
+import { aggregatorIntegrationsSortByName } from "../utils";
 import {
+  DEFAULT_LOGO_URL,
   INSTITUTION_ACTIVE_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
@@ -47,9 +47,9 @@ import {
   INSTITUTION_URL_TOOLTIP_TEST_ID,
   INSTITUTION_URL_TOOLTIP_TEXT,
 } from "./constants";
+import styles from "./institution.module.css";
+import InstitutionField from "./InstitutionField";
 import InstitutionSection from "./InstitutionSection";
-import { aggregatorIntegrationsSortByName } from "../utils";
-import EditInstitution from "../ChangeInstitution/EditInstitution";
 import AddAggregatorIntegration from "../ChangeAggregatorIntegration/AddAggregatorIntegration";
 import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
 import {
@@ -146,7 +146,7 @@ const Institution = () => {
                   className={styles.logoSkeleton}
                   isLoading={isFetching}
                 >
-                  <img className={styles.logo} src={logo} />
+                  <img className={styles.logo} src={logo ?? DEFAULT_LOGO_URL} />
                 </SkeletonIfLoading>
                 <Typography variant="h4">
                   {isFetching ? (
