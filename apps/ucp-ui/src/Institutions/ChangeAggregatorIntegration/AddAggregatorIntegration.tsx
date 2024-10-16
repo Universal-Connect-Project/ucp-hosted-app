@@ -99,7 +99,7 @@ const AddAggregatorIntegration = ({
       displayName: supportsJobTypeMap.fullHistory.displayName,
     },
     {
-      description: supportsJobTypeMap.verification.displayName,
+      description: supportsJobTypeMap.verification.description,
       name: "supportsVerification",
       displayName: supportsJobTypeMap.verification.displayName,
     },

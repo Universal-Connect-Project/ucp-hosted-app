@@ -10,7 +10,7 @@ interface JobType {
 
 export const supportsJobTypeMap: Record<string, JobType> = {
   aggregation: {
-    description: "Accounts and recent transaction data ",
+    description: "Accounts and recent transaction data",
     displayName: "Aggregation",
     prop: "supports_aggregation",
   },
@@ -20,7 +20,7 @@ export const supportsJobTypeMap: Record<string, JobType> = {
     prop: "supports_history",
   },
   identification: {
-    description: "Customer data available ",
+    description: "Customer data available",
     displayName: "Identification",
     prop: "supports_identification",
   },
