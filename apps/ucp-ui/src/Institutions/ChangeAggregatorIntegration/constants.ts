@@ -20,7 +20,7 @@ export const INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT =
 export const INSTITUTION_CHANGE_AGGREGATOR_ERROR_TEXT =
   "We couldn’t save your changes. Please try again in a few moments.";
 
-export interface CreateAggregatorIntegrationInputs {
+export interface ChangeAggregatorIntegrationInputs {
   aggregatorId: number | string;
   aggregatorInstitutionId: string;
   isActive: boolean;

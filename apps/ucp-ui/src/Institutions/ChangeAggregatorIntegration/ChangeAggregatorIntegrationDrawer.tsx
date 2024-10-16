@@ -3,7 +3,7 @@ import { Institution, InstitutionDetailPermissions } from "../api";
 import { Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import {
   CheckboxName,
-  CreateAggregatorIntegrationInputs,
+  ChangeAggregatorIntegrationInputs,
   INSTITUTION_CHANGE_AGGREGATOR_ERROR_TEXT,
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_ACTIVE_LABEL_TEXT,
@@ -105,7 +105,7 @@ const ChangeAggregatorIntegrationDrawer = ({
   ];
 
   const { control, formState, handleSubmit, reset, trigger } =
-    useForm<CreateAggregatorIntegrationInputs>({
+    useForm<ChangeAggregatorIntegrationInputs>({
       defaultValues,
       mode: "onTouched",
     });
@@ -125,7 +125,7 @@ const ChangeAggregatorIntegrationDrawer = ({
   const dispatch = useAppDispatch();
 
   const changeAggregatorIntegration = (
-    body: CreateAggregatorIntegrationInputs,
+    body: ChangeAggregatorIntegrationInputs,
   ) => {
     mutateChangeAggregatorIntegration({
       ...body,
@@ -142,10 +142,10 @@ const ChangeAggregatorIntegrationDrawer = ({
 
   const validateAnyJobTypeSelected = (
     _value: boolean,
-    formState: CreateAggregatorIntegrationInputs,
+    formState: ChangeAggregatorIntegrationInputs,
   ): boolean => checkboxes.some(({ name }) => formState[name]);
 
-  const onSubmit: SubmitHandler<CreateAggregatorIntegrationInputs> =
+  const onSubmit: SubmitHandler<ChangeAggregatorIntegrationInputs> =
     changeAggregatorIntegration;
 
   const { logo, name } = institution || {};
