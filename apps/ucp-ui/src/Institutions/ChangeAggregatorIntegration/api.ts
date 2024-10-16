@@ -1,10 +1,8 @@
 import { api, TagTypes } from "../../baseApi";
 import { HttpMethods } from "../../shared/constants/http";
 
-export interface CreateAggregatorIntegrationParams {
-  aggregatorId: number | string;
+interface ChangeAggregatorIntegrationParams {
   aggregatorInstitutionId: string;
-  institutionId: string;
   isActive: boolean;
   supportsAggregation: boolean;
   supportsIdentification: boolean;
@@ -13,22 +11,29 @@ export interface CreateAggregatorIntegrationParams {
   supportsVerification: boolean;
 }
 
+export interface CreateAggregatorIntegrationParams
+  extends ChangeAggregatorIntegrationParams {
+  aggregatorId: number | string;
+  institutionId: string;
+}
+
+interface EditAggregatorIntegrationParams
+  extends ChangeAggregatorIntegrationParams {
+  aggregatorIntegrationId: number;
+}
+
 const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
 const transformBody = ({
-  aggregatorId,
   aggregatorInstitutionId,
-  institutionId,
   isActive,
   supportsAggregation,
   supportsIdentification,
   supportsFullHistory,
   supportsOauth,
   supportsVerification,
-}: CreateAggregatorIntegrationParams) => ({
-  aggregatorId,
+}: ChangeAggregatorIntegrationParams) => ({
   aggregator_institution_id: aggregatorInstitutionId,
-  institution_id: institutionId,
   isActive,
   supports_aggregation: supportsAggregation,
   supports_identification: supportsIdentification,
@@ -45,10 +50,26 @@ export const institutionsApi = api.injectEndpoints({
       void,
       CreateAggregatorIntegrationParams
     >({
-      query: (params) => ({
-        body: transformBody(params),
+      query: ({ aggregatorId, institutionId, ...rest }) => ({
+        body: {
+          ...transformBody(rest),
+          aggregatorId,
+          institution_id: institutionId,
+        },
         method: HttpMethods.POST,
         url: INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL,
+      }),
+      invalidatesTags: (result, error) =>
+        !error ? [TagTypes.INSTITUTIONS] : [],
+    }),
+    EditAggregatorIntegration: builder.mutation<
+      void,
+      EditAggregatorIntegrationParams
+    >({
+      query: ({ aggregatorIntegrationId, ...rest }) => ({
+        body: transformBody(rest),
+        method: HttpMethods.PUT,
+        url: `${INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL}/${aggregatorIntegrationId}`,
       }),
       invalidatesTags: (result, error) =>
         !error ? [TagTypes.INSTITUTIONS] : [],
@@ -57,4 +78,7 @@ export const institutionsApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useCreateAggregatorIntegrationMutation } = institutionsApi;
+export const {
+  useCreateAggregatorIntegrationMutation,
+  useEditAggregatorIntegrationMutation,
+} = institutionsApi;

@@ -1,5 +1,9 @@
 import React, { useEffect, useMemo } from "react";
-import { Institution, InstitutionDetailPermissions } from "../api";
+import {
+  AggregatorIntegration,
+  Institution,
+  InstitutionDetailPermissions,
+} from "../api";
 import { Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import {
   CheckboxName,
@@ -29,7 +33,10 @@ import {
   INSTITUTION_OAUTH_TOOLTIP_TEXT,
 } from "../../shared/constants/institution";
 import SupportsCheckbox from "./SupportsCheckbox";
-import { useCreateAggregatorIntegrationMutation } from "./api";
+import {
+  useCreateAggregatorIntegrationMutation,
+  useEditAggregatorIntegrationMutation,
+} from "./api";
 import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
@@ -44,6 +51,7 @@ interface Checkbox {
 }
 
 const ChangeAggregatorIntegrationDrawer = ({
+  aggregatorIntegration,
   institution,
   isOpen,
   useMutationFunction,
@@ -51,12 +59,15 @@ const ChangeAggregatorIntegrationDrawer = ({
   saveSuccessMessage,
   setIsOpen,
 }: {
+  aggregatorIntegration?: AggregatorIntegration;
   institution?: Institution;
   isOpen: boolean;
   permissions?: InstitutionDetailPermissions;
   saveSuccessMessage: string;
   setIsOpen: (arg: boolean) => void;
-  useMutationFunction: typeof useCreateAggregatorIntegrationMutation;
+  useMutationFunction:
+    | typeof useCreateAggregatorIntegrationMutation
+    | typeof useEditAggregatorIntegrationMutation;
 }) => {
   const handleCloseDrawer = () => {
     setIsOpen(false);
@@ -129,6 +140,7 @@ const ChangeAggregatorIntegrationDrawer = ({
   ) => {
     mutateChangeAggregatorIntegration({
       ...body,
+      aggregatorIntegrationId: aggregatorIntegration?.id as number,
       institutionId: institution?.id as string,
     })
       .unwrap()
