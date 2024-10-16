@@ -169,7 +169,7 @@
         "summary": "Institution Cache List"
       }
     },
-    "/institutions/:id": {
+    "/institutions/{id}": {
       "put": {
         "security": [
           {
@@ -727,7 +727,7 @@
         }
       }
     },
-    "/aggregatorIntegrations/:id": {
+    "/aggregatorIntegrations/{id}": {
       "put": {
         "security": [
           {
