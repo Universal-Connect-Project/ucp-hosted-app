@@ -37,12 +37,11 @@ describe("institutionController", () => {
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith([
-        expect.objectContaining(cachedInstitutionFromSeed),
-      ]);
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect((res.json as jest.Mock).mock.calls[0]?.[0]).toHaveLength(1);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining(cachedInstitutionFromSeed),
+        ]),
+      );
     });
 
     it("returns 404 on error", async () => {

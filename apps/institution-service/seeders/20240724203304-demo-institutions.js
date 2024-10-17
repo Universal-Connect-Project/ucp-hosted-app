@@ -11,8 +11,9 @@ module.exports = {
     const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
 
     const allAggregatorsInstitutionId = "d7b98242-3645-4de4-b770-f59a197942cb";
-    
-    const allAggregatorsSupportsNothingId = "d7b98242-3645-4de4-b770-f59a197942ce";
+
+    const allAggregatorsSupportsNothingId =
+      "d7b98242-3645-4de4-b770-f59a197942ce";
 
     await queryInterface.bulkInsert("institutions", [
       {
