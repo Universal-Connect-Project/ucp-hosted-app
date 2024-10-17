@@ -316,6 +316,103 @@ describe("institutionController", () => {
       );
     });
 
+    it("returns correct items from search term", async () => {
+      const req = {
+        query: {
+          search: "wells",
+        },
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          totalRecords: 1,
+          totalPages: expect.any(Number),
+          institutions: expect.arrayContaining([
+            expect.objectContaining({
+              id: seedInstitutionId,
+              name: "Wells Fargo",
+            }),
+          ]),
+        }),
+      );
+    });
+
+    [
+      "isActive",
+      "supports_oauth",
+      "supports_identification",
+      "supports_verification",
+      "supports_aggregation",
+      "supports_history",
+    ].forEach((keyword) => {
+      const req = {
+        query: {
+          [keyword]: "true",
+        },
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      it(`returns expected response with filter: ${keyword} = true`, async () => {
+        await getPaginatedInstitutions(req, res);
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(
+          expect.objectContaining({
+            institutions: expect.arrayContaining([
+              expect.objectContaining({
+                aggregatorIntegrations: [
+                  expect.objectContaining({
+                    [keyword]: true,
+                  }),
+                ],
+              }),
+            ]),
+          }),
+        );
+      });
+    });
+
+    it("filters properly by aggregator", async () => {
+      const req = {
+        query: {
+          aggregatorName: ["mx"],
+        },
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          institutions: expect.arrayContaining([
+            expect.objectContaining({
+              aggregatorIntegrations: expect.arrayContaining([
+                expect.objectContaining({
+                  aggregator: expect.objectContaining({ name: "mx" }),
+                }),
+              ]),
+            }),
+          ]),
+        }),
+      );
+    });
+
     it("responds with 500 when there's an error", async () => {
       const req = {} as unknown as Request;
       const res = {

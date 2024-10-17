@@ -12,7 +12,7 @@ export const defineAssociations = () => {
   Aggregator.hasMany(AggregatorIntegration, {
     sourceKey: "id",
     foreignKey: "aggregatorId",
-    as: "aggregatorIntegrations",
+    as: "integrations",
   });
 
   Aggregator.belongsToMany(Institution, {

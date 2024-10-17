@@ -1,7 +1,8 @@
 import { UUID } from "crypto";
 import { Request, Response } from "express";
-import { ValidationError } from "sequelize";
+import { Op, ValidationError, literal } from "sequelize";
 import { validate } from "uuid";
+import db from "../database";
 import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
@@ -108,7 +109,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
   }
 };
 
-export interface AggregatorIntegration {
+export interface AggregatorIntegrationResponse {
   aggregator_institution_id: string;
   id: number;
   supports_oauth: boolean;
@@ -135,7 +136,7 @@ export interface InstitutionDetail {
   routing_numbers: string[];
   createdAt: string;
   updatedAt: string;
-  aggregatorIntegrations: AggregatorIntegration[];
+  aggregatorIntegrations: AggregatorIntegrationResponse[];
 }
 
 interface AggregatorIntegrationPermissions {
@@ -172,6 +173,15 @@ interface PaginationOptions {
   offset: number;
 }
 
+type WhereConditions = {
+  [key: string]: unknown;
+  [Op.or]?: Array<{
+    name?: { [Op.iLike]: string };
+    keywords?: { [Op.contains]: string[] };
+  }>;
+  [Op.and]?: unknown;
+};
+
 const getPaginationOptions = (req: Request): PaginationOptions => {
   const page = parseInt(req.query.page as string, 10) || 1;
   const limit =
@@ -180,11 +190,80 @@ const getPaginationOptions = (req: Request): PaginationOptions => {
   return { page, limit, offset };
 };
 
+const whereAggregatorIntegrationConditions = (req: Request) => {
+  const {
+    supportsIdentification,
+    supportsAggregation,
+    supportsHistory,
+    supportsVerification,
+    supportsOauth,
+    isActive,
+  } = req.query;
+  const whereConditions: WhereConditions = {};
+  if (supportsIdentification === "true") {
+    whereConditions["supports_identification"] = true;
+  }
+  if (supportsAggregation === "true") {
+    whereConditions["supports_aggregation"] = true;
+  }
+  if (supportsHistory === "true") {
+    whereConditions["supports_history"] = true;
+  }
+  if (supportsVerification === "true") {
+    whereConditions["supports_verification"] = true;
+  }
+  if (supportsOauth === "true") {
+    whereConditions["supports_oauth"] = true;
+  }
+  if (isActive) {
+    whereConditions["isActive"] = isActive === "true" ? true : false;
+  }
+
+  return whereConditions;
+};
+
+const whereInstitutionConditions = (req: Request): WhereConditions => {
+  const { search, aggregatorName } = req.query;
+
+  const whereConditions: WhereConditions = {};
+
+  if (search) {
+    whereConditions[Op.or] = [
+      { name: { [Op.iLike]: `%${search as string}%` } },
+      { keywords: { [Op.contains]: [search as string] } },
+    ];
+  }
+
+  if (aggregatorName) {
+    const aggregatorNames = Array.isArray(aggregatorName)
+      ? aggregatorName
+      : [aggregatorName];
+    const escapedAggregatorNames = aggregatorNames.map((aggregator) => {
+      return db.escape(aggregator as string);
+    });
+    const aggQueryString = `(${escapedAggregatorNames.join(", ")})`;
+    const aggCount = escapedAggregatorNames.length;
+
+    whereConditions[Op.and] = literal(`
+        EXISTS (
+          SELECT COUNT(*)
+          FROM "aggregatorIntegrations" AS "aggregatorIntegration"
+          INNER JOIN "aggregators" AS "aggregator" ON "aggregatorIntegration"."aggregatorId" = "aggregator"."id"
+          WHERE "aggregatorIntegration"."institution_id" = "Institution"."id"
+          AND "aggregator"."name" IN ${aggQueryString}
+          HAVING COUNT(*) = ${aggCount}
+        )
+      `);
+  }
+  return whereConditions;
+};
+
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   try {
     const { limit, offset, page } = getPaginationOptions(req);
 
     const { count, rows: institutions } = await Institution.findAndCountAll({
+      where: whereInstitutionConditions(req),
       include: [
         {
           association: Institution.associations.aggregatorIntegrations,
@@ -198,6 +277,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
             "supports_history",
             "isActive",
           ],
+          where: whereAggregatorIntegrationConditions(req),
           include: [
             {
               model: Aggregator,
