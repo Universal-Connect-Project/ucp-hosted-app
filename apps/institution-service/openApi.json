@@ -482,6 +482,104 @@
             "required": false,
             "example": 3,
             "description": "The number of institutions to be returned in the paginated response."
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "example": "American"
+            },
+            "required": false,
+            "example": "American",
+            "description": "Search term for Institutions query"
+          },
+          {
+            "in": "query",
+            "name": "isActive",
+            "schema": {
+              "type": "boolean",
+              "enum": [true],
+              "example": true
+            },
+            "required": false,
+            "example": true,
+            "description": "Only show Institutions that are active"
+          },
+          {
+            "in": "query",
+            "name": "supportsOauth",
+            "schema": {
+              "type": "boolean",
+              "enum": [true],
+              "example": true
+            },
+            "required": false,
+            "example": true,
+            "description": "Only show Institutions that support Oauth"
+          },
+          {
+            "in": "query",
+            "name": "supportsAggregation",
+            "schema": {
+              "type": "boolean",
+              "enum": [true],
+              "example": true
+            },
+            "required": false,
+            "example": true,
+            "description": "Only show Institutions that support aggregation"
+          },
+          {
+            "in": "query",
+            "name": "supportsVerification",
+            "schema": {
+              "type": "boolean",
+              "enum": [true],
+              "example": true
+            },
+            "required": false,
+            "example": true,
+            "description": "Only show Institutions that support verification"
+          },
+          {
+            "in": "query",
+            "name": "supportsIdentification",
+            "schema": {
+              "type": "boolean",
+              "enum": [true],
+              "example": true
+            },
+            "required": false,
+            "example": true,
+            "description": "Only show Institutions that support identification"
+          },
+          {
+            "in": "query",
+            "name": "supportsHistory",
+            "schema": {
+              "type": "boolean",
+              "enum": [true],
+              "example": true
+            },
+            "required": false,
+            "example": true,
+            "description": "Only show Institutions that support extended transaction history"
+          },
+          {
+            "in": "query",
+            "name": "aggregatorName",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "example": ["mx", "sophtron"],
+            "description": "Only show Institutions that support extended transaction history"
           }
         ],
         "responses": {
