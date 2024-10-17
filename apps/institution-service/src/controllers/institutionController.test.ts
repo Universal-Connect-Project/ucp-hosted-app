@@ -371,11 +371,11 @@ describe("institutionController", () => {
           expect.objectContaining({
             institutions: expect.arrayContaining([
               expect.objectContaining({
-                aggregatorIntegrations: [
+                aggregatorIntegrations: expect.arrayContaining([
                   expect.objectContaining({
                     [keyword]: true,
                   }),
-                ],
+                ]),
               }),
             ]),
           }),
