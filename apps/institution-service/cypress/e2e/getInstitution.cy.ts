@@ -1,5 +1,5 @@
 import {
-  AggregatorIntegration,
+  AggregatorIntegrationResponse,
   InstitutionDetail,
   InstitutionPermissions,
   InstitutionResponse,
@@ -260,7 +260,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
         ) => {
           const findAggregatorIntegrationByName = (name: string) =>
             response.body.institution.aggregatorIntegrations.find(
-              ({ aggregator }: AggregatorIntegration) =>
+              ({ aggregator }: AggregatorIntegrationResponse) =>
                 name === aggregator.name,
             );
 
