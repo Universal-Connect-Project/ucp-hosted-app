@@ -30,8 +30,12 @@ const SectionHeaderSwitch = ({
         name={name}
         control={control}
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        render={({ field: { ref, ...fieldProps } }) => (
-          <Switch inputProps={{ id: label }} {...fieldProps} />
+        render={({ field: { ref, value, ...fieldProps } }) => (
+          <Switch
+            checked={value as boolean}
+            inputProps={{ id: label }}
+            {...fieldProps}
+          />
         )}
       />
     </div>

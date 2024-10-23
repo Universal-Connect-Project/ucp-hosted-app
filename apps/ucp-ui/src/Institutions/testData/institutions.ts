@@ -1,5 +1,20 @@
 import { Institution, InstitutionDetailPermissions } from "../api";
 
+const aggregatorIntegrationThatCanBeEdited = {
+  aggregator: {
+    displayName: "MX",
+    name: "mx",
+  },
+  aggregator_institution_id: "testAggregatorInstitutionId2",
+  id: "f10c1eea-abb6-4d98-8867-e0b5711e1c15",
+  isActive: true,
+  supports_oauth: false,
+  supports_identification: true,
+  supports_verification: true,
+  supports_aggregation: true,
+  supports_history: true,
+};
+
 export const testInstitution = {
   id: "cb5b312f-bd10-44d8-a982-ddd8f25b5fb2",
   name: "Wells Fargo CEO",
@@ -23,24 +38,17 @@ export const testInstitution = {
       supports_aggregation: true,
       supports_history: false,
     },
-    {
-      aggregator: {
-        displayName: "MX",
-        name: "mx",
-      },
-      id: "f10c1eea-abb6-4d98-8867-e0b5711e1c15",
-      isActive: true,
-      supports_oauth: false,
-      supports_identification: true,
-      supports_verification: true,
-      supports_aggregation: true,
-      supports_history: true,
-    },
+    aggregatorIntegrationThatCanBeEdited,
   ],
 } as unknown as Institution;
 
 export const testInstitutionPermissions = {
-  aggregatorIntegrationPermissionsMap: {},
+  aggregatorIntegrationPermissionsMap: {
+    [aggregatorIntegrationThatCanBeEdited.id]: {
+      canDelete: true,
+      canEdit: true,
+    },
+  },
   aggregatorsThatCanBeAdded: [
     {
       id: 50,
@@ -64,7 +72,6 @@ export const testInstitutionActiveAndInactive = {
     },
     {
       ...testInstitution.aggregatorIntegrations[1],
-      aggregator_institution_id: "testAggregatorInstitutionId1",
       isActive: false,
       supports_oauth: false,
     },

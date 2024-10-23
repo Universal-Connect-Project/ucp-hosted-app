@@ -79,6 +79,7 @@ async function loadInstitutionData() {
         name: "testExampleA",
         displayName: "Test Example A",
         id: testExampleAAggregatorId,
+        logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
       },
     });
   const [testExampleBAggregator, _testExampleBCreated] =
@@ -87,6 +88,7 @@ async function loadInstitutionData() {
         name: "testExampleB",
         displayName: "Test Example B",
         id: testExampleBAggregatorId,
+        logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
       },
     });
 

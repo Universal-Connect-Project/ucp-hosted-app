@@ -14,7 +14,7 @@ interface Aggregator {
 export interface AggregatorIntegration {
   aggregator_institution_id: string;
   aggregator: Aggregator;
-  id: string;
+  id: number;
   isActive: boolean;
   supports_aggregation: boolean;
   supports_history: boolean;
