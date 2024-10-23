@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./aggregatorIntegrations.module.css";
 import InstitutionSection from "./InstitutionSection";
 import {
@@ -38,6 +38,7 @@ import {
 } from "../../shared/components/Skeleton";
 import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
 import AddAggregatorIntegration from "../ChangeAggregatorIntegration/AddAggregatorIntegration";
+import EditAggregatorIntegration from "../ChangeAggregatorIntegration/EditAggregatorIntegration";
 
 const AggregatorIntegrations = ({
   institution,
@@ -48,6 +49,16 @@ const AggregatorIntegrations = ({
   isLoading: boolean;
   permissions?: InstitutionDetailPermissions;
 }) => {
+  const [aggregatorIntegrationIdToEdit, setAggregatorIntegrationIdToEdit] =
+    useState<number>();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const createEditAggregatorIntegrationHandler =
+    (aggregatorIntegrationId: number) => () => {
+      setAggregatorIntegrationIdToEdit(aggregatorIntegrationId);
+      setIsEditOpen(true);
+    };
+
   const tableHeadCells = [
     { name: "Aggregator" },
     {
@@ -92,6 +103,12 @@ const AggregatorIntegrations = ({
 
   return (
     <div className={styles.container}>
+      <EditAggregatorIntegration
+        aggregatorIntegrationId={aggregatorIntegrationIdToEdit}
+        institution={institution}
+        isOpen={isEditOpen}
+        setIsOpen={setIsEditOpen}
+      />
       <InstitutionSection title="AGGREGATOR INTEGRATIONS">
         <TableContainer className={styles.table}>
           <Table>
@@ -142,7 +159,11 @@ const AggregatorIntegrations = ({
                             {permissions?.aggregatorIntegrationPermissionsMap[
                               id
                             ]?.canEdit && (
-                              <IconButton>
+                              <IconButton
+                                onClick={createEditAggregatorIntegrationHandler(
+                                  id,
+                                )}
+                              >
                                 <Edit />
                               </IconButton>
                             )}

@@ -1,9 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import {
-  AggregatorIntegration,
-  Institution,
-  InstitutionDetailPermissions,
-} from "../api";
+import { Institution, InstitutionDetailPermissions } from "../api";
 import { Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import {
   CheckboxName,
@@ -41,6 +37,7 @@ import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
 import classNames from "classnames";
+import { DEFAULT_LOGO_URL } from "../Institution/constants";
 
 const formId = "changeAggregatorIntegration";
 
@@ -51,7 +48,8 @@ interface Checkbox {
 }
 
 const ChangeAggregatorIntegrationDrawer = ({
-  aggregatorIntegration,
+  aggregatorIntegrationId,
+  drawerTitle,
   institution,
   isOpen,
   useMutationFunction,
@@ -59,7 +57,8 @@ const ChangeAggregatorIntegrationDrawer = ({
   saveSuccessMessage,
   setIsOpen,
 }: {
-  aggregatorIntegration?: AggregatorIntegration;
+  aggregatorIntegrationId?: number;
+  drawerTitle: string;
   institution?: Institution;
   isOpen: boolean;
   permissions?: InstitutionDetailPermissions;
@@ -140,7 +139,7 @@ const ChangeAggregatorIntegrationDrawer = ({
   ) => {
     mutateChangeAggregatorIntegration({
       ...body,
-      aggregatorIntegrationId: aggregatorIntegration?.id as number,
+      aggregatorIntegrationId: aggregatorIntegrationId as number,
       institutionId: institution?.id as string,
     })
       .unwrap()
@@ -198,9 +197,12 @@ const ChangeAggregatorIntegrationDrawer = ({
                   title="Something went wrong"
                 />
               )}
-              <DrawerTitle>Add Aggregator Integration</DrawerTitle>
+              <DrawerTitle>{drawerTitle}</DrawerTitle>
               <div className={styles.nameLogoContainer}>
-                <img className={styles.institutionLogo} src={logo} />
+                <img
+                  className={styles.institutionLogo}
+                  src={logo || DEFAULT_LOGO_URL}
+                />
                 <div className={styles.nameContainer}>
                   <Typography>Institution</Typography>
                   <Typography>{name}</Typography>

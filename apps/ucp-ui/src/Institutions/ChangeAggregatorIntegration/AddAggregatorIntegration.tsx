@@ -28,6 +28,7 @@ const AddAggregatorIntegration = ({
         </Button>
       )}
       <ChangeAggregatorIntegrationDrawer
+        drawerTitle="Add Aggregator Integration"
         institution={institution}
         isOpen={isOpen}
         permissions={permissions}
