@@ -3,7 +3,7 @@ import { render, screen, userEvent } from "../../shared/test/testUtils";
 import AddAggregatorIntegration from "./AddAggregatorIntegration";
 import {
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
-  INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+  INSTITUTION_CHANGE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
 } from "./constants";
@@ -28,7 +28,7 @@ const openAddDrawer = async () =>
 const submitForm = async () =>
   await userEvent.click(
     await screen.findByRole("button", {
-      name: INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+      name: INSTITUTION_CHANGE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
     }),
   );
 

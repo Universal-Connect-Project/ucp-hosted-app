@@ -7,7 +7,7 @@ import {
 } from "../testData/institutions";
 import {
   INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
-  INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+  INSTITUTION_CHANGE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
 } from "./constants";
 import { server } from "../../shared/test/testServer";
@@ -26,7 +26,7 @@ const openDrawer = async () =>
 const submitForm = async () =>
   await userEvent.click(
     await screen.findByRole("button", {
-      name: INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+      name: INSTITUTION_CHANGE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
     }),
   );
 

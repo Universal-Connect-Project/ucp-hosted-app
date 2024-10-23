@@ -26,6 +26,10 @@ export const handlers = [
   http.post(INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL, () =>
     HttpResponse.json({}),
   ),
+  http.put(
+    `${INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL}/:integrationId`,
+    () => HttpResponse.json({}),
+  ),
   http.get(INSTITUTION_SERVICE_PERMISSIONS_URL, () =>
     HttpResponse.json(institutionPermissionsResponse),
   ),
