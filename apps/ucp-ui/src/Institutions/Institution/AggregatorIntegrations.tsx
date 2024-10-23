@@ -3,6 +3,7 @@ import styles from "./aggregatorIntegrations.module.css";
 import InstitutionSection from "./InstitutionSection";
 import {
   Chip,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -24,7 +25,7 @@ import {
   INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_OAUTH_TOOLTIP_TEXT,
 } from "../../shared/constants/institution";
-import { InfoOutlined } from "@mui/icons-material";
+import { Edit, InfoOutlined } from "@mui/icons-material";
 import {
   AggregatorIntegration,
   Institution,
@@ -137,12 +138,24 @@ const AggregatorIntegrations = ({
                     >
                       <TableCell>
                         <div className={styles.nameLogoCell}>
-                          <SkeletonIfLoading
-                            className={styles.aggregatorlogoSkeleton}
-                            isLoading={isLoading}
-                          >
-                            <img className={styles.aggregatorLogo} src={logo} />
-                          </SkeletonIfLoading>
+                          <div className={styles.editContainer}>
+                            {permissions?.aggregatorIntegrationPermissionsMap[
+                              id
+                            ]?.canEdit && (
+                              <IconButton>
+                                <Edit />
+                              </IconButton>
+                            )}
+                            <SkeletonIfLoading
+                              className={styles.aggregatorlogoSkeleton}
+                              isLoading={isLoading}
+                            >
+                              <img
+                                className={styles.aggregatorLogo}
+                                src={logo}
+                              />
+                            </SkeletonIfLoading>
+                          </div>
                           {isLoading ? (
                             <TextSkeletonIfLoading isLoading width="100px" />
                           ) : (

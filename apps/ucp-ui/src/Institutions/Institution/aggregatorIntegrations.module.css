@@ -24,6 +24,11 @@
   gap: 4px;
 }
 
+.editContainer {
+  align-items: center;
+  display: flex;
+}
+
 .nameLogoCell {
   align-items: center;
   display: flex;
