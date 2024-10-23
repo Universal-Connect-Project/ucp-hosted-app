@@ -17,7 +17,7 @@ export interface CreateAggregatorIntegrationParams
   institutionId: string;
 }
 
-interface EditAggregatorIntegrationParams
+export interface EditAggregatorIntegrationParams
   extends ChangeAggregatorIntegrationParams {
   aggregatorIntegrationId: number;
 }

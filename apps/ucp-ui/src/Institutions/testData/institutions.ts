@@ -5,6 +5,7 @@ const aggregatorIntegrationThatCanBeEdited = {
     displayName: "MX",
     name: "mx",
   },
+  aggregator_institution_id: "testAggregatorInstitutionId2",
   id: "f10c1eea-abb6-4d98-8867-e0b5711e1c15",
   isActive: true,
   supports_oauth: false,
@@ -71,7 +72,6 @@ export const testInstitutionActiveAndInactive = {
     },
     {
       ...testInstitution.aggregatorIntegrations[1],
-      aggregator_institution_id: "testAggregatorInstitutionId1",
       isActive: false,
       supports_oauth: false,
     },
