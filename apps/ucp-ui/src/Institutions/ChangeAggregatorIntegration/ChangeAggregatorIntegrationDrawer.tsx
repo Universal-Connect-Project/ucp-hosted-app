@@ -16,7 +16,7 @@ import DrawerContent from "../../shared/components/Drawer/DrawerContent";
 import DrawerCloseButton from "../../shared/components/Drawer/DrawerCloseButton";
 import { INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT } from "../ChangeInstitution/constants";
 import DrawerTitle from "../../shared/components/Drawer/DrawerTitle";
-import styles from "./addAggregatorIntegration.module.css";
+import styles from "./changeAggregatorIntegration.module.css";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
 import TextField from "../../shared/components/Forms/TextField";
@@ -38,6 +38,7 @@ import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
 import classNames from "classnames";
 import { DEFAULT_LOGO_URL } from "../Institution/constants";
+import NameLogo from "./NameLogo";
 
 const formId = "changeAggregatorIntegration";
 
@@ -71,6 +72,12 @@ const ChangeAggregatorIntegrationDrawer = ({
   const handleCloseDrawer = () => {
     setIsOpen(false);
   };
+
+  const shouldDisplayAggregatorSelect = !aggregatorIntegrationId;
+
+  const aggregatorIntegration = institution?.aggregatorIntegrations.find(
+    ({ id }) => id === aggregatorIntegrationId,
+  );
 
   const canSelectAnAggregator = permissions?.hasAccessToAllAggregators;
 
@@ -198,49 +205,55 @@ const ChangeAggregatorIntegrationDrawer = ({
                 />
               )}
               <DrawerTitle>{drawerTitle}</DrawerTitle>
-              <div className={styles.nameLogoContainer}>
-                <img
-                  className={styles.institutionLogo}
-                  src={logo || DEFAULT_LOGO_URL}
-                />
-                <div className={styles.nameContainer}>
-                  <Typography>Institution</Typography>
-                  <Typography>{name}</Typography>
-                </div>
-              </div>
-              <Controller
-                name="aggregatorId"
-                control={control}
-                rules={{ required: REQUIRED_ERROR_TEXT }}
-                render={({
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  field: { ref, ...fieldProps },
-                  fieldState: { error },
-                }) => (
-                  <TextField
-                    disabled={!canSelectAnAggregator}
-                    error={!!error}
-                    fullWidth
-                    helperText={error?.message}
-                    InputProps={{}}
-                    InputLabelProps={{ required: true }}
-                    label={
-                      INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT
-                    }
-                    select
-                    variant="filled"
-                    {...fieldProps}
-                  >
-                    {permissions?.aggregatorsThatCanBeAdded?.map(
-                      ({ displayName, id }) => (
-                        <MenuItem key={id} value={id}>
-                          {displayName}
-                        </MenuItem>
-                      ),
-                    )}
-                  </TextField>
+              <div className={styles.nameLogosContainer}>
+                {!shouldDisplayAggregatorSelect && (
+                  <NameLogo
+                    label="Aggregator"
+                    logo={aggregatorIntegration?.aggregator?.logo}
+                    name={aggregatorIntegration?.aggregator?.displayName}
+                  />
                 )}
-              />
+                <NameLogo
+                  label="Institution"
+                  logo={logo || DEFAULT_LOGO_URL}
+                  name={name}
+                />
+              </div>
+              {shouldDisplayAggregatorSelect && (
+                <Controller
+                  name="aggregatorId"
+                  control={control}
+                  rules={{ required: REQUIRED_ERROR_TEXT }}
+                  render={({
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    field: { ref, ...fieldProps },
+                    fieldState: { error },
+                  }) => (
+                    <TextField
+                      disabled={!canSelectAnAggregator}
+                      error={!!error}
+                      fullWidth
+                      helperText={error?.message}
+                      InputProps={{}}
+                      InputLabelProps={{ required: true }}
+                      label={
+                        INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT
+                      }
+                      select
+                      variant="filled"
+                      {...fieldProps}
+                    >
+                      {permissions?.aggregatorsThatCanBeAdded?.map(
+                        ({ displayName, id }) => (
+                          <MenuItem key={id} value={id}>
+                            {displayName}
+                          </MenuItem>
+                        ),
+                      )}
+                    </TextField>
+                  )}
+                />
+              )}
               <SectionHeaderSwitch
                 control={control}
                 label={

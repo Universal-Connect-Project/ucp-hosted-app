@@ -1,15 +1,4 @@
-.institutionLogo {
-  height: 40px;
-  width: 40px;
-}
-
-.nameLogoContainer {
-  align-items: center;
-  display: flex;
-  gap: 24px;
-}
-
-.nameContainer {
+.nameLogosContainer {
   display: flex;
   flex-direction: column;
   gap: 4px;
