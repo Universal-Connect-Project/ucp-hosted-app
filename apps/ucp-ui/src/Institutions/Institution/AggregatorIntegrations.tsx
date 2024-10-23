@@ -17,6 +17,7 @@ import {
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEST_ID,
   INSTITUTION_AGGREGATOR_INSTITUTION_ID_TOOLTIP_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW,
+  INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEST_ID,
   INSTITUTION_JOB_TYPES_TOOLTIP_TEXT,
   INSTITUTION_OAUTH_TOOLTIP_TEST_ID,
@@ -160,6 +161,9 @@ const AggregatorIntegrations = ({
                               id
                             ]?.canEdit && (
                               <IconButton
+                                data-testid={
+                                  INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID
+                                }
                                 onClick={createEditAggregatorIntegrationHandler(
                                   id,
                                 )}

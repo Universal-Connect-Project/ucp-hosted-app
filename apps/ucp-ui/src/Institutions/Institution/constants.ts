@@ -40,3 +40,6 @@ export const INSTITUTION_AGGREGATOR_INTEGRATION_TABLE_ROW =
 
 export const DEFAULT_LOGO_URL =
   "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/default_100x100.png";
+
+export const INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID =
+  "editAggregatorIntegration";

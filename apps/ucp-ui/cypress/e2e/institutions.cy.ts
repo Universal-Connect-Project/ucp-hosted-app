@@ -1,4 +1,5 @@
 import { INSTITUTIONS_ROW_TEST_ID } from "../../src/Institutions/constants";
+import { INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID } from "../../src/Institutions/Institution/constants";
 import {
   INSTITUTION_ADD_SUCCESS_TEXT,
   INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
@@ -19,6 +20,7 @@ import {
   INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
+  INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_SUCCESS_TEXT,
 } from "../../src/Institutions/ChangeAggregatorIntegration/constants";
 
 describe("institutions", () => {
@@ -60,7 +62,7 @@ describe("institutions", () => {
       });
   });
 
-  it("creates an institution, navigates to its page, edits the institution, and adds an aggregator integration", () => {
+  it("creates an institution, navigates to its page, edits the institution, adds an aggregator integration, and edits that aggregator integration", () => {
     cy.loginSuperAdmin();
 
     cy.findByRole("button", {
@@ -135,12 +137,32 @@ describe("institutions", () => {
       new RegExp(
         INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
       ),
-    ).type("test");
+    ).type("testaggregatorinstitutionid");
 
     cy.findByRole("button", {
       name: INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
     }).click();
 
     cy.findByText(INSTITUTION_ADD_AGGREGATOR_SUCCESS_TEXT).should("exist");
+
+    cy.findByTestId(
+      INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID,
+    ).click();
+
+    cy.findByLabelText(
+      new RegExp(
+        INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
+      ),
+    ).type(" edited");
+
+    cy.findByRole("button", {
+      name: INSTITUTION_ADD_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+    }).click();
+
+    cy.findByText(INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_SUCCESS_TEXT).should(
+      "exist",
+    );
+
+    cy.findByText("testaggregatorinstitutionid edited").should("exist");
   });
 });
