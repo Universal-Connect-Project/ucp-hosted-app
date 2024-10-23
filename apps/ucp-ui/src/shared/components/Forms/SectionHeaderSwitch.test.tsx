@@ -10,7 +10,7 @@ const tooltipTitle = "testTooltipTitle";
 const TestComponent = () => {
   const { control } = useForm({
     defaultValues: {
-      [name]: "false",
+      [name]: true,
     },
   });
 
@@ -28,14 +28,14 @@ describe("<SectionHeaderSwitch />", () => {
   it("changes the value on click", async () => {
     render(<TestComponent />);
 
-    expect(screen.getByLabelText(label)).not.toBeChecked();
-
-    await userEvent.click(screen.getByLabelText(label));
-
     expect(screen.getByLabelText(label)).toBeChecked();
 
     await userEvent.click(screen.getByLabelText(label));
 
     expect(screen.getByLabelText(label)).not.toBeChecked();
+
+    await userEvent.click(screen.getByLabelText(label));
+
+    expect(screen.getByLabelText(label)).toBeChecked();
   });
 });
