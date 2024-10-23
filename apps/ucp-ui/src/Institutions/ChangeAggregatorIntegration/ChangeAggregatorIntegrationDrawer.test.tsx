@@ -16,6 +16,7 @@ import { server } from "../../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL } from "./api";
 import { INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT } from "../ChangeInstitution/constants";
+import EditAggregatorIntegration from "./EditAggregatorIntegration";
 
 const openAddDrawer = async () =>
   await userEvent.click(
@@ -143,6 +144,27 @@ describe("ChangeAggregatorIntegration", () => {
   });
 
   describe("edit integration", () => {
-    it("doesn't render an aggregator select and renders the aggregator logo if an integrationId is provided", () => {});
+    it("doesn't render an aggregator select and renders the aggregator name if an integrationId is provided", () => {
+      render(
+        <EditAggregatorIntegration
+          aggregatorIntegrationId={testInstitution.aggregatorIntegrations[0].id}
+          institution={testInstitution}
+          isOpen={true}
+          setIsOpen={() => {}}
+        />,
+      );
+
+      expect(
+        screen.getByText(
+          testInstitution.aggregatorIntegrations[0].aggregator.displayName,
+        ),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.queryByLabelText(
+          INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
+        ),
+      ).not.toBeInTheDocument();
+    });
   });
 });
