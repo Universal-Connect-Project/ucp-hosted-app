@@ -81,22 +81,34 @@ const ChangeAggregatorIntegrationDrawer = ({
 
   const canSelectAnAggregator = permissions?.hasAccessToAllAggregators;
 
-  const defaultValues = useMemo(
-    () => ({
-      aggregatorId:
-        (!canSelectAnAggregator &&
-          permissions?.aggregatorsThatCanBeAdded?.[0]?.id) ||
-        "",
-      aggregatorInstitutionId: "",
-      isActive: false,
-      supportsAggregation: false,
-      supportsIdentification: false,
-      supportsOauth: false,
-      supportsFullHistory: false,
-      supportsVerification: false,
-    }),
-    [permissions, canSelectAnAggregator],
-  );
+  const defaultValues = useMemo(() => {
+    let aggregatorId: string | number = "";
+
+    if (aggregatorIntegrationId) {
+      aggregatorId = aggregatorIntegration?.aggregator?.id || "";
+    } else if (!canSelectAnAggregator) {
+      aggregatorId = permissions?.aggregatorsThatCanBeAdded?.[0]?.id || "";
+    }
+
+    return {
+      aggregatorId,
+      aggregatorInstitutionId:
+        aggregatorIntegration?.aggregator_institution_id || "",
+      isActive: aggregatorIntegration?.isActive || false,
+      supportsAggregation: aggregatorIntegration?.supports_aggregation || false,
+      supportsIdentification:
+        aggregatorIntegration?.supports_identification || false,
+      supportsOauth: aggregatorIntegration?.supports_oauth || false,
+      supportsFullHistory: aggregatorIntegration?.supports_history || false,
+      supportsVerification:
+        aggregatorIntegration?.supports_verification || false,
+    };
+  }, [
+    permissions,
+    canSelectAnAggregator,
+    aggregatorIntegration,
+    aggregatorIntegrationId,
+  ]);
 
   const checkboxes: Checkbox[] = [
     {

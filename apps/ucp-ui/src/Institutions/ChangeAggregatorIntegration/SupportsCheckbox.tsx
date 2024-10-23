@@ -28,8 +28,9 @@ const SupportsCheckbox = ({
       name={name}
       control={control}
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      render={({ field: { ref, onChange, ...fieldProps } }) => (
+      render={({ field: { ref, onChange, value, ...fieldProps } }) => (
         <Checkbox
+          checked={value}
           inputProps={{ id: label }}
           onChange={(event) => {
             onChange(event);
