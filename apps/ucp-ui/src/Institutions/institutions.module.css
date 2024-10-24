@@ -30,12 +30,6 @@
   gap: 24px;
 }
 
-.searchAndFilterContainer {
-  max-width: 168px;
-  min-width: 168px;
-  width: 168px;
-}
-
 .chipSkeleton {
   border-radius: 16px;
 }

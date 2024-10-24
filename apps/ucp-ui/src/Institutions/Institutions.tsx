@@ -1,4 +1,4 @@
-import { InfoOutlined, Search } from "@mui/icons-material";
+import { InfoOutlined } from "@mui/icons-material";
 import {
   Alert,
   AlertTitle,
@@ -16,7 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import classNames from "classnames";
-import React, { ChangeEvent, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FetchError from "../shared/components/FetchError";
 import PageContent from "../shared/components/PageContent";
@@ -45,8 +45,7 @@ import {
 import { DEFAULT_LOGO_URL } from "./Institution/constants";
 import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
-import TextField from "../shared/components/Forms/TextField";
-import debounce from "lodash.debounce";
+import InstitutionFilters, { FilterParams } from "./InstitutionFilters";
 
 const generateFakeInstitutionData = (rowsPerPage: number) => {
   return new Array(rowsPerPage).fill(0).map(() => ({
@@ -75,16 +74,16 @@ const generateFakeInstitutionData = (rowsPerPage: number) => {
 const Institutions = () => {
   const navigate = useNavigate();
 
-  const [searchText, setSearchText] = useState("");
+  const [filterParams, setFilterParams] = useState<FilterParams>({});
 
-  const debouncedUpdateSearch = useMemo(
-    () =>
-      debounce(
-        ({ target: { value } }: ChangeEvent<HTMLInputElement>) =>
-          setSearchText(value),
-        250,
-      ),
-    [],
+  const updateFilterParam = useCallback(
+    ({ key, value }: { key: string; value: string | boolean }) => {
+      setFilterParams({
+        ...filterParams,
+        [key]: value,
+      });
+    },
+    [filterParams],
   );
 
   const tableHeadCells = [
@@ -141,7 +140,7 @@ const Institutions = () => {
   } = useGetInstitutionsQuery({
     page: page,
     pageSize: rowsPerPage,
-    search: searchText,
+    ...filterParams,
   });
 
   const institutions =
@@ -172,15 +171,7 @@ const Institutions = () => {
             <AddInstitution />
           </div>
           <div className={styles.filterTableContainer}>
-            <div className={styles.searchAndFilterContainer}>
-              <TextField
-                InputProps={{
-                  endAdornment: <Search />,
-                }}
-                label="Search"
-                onChange={debouncedUpdateSearch}
-              />
-            </div>
+            <InstitutionFilters updateFilterParam={updateFilterParam} />
             {shouldDisplayTable ? (
               <TableContainer className={styles.table}>
                 <>
