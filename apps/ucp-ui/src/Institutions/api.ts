@@ -65,6 +65,7 @@ interface InstitutionResponse {
 interface PaginationOptions {
   pageSize: number;
   page: number;
+  search: string;
 }
 
 interface GetInstitution {
