@@ -197,7 +197,6 @@ const whereAggregatorIntegrationConditions = (req: Request) => {
     supportsHistory,
     supportsVerification,
     supportsOauth,
-    isActive,
   } = req.query;
   const whereConditions: WhereConditions = {};
   if (supportsIdentification === "true") {
@@ -214,9 +213,6 @@ const whereAggregatorIntegrationConditions = (req: Request) => {
   }
   if (supportsOauth === "true") {
     whereConditions["supports_oauth"] = true;
-  }
-  if (isActive) {
-    whereConditions["isActive"] = isActive === "true" ? true : false;
   }
 
   return whereConditions;
@@ -251,6 +247,7 @@ const whereInstitutionConditions = (req: Request): WhereConditions => {
           INNER JOIN "aggregators" AS "aggregator" ON "aggregatorIntegration"."aggregatorId" = "aggregator"."id"
           WHERE "aggregatorIntegration"."institution_id" = "Institution"."id"
           AND "aggregator"."name" IN ${aggQueryString}
+          AND "aggregatorIntegration"."isActive" = true
           HAVING COUNT(*) = ${aggCount}
         )
       `);

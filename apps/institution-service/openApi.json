@@ -496,18 +496,6 @@
           },
           {
             "in": "query",
-            "name": "isActive",
-            "schema": {
-              "type": "boolean",
-              "enum": [true],
-              "example": true
-            },
-            "required": false,
-            "example": true,
-            "description": "Only show Institutions that are active"
-          },
-          {
-            "in": "query",
             "name": "supportsOauth",
             "schema": {
               "type": "boolean",
