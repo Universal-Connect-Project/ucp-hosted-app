@@ -1,14 +1,9 @@
 import { api, TagTypes } from "../baseApi";
+import { Aggregator } from "../shared/constants/aggregators";
+import { InstitutionFilterState } from "./institutionFiltersSlice";
 
 interface InstitutionPermissions {
   canCreateInstitution: boolean;
-}
-
-interface Aggregator {
-  displayName: string;
-  id: number;
-  logo: string;
-  name: string;
 }
 
 export interface AggregatorIntegration {
@@ -62,10 +57,9 @@ interface InstitutionResponse {
   permissions: InstitutionDetailPermissions;
 }
 
-interface PaginationOptions {
+interface PaginationOptions extends InstitutionFilterState {
   pageSize: number;
   page: number;
-  search?: string;
 }
 
 interface GetInstitution {
@@ -90,10 +84,21 @@ export const institutionsApi = api.injectEndpoints({
       providesTags: [TagTypes.INSTITUTION_PERMISSIONS],
     }),
     getInstitutions: builder.query<InstitutionsResponse, PaginationOptions>({
-      query: (params) => ({
-        params,
-        url: INSTITUTION_SERVICE_INSTITUTIONS_URL,
-      }),
+      query: ({ aggregatorName, ...rest }) => {
+        const customParams = new URLSearchParams();
+
+        Object.entries(rest).forEach(([key, value]) =>
+          customParams.append(key, value as string),
+        );
+
+        aggregatorName?.forEach((name: string) =>
+          customParams.append("aggregatorName", name),
+        );
+
+        return {
+          url: `${INSTITUTION_SERVICE_INSTITUTIONS_URL}?${customParams.toString()}`,
+        };
+      },
       providesTags: [TagTypes.INSTITUTIONS],
     }),
   }),

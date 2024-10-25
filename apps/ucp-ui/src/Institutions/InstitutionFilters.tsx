@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo } from "react";
 import styles from "./institutionFilters.module.css";
 import TextField from "../shared/components/Forms/TextField";
 import { Search } from "@mui/icons-material";
@@ -11,41 +11,37 @@ import {
   FormHelperText,
   Switch,
 } from "@mui/material";
+import { useGetAggregatorsQuery } from "../shared/api/aggregators";
+import { useAppDispatch } from "../shared/utils/redux";
+import {
+  clearInstitutionFilters,
+  InstitutionFilterBooleans,
+  setFilterAggregator,
+  setFilterBoolean,
+  setSearch,
+} from "./institutionFiltersSlice";
 
-export interface FilterParams {
-  search?: string;
-}
+const InstitutionFilters = () => {
+  const dispatch = useAppDispatch();
 
-const InstitutionFilters = ({
-  updateFilterParam,
-}: {
-  updateFilterParam: ({
-    key,
-    value,
-  }: {
-    key: string;
-    value: string | boolean;
-  }) => void;
-}) => {
-  const [searchText, setSearchText] = useState("");
+  useEffect(
+    () => () => {
+      dispatch(clearInstitutionFilters());
+    },
+    [dispatch],
+  );
 
   const debouncedUpdateSearch = useMemo(
     () =>
       debounce(
         ({ target: { value } }: ChangeEvent<HTMLInputElement>) =>
-          setSearchText(value),
+          dispatch(setSearch(value)),
         250,
       ),
-    [],
+    [dispatch],
   );
 
-  useEffect(() => {
-    updateFilterParam({
-      key: "search",
-      value: searchText,
-    });
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchText]);
+  const { data: aggregatorsData } = useGetAggregatorsQuery();
 
   const jobTypeCheckboxes = [
     {
@@ -83,15 +79,36 @@ const InstitutionFilters = ({
             control={
               <Checkbox
                 onChange={({ target: { checked } }) =>
-                  updateFilterParam({
-                    key: prop,
-                    value: checked,
-                  })
+                  dispatch(
+                    setFilterBoolean({
+                      key: prop as keyof InstitutionFilterBooleans,
+                      value: checked,
+                    }),
+                  )
                 }
               />
             }
             key={prop}
             label={label}
+          />
+        ))}
+        <FormHelperText>Filter by Aggregator</FormHelperText>
+        {aggregatorsData?.aggregators?.map(({ displayName, name, id }) => (
+          <FormControlLabel
+            control={
+              <Checkbox
+                onChange={({ target: { checked } }) =>
+                  dispatch(
+                    setFilterAggregator({
+                      name,
+                      value: checked,
+                    }),
+                  )
+                }
+              />
+            }
+            key={id}
+            label={displayName}
           />
         ))}
         <FormHelperText>Other Features</FormHelperText>
@@ -100,10 +117,12 @@ const InstitutionFilters = ({
           control={
             <Switch
               onChange={({ target: { checked } }) =>
-                updateFilterParam({
-                  key: "supportsOauth",
-                  value: checked,
-                })
+                dispatch(
+                  setFilterBoolean({
+                    key: "supportsOauth",
+                    value: checked,
+                  }),
+                )
               }
               size="small"
             />

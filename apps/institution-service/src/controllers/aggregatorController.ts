@@ -5,8 +5,8 @@ export const getAggregators = async (req: Request, res: Response) => {
   try {
     const aggregators = await Aggregator.findAll({
       order: [
+        ["displayName", "ASC"],
         ["createdAt", "DESC"],
-        ["name", "ASC"],
       ],
     });
 

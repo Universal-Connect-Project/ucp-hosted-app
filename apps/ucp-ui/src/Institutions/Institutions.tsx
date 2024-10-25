@@ -16,7 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import classNames from "classnames";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FetchError from "../shared/components/FetchError";
 import PageContent from "../shared/components/PageContent";
@@ -45,7 +45,9 @@ import {
 import { DEFAULT_LOGO_URL } from "./Institution/constants";
 import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
-import InstitutionFilters, { FilterParams } from "./InstitutionFilters";
+import InstitutionFilters from "./InstitutionFilters";
+import { useAppSelector } from "../shared/utils/redux";
+import { getInstitutionFilterSlice } from "./institutionFiltersSlice";
 
 const generateFakeInstitutionData = (rowsPerPage: number) => {
   return new Array(rowsPerPage).fill(0).map(() => ({
@@ -73,18 +75,6 @@ const generateFakeInstitutionData = (rowsPerPage: number) => {
 
 const Institutions = () => {
   const navigate = useNavigate();
-
-  const [filterParams, setFilterParams] = useState<FilterParams>({});
-
-  const updateFilterParam = useCallback(
-    ({ key, value }: { key: string; value: string | boolean }) => {
-      setFilterParams({
-        ...filterParams,
-        [key]: value,
-      });
-    },
-    [filterParams],
-  );
 
   const tableHeadCells = [
     { label: "Institution" },
@@ -131,6 +121,8 @@ const Institutions = () => {
     refetch: refetchInstitutionPermissions,
   } = useGetInstitutionPermissionsQuery();
 
+  const filterParams = useAppSelector(getInstitutionFilterSlice);
+
   const {
     data,
     isError: isInstitutionsError,
@@ -171,7 +163,7 @@ const Institutions = () => {
             <AddInstitution />
           </div>
           <div className={styles.filterTableContainer}>
-            <InstitutionFilters updateFilterParam={updateFilterParam} />
+            <InstitutionFilters />
             {shouldDisplayTable ? (
               <TableContainer className={styles.table}>
                 <>
