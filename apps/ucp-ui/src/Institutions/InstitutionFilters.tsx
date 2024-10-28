@@ -22,6 +22,11 @@ import {
   setFilterBoolean,
   setSearch,
 } from "./institutionFiltersSlice";
+import {
+  INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
+  INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT,
+  INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
+} from "./constants";
 
 export const jobTypeCheckboxes = [
   {
@@ -76,7 +81,7 @@ const InstitutionFilters = () => {
         InputProps={{
           endAdornment: <Search />,
         }}
-        label="Search"
+        label={INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT}
         onChange={debouncedUpdateSearch}
       />
       <FormGroup className={styles.formGroup}>
@@ -134,7 +139,7 @@ const InstitutionFilters = () => {
               }
             />
           }
-          label="OAuth"
+          label={INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT}
           slotProps={slotProps}
         />
         <Divider />
@@ -153,7 +158,7 @@ const InstitutionFilters = () => {
               size="small"
             />
           }
-          label="Include inactive integrations"
+          label={INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT}
           slotProps={slotProps}
         />
       </FormGroup>

@@ -20,3 +20,10 @@ export const INSTITUTIONS_ERROR_TEXT =
 export const INSTITUTIONS_AGGREGATOR_INFO_ICON = "institutions-aggregator-info";
 export const INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP =
   "Aggregators that support each institution, along with the number of job types they support.";
+
+export const INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT = "Search";
+
+export const INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT =
+  "Include inactive integrations";
+
+export const INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT = "OAuth";

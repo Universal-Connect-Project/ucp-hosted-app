@@ -9,6 +9,11 @@ import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_INSTITUTIONS_URL } from "./api";
 import { institutionsPage1 } from "./testData/institutions";
+import {
+  INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
+  INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT,
+  INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
+} from "./constants";
 
 const { aggregators } = aggregatorsResponse;
 
@@ -88,14 +93,18 @@ describe("<InstitutionFilters />", () => {
       expect(latestSearchParams).toEqual(expectedParams);
     }
 
-    await userEvent.click(screen.getByLabelText("OAuth"));
+    await userEvent.click(
+      screen.getByLabelText(INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT),
+    );
 
     expectedParams.supportsOauth = "true";
 
     expect(latestSearchParams).toEqual(expectedParams);
 
     await userEvent.click(
-      screen.getByLabelText("Include inactive integrations"),
+      screen.getByLabelText(
+        INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
+      ),
     );
 
     expectedParams.includeInactiveIntegrations = "true";
@@ -104,7 +113,10 @@ describe("<InstitutionFilters />", () => {
 
     const testSearch = "testSearch";
 
-    await userEvent.type(screen.getByLabelText("Search"), testSearch);
+    await userEvent.type(
+      screen.getByLabelText(INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT),
+      testSearch,
+    );
 
     expect(latestSearchParams).toEqual(expectedParams);
 
