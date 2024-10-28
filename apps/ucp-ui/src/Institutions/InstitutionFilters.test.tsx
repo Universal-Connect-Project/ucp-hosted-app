@@ -50,7 +50,7 @@ describe("<InstitutionFilters />", () => {
     );
   });
 
-  it("updates the query for each of the inputs and delays search changes", async () => {
+  it("updates the query for each of the inputs including removing an aggregator and delays search changes", async () => {
     let latestSearchParams: Record<string, string> = {};
     let latestAggregatorNames;
     const expectedParams: Record<string, string> = {};
@@ -84,6 +84,19 @@ describe("<InstitutionFilters />", () => {
 
       expect(latestAggregatorNames).toEqual(expectedAggregatorNames);
     }
+
+    const [firstAggregator] = aggregators;
+
+    await userEvent.click(screen.getByLabelText(firstAggregator.displayName));
+
+    expectedAggregatorNames.splice(
+      expectedAggregatorNames.findIndex(
+        (name) => firstAggregator.name === name,
+      ),
+      1,
+    );
+
+    expect(latestAggregatorNames).toEqual(expectedAggregatorNames);
 
     for (const jobType of jobTypeCheckboxes) {
       await userEvent.click(screen.getByLabelText(jobType.label));
@@ -127,6 +140,6 @@ describe("<InstitutionFilters />", () => {
     expect(Object.keys(latestSearchParams || {})).toHaveLength(
       jobTypeCheckboxes.length + 3,
     );
-    expect(latestAggregatorNames).toHaveLength(aggregators.length);
+    expect(latestAggregatorNames).toHaveLength(aggregators.length - 1);
   });
 });
