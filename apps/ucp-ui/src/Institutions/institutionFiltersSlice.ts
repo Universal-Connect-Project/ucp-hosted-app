@@ -84,5 +84,5 @@ export const getInstitutionFilterSlice = createAppSelector(
 
 export const getShouldShowInactiveIntegrations = createAppSelector(
   getInstitutionFilterSlice,
-  (slice) => slice.includeInactiveIntegrations,
+  (slice) => !!slice.includeInactiveIntegrations,
 );
