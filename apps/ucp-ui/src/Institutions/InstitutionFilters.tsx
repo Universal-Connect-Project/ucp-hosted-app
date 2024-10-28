@@ -6,10 +6,12 @@ import debounce from "lodash.debounce";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import {
   Checkbox,
+  Divider,
   FormControlLabel,
   FormGroup,
   FormHelperText,
   Switch,
+  TypographyProps,
 } from "@mui/material";
 import { useGetAggregatorsQuery } from "../shared/api/aggregators";
 import { useAppDispatch } from "../shared/utils/redux";
@@ -62,6 +64,12 @@ const InstitutionFilters = () => {
     },
   ];
 
+  const slotProps = {
+    typography: {
+      variant: "body2",
+    } as TypographyProps,
+  };
+
   return (
     <div className={styles.container}>
       <TextField
@@ -72,27 +80,7 @@ const InstitutionFilters = () => {
         onChange={debouncedUpdateSearch}
       />
       <FormGroup className={styles.formGroup}>
-        <FormHelperText>Filter by Job Type</FormHelperText>
-        {jobTypeCheckboxes.map(({ label, prop }) => (
-          <FormControlLabel
-            className={styles.input}
-            control={
-              <Checkbox
-                onChange={({ target: { checked } }) =>
-                  dispatch(
-                    setFilterBoolean({
-                      key: prop as keyof InstitutionFilterBooleans,
-                      value: checked,
-                    }),
-                  )
-                }
-              />
-            }
-            key={prop}
-            label={label}
-          />
-        ))}
-        <FormHelperText>Filter by Aggregator</FormHelperText>
+        <FormHelperText>Aggregator</FormHelperText>
         {aggregatorsData?.aggregators?.map(({ displayName, name, id }) => (
           <FormControlLabel
             control={
@@ -109,13 +97,33 @@ const InstitutionFilters = () => {
             }
             key={id}
             label={displayName}
+            slotProps={slotProps}
+          />
+        ))}
+        <FormHelperText>Filter by Job Type</FormHelperText>
+        {jobTypeCheckboxes.map(({ label, prop }) => (
+          <FormControlLabel
+            control={
+              <Checkbox
+                onChange={({ target: { checked } }) =>
+                  dispatch(
+                    setFilterBoolean({
+                      key: prop as keyof InstitutionFilterBooleans,
+                      value: checked,
+                    }),
+                  )
+                }
+              />
+            }
+            key={prop}
+            label={label}
+            slotProps={slotProps}
           />
         ))}
         <FormHelperText>Other Features</FormHelperText>
         <FormControlLabel
-          className={styles.input}
           control={
-            <Switch
+            <Checkbox
               onChange={({ target: { checked } }) =>
                 dispatch(
                   setFilterBoolean({
@@ -124,10 +132,28 @@ const InstitutionFilters = () => {
                   }),
                 )
               }
-              size="small"
             />
           }
           label="OAuth"
+        />
+        <Divider />
+        <FormControlLabel
+          className={styles.inactiveSwitch}
+          control={
+            <Switch
+              onChange={({ target: { checked } }) =>
+                dispatch(
+                  setFilterBoolean({
+                    key: "includeInactiveIntegrations",
+                    value: checked,
+                  }),
+                )
+              }
+              size="small"
+            />
+          }
+          label="Include inactive integrations"
+          slotProps={slotProps}
         />
       </FormGroup>
     </div>

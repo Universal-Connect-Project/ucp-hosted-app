@@ -10,9 +10,10 @@
 .formGroup {
   :global(.MuiFormControlLabel-root) {
     margin-left: unset;
+    margin-right: unset;
   }
 }
 
-.input {
-  height: 42px;
+.inactiveSwitch {
+  margin-top: 8px;
 }

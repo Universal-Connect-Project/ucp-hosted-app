@@ -3,6 +3,7 @@ import { createAppSelector } from "../shared/utils/redux";
 import { RootState } from "../store";
 
 export interface InstitutionFilterBooleans {
+  includeInactiveIntegrations?: boolean;
   supportsAggregation?: boolean;
   supportsHistory?: boolean;
   supportsIdentification?: boolean;
