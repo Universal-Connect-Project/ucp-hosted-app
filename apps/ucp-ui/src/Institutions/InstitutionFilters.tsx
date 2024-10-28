@@ -135,6 +135,7 @@ const InstitutionFilters = () => {
             />
           }
           label="OAuth"
+          slotProps={slotProps}
         />
         <Divider />
         <FormControlLabel
