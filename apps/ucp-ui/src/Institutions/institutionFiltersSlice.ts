@@ -81,3 +81,8 @@ export const getInstitutionFilterSlice = createAppSelector(
   (state) => state,
   (state: RootState) => state.institutionFilter,
 );
+
+export const getShouldShowInactiveIntegrations = createAppSelector(
+  getInstitutionFilterSlice,
+  (slice) => slice.includeInactiveIntegrations,
+);

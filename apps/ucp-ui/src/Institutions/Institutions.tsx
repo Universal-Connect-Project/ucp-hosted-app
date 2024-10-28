@@ -47,7 +47,10 @@ import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
 import { useAppSelector } from "../shared/utils/redux";
-import { getInstitutionFilterSlice } from "./institutionFiltersSlice";
+import {
+  getInstitutionFilterSlice,
+  getShouldShowInactiveIntegrations,
+} from "./institutionFiltersSlice";
 
 const generateFakeInstitutionData = (rowsPerPage: number) => {
   return new Array(rowsPerPage).fill(0).map(() => ({
@@ -147,6 +150,10 @@ const Institutions = () => {
 
   const shouldDisplayTable = !isInstitutionsError && !isInstitutionListEmpty;
 
+  const shouldShowInactiveIntegrations = useAppSelector(
+    getShouldShowInactiveIntegrations,
+  );
+
   return (
     <>
       {isInstitutionPermissionsError && (
@@ -242,7 +249,10 @@ const Institutions = () => {
                                       isActive,
                                     } = aggregatorIntegration;
 
-                                    if (!isActive) {
+                                    if (
+                                      !isActive &&
+                                      !shouldShowInactiveIntegrations
+                                    ) {
                                       return null;
                                     }
 
@@ -283,6 +293,7 @@ const Institutions = () => {
                                             data-testid={
                                               INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
                                             }
+                                            disabled={!isActive}
                                             label={displayName}
                                             size="small"
                                           />
