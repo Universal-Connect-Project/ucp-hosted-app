@@ -36,6 +36,7 @@ import AddInstitution from "./ChangeInstitution/AddInstitution";
 import {
   INSTITUTIONS_AGGREGATOR_INFO_ICON,
   INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP,
+  INSTITUTIONS_EMPTY_RESULTS_TEXT,
   INSTITUTIONS_ERROR_TEXT,
   INSTITUTIONS_PAGE_TITLE,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
@@ -347,10 +348,10 @@ const Institutions = () => {
                     refetch={() => void refetchInstitutions()}
                     title="Something went wrong"
                   />
-                )}{" "}
+                )}
                 {isInstitutionListEmpty && (
                   <Alert severity="info">
-                    <AlertTitle>No Institutions found</AlertTitle>
+                    <AlertTitle>{INSTITUTIONS_EMPTY_RESULTS_TEXT}</AlertTitle>
                     Try editing your filters to see more Instutitions.
                   </Alert>
                 )}

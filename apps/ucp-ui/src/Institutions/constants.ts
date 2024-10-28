@@ -27,3 +27,5 @@ export const INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT =
   "Include inactive integrations";
 
 export const INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT = "OAuth";
+
+export const INSTITUTIONS_EMPTY_RESULTS_TEXT = "No Institutions found";

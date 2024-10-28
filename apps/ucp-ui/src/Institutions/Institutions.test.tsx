@@ -12,7 +12,9 @@ import Institutions from "./Institutions";
 import {
   INSTITUTIONS_AGGREGATOR_INFO_ICON,
   INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP,
+  INSTITUTIONS_EMPTY_RESULTS_TEXT,
   INSTITUTIONS_ERROR_TEXT,
+  INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
@@ -23,6 +25,7 @@ import {
   institutionsPage1,
   institutionsPage2,
   testInstitution,
+  testInstitutionActiveAndInactive,
 } from "./testData/institutions";
 import { server } from "../shared/test/testServer";
 import { delay, http, HttpResponse } from "msw";
@@ -216,5 +219,48 @@ describe("<Institutions />", () => {
     expectLocation(
       institutionRoute.createPath({ institutionId: institutions[0].id }),
     );
+  });
+
+  it("hides inactive integrations when includeInactiveIntegrations is off, but shows them when it's on", async () => {
+    server.use(
+      http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, () =>
+        HttpResponse.json({
+          ...institutionsPage1,
+          institutions: [testInstitutionActiveAndInactive],
+        }),
+      ),
+    );
+    render(<Institutions />);
+
+    const inactiveDisplayName =
+      testInstitutionActiveAndInactive.aggregatorIntegrations[1].aggregator
+        .displayName;
+
+    expect(await screen.findAllByText(inactiveDisplayName)).toHaveLength(1);
+
+    await userEvent.click(
+      screen.getByLabelText(
+        INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
+      ),
+    );
+
+    expect(await screen.findAllByText(inactiveDisplayName)).toHaveLength(2);
+  });
+
+  it("shows an empty state if there are no results", async () => {
+    server.use(
+      http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, () =>
+        HttpResponse.json({
+          ...institutionsPage1,
+          institutions: [],
+        }),
+      ),
+    );
+
+    render(<Institutions />);
+
+    expect(
+      await screen.findByText(INSTITUTIONS_EMPTY_RESULTS_TEXT),
+    ).toBeInTheDocument();
   });
 });
