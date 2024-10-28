@@ -1,6 +1,6 @@
 import React from "react";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
-import { render, screen, userEvent } from "../shared/test/testUtils";
+import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
 import { createStore } from "../store";
 import InstitutionFilters, { jobTypeCheckboxes } from "./InstitutionFilters";
 import { aggregatorsResponse } from "../shared/api/testData/aggregators";
@@ -45,8 +45,8 @@ describe("<InstitutionFilters />", () => {
     );
   });
 
-  it("updates the query for each of the inputs", async () => {
-    let latestSearchParams;
+  it("updates the query for each of the inputs and delays search changes", async () => {
+    let latestSearchParams: Record<string, string> = {};
     let latestAggregatorNames;
     const expectedParams: Record<string, string> = {};
     const expectedAggregatorNames = [];
@@ -102,8 +102,18 @@ describe("<InstitutionFilters />", () => {
 
     expect(latestSearchParams).toEqual(expectedParams);
 
+    const testSearch = "testSearch";
+
+    await userEvent.type(screen.getByLabelText("Search"), testSearch);
+
+    expect(latestSearchParams).toEqual(expectedParams);
+
+    expectedParams.search = testSearch;
+
+    await waitFor(() => expect(latestSearchParams).toEqual(expectedParams));
+
     expect(Object.keys(latestSearchParams || {})).toHaveLength(
-      jobTypeCheckboxes.length + 2,
+      jobTypeCheckboxes.length + 3,
     );
     expect(latestAggregatorNames).toHaveLength(aggregators.length);
   });
