@@ -23,6 +23,25 @@ import {
   setSearch,
 } from "./institutionFiltersSlice";
 
+export const jobTypeCheckboxes = [
+  {
+    label: supportsJobTypeMap.aggregation.displayName,
+    prop: "supportsAggregation",
+  },
+  {
+    label: supportsJobTypeMap.identification.displayName,
+    prop: "supportsIdentification",
+  },
+  {
+    label: supportsJobTypeMap.verification.displayName,
+    prop: "supportsVerification",
+  },
+  {
+    label: supportsJobTypeMap.fullHistory.displayName,
+    prop: "supportsHistory",
+  },
+];
+
 const InstitutionFilters = () => {
   const dispatch = useAppDispatch();
 
@@ -44,25 +63,6 @@ const InstitutionFilters = () => {
   );
 
   const { data: aggregatorsData } = useGetAggregatorsQuery();
-
-  const jobTypeCheckboxes = [
-    {
-      label: supportsJobTypeMap.aggregation.displayName,
-      prop: "supportsAggregation",
-    },
-    {
-      label: supportsJobTypeMap.identification.displayName,
-      prop: "supportsIdentification",
-    },
-    {
-      label: supportsJobTypeMap.verification.displayName,
-      prop: "supportsVerification",
-    },
-    {
-      label: supportsJobTypeMap.fullHistory.displayName,
-      prop: "supportsHistory",
-    },
-  ];
 
   const slotProps = {
     typography: {
