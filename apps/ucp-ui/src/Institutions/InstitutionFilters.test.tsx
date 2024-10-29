@@ -31,7 +31,14 @@ describe("<InstitutionFilters />", () => {
   it("updates the query for each of the inputs including removing an aggregator and delays search changes", async () => {
     let latestSearchParams: Record<string, string> = {};
     let latestAggregatorNames;
-    const expectedParams: Record<string, string> = {};
+    const expectedParams: Record<string, string> = {
+      includeInactiveIntegrations: "false",
+      search: "",
+      supportsHistory: "false",
+      supportsIdentification: "false",
+      supportsOauth: "false",
+      supportsVerification: "false",
+    };
     const expectedAggregatorNames = [];
 
     server.use(

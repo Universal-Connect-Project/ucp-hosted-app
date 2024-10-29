@@ -1,8 +1,7 @@
-import React, { ChangeEvent, useMemo } from "react";
+import React, { ChangeEvent } from "react";
 import styles from "./institutionFilters.module.css";
 import TextField from "../shared/components/Forms/TextField";
 import { Search } from "@mui/icons-material";
-import debounce from "lodash.debounce";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import {
   Checkbox,
@@ -47,18 +46,6 @@ const InstitutionFilters = ({
   handleChangeParams: (changes: Record<string, string>) => void;
   institutionsParams: InstitutionsParams;
 }) => {
-  const debouncedUpdateSearch = useMemo(
-    () =>
-      debounce(
-        ({ target: { value } }: ChangeEvent<HTMLInputElement>) =>
-          handleChangeParams({
-            search: value,
-          }),
-        250,
-      ),
-    [handleChangeParams],
-  );
-
   const { data: aggregatorsData } = useGetAggregatorsQuery();
 
   const slotProps = {
@@ -94,7 +81,12 @@ const InstitutionFilters = ({
           endAdornment: <Search />,
         }}
         label={INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT}
-        onChange={debouncedUpdateSearch}
+        onChange={({ target: { value } }) => {
+          handleChangeParams({
+            search: value,
+          });
+        }}
+        value={institutionsParams.search}
       />
       <FormGroup className={styles.formGroup}>
         <FormHelperText>Aggregator</FormHelperText>

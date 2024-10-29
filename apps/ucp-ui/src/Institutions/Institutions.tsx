@@ -16,7 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import classNames from "classnames";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FetchError from "../shared/components/FetchError";
 import PageContent from "../shared/components/PageContent";
@@ -47,6 +47,7 @@ import { DEFAULT_LOGO_URL } from "./Institution/constants";
 import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
+import debounce from "lodash.debounce";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -113,6 +114,17 @@ const Institutions = () => {
   );
   const search = searchParams.get("search") || "";
 
+  const [delayedSearch, setDelayedSearch] = useState(search);
+
+  const debouncedSetDelayedSearch = useMemo(
+    () => debounce((value: string) => setDelayedSearch(value), 250),
+    [setDelayedSearch],
+  );
+
+  useEffect(() => {
+    debouncedSetDelayedSearch(search);
+  }, [search, debouncedSetDelayedSearch]);
+
   const institutionsParams = {
     page,
     pageSize,
@@ -177,7 +189,10 @@ const Institutions = () => {
     isFetching: isInstitutionsLoading,
     isSuccess: isInstitutionsSuccess,
     refetch: refetchInstitutions,
-  } = useGetInstitutionsQuery(institutionsParams);
+  } = useGetInstitutionsQuery({
+    ...institutionsParams,
+    search: delayedSearch,
+  });
 
   const institutions =
     isInstitutionsLoading && !data
