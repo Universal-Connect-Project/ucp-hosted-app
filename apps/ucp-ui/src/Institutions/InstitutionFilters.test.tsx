@@ -28,16 +28,118 @@ describe("<InstitutionFilters />", () => {
     );
   });
 
+  it("populates the inputs with filled inputs from the query string", async () => {
+    const queryParams = {
+      includeInactiveIntegrations: "true",
+      search: "test",
+      ...jobTypeCheckboxes.reduce(
+        (acc, { prop }) => ({
+          ...acc,
+          [prop]: true,
+        }),
+        {},
+      ),
+      supportsOauth: "true",
+      aggregatorName: aggregators.map(({ name }) => name).toString(),
+    };
+
+    render(<Institutions />, {
+      initialRoute: `/?${new URLSearchParams(queryParams).toString()}`,
+    });
+
+    for (const { displayName } of aggregators) {
+      expect(await screen.findByLabelText(displayName)).toBeChecked();
+    }
+
+    const labels = [
+      INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT,
+      INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
+      ...jobTypeCheckboxes.map(({ label }) => label),
+    ];
+
+    for (const label of labels) {
+      expect(screen.getByLabelText(label)).toBeChecked();
+    }
+
+    expect(
+      screen.getByLabelText(INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT),
+    ).toHaveValue("test");
+  });
+
+  it("leaves the inputs blank if everything is falsy in the query string", async () => {
+    const queryParams = {
+      includeInactiveIntegrations: "false",
+      search: "",
+      ...jobTypeCheckboxes.reduce(
+        (acc, { prop }) => ({
+          ...acc,
+          [prop]: "false",
+        }),
+        {},
+      ),
+      supportsOauth: "false",
+      aggregatorName: [].toString(),
+    };
+
+    render(<Institutions />, {
+      initialRoute: `/?${new URLSearchParams(queryParams).toString()}`,
+    });
+
+    for (const { displayName } of aggregators) {
+      expect(await screen.findByLabelText(displayName)).not.toBeChecked();
+    }
+
+    const labels = [
+      INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT,
+      INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
+      ...jobTypeCheckboxes.map(({ label }) => label),
+    ];
+
+    for (const label of labels) {
+      expect(screen.getByLabelText(label)).not.toBeChecked();
+    }
+
+    expect(
+      screen.getByLabelText(INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT),
+    ).toHaveValue("");
+  });
+
+  it("leaves the inputs blank if there's nothing in the query string", async () => {
+    render(<Institutions />);
+
+    for (const { displayName } of aggregators) {
+      expect(await screen.findByLabelText(displayName)).not.toBeChecked();
+    }
+
+    const labels = [
+      INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT,
+      INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
+      ...jobTypeCheckboxes.map(({ label }) => label),
+    ];
+
+    for (const label of labels) {
+      expect(screen.getByLabelText(label)).not.toBeChecked();
+    }
+
+    expect(
+      screen.getByLabelText(INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT),
+    ).toHaveValue("");
+  });
+
   it("updates the query for each of the inputs including removing an aggregator and delays search changes", async () => {
     let latestSearchParams: Record<string, string> = {};
     let latestAggregatorNames;
     const expectedParams: Record<string, string> = {
       includeInactiveIntegrations: "false",
       search: "",
-      supportsHistory: "false",
-      supportsIdentification: "false",
+      ...jobTypeCheckboxes.reduce(
+        (acc, { prop }) => ({
+          ...acc,
+          [prop]: "false",
+        }),
+        {},
+      ),
       supportsOauth: "false",
-      supportsVerification: "false",
     };
     const expectedAggregatorNames = [];
 
