@@ -12,13 +12,13 @@ const getInstitutionsRequest = ({
   search?: string;
   aggregatorFilter?: string[];
 }) => {
-  let jobTypeFilterQueryParam;
+  let integrationFilterQueryParam;
   if (integrationFieldFilter) {
-    jobTypeFilterQueryParam = integrationFieldFilter
-      .map((jobType) => `${jobType}=true&`)
+    integrationFilterQueryParam = integrationFieldFilter
+      .map((integrationField) => `${integrationField}=true&`)
       .join("");
   } else {
-    jobTypeFilterQueryParam = "";
+    integrationFilterQueryParam = "";
   }
 
   const searchQueryParam = search ? `search=${search}&` : "";
@@ -33,7 +33,7 @@ const getInstitutionsRequest = ({
   }
 
   return cy.request({
-    url: `http://localhost:${PORT}/institutions?pageSize=50&${jobTypeFilterQueryParam}${searchQueryParam}${aggregatorFilterQueryParam}`,
+    url: `http://localhost:${PORT}/institutions?pageSize=50&${integrationFilterQueryParam}${searchQueryParam}${aggregatorFilterQueryParam}`,
     method: "GET",
     headers: {
       Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
@@ -42,7 +42,7 @@ const getInstitutionsRequest = ({
 };
 
 describe("/institutions with filters and search", () => {
-  it("gets a list of institutions including mx, sophtron, and finicity aggregators", () => {
+  it("gets a list of institutions including mx or sophtron or finicity aggregators", () => {
     getInstitutionsRequest({
       aggregatorFilter: ["mx", "sophtron", "finicity"],
     }).then(
@@ -51,28 +51,26 @@ describe("/institutions with filters and search", () => {
 
         expect(response.status).to.eq(200);
         institutionResponse.institutions.forEach((institution) => {
-          expect(institution.aggregatorIntegrations.length).to.be.gte(3);
+          expect(institution.aggregatorIntegrations.length).to.be.gte(1);
           let mxFound = false;
-          let sohptronFound = false;
+          let sophtronFound = false;
           let finicityFound = false;
           institution.aggregatorIntegrations.forEach((integration) => {
             if (integration.aggregator.name === "mx") {
               mxFound = true;
             } else if (integration.aggregator.name === "sophtron") {
-              sohptronFound = true;
+              sophtronFound = true;
             } else if (integration.aggregator.name === "finicity") {
               finicityFound = true;
             }
           });
-          expect(mxFound).to.be.true;
-          expect(sohptronFound).to.be.true;
-          expect(finicityFound).to.be.true;
+          expect(mxFound || sophtronFound || finicityFound).to.be.true;
         });
       },
     );
   });
 
-  it("gets a list of institutions that have support for all job types", () => {
+  it("gets a list of institutions that have support for one of these job types", () => {
     getInstitutionsRequest({
       integrationFieldFilter: [
         "supportsIdentification",
@@ -84,25 +82,33 @@ describe("/institutions with filters and search", () => {
       (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
         response.body.institutions.forEach((institution) => {
           institution.aggregatorIntegrations.forEach((aggInt) => {
-            expect(aggInt.supports_aggregation).to.be.true;
-            expect(aggInt.supports_identification).to.be.true;
-            expect(aggInt.supports_verification).to.be.true;
-            expect(aggInt.supports_history).to.be.true;
+            let jobTypeSupported = false;
+            if (
+              aggInt.supports_aggregation ||
+              aggInt.supports_identification ||
+              aggInt.supports_verification ||
+              aggInt.supports_history
+            ) {
+              jobTypeSupported = true;
+            }
+            expect(jobTypeSupported).to.be.true;
           });
         });
       },
     );
   });
 
-  it("gets a list of institutions that have isActive = true", () => {
-    getInstitutionsRequest({
-      integrationFieldFilter: ["isActive"],
-    }).then(
+  it("institution list by default only includes institutions which have at least one active integration", () => {
+    getInstitutionsRequest({}).then(
       (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
         response.body.institutions.forEach((institution) => {
+          let hasActiveIntegration = false;
           institution.aggregatorIntegrations.forEach((aggInt) => {
-            expect(aggInt.isActive).to.be.true;
+            if (aggInt.isActive) {
+              hasActiveIntegration = true;
+            }
           });
+          expect(hasActiveIntegration).to.be.true;
         });
       },
     );
@@ -110,7 +116,7 @@ describe("/institutions with filters and search", () => {
 
   it("gets a list of active institutions with mx agg support and supports_history", () => {
     getInstitutionsRequest({
-      integrationFieldFilter: ["isActive", "supportsHistory"],
+      integrationFieldFilter: ["supportsHistory"],
       aggregatorFilter: ["mx"],
     }).then(
       (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
@@ -130,7 +136,7 @@ describe("/institutions with filters and search", () => {
 
   it("gets a list of active institutions with mx agg support and supports_history and has OAuth", () => {
     getInstitutionsRequest({
-      integrationFieldFilter: ["isActive", "supportsHistory", "supportsOauth"],
+      integrationFieldFilter: ["supportsHistory", "supportsOauth"],
       aggregatorFilter: ["mx"],
     }).then(
       (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
@@ -152,7 +158,7 @@ describe("/institutions with filters and search", () => {
 
   it("gets a list of active institutions with mx agg support, supports_history, has OAuth and 'Bank' in the name", () => {
     getInstitutionsRequest({
-      integrationFieldFilter: ["isActive", "supportsHistory", "supportsOauth"],
+      integrationFieldFilter: ["supportsHistory", "supportsOauth"],
       aggregatorFilter: ["mx"],
       search: "Bank",
     }).then(
@@ -181,6 +187,49 @@ describe("/institutions with filters and search", () => {
       (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
         response.body.institutions.forEach((institution) => {
           expect(institution.name.toLowerCase()).to.include("testexample");
+        });
+      },
+    );
+  });
+
+  it("includes institutions with inactive integrations when includeInactiveIntegrations is passed", () => {
+    getInstitutionsRequest({
+      aggregatorFilter: ["finicity"],
+      search: "finbank",
+      integrationFieldFilter: ["includeInactiveIntegrations"],
+    }).then(
+      (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
+        let inactiveInstitutionFound = false;
+        response.body.institutions.forEach((institution) => {
+          let activeAggregatorFound = false;
+          institution.aggregatorIntegrations.forEach((aggInt) => {
+            if (aggInt.isActive) {
+              activeAggregatorFound = true;
+            }
+          });
+          if (!activeAggregatorFound) {
+            inactiveInstitutionFound = true;
+          }
+        });
+        expect(inactiveInstitutionFound).to.be.true;
+      },
+    );
+  });
+
+  it("includes institutions that have an mx integration with extended_history", () => {
+    getInstitutionsRequest({
+      aggregatorFilter: ["mx"],
+      integrationFieldFilter: ["supportsHistory"],
+    }).then(
+      (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
+        response.body.institutions.forEach((institution) => {
+          let mxIntegrationWithHistoryFound = false;
+          institution.aggregatorIntegrations.forEach((aggInt) => {
+            if (aggInt.aggregator.name === "mx" && aggInt.supports_history) {
+              mxIntegrationWithHistoryFound = true;
+            }
+          });
+          expect(mxIntegrationWithHistoryFound).to.be.true;
         });
       },
     );

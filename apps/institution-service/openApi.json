@@ -496,7 +496,7 @@
           },
           {
             "in": "query",
-            "name": "isActive",
+            "name": "includeInactiveIntegrations",
             "schema": {
               "type": "boolean",
               "enum": [true],
@@ -504,7 +504,7 @@
             },
             "required": false,
             "example": true,
-            "description": "Only show Institutions that are active"
+            "description": "Include institutions without active integrations in the search"
           },
           {
             "in": "query",
@@ -579,7 +579,7 @@
             "style": "form",
             "explode": true,
             "example": ["mx", "sophtron"],
-            "description": "Only show Institutions that support extended transaction history"
+            "description": "Institutions must include an integration by at least one of these aggregators"
           }
         ],
         "responses": {

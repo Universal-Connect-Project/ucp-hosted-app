@@ -1,9 +1,11 @@
 import { UUID } from "crypto";
 import { Request, Response } from "express";
 import { Op, ValidationError, literal } from "sequelize";
+import { Literal } from "sequelize/types/utils";
 import { validate } from "uuid";
 import db from "../database";
 import { Aggregator } from "../models/aggregator";
+import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
@@ -175,10 +177,12 @@ interface PaginationOptions {
 
 type WhereConditions = {
   [key: string]: unknown;
-  [Op.or]?: Array<{
-    name?: { [Op.iLike]: string };
-    keywords?: { [Op.contains]: string[] };
-  }>;
+  [Op.or]?: Array<
+    | {
+        name?: { [Op.iLike]: string };
+      }
+    | Literal
+  >;
   [Op.and]?: unknown;
 };
 
@@ -190,50 +194,78 @@ const getPaginationOptions = (req: Request): PaginationOptions => {
   return { page, limit, offset };
 };
 
-const whereAggregatorIntegrationConditions = (req: Request) => {
+const integrationFilterStrings = (req: Request): string => {
   const {
     supportsIdentification,
     supportsAggregation,
     supportsHistory,
     supportsVerification,
     supportsOauth,
-    isActive,
+    includeInactiveIntegrations,
   } = req.query;
-  const whereConditions: WhereConditions = {};
+  const integrationFilterStringList = [];
   if (supportsIdentification === "true") {
-    whereConditions["supports_identification"] = true;
+    integrationFilterStringList.push(
+      'AND "aggregatorIntegration"."supports_identification" = TRUE',
+    );
   }
   if (supportsAggregation === "true") {
-    whereConditions["supports_aggregation"] = true;
+    integrationFilterStringList.push(
+      'AND "aggregatorIntegration"."supports_aggregation" = TRUE',
+    );
   }
   if (supportsHistory === "true") {
-    whereConditions["supports_history"] = true;
+    integrationFilterStringList.push(
+      'AND "aggregatorIntegration"."supports_history" = TRUE',
+    );
   }
   if (supportsVerification === "true") {
-    whereConditions["supports_verification"] = true;
+    integrationFilterStringList.push(
+      'AND "aggregatorIntegration"."supports_verification" = TRUE',
+    );
   }
   if (supportsOauth === "true") {
-    whereConditions["supports_oauth"] = true;
-  }
-  if (isActive) {
-    whereConditions["isActive"] = isActive === "true" ? true : false;
+    integrationFilterStringList.push(
+      'AND "aggregatorIntegration"."supports_oauth" = TRUE',
+    );
+    if (includeInactiveIntegrations !== "true") {
+      integrationFilterStringList.push(
+        `AND "aggregatorIntegration"."isActive" = TRUE`,
+      );
+    }
   }
 
-  return whereConditions;
+  return integrationFilterStringList.join(" ");
 };
 
 const whereInstitutionConditions = (req: Request): WhereConditions => {
-  const { search, aggregatorName } = req.query;
+  const { search } = req.query;
 
   const whereConditions: WhereConditions = {};
 
   if (search) {
+    const escapedSearch = db.escape(`%${search as string}%`);
+
     whereConditions[Op.or] = [
       { name: { [Op.iLike]: `%${search as string}%` } },
-      { keywords: { [Op.contains]: [search as string] } },
+      literal(`
+        EXISTS (
+          SELECT 1 from UNNEST(keywords) as keyword
+          WHERE keyword ILIKE ${escapedSearch}
+        )
+      `),
     ];
   }
 
+  whereConditions[Op.and] = aggregatorFilterLiteral(req);
+
+  return whereConditions;
+};
+
+const aggregatorFilterLiteral = (req: Request): Literal => {
+  const { aggregatorName } = req.query;
+
+  let aggQueryFilter = "";
   if (aggregatorName) {
     const aggregatorNames = Array.isArray(aggregatorName)
       ? aggregatorName
@@ -241,21 +273,20 @@ const whereInstitutionConditions = (req: Request): WhereConditions => {
     const escapedAggregatorNames = aggregatorNames.map((aggregator) => {
       return db.escape(aggregator as string);
     });
-    const aggQueryString = `(${escapedAggregatorNames.join(", ")})`;
-    const aggCount = escapedAggregatorNames.length;
-
-    whereConditions[Op.and] = literal(`
-        EXISTS (
-          SELECT COUNT(*)
-          FROM "aggregatorIntegrations" AS "aggregatorIntegration"
-          INNER JOIN "aggregators" AS "aggregator" ON "aggregatorIntegration"."aggregatorId" = "aggregator"."id"
-          WHERE "aggregatorIntegration"."institution_id" = "Institution"."id"
-          AND "aggregator"."name" IN ${aggQueryString}
-          HAVING COUNT(*) = ${aggCount}
-        )
-      `);
+    aggQueryFilter = `AND "aggregator"."name" IN (${escapedAggregatorNames.join(", ")})`;
   }
-  return whereConditions;
+
+  return literal(`
+    EXISTS (
+      SELECT 1
+      FROM "aggregatorIntegrations" AS "aggregatorIntegration"
+      INNER JOIN "aggregators" AS "aggregator" 
+      ON "aggregatorIntegration"."aggregatorId" = "aggregator"."id"
+      WHERE "aggregatorIntegration"."institution_id" = "Institution"."id"
+      ${integrationFilterStrings(req)}
+      ${aggQueryFilter}
+    )
+  `);
 };
 
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
@@ -263,10 +294,12 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
     const { limit, offset, page } = getPaginationOptions(req);
 
     const { count, rows: institutions } = await Institution.findAndCountAll({
+      attributes: { include: ["*"] },
       where: whereInstitutionConditions(req),
       include: [
         {
-          association: Institution.associations.aggregatorIntegrations,
+          model: AggregatorIntegration,
+          as: "aggregatorIntegrations",
           attributes: [
             "id",
             "aggregator_institution_id",
@@ -277,23 +310,25 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
             "supports_history",
             "isActive",
           ],
-          where: whereAggregatorIntegrationConditions(req),
+          required: false,
           include: [
             {
               model: Aggregator,
               as: "aggregator",
               attributes: ["name", "id", "displayName", "logo"],
+              required: false,
             },
           ],
         },
       ],
-      distinct: true,
-      limit,
-      offset,
       order: [
         ["createdAt", "DESC"],
         ["name", "ASC"],
       ],
+      distinct: true,
+      limit,
+      offset,
+      subQuery: false,
     });
 
     return res.status(200).json({
