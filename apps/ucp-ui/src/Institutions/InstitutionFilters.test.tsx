@@ -1,8 +1,6 @@
 import React from "react";
-import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
-import { createStore } from "../store";
-import InstitutionFilters, { jobTypeCheckboxes } from "./InstitutionFilters";
+import { jobTypeCheckboxes } from "./InstitutionFilters";
 import { aggregatorsResponse } from "../shared/api/testData/aggregators";
 import Institutions from "./Institutions";
 import { server } from "../shared/test/testServer";
@@ -18,28 +16,8 @@ import {
 const { aggregators } = aggregatorsResponse;
 
 describe("<InstitutionFilters />", () => {
-  it("resets the filters on unmount", async () => {
-    const store = createStore();
-
-    const { unmount } = render(<InstitutionFilters />, {
-      store,
-    });
-
-    await userEvent.click(
-      screen.getByLabelText(supportsJobTypeMap.aggregation.displayName),
-    );
-
-    expect(store.getState().institutionFilter.supportsAggregation).toBe(true);
-
-    unmount();
-
-    expect(store.getState().institutionFilter.supportsAggregation).toBe(
-      undefined,
-    );
-  });
-
   it("renders a checkbox for each of the aggregators", async () => {
-    render(<InstitutionFilters />);
+    render(<Institutions />);
 
     expect(
       await screen.findByText(aggregators[0].displayName),

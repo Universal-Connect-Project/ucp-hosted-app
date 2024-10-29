@@ -3,7 +3,6 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { api } from "./baseApi";
 import { tokenSlice } from "./shared/reducers/token";
 import { snackbarSlice } from "./shared/reducers/snackbar";
-import { institutionFilterSlice } from "./Institutions/institutionFiltersSlice";
 
 export const createStore = () =>
   configureStore({
@@ -11,7 +10,6 @@ export const createStore = () =>
       getDefaultMiddleware().concat(api.middleware),
     reducer: {
       [api.reducerPath]: api.reducer,
-      [institutionFilterSlice.reducerPath]: institutionFilterSlice.reducer,
       [snackbarSlice.reducerPath]: snackbarSlice.reducer,
       [tokenSlice.reducerPath]: tokenSlice.reducer,
     },

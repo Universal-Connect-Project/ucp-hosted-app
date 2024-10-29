@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useMemo } from "react";
+import React, { ChangeEvent, useMemo } from "react";
 import styles from "./institutionFilters.module.css";
 import TextField from "../shared/components/Forms/TextField";
 import { Search } from "@mui/icons-material";
@@ -14,19 +14,12 @@ import {
   TypographyProps,
 } from "@mui/material";
 import { useGetAggregatorsQuery } from "../shared/api/aggregators";
-import { useAppDispatch } from "../shared/utils/redux";
-import {
-  clearInstitutionFilters,
-  InstitutionFilterBooleans,
-  setFilterAggregator,
-  setFilterBoolean,
-  setSearch,
-} from "./institutionFiltersSlice";
 import {
   INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
   INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT,
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
 } from "./constants";
+import { InstitutionParamsBooleans, InstitutionsParams } from "./api";
 
 export const jobTypeCheckboxes = [
   {
@@ -47,24 +40,23 @@ export const jobTypeCheckboxes = [
   },
 ];
 
-const InstitutionFilters = () => {
-  const dispatch = useAppDispatch();
-
-  useEffect(
-    () => () => {
-      dispatch(clearInstitutionFilters());
-    },
-    [dispatch],
-  );
-
+const InstitutionFilters = ({
+  handleChangeParams,
+  institutionsParams,
+}: {
+  handleChangeParams: (changes: Record<string, string>) => void;
+  institutionsParams: InstitutionsParams;
+}) => {
   const debouncedUpdateSearch = useMemo(
     () =>
       debounce(
         ({ target: { value } }: ChangeEvent<HTMLInputElement>) =>
-          dispatch(setSearch(value)),
+          handleChangeParams({
+            search: value,
+          }),
         250,
       ),
-    [dispatch],
+    [handleChangeParams],
   );
 
   const { data: aggregatorsData } = useGetAggregatorsQuery();
@@ -74,6 +66,26 @@ const InstitutionFilters = () => {
       variant: "body2",
     } as TypographyProps,
   };
+
+  const createChangeAggregatorHandler =
+    (name: string) =>
+    ({ target: { checked } }: ChangeEvent<HTMLInputElement>) => {
+      const { aggregatorName } = institutionsParams;
+
+      let newAggregatorName = [...aggregatorName];
+
+      if (checked) {
+        newAggregatorName.push(name);
+      } else {
+        newAggregatorName = aggregatorName.filter(
+          (current) => current !== name,
+        );
+      }
+
+      handleChangeParams({
+        aggregatorName: newAggregatorName.toString(),
+      });
+    };
 
   return (
     <div className={styles.container}>
@@ -90,14 +102,8 @@ const InstitutionFilters = () => {
           <FormControlLabel
             control={
               <Checkbox
-                onChange={({ target: { checked } }) =>
-                  dispatch(
-                    setFilterAggregator({
-                      name,
-                      value: checked,
-                    }),
-                  )
-                }
+                checked={institutionsParams.aggregatorName?.includes(name)}
+                onChange={createChangeAggregatorHandler(name)}
               />
             }
             key={id}
@@ -110,14 +116,14 @@ const InstitutionFilters = () => {
           <FormControlLabel
             control={
               <Checkbox
-                onChange={({ target: { checked } }) =>
-                  dispatch(
-                    setFilterBoolean({
-                      key: prop as keyof InstitutionFilterBooleans,
-                      value: checked,
-                    }),
-                  )
+                checked={
+                  institutionsParams[prop as keyof InstitutionParamsBooleans]
                 }
+                onChange={({ target: { checked } }) => {
+                  handleChangeParams({
+                    [prop]: checked.toString(),
+                  });
+                }}
               />
             }
             key={prop}
@@ -129,13 +135,11 @@ const InstitutionFilters = () => {
         <FormControlLabel
           control={
             <Checkbox
+              checked={institutionsParams.supportsOauth}
               onChange={({ target: { checked } }) =>
-                dispatch(
-                  setFilterBoolean({
-                    key: "supportsOauth",
-                    value: checked,
-                  }),
-                )
+                handleChangeParams({
+                  supportsOauth: checked.toString(),
+                })
               }
             />
           }
@@ -147,13 +151,11 @@ const InstitutionFilters = () => {
           className={styles.inactiveSwitch}
           control={
             <Switch
+              checked={institutionsParams.includeInactiveIntegrations}
               onChange={({ target: { checked } }) =>
-                dispatch(
-                  setFilterBoolean({
-                    key: "includeInactiveIntegrations",
-                    value: checked,
-                  }),
-                )
+                handleChangeParams({
+                  includeInactiveIntegrations: checked.toString(),
+                })
               }
               size="small"
             />

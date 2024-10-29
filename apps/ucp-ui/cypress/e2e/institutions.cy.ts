@@ -24,7 +24,7 @@ import {
 } from "../../src/Institutions/ChangeAggregatorIntegration/constants";
 
 describe("institutions", () => {
-  it("renders institutions, changes rows per page, and paginates", () => {
+  it("renders institutions, changes rows per page, paginates, and filters", () => {
     cy.loginWithoutWidgetRole();
 
     const rowRegex = new RegExp(INSTITUTIONS_ROW_TEST_ID);

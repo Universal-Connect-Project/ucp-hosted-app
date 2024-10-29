@@ -47,14 +47,9 @@ import { DEFAULT_LOGO_URL } from "./Institution/constants";
 import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
-import { useAppSelector } from "../shared/utils/redux";
-import {
-  getInstitutionFilterSlice,
-  getShouldShowInactiveIntegrations,
-} from "./institutionFiltersSlice";
 
-const generateFakeInstitutionData = (rowsPerPage: number) => {
-  return new Array(rowsPerPage).fill(0).map(() => ({
+const generateFakeInstitutionData = (pageSize: number) => {
+  return new Array(pageSize).fill(0).map(() => ({
     id: window.crypto.randomUUID(),
     logo: undefined,
     name: "Test that has to be quite long 1234566777",
@@ -91,33 +86,84 @@ const Institutions = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const getBooleanFromSearchParams = (key: string) => {
+    const value = searchParams.get(key);
+
+    return value === "true" ? true : false;
+  };
+
   const page = parseInt(searchParams.get("page") || "1", 10);
-  const rowsPerPage = parseInt(searchParams.get("rowsPerPage") || "10", 10);
+  const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+  const supportsAggregation = getBooleanFromSearchParams("supportsAggregation");
+  const supportsIdentification = getBooleanFromSearchParams(
+    "supportsIdentification",
+  );
+  const supportsHistory = getBooleanFromSearchParams("supportsHistory");
+  const supportsVerification = getBooleanFromSearchParams(
+    "supportsVerification",
+  );
+  const aggregatorName =
+    searchParams
+      .get("aggregatorName")
+      ?.split(",")
+      ?.filter((value) => value) || [];
+  const supportsOauth = getBooleanFromSearchParams("supportsOauth");
+  const includeInactiveIntegrations = getBooleanFromSearchParams(
+    "includeInactiveIntegrations",
+  );
+  const search = searchParams.get("search") || "";
+
+  const institutionsParams = {
+    page,
+    pageSize,
+    supportsAggregation,
+    supportsIdentification,
+    supportsHistory,
+    supportsVerification,
+    aggregatorName,
+    search,
+    supportsOauth,
+    includeInactiveIntegrations,
+  };
+
+  const handleChangeParams = (changes: Record<string, string>) => {
+    const urlFriendlyInstitutionsParams = Object.entries(
+      institutionsParams,
+    ).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: value.toString(),
+      }),
+      {},
+    );
+
+    setSearchParams(
+      {
+        ...urlFriendlyInstitutionsParams,
+        ...changes,
+      },
+      { replace: true },
+    );
+  };
 
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
     newPage: number,
   ) => {
-    setSearchParams(
-      {
-        page: newPage.toString(),
-        rowsPerPage: rowsPerPage.toString(),
-      },
-      { replace: true },
-    );
+    handleChangeParams({
+      page: newPage.toString(),
+      pageSize: pageSize.toString(),
+    });
     window.scrollTo({ behavior: "smooth", top: 0 });
   };
 
-  const handleChangeRowsPerPage = (
+  const handleChangePageSize = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setSearchParams(
-      {
-        page: "1",
-        rowsPerPage: parseInt(event.target.value, 10).toString(),
-      },
-      { replace: true },
-    );
+    handleChangeParams({
+      page: "1",
+      pageSize: parseInt(event.target.value, 10).toString(),
+    });
   };
 
   const {
@@ -125,23 +171,17 @@ const Institutions = () => {
     refetch: refetchInstitutionPermissions,
   } = useGetInstitutionPermissionsQuery();
 
-  const filterParams = useAppSelector(getInstitutionFilterSlice);
-
   const {
     data,
     isError: isInstitutionsError,
     isFetching: isInstitutionsLoading,
     isSuccess: isInstitutionsSuccess,
     refetch: refetchInstitutions,
-  } = useGetInstitutionsQuery({
-    page: page,
-    pageSize: rowsPerPage,
-    ...filterParams,
-  });
+  } = useGetInstitutionsQuery(institutionsParams);
 
   const institutions =
     isInstitutionsLoading && !data
-      ? generateFakeInstitutionData(rowsPerPage)
+      ? generateFakeInstitutionData(pageSize)
       : data?.institutions;
   const totalRecords = data?.totalRecords || 0;
   const pages = data?.totalPages;
@@ -151,9 +191,7 @@ const Institutions = () => {
 
   const shouldDisplayTable = !isInstitutionsError && !isInstitutionListEmpty;
 
-  const shouldShowInactiveIntegrations = useAppSelector(
-    getShouldShowInactiveIntegrations,
-  );
+  const shouldShowInactiveIntegrations = !!includeInactiveIntegrations;
 
   return (
     <>
@@ -171,7 +209,10 @@ const Institutions = () => {
             <AddInstitution />
           </div>
           <div className={styles.filterTableContainer}>
-            <InstitutionFilters />
+            <InstitutionFilters
+              handleChangeParams={handleChangeParams}
+              institutionsParams={institutionsParams}
+            />
             {shouldDisplayTable ? (
               <TableContainer className={styles.table}>
                 <>
@@ -315,8 +356,8 @@ const Institutions = () => {
                       component="div"
                       page={page - 1}
                       onPageChange={() => {}}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      rowsPerPage={rowsPerPage}
+                      onRowsPerPageChange={handleChangePageSize}
+                      rowsPerPage={pageSize}
                       size="small"
                       slotProps={{
                         actions: {
@@ -332,6 +373,7 @@ const Institutions = () => {
                     <Pagination
                       count={pages}
                       onChange={handleChangePage}
+                      page={page}
                       shape="circular"
                       showFirstButton
                       showLastButton
