@@ -139,9 +139,10 @@ const Institutions = () => {
   };
 
   const handleChangeParams = (changes: Record<string, string>) => {
-    const urlFriendlyInstitutionsParams = Object.entries(
-      institutionsParams,
-    ).reduce(
+    const urlFriendlyInstitutionsParams = Object.entries({
+      ...institutionsParams,
+      page: 1,
+    }).reduce(
       (acc, [key, value]) => ({
         ...acc,
         [key]: value.toString(),
@@ -164,7 +165,6 @@ const Institutions = () => {
   ) => {
     handleChangeParams({
       page: newPage.toString(),
-      pageSize: pageSize.toString(),
     });
     window.scrollTo({ behavior: "smooth", top: 0 });
   };
@@ -173,7 +173,6 @@ const Institutions = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     handleChangeParams({
-      page: "1",
       pageSize: parseInt(event.target.value, 10).toString(),
     });
   };

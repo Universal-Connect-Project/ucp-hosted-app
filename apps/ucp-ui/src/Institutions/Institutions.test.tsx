@@ -37,6 +37,7 @@ import { institutionPermissionsResponse } from "../shared/test/testData/institut
 import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
 import { INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT } from "./ChangeInstitution/constants";
 import { institutionRoute } from "../shared/constants/routes";
+import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 
 const findRowById = async (id: string) => {
   expect(
@@ -161,7 +162,17 @@ describe("<Institutions />", () => {
     await findRowById(institutionsPage1.institutions[0].id);
   });
 
-  it("paginates and changes number of rows", async () => {
+  it("paginates, changes the number of rows, and resets the page back to 1 on filter change", async () => {
+    const institutionsFilteredBySupportsAggregation = {
+      ...institutionsBiggerPage,
+      institutions: [
+        {
+          ...institutionsBiggerPage.institutions[0],
+          id: "filteredBySupportsAggregation",
+        },
+      ],
+    };
+
     server.use(
       http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, ({ request }) => {
         let response = institutionsPage1;
@@ -170,11 +181,19 @@ describe("<Institutions />", () => {
 
         const page = parseInt(searchParams.get("page") as string, 10);
         const pageSize = parseInt(searchParams.get("pageSize") as string, 10);
+        const supportsAggregation =
+          searchParams.get("supportsAggregation") === "true";
 
         if (page === 2) {
           response = institutionsPage2;
         } else if (pageSize === 25) {
-          response = institutionsBiggerPage;
+          if (page === 1) {
+            if (supportsAggregation) {
+              response = institutionsFilteredBySupportsAggregation;
+            } else {
+              response = institutionsBiggerPage;
+            }
+          }
         }
 
         return HttpResponse.json(response);
@@ -193,6 +212,14 @@ describe("<Institutions />", () => {
     await userEvent.click(screen.getByText(25));
 
     await findRowById(institutionsBiggerPage.institutions[0].id);
+
+    await userEvent.click(
+      screen.getByLabelText(supportsJobTypeMap.aggregation.displayName),
+    );
+
+    await findRowById(
+      institutionsFilteredBySupportsAggregation.institutions[0].id,
+    );
   });
 
   it("shows a tooltip for aggregators", async () => {
