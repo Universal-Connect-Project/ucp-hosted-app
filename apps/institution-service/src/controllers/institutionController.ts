@@ -247,7 +247,6 @@ const whereInstitutionConditions = (req: Request): WhereConditions => {
           INNER JOIN "aggregators" AS "aggregator" ON "aggregatorIntegration"."aggregatorId" = "aggregator"."id"
           WHERE "aggregatorIntegration"."institution_id" = "Institution"."id"
           AND "aggregator"."name" IN ${aggQueryString}
-          AND "aggregatorIntegration"."isActive" = true
           HAVING COUNT(*) = ${aggCount}
         )
       `);
