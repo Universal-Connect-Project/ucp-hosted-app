@@ -22,6 +22,7 @@ import {
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
 } from "./constants";
 import { InstitutionParamsBooleans, InstitutionsParams } from "./api";
+import LoadingCheckbox from "./LoadingCheckbox";
 
 export const jobTypeCheckboxes = [
   {
@@ -49,8 +50,11 @@ const InstitutionFilters = ({
   handleChangeParams: (changes: Record<string, string>) => void;
   institutionsParams: InstitutionsParams;
 }) => {
-  const { data: aggregatorsData, isError: isAggregatorsError } =
-    useGetAggregatorsQuery();
+  const {
+    data: aggregatorsData,
+    isError: isAggregatorsError,
+    isLoading: isAggregatorsLoading,
+  } = useGetAggregatorsQuery();
 
   const slotProps = {
     typography: {
@@ -99,6 +103,12 @@ const InstitutionFilters = ({
             <AlertTitle>Filter not found</AlertTitle>
             {INSTITUTIONS_FILTER_AGGREGATORS_ERROR_TEXT}
           </Alert>
+        )}
+        {isAggregatorsLoading && (
+          <>
+            <LoadingCheckbox />
+            <LoadingCheckbox />
+          </>
         )}
         {aggregatorsData?.aggregators?.map(({ displayName, name, id }) => (
           <FormControlLabel
