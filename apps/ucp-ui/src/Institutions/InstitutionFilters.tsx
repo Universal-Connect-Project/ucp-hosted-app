@@ -4,6 +4,8 @@ import TextField from "../shared/components/Forms/TextField";
 import { Search } from "@mui/icons-material";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import {
+  Alert,
+  AlertTitle,
   Checkbox,
   Divider,
   FormControlLabel,
@@ -14,6 +16,7 @@ import {
 } from "@mui/material";
 import { useGetAggregatorsQuery } from "../shared/api/aggregators";
 import {
+  INSTITUTIONS_FILTER_AGGREGATORS_ERROR_TEXT,
   INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
   INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT,
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
@@ -46,7 +49,8 @@ const InstitutionFilters = ({
   handleChangeParams: (changes: Record<string, string>) => void;
   institutionsParams: InstitutionsParams;
 }) => {
-  const { data: aggregatorsData } = useGetAggregatorsQuery();
+  const { data: aggregatorsData, isError: isAggregatorsError } =
+    useGetAggregatorsQuery();
 
   const slotProps = {
     typography: {
@@ -90,6 +94,12 @@ const InstitutionFilters = ({
       />
       <FormGroup className={styles.formGroup}>
         <FormHelperText>Aggregator</FormHelperText>
+        {isAggregatorsError && (
+          <Alert icon={false} severity="error">
+            <AlertTitle>Filter not found</AlertTitle>
+            {INSTITUTIONS_FILTER_AGGREGATORS_ERROR_TEXT}
+          </Alert>
+        )}
         {aggregatorsData?.aggregators?.map(({ displayName, name, id }) => (
           <FormControlLabel
             control={

@@ -8,10 +8,12 @@ import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_INSTITUTIONS_URL } from "./api";
 import { institutionsPage1 } from "./testData/institutions";
 import {
+  INSTITUTIONS_FILTER_AGGREGATORS_ERROR_TEXT,
   INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
   INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT,
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
 } from "./constants";
+import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../shared/api/aggregators";
 
 const { aggregators } = aggregatorsResponse;
 
@@ -228,5 +230,20 @@ describe("<InstitutionFilters />", () => {
       jobTypeCheckboxes.length + 3,
     );
     expect(latestAggregatorNames).toHaveLength(aggregators.length - 1);
+  });
+
+  it("shows an error if fetch aggregators fails", async () => {
+    server.use(
+      http.get(
+        INSTITUTION_SERVICE_AGGREGATORS_URL,
+        () => new HttpResponse(null, { status: 400 }),
+      ),
+    );
+
+    render(<Institutions />);
+
+    expect(
+      await screen.findByText(INSTITUTIONS_FILTER_AGGREGATORS_ERROR_TEXT),
+    ).toBeInTheDocument();
   });
 });

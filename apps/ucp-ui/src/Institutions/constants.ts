@@ -29,3 +29,6 @@ export const INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT =
 export const INSTITUTIONS_FILTER_OAUTH_LABEL_TEXT = "OAuth";
 
 export const INSTITUTIONS_EMPTY_RESULTS_TEXT = "No Institutions found";
+
+export const INSTITUTIONS_FILTER_AGGREGATORS_ERROR_TEXT =
+  "We cannot load the Aggregator list to filter right now. Reload the page and try again.";
