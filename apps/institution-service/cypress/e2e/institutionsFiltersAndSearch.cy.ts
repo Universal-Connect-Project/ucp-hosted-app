@@ -70,7 +70,7 @@ describe("/institutions with filters and search", () => {
     );
   });
 
-  it("gets a list of institutions that have support for one of these job types", () => {
+  it("gets a list of institutions that have support for all of these job types", () => {
     getInstitutionsRequest({
       integrationFieldFilter: [
         "supportsIdentification",
@@ -194,8 +194,8 @@ describe("/institutions with filters and search", () => {
 
   it("includes institutions with inactive integrations when includeInactiveIntegrations is passed", () => {
     getInstitutionsRequest({
-      aggregatorFilter: ["finicity"],
-      search: "finbank",
+      aggregatorFilter: ["testExampleA"],
+      search: "noneActive",
       integrationFieldFilter: ["includeInactiveIntegrations"],
     }).then(
       (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
@@ -212,6 +212,17 @@ describe("/institutions with filters and search", () => {
           }
         });
         expect(inactiveInstitutionFound).to.be.true;
+      },
+    );
+  });
+
+  it("exludes institutions with inactive integrations when includeInactiveIntegrations is not passed", () => {
+    getInstitutionsRequest({
+      aggregatorFilter: ["testExampleA"],
+      search: "noneActive",
+    }).then(
+      (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
+        expect(response.body.institutions.length).to.eq(0);
       },
     );
   });

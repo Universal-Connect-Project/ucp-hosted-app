@@ -413,13 +413,15 @@ describe("institutionController", () => {
     });
 
     it("responds with 500 when there's an error", async () => {
-      const req = {} as unknown as Request;
+      const req = {
+        query: {},
+      } as unknown as Request;
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      jest.spyOn(Institution, "findAndCountAll").mockRejectedValue(new Error());
+      jest.spyOn(Institution, "findAll").mockRejectedValue(new Error());
 
       await getPaginatedInstitutions(req, res);
 
