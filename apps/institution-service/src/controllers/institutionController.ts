@@ -228,11 +228,11 @@ const integrationFilterStrings = (req: Request): string => {
     integrationFilterStringList.push(
       'AND "aggregatorIntegration"."supports_oauth" = TRUE',
     );
-    if (includeInactiveIntegrations !== "true") {
-      integrationFilterStringList.push(
-        `AND "aggregatorIntegration"."isActive" = TRUE`,
-      );
-    }
+  }
+  if (includeInactiveIntegrations !== "true") {
+    integrationFilterStringList.push(
+      `AND "aggregatorIntegration"."isActive" = TRUE`,
+    );
   }
 
   return integrationFilterStringList.join(" ");
@@ -293,7 +293,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   try {
     const { limit, offset, page } = getPaginationOptions(req);
 
-    const { count, rows: institutions } = await Institution.findAndCountAll({
+    const institutions = await Institution.findAll({
       attributes: { include: ["*"] },
       where: whereInstitutionConditions(req),
       include: [
@@ -325,18 +325,20 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
         ["createdAt", "DESC"],
         ["name", "ASC"],
       ],
-      distinct: true,
-      limit,
-      offset,
-      subQuery: false,
     });
+
+    const count = await Institution.count({
+      where: whereInstitutionConditions(req),
+    });
+
+    const paginatedInstitutions = institutions.slice(offset, page * limit);
 
     return res.status(200).json({
       currentPage: page,
       pageSize: limit,
       totalRecords: count,
       totalPages: Math.ceil(count / limit),
-      institutions,
+      institutions: paginatedInstitutions,
     } as unknown as PaginatedInstitutionsResponse);
   } catch (error) {
     return res
