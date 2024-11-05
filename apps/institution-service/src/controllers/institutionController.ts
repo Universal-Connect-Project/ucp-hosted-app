@@ -202,6 +202,7 @@ const integrationFilterStrings = (req: Request): string => {
     supportsVerification,
     supportsOauth,
     includeInactiveIntegrations,
+    aggregatorName,
   } = req.query;
   const integrationFilterStringList = [];
   if (supportsIdentification === "true") {
@@ -229,7 +230,7 @@ const integrationFilterStrings = (req: Request): string => {
       'AND "aggregatorIntegration"."supports_oauth" = TRUE',
     );
   }
-  if (includeInactiveIntegrations !== "true") {
+  if (includeInactiveIntegrations !== "true" && aggregatorName) {
     integrationFilterStringList.push(
       `AND "aggregatorIntegration"."isActive" = TRUE`,
     );
