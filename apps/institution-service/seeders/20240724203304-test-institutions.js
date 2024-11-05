@@ -5,28 +5,49 @@ const { v4: uuidv4 } = require("uuid");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const buildTestBank = ({institutionBody, aggregatorIntegrations}) => {
-      const {id, name, keywords, logo, url, is_test_bank, routing_numbers, createdAt, updatedAt} = institutionBody
-      const uid = id ?? uuidv4()
+    const buildTestBank = ({ institutionBody, aggregatorIntegrations }) => {
+      const {
+        id,
+        name,
+        keywords,
+        logo,
+        url,
+        is_test_bank,
+        routing_numbers,
+        createdAt,
+        updatedAt,
+      } = institutionBody;
+      const uid = id ?? uuidv4();
       return {
         institutionBody: {
           id: uid,
-          name: name ?? 'DefaultName',
+          name: name ?? "DefaultName",
           keywords,
           logo,
           url,
           is_test_bank: is_test_bank ?? true,
           routing_numbers,
           createdAt: createdAt ?? new Date(),
-          updatedAt: updatedAt ?? new Date()
+          updatedAt: updatedAt ?? new Date(),
         },
-        aggregatorIntegrations: aggregatorIntegrations.map(integration => {
-          const { isActive, aggregatorId, aggregator_institution_id, supports_oauth, supports_identification, supports_verification, supports_aggregation, supports_history, createdAt } = integration
+        aggregatorIntegrations: aggregatorIntegrations.map((integration) => {
+          const {
+            isActive,
+            aggregatorId,
+            aggregator_institution_id,
+            supports_oauth,
+            supports_identification,
+            supports_verification,
+            supports_aggregation,
+            supports_history,
+            createdAt,
+          } = integration;
 
           return {
             isActive: isActive ?? false,
             aggregatorId,
-            aggregator_institution_id: aggregator_institution_id ?? 'testAggDefaultId',
+            aggregator_institution_id:
+              aggregator_institution_id ?? "testAggDefaultId",
             supports_oauth: supports_oauth ?? true,
             supports_identification: supports_identification ?? true,
             supports_verification: supports_verification ?? true,
@@ -34,10 +55,10 @@ module.exports = {
             supports_history: supports_history ?? true,
             institution_id: uid,
             createdAt: createdAt ?? new Date(),
-          }
-        })
-      }
-    }
+          };
+        }),
+      };
+    };
 
     const seedInstitutionId = "c14e9877-c1e3-4d3a-b449-585086d14845";
 
@@ -94,7 +115,7 @@ module.exports = {
               aggregator_institution_id: "all_aggregators_id",
             }),
           ),
-        ]
+        ],
       }),
       buildTestBank({
         institutionBody: {
@@ -117,7 +138,7 @@ module.exports = {
             aggregatorId: sophtronAggregatorId,
             aggregator_institution_id: "sophtron_bank",
           },
-        ]
+        ],
       }),
       buildTestBank({
         institutionBody: {
@@ -137,7 +158,7 @@ module.exports = {
             aggregatorId: finicityAggregatorId,
             aggregator_institution_id: "sophtron_bank",
           },
-        ]
+        ],
       }),
       buildTestBank({
         institutionBody: {
@@ -155,7 +176,7 @@ module.exports = {
             aggregatorId: mxAggregatorId,
             aggregator_institution_id: "mx_only",
           },
-        ]
+        ],
       }),
       buildTestBank({
         institutionBody: {
@@ -182,7 +203,7 @@ module.exports = {
               supports_history: false,
             }),
           ),
-        ]
+        ],
       }),
       buildTestBank({
         institutionBody: {
@@ -195,18 +216,20 @@ module.exports = {
             aggregatorId: mxAggregatorId,
             aggregator_institution_id: "mx_active_with_history",
             supports_history: true,
-            supports_oauth: true
+            supports_oauth: true,
           },
-        ]
-      })
-    ]
+        ],
+      }),
+    ];
 
-    await queryInterface.bulkInsert("institutions", 
-      testBanks.map(testBank => testBank.institutionBody)
-    )
+    await queryInterface.bulkInsert(
+      "institutions",
+      testBanks.map((testBank) => testBank.institutionBody),
+    );
 
-    await queryInterface.bulkInsert("aggregatorIntegrations", 
-      testBanks.flatMap(testBank => testBank.aggregatorIntegrations)
+    await queryInterface.bulkInsert(
+      "aggregatorIntegrations",
+      testBanks.flatMap((testBank) => testBank.aggregatorIntegrations),
     );
   },
 
