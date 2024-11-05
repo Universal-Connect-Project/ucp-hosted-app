@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { UUID } from "crypto";
 import { Request, Response } from "express";
@@ -504,10 +506,8 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      const jsonResponse =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock
-          .calls[0][0] as PaginatedInstitutionResponse;
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
       expect(res.status).toHaveBeenCalledWith(200);
       expect(jsonResponse.currentPage).toBe(1);
       expect(jsonResponse.totalRecords).toBeGreaterThan(0);
@@ -536,10 +536,8 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      const jsonResponse =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock
-          .calls[0][0] as PaginatedInstitutionResponse;
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
       expect(res.status).toHaveBeenCalledWith(200);
       expect(jsonResponse.totalRecords).toBeGreaterThan(0);
       jsonResponse.institutions.forEach((institution) => {
@@ -567,10 +565,8 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      const jsonResponse =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock
-          .calls[0][0] as PaginatedInstitutionResponse;
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
       expect(res.status).toHaveBeenCalledWith(200);
       expect(jsonResponse.totalRecords).toBeGreaterThan(0);
       jsonResponse.institutions.forEach((institution) => {
@@ -597,10 +593,8 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      const jsonResponse =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock
-          .calls[0][0] as PaginatedInstitutionResponse;
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
       expect(res.status).toHaveBeenCalledWith(200);
       expect(jsonResponse.totalRecords).toBeGreaterThan(0);
 
@@ -630,10 +624,8 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      const jsonResponse =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock
-          .calls[0][0] as PaginatedInstitutionResponse;
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
       expect(res.status).toHaveBeenCalledWith(200);
       expect(jsonResponse.totalRecords).toBeGreaterThan(0);
       jsonResponse.institutions.forEach((institution) => {
@@ -662,10 +654,8 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      const jsonResponse =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock
-          .calls[0][0] as PaginatedInstitutionResponse;
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(jsonResponse.totalRecords).toBeGreaterThan(0);
@@ -686,10 +676,8 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      const jsonResponse =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock
-          .calls[0][0] as PaginatedInstitutionResponse;
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(jsonResponse.totalRecords).toBeGreaterThan(0);
@@ -717,10 +705,8 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      const jsonResponse =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock
-          .calls[0][0] as PaginatedInstitutionResponse;
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(jsonResponse.totalRecords).toBeGreaterThan(0);
@@ -796,10 +782,8 @@ describe("institutionController", () => {
         }),
       );
 
-      const aggregatorIntegrationPermissionsMap =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock.calls[0]?.[0]?.permissions
-          ?.aggregatorIntegrationPermissionsMap;
+      const aggregatorIntegrationPermissionsMap = (res.json as jest.Mock).mock
+        .calls[0]?.[0]?.permissions?.aggregatorIntegrationPermissionsMap;
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       expect(Object.values(aggregatorIntegrationPermissionsMap)[0]).toEqual(
