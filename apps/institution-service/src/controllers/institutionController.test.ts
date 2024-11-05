@@ -37,7 +37,6 @@ describe("institutionController", () => {
 
       await getInstitutionCachedList(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -57,7 +56,6 @@ describe("institutionController", () => {
 
       await getInstitutionCachedList(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: "Error getting all Institutions",
@@ -85,7 +83,6 @@ describe("institutionController", () => {
 
       await createInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -109,7 +106,6 @@ describe("institutionController", () => {
 
       await createInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
@@ -128,7 +124,6 @@ describe("institutionController", () => {
 
       await createInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(201);
     });
   });
@@ -147,7 +142,6 @@ describe("institutionController", () => {
       } as unknown as Response;
 
       await updateInstitution(req, res);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Institution not found",
@@ -167,7 +161,6 @@ describe("institutionController", () => {
       } as unknown as Response;
 
       await updateInstitution(req, res);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Institution not found",
@@ -198,7 +191,6 @@ describe("institutionController", () => {
       } as unknown as Response;
 
       await updateInstitution(req, res);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: "Institution updated successfully",
@@ -226,7 +218,6 @@ describe("institutionController", () => {
 
       await updateInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         error: "An error occurred while updating the institution",
@@ -315,7 +306,6 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -368,7 +358,6 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -394,7 +383,6 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -430,7 +418,6 @@ describe("institutionController", () => {
 
       it(`returns expected response with filter: ${keyword} = true`, async () => {
         await getPaginatedInstitutions(req, res);
-        // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -461,7 +448,6 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -491,7 +477,6 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
     });
 
@@ -741,7 +726,6 @@ describe("institutionController", () => {
 
       await getInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -805,7 +789,6 @@ describe("institutionController", () => {
 
       await getInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Institution not found",
@@ -823,7 +806,6 @@ describe("institutionController", () => {
 
       await getInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Institution not found",
