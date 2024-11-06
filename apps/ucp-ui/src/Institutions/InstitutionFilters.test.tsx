@@ -179,9 +179,7 @@ describe("<InstitutionFilters />", () => {
     await userEvent.click(screen.getByLabelText(firstAggregator.displayName));
 
     expectedAggregatorNames.splice(
-      expectedAggregatorNames.findIndex(
-        (name) => firstAggregator.name === name,
-      ),
+      expectedAggregatorNames.indexOf(firstAggregator.name),
       1,
     );
 
