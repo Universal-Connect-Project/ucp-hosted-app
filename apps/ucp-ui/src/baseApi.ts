@@ -3,6 +3,7 @@ import { getAccessToken } from "./shared/reducers/token";
 import { RootState } from "./store";
 
 export enum TagTypes {
+  AGGREGATORS = "aggregators",
   API_KEYS = "apiKeys",
   INSTITUTIONS = "institutions",
   INSTITUTION_PERMISSIONS = "institutionPermissions",

@@ -1,4 +1,4 @@
-import { Skeleton, SkeletonOwnProps } from "@mui/material";
+import { Skeleton as MuiSkeleton, SkeletonOwnProps } from "@mui/material";
 import React, { ReactNode } from "react";
 import styles from "./skeleton.module.css";
 import { SKELETON_LOADER_TEST_ID } from "./constants";
@@ -18,19 +18,23 @@ export const SkeletonIfLoading = ({
 }: SkeletonProps) => {
   if (isLoading) {
     return (
-      <Skeleton
+      <MuiSkeleton
         className={classnames(styles.hideChildren, className)}
         data-testid={SKELETON_LOADER_TEST_ID}
         variant="rectangular"
         {...props}
       >
         {children}
-      </Skeleton>
+      </MuiSkeleton>
     );
   }
 
   return children;
 };
+
+export const Skeleton = (props: SkeletonOwnProps) => (
+  <SkeletonIfLoading isLoading {...props} />
+);
 
 export const InputSkeletonIfLoading = ({
   children,

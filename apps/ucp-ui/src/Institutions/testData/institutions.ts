@@ -101,7 +101,7 @@ export const institutionsBiggerPage = {
   institutions: [
     {
       ...testInstitution,
-      id: "bbbbbbbbbbbb",
+      id: "biggerPage",
     },
   ],
 };
@@ -114,7 +114,7 @@ export const institutionsPage2 = {
   institutions: [
     {
       ...testInstitution,
-      id: "aaaaaaaaaaa",
+      id: "page2",
     },
   ],
 };

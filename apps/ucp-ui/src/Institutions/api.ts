@@ -1,14 +1,8 @@
 import { api, TagTypes } from "../baseApi";
+import { Aggregator } from "../shared/constants/aggregators";
 
 interface InstitutionPermissions {
   canCreateInstitution: boolean;
-}
-
-interface Aggregator {
-  displayName: string;
-  id: number;
-  logo: string;
-  name: string;
 }
 
 export interface AggregatorIntegration {
@@ -62,9 +56,20 @@ interface InstitutionResponse {
   permissions: InstitutionDetailPermissions;
 }
 
-interface PaginationOptions {
+export interface InstitutionParamsBooleans {
+  includeInactiveIntegrations?: boolean;
+  supportsAggregation?: boolean;
+  supportsHistory?: boolean;
+  supportsIdentification?: boolean;
+  supportsOauth?: boolean;
+  supportsVerification?: boolean;
+}
+
+export interface InstitutionsParams extends InstitutionParamsBooleans {
   pageSize: number;
   page: number;
+  aggregatorName: string[];
+  search?: string;
 }
 
 interface GetInstitution {
@@ -88,11 +93,22 @@ export const institutionsApi = api.injectEndpoints({
       query: () => INSTITUTION_SERVICE_PERMISSIONS_URL,
       providesTags: [TagTypes.INSTITUTION_PERMISSIONS],
     }),
-    getInstitutions: builder.query<InstitutionsResponse, PaginationOptions>({
-      query: (params) => ({
-        params,
-        url: INSTITUTION_SERVICE_INSTITUTIONS_URL,
-      }),
+    getInstitutions: builder.query<InstitutionsResponse, InstitutionsParams>({
+      query: ({ aggregatorName, ...rest }) => {
+        const customParams = new URLSearchParams();
+
+        Object.entries(rest).forEach(([key, value]) =>
+          customParams.append(key, value as string),
+        );
+
+        aggregatorName?.forEach((name: string) =>
+          customParams.append("aggregatorName", name),
+        );
+
+        return {
+          url: `${INSTITUTION_SERVICE_INSTITUTIONS_URL}?${customParams.toString()}`,
+        };
+      },
       providesTags: [TagTypes.INSTITUTIONS],
     }),
   }),

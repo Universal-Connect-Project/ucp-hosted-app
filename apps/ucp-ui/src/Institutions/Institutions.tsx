@@ -1,8 +1,11 @@
 import { InfoOutlined } from "@mui/icons-material";
 import {
+  Alert,
+  AlertTitle,
   Avatar,
   Chip,
   Pagination,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -13,7 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import classNames from "classnames";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FetchError from "../shared/components/FetchError";
 import PageContent from "../shared/components/PageContent";
@@ -33,6 +36,7 @@ import AddInstitution from "./ChangeInstitution/AddInstitution";
 import {
   INSTITUTIONS_AGGREGATOR_INFO_ICON,
   INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP,
+  INSTITUTIONS_EMPTY_RESULTS_TEXT,
   INSTITUTIONS_ERROR_TEXT,
   INSTITUTIONS_PAGE_TITLE,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
@@ -42,9 +46,11 @@ import {
 import { DEFAULT_LOGO_URL } from "./Institution/constants";
 import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
+import InstitutionFilters from "./InstitutionFilters";
+import debounce from "lodash.debounce";
 
-const generateFakeInstitutionData = (rowsPerPage: number) => {
-  return new Array(rowsPerPage).fill(0).map(() => ({
+const generateFakeInstitutionData = (pageSize: number) => {
+  return new Array(pageSize).fill(0).map(() => ({
     id: window.crypto.randomUUID(),
     logo: undefined,
     name: "Test that has to be quite long 1234566777",
@@ -81,33 +87,94 @@ const Institutions = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const getBooleanFromSearchParams = (key: string) => {
+    const value = searchParams.get(key);
+
+    return value === "true" ? true : false;
+  };
+
   const page = parseInt(searchParams.get("page") || "1", 10);
-  const rowsPerPage = parseInt(searchParams.get("rowsPerPage") || "10", 10);
+  const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+  const supportsAggregation = getBooleanFromSearchParams("supportsAggregation");
+  const supportsIdentification = getBooleanFromSearchParams(
+    "supportsIdentification",
+  );
+  const supportsHistory = getBooleanFromSearchParams("supportsHistory");
+  const supportsVerification = getBooleanFromSearchParams(
+    "supportsVerification",
+  );
+  const aggregatorName =
+    searchParams
+      .get("aggregatorName")
+      ?.split(",")
+      ?.filter((value) => value) || [];
+  const supportsOauth = getBooleanFromSearchParams("supportsOauth");
+  const includeInactiveIntegrations = getBooleanFromSearchParams(
+    "includeInactiveIntegrations",
+  );
+  const search = searchParams.get("search") || "";
+
+  const [delayedSearch, setDelayedSearch] = useState(search);
+
+  const debouncedSetDelayedSearch = useMemo(
+    () => debounce((value: string) => setDelayedSearch(value), 250),
+    [setDelayedSearch],
+  );
+
+  useEffect(() => {
+    debouncedSetDelayedSearch(search);
+  }, [search, debouncedSetDelayedSearch]);
+
+  const institutionsParams = {
+    page,
+    pageSize,
+    supportsAggregation,
+    supportsIdentification,
+    supportsHistory,
+    supportsVerification,
+    aggregatorName,
+    search,
+    supportsOauth,
+    includeInactiveIntegrations,
+  };
+
+  const handleChangeParams = (changes: Record<string, string>) => {
+    const urlFriendlyInstitutionsParams = Object.entries({
+      ...institutionsParams,
+      page: 1,
+    }).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: value.toString(),
+      }),
+      {},
+    );
+
+    setSearchParams(
+      {
+        ...urlFriendlyInstitutionsParams,
+        ...changes,
+      },
+      { replace: true },
+    );
+  };
 
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
     newPage: number,
   ) => {
-    setSearchParams(
-      {
-        page: newPage.toString(),
-        rowsPerPage: rowsPerPage.toString(),
-      },
-      { replace: true },
-    );
+    handleChangeParams({
+      page: newPage.toString(),
+    });
     window.scrollTo({ behavior: "smooth", top: 0 });
   };
 
-  const handleChangeRowsPerPage = (
+  const handleChangePageSize = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setSearchParams(
-      {
-        page: "1",
-        rowsPerPage: parseInt(event.target.value, 10).toString(),
-      },
-      { replace: true },
-    );
+    handleChangeParams({
+      pageSize: parseInt(event.target.value, 10).toString(),
+    });
   };
 
   const {
@@ -119,18 +186,26 @@ const Institutions = () => {
     data,
     isError: isInstitutionsError,
     isFetching: isInstitutionsLoading,
+    isSuccess: isInstitutionsSuccess,
     refetch: refetchInstitutions,
   } = useGetInstitutionsQuery({
-    page: page,
-    pageSize: rowsPerPage,
+    ...institutionsParams,
+    search: delayedSearch,
   });
 
   const institutions =
     isInstitutionsLoading && !data
-      ? generateFakeInstitutionData(rowsPerPage)
+      ? generateFakeInstitutionData(pageSize)
       : data?.institutions;
   const totalRecords = data?.totalRecords || 0;
   const pages = data?.totalPages;
+
+  const isInstitutionListEmpty =
+    isInstitutionsSuccess && !data?.institutions?.length;
+
+  const shouldDisplayTable = !isInstitutionsError && !isInstitutionListEmpty;
+
+  const shouldShowInactiveIntegrations = !!includeInactiveIntegrations;
 
   return (
     <>
@@ -147,174 +222,198 @@ const Institutions = () => {
             <PageTitle>{INSTITUTIONS_PAGE_TITLE}</PageTitle>
             <AddInstitution />
           </div>
-          <TableContainer className={styles.table}>
-            {isInstitutionsError ? (
-              <FetchError
-                description={INSTITUTIONS_ERROR_TEXT}
-                refetch={() => void refetchInstitutions()}
-                title="Something went wrong"
-              />
-            ) : (
-              <>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      {tableHeadCells.map(({ label, tooltip }) => (
-                        <TableCell key={label}>
-                          <div className={styles.tableHeadCell}>
-                            {tooltip && (
-                              <Tooltip
-                                data-testid={INSTITUTIONS_AGGREGATOR_INFO_ICON}
-                                title={tooltip}
-                              >
-                                <InfoOutlined fontSize="inherit" />
-                              </Tooltip>
-                            )}
-                            <div>{label}</div>
-                          </div>
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {institutions?.map(
-                      ({ aggregatorIntegrations, logo, name, id }) => (
-                        <TableRow
-                          className={classNames({
-                            [styles.tableRowHover]: !isInstitutionsLoading,
-                          })}
-                          data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
-                          hover={!isInstitutionsLoading}
-                          key={id}
-                          onClick={() =>
-                            navigate(
-                              institutionRoute.createPath({
-                                institutionId: id,
-                              }),
-                            )
-                          }
-                        >
-                          <TableCell>
-                            <div className={styles.institutionCell}>
-                              <SkeletonIfLoading
-                                height="100%"
-                                isLoading={isInstitutionsLoading}
-                              >
-                                <img
-                                  className={styles.institutionLogo}
-                                  src={logo ?? DEFAULT_LOGO_URL}
-                                />
-                              </SkeletonIfLoading>
+          <div className={styles.filterTableContainer}>
+            <InstitutionFilters
+              handleChangeParams={handleChangeParams}
+              institutionsParams={institutionsParams}
+            />
+            {shouldDisplayTable ? (
+              <TableContainer className={styles.table}>
+                <>
+                  <Table stickyHeader>
+                    <TableHead>
+                      <TableRow>
+                        {tableHeadCells.map(({ label, tooltip }) => (
+                          <TableCell key={label}>
+                            <div className={styles.tableHeadCell}>
+                              {tooltip && (
+                                <Tooltip
+                                  data-testid={
+                                    INSTITUTIONS_AGGREGATOR_INFO_ICON
+                                  }
+                                  title={tooltip}
+                                >
+                                  <InfoOutlined fontSize="inherit" />
+                                </Tooltip>
+                              )}
+                              <div>{label}</div>
+                            </div>
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {institutions?.map(
+                        ({ aggregatorIntegrations, logo, name, id }) => (
+                          <TableRow
+                            className={classNames({
+                              [styles.tableRowHover]: !isInstitutionsLoading,
+                            })}
+                            data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
+                            hover={!isInstitutionsLoading}
+                            key={id}
+                            onClick={() =>
+                              navigate(
+                                institutionRoute.createPath({
+                                  institutionId: id,
+                                }),
+                              )
+                            }
+                          >
+                            <TableCell>
+                              <div className={styles.institutionCell}>
+                                <SkeletonIfLoading
+                                  height="100%"
+                                  isLoading={isInstitutionsLoading}
+                                >
+                                  <img
+                                    className={styles.institutionLogo}
+                                    src={logo ?? DEFAULT_LOGO_URL}
+                                  />
+                                </SkeletonIfLoading>
+                                <TextSkeletonIfLoading
+                                  isLoading={isInstitutionsLoading}
+                                >
+                                  <div>{name}</div>
+                                </TextSkeletonIfLoading>
+                              </div>
+                            </TableCell>
+                            <TableCell>
                               <TextSkeletonIfLoading
                                 isLoading={isInstitutionsLoading}
                               >
-                                <div>{name}</div>
+                                <div>{id}</div>
                               </TextSkeletonIfLoading>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <TextSkeletonIfLoading
-                              isLoading={isInstitutionsLoading}
-                            >
-                              <div>{id}</div>
-                            </TextSkeletonIfLoading>
-                          </TableCell>
-                          <TableCell>
-                            <div className={styles.aggregatorsCell}>
-                              {[...aggregatorIntegrations]
-                                .sort(aggregatorIntegrationsSortByName)
-                                .map((aggregatorIntegration) => {
-                                  const {
-                                    aggregator: { displayName },
-                                    isActive,
-                                  } = aggregatorIntegration;
+                            </TableCell>
+                            <TableCell>
+                              <div className={styles.aggregatorsCell}>
+                                {[...aggregatorIntegrations]
+                                  .sort(aggregatorIntegrationsSortByName)
+                                  .map((aggregatorIntegration) => {
+                                    const {
+                                      aggregator: { displayName },
+                                      isActive,
+                                    } = aggregatorIntegration;
 
-                                  if (!isActive) {
-                                    return null;
-                                  }
+                                    if (
+                                      !isActive &&
+                                      !shouldShowInactiveIntegrations
+                                    ) {
+                                      return null;
+                                    }
 
-                                  const supportedTypes = Object.values(
-                                    supportsJobTypeMap,
-                                  ).filter(
-                                    ({ prop }) => aggregatorIntegration[prop],
-                                  );
+                                    const supportedTypes = Object.values(
+                                      supportsJobTypeMap,
+                                    ).filter(
+                                      ({ prop }) => aggregatorIntegration[prop],
+                                    );
 
-                                  const namesSupported = supportedTypes
-                                    .map(({ displayName }) => displayName)
-                                    .join(", ");
-                                  const numberSupported = supportedTypes.length;
+                                    const namesSupported = supportedTypes
+                                      .map(({ displayName }) => displayName)
+                                      .join(", ");
+                                    const numberSupported =
+                                      supportedTypes.length;
 
-                                  return (
-                                    <SkeletonIfLoading
-                                      className={styles.chipSkeleton}
-                                      isLoading={isInstitutionsLoading}
-                                      key={displayName}
-                                    >
-                                      <Tooltip
-                                        disableInteractive
-                                        title={
-                                          numberSupported
-                                            ? `Supported job types: ${namesSupported}`
-                                            : null
-                                        }
+                                    return (
+                                      <SkeletonIfLoading
+                                        className={styles.chipSkeleton}
+                                        isLoading={isInstitutionsLoading}
+                                        key={displayName}
                                       >
-                                        <Chip
-                                          avatar={
-                                            <Avatar
-                                              className={styles.chipAvatar}
-                                            >
-                                              {numberSupported}
-                                            </Avatar>
+                                        <Tooltip
+                                          disableInteractive
+                                          title={
+                                            numberSupported
+                                              ? `Supported job types: ${namesSupported}`
+                                              : null
                                           }
-                                          data-testid={
-                                            INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
-                                          }
-                                          label={displayName}
-                                          size="small"
-                                        />
-                                      </Tooltip>
-                                    </SkeletonIfLoading>
-                                  );
-                                })}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ),
-                    )}
-                  </TableBody>
-                </Table>
-                <div className={styles.paginationContainer}>
-                  <TablePagination
-                    count={totalRecords}
-                    component="div"
-                    page={page - 1}
-                    onPageChange={() => {}}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    rowsPerPage={rowsPerPage}
-                    size="small"
-                    slotProps={{
-                      actions: {
-                        nextButton: {
-                          style: { display: "none" },
+                                        >
+                                          <Chip
+                                            avatar={
+                                              <Avatar
+                                                className={styles.chipAvatar}
+                                              >
+                                                {numberSupported}
+                                              </Avatar>
+                                            }
+                                            data-testid={
+                                              INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
+                                            }
+                                            disabled={!isActive}
+                                            label={displayName}
+                                            size="small"
+                                          />
+                                        </Tooltip>
+                                      </SkeletonIfLoading>
+                                    );
+                                  })}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ),
+                      )}
+                    </TableBody>
+                  </Table>
+                  <div className={styles.paginationContainer}>
+                    <TablePagination
+                      count={totalRecords}
+                      component="div"
+                      page={page - 1}
+                      onPageChange={() => {}}
+                      onRowsPerPageChange={handleChangePageSize}
+                      rowsPerPage={pageSize}
+                      size="small"
+                      slotProps={{
+                        actions: {
+                          nextButton: {
+                            style: { display: "none" },
+                          },
+                          previousButton: {
+                            style: { display: "none" },
+                          },
                         },
-                        previousButton: {
-                          style: { display: "none" },
-                        },
-                      },
-                    }}
+                      }}
+                    />
+                    <Pagination
+                      count={pages}
+                      onChange={handleChangePage}
+                      page={page}
+                      shape="circular"
+                      showFirstButton
+                      showLastButton
+                      size="small"
+                    />
+                  </div>
+                </>
+              </TableContainer>
+            ) : (
+              <Paper className={styles.alertContainer} variant="outlined">
+                {isInstitutionsError && (
+                  <FetchError
+                    description={INSTITUTIONS_ERROR_TEXT}
+                    refetch={() => void refetchInstitutions()}
+                    title="Something went wrong"
                   />
-                  <Pagination
-                    count={pages}
-                    onChange={handleChangePage}
-                    shape="circular"
-                    showFirstButton
-                    showLastButton
-                    size="small"
-                  />
-                </div>
-              </>
+                )}
+                {isInstitutionListEmpty && (
+                  <Alert severity="info">
+                    <AlertTitle>{INSTITUTIONS_EMPTY_RESULTS_TEXT}</AlertTitle>
+                    Try editing your filters to see more Instutitions.
+                  </Alert>
+                )}
+              </Paper>
             )}
-          </TableContainer>
+          </div>
         </div>
       </PageContent>
     </>

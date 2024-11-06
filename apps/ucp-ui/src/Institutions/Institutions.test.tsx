@@ -12,7 +12,9 @@ import Institutions from "./Institutions";
 import {
   INSTITUTIONS_AGGREGATOR_INFO_ICON,
   INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP,
+  INSTITUTIONS_EMPTY_RESULTS_TEXT,
   INSTITUTIONS_ERROR_TEXT,
+  INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
@@ -23,6 +25,7 @@ import {
   institutionsPage1,
   institutionsPage2,
   testInstitution,
+  testInstitutionActiveAndInactive,
 } from "./testData/institutions";
 import { server } from "../shared/test/testServer";
 import { delay, http, HttpResponse } from "msw";
@@ -34,6 +37,7 @@ import { institutionPermissionsResponse } from "../shared/test/testData/institut
 import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
 import { INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT } from "./ChangeInstitution/constants";
 import { institutionRoute } from "../shared/constants/routes";
+import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 
 const findRowById = async (id: string) => {
   expect(
@@ -158,7 +162,17 @@ describe("<Institutions />", () => {
     await findRowById(institutionsPage1.institutions[0].id);
   });
 
-  it("paginates and changes number of rows", async () => {
+  it("paginates, changes the number of rows, and resets the page back to 1 on filter change", async () => {
+    const institutionsFilteredBySupportsAggregation = {
+      ...institutionsBiggerPage,
+      institutions: [
+        {
+          ...institutionsBiggerPage.institutions[0],
+          id: "filteredBySupportsAggregation",
+        },
+      ],
+    };
+
     server.use(
       http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, ({ request }) => {
         let response = institutionsPage1;
@@ -167,11 +181,19 @@ describe("<Institutions />", () => {
 
         const page = parseInt(searchParams.get("page") as string, 10);
         const pageSize = parseInt(searchParams.get("pageSize") as string, 10);
+        const supportsAggregation =
+          searchParams.get("supportsAggregation") === "true";
 
         if (page === 2) {
           response = institutionsPage2;
         } else if (pageSize === 25) {
-          response = institutionsBiggerPage;
+          if (page === 1) {
+            if (supportsAggregation) {
+              response = institutionsFilteredBySupportsAggregation;
+            } else {
+              response = institutionsBiggerPage;
+            }
+          }
         }
 
         return HttpResponse.json(response);
@@ -190,6 +212,14 @@ describe("<Institutions />", () => {
     await userEvent.click(screen.getByText(25));
 
     await findRowById(institutionsBiggerPage.institutions[0].id);
+
+    await userEvent.click(
+      screen.getByLabelText(supportsJobTypeMap.aggregation.displayName),
+    );
+
+    await findRowById(
+      institutionsFilteredBySupportsAggregation.institutions[0].id,
+    );
   });
 
   it("shows a tooltip for aggregators", async () => {
@@ -216,5 +246,48 @@ describe("<Institutions />", () => {
     expectLocation(
       institutionRoute.createPath({ institutionId: institutions[0].id }),
     );
+  });
+
+  it("hides inactive integrations when includeInactiveIntegrations is off, but shows them when it's on", async () => {
+    server.use(
+      http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, () =>
+        HttpResponse.json({
+          ...institutionsPage1,
+          institutions: [testInstitutionActiveAndInactive],
+        }),
+      ),
+    );
+    render(<Institutions />);
+
+    const inactiveDisplayName =
+      testInstitutionActiveAndInactive.aggregatorIntegrations[1].aggregator
+        .displayName;
+
+    expect(await screen.findAllByText(inactiveDisplayName)).toHaveLength(1);
+
+    await userEvent.click(
+      screen.getByLabelText(
+        INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
+      ),
+    );
+
+    expect(await screen.findAllByText(inactiveDisplayName)).toHaveLength(2);
+  });
+
+  it("shows an empty state if there are no results", async () => {
+    server.use(
+      http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, () =>
+        HttpResponse.json({
+          ...institutionsPage1,
+          institutions: [],
+        }),
+      ),
+    );
+
+    render(<Institutions />);
+
+    expect(
+      await screen.findByText(INSTITUTIONS_EMPTY_RESULTS_TEXT),
+    ).toBeInTheDocument();
   });
 });

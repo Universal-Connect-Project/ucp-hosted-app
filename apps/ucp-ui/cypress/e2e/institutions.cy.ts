@@ -1,4 +1,7 @@
-import { INSTITUTIONS_ROW_TEST_ID } from "../../src/Institutions/constants";
+import {
+  INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
+  INSTITUTIONS_ROW_TEST_ID,
+} from "../../src/Institutions/constants";
 import { INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID } from "../../src/Institutions/Institution/constants";
 import {
   INSTITUTION_ADD_SUCCESS_TEXT,
@@ -22,9 +25,10 @@ import {
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
   INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_SUCCESS_TEXT,
 } from "../../src/Institutions/ChangeAggregatorIntegration/constants";
+import { supportsJobTypeMap } from "../../src/shared/constants/jobTypes";
 
 describe("institutions", () => {
-  it("renders institutions, changes rows per page, and paginates", () => {
+  it("renders institutions, changes rows per page, paginates, and filters. It keeps the filters on reload", () => {
     cy.loginWithoutWidgetRole();
 
     const rowRegex = new RegExp(INSTITUTIONS_ROW_TEST_ID);
@@ -59,6 +63,40 @@ describe("institutions", () => {
           .eq(0)
           .invoke("attr", "data-testid")
           .should("not.eq", firstPageTestId);
+
+        const searchText = "TestExample";
+
+        cy.findByLabelText(INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT).type(
+          searchText,
+        );
+
+        cy.findByLabelText(supportsJobTypeMap.aggregation.displayName).click();
+
+        cy.waitForLoad();
+
+        cy.findAllByTestId(rowRegex)
+          .eq(0)
+          .invoke("attr", "data-testid")
+          .then((testIdBeforeRefresh) => {
+            cy.reload();
+
+            cy.findAllByTestId(rowRegex);
+
+            cy.waitForLoad();
+
+            cy.findAllByTestId(rowRegex)
+              .eq(0)
+              .invoke("attr", "data-testid")
+              .then((testIdAfterRefresh) => {
+                expect(testIdAfterRefresh).to.eq(testIdBeforeRefresh);
+                cy.findByLabelText(
+                  INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
+                ).should("have.value", searchText);
+                cy.findByLabelText(
+                  supportsJobTypeMap.aggregation.displayName,
+                ).should("be.checked");
+              });
+          });
       });
   });
 
