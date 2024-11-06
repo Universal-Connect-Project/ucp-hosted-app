@@ -504,7 +504,7 @@
             },
             "required": false,
             "example": true,
-            "description": "Include institutions without active integrations in the search"
+            "description": "When using aggregator integration filters include institutions that have inactive integrations that match the filters"
           },
           {
             "in": "query",

@@ -1,7 +1,10 @@
 import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
 import { Institution } from "models/institution";
-import { PaginatedInstitutionsResponse } from "../../src/controllers/institutionController";
+import {
+  InstitutionDetail,
+  PaginatedInstitutionsResponse,
+} from "../../src/controllers/institutionController";
 import { DEFAULT_PAGINATION_PAGE_SIZE, PORT } from "../../src/shared/const";
 import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
 import { testInstitution } from "../../src/test/testData/institutions";
@@ -11,6 +14,7 @@ import {
   USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
+import { getInstitutionsWithFiltersRequest } from "../shared/utils/institutions";
 import {
   createTestInstitution,
   runInvalidPermissionCheck,
@@ -464,6 +468,32 @@ describe("/institutions", () => {
       expect(institutionResponse.totalPages).to.be.greaterThan(100);
       expect(institutionResponse.institutions.length).to.eq(PAGE_SIZE);
     });
+  });
+
+  it("gets filtered results when aggregator, job type, and search are passed in the url", () => {
+    const searchKeyword = "america";
+    getInstitutionsWithFiltersRequest({
+      integrationFieldFilter: ["supportsAggregation", "supportsHistory"],
+      search: searchKeyword,
+      aggregatorFilter: ["mx"],
+    }).then(
+      (response: Cypress.Response<{ institutions: InstitutionDetail[] }>) => {
+        response.body.institutions.forEach((institution) => {
+          const searchValidated =
+            institution.name.toLowerCase().includes(searchKeyword) ||
+            institution.keywords.some((keyword) =>
+              keyword.toLowerCase().includes(searchKeyword),
+            );
+          const hasExpectedAttributes = institution.aggregatorIntegrations.some(
+            (integration) =>
+              integration.supports_aggregation &&
+              integration.supports_history &&
+              integration.aggregator.name === "mx",
+          );
+          expect(hasExpectedAttributes && searchValidated).to.be.true;
+        });
+      },
+    );
   });
 
   runTokenInvalidCheck({
