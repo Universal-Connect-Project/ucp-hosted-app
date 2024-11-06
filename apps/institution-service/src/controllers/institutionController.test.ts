@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { UUID } from "crypto";
 import { Request, Response } from "express";
@@ -35,7 +37,6 @@ describe("institutionController", () => {
 
       await getInstitutionCachedList(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -55,7 +56,6 @@ describe("institutionController", () => {
 
       await getInstitutionCachedList(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: "Error getting all Institutions",
@@ -83,7 +83,6 @@ describe("institutionController", () => {
 
       await createInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -107,7 +106,6 @@ describe("institutionController", () => {
 
       await createInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
@@ -126,7 +124,6 @@ describe("institutionController", () => {
 
       await createInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(201);
     });
   });
@@ -145,7 +142,6 @@ describe("institutionController", () => {
       } as unknown as Response;
 
       await updateInstitution(req, res);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Institution not found",
@@ -165,7 +161,6 @@ describe("institutionController", () => {
       } as unknown as Response;
 
       await updateInstitution(req, res);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Institution not found",
@@ -196,7 +191,6 @@ describe("institutionController", () => {
       } as unknown as Response;
 
       await updateInstitution(req, res);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: "Institution updated successfully",
@@ -224,13 +218,76 @@ describe("institutionController", () => {
 
       await updateInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         error: "An error occurred while updating the institution",
       });
     });
   });
+
+  const buildInstitutionRequest = ({
+    search,
+    page,
+    pageSize,
+    aggregatorName,
+    supportsIdentification,
+    supportsAggregation,
+    supportsHistory,
+    supportsVerification,
+    supportsOauth,
+    includeInactiveIntegrations,
+  }: {
+    search?: string;
+    page?: number;
+    pageSize?: number;
+    aggregatorName?: string[] | string;
+    supportsIdentification?: boolean;
+    supportsAggregation?: boolean;
+    supportsHistory?: boolean;
+    supportsVerification?: boolean;
+    supportsOauth?: boolean;
+    includeInactiveIntegrations?: boolean;
+  }): Request => {
+    return {
+      query: {
+        search,
+        page,
+        pageSize,
+        aggregatorName,
+        supportsIdentification: supportsIdentification ? "true" : undefined,
+        supportsAggregation: supportsAggregation ? "true" : undefined,
+        supportsHistory: supportsHistory ? "true" : undefined,
+        supportsVerification: supportsVerification ? "true" : undefined,
+        supportsOauth: supportsOauth ? "true" : undefined,
+        includeInactiveIntegrations: includeInactiveIntegrations
+          ? "true"
+          : undefined,
+      },
+    } as unknown as Request;
+  };
+
+  interface PaginatedInstitutionResponse {
+    currentPage: number;
+    totalRecords: number;
+    institutions: [
+      {
+        name: string;
+        aggregatorIntegrations: [
+          {
+            isActive: boolean;
+            supports_aggregation: boolean;
+            supports_identification: boolean;
+            supports_verification: boolean;
+            supports_history: boolean;
+            supports_oauth: boolean;
+            aggregator: {
+              name: string;
+            };
+          },
+        ];
+      },
+    ];
+  }
 
   describe("getPaginatedInstitutions", () => {
     it("returns a paginated list of institutions", async () => {
@@ -249,7 +306,6 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -302,7 +358,6 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -328,7 +383,6 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -364,7 +418,6 @@ describe("institutionController", () => {
 
       it(`returns expected response with filter: ${keyword} = true`, async () => {
         await getPaginatedInstitutions(req, res);
-        // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -395,7 +448,6 @@ describe("institutionController", () => {
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -413,18 +465,247 @@ describe("institutionController", () => {
     });
 
     it("responds with 500 when there's an error", async () => {
-      const req = {} as unknown as Request;
+      const req = {
+        query: {},
+      } as unknown as Request;
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      jest.spyOn(Institution, "findAndCountAll").mockRejectedValue(new Error());
+      jest.spyOn(Institution, "findAll").mockRejectedValue(new Error());
 
       await getPaginatedInstitutions(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
+    });
+
+    it("gets a list of institutions including mx or finicity integrations", async () => {
+      const req = buildInstitutionRequest({
+        aggregatorName: ["mx", "finicity"],
+      });
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(jsonResponse.currentPage).toBe(1);
+      expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+      jsonResponse.institutions.forEach((institution) => {
+        const hasRequiredAggregator = institution.aggregatorIntegrations.some(
+          (integration) =>
+            integration.aggregator.name === "mx" ||
+            integration.aggregator.name === "finicity",
+        );
+
+        expect(hasRequiredAggregator).toBeTruthy();
+      });
+    });
+
+    it("gets a list of institutions that have an integration that supports filtered job types", async () => {
+      const req = buildInstitutionRequest({
+        supportsIdentification: true,
+        supportsVerification: true,
+        supportsAggregation: true,
+        supportsHistory: true,
+      });
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+      jsonResponse.institutions.forEach((institution) => {
+        const jobTypesSupported = institution.aggregatorIntegrations.some(
+          (aggInt) =>
+            aggInt.supports_aggregation &&
+            aggInt.supports_identification &&
+            aggInt.supports_verification &&
+            aggInt.supports_history,
+        );
+
+        expect(jobTypesSupported).toBeTruthy();
+      });
+    });
+
+    it("gets a list of active institutions with an mx integration and supports_history", async () => {
+      const req = buildInstitutionRequest({
+        aggregatorName: "mx",
+        supportsHistory: true,
+      });
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+      jsonResponse.institutions.forEach((institution) => {
+        const hasExpectedAttributes = institution.aggregatorIntegrations.some(
+          (aggInt) =>
+            aggInt.aggregator.name === "mx" &&
+            aggInt.isActive &&
+            aggInt.supports_history,
+        );
+
+        expect(hasExpectedAttributes).toBeTruthy();
+      });
+    });
+
+    it("gets a list of active institutions with an mx integration and supports_history and has OAuth", async () => {
+      const req = buildInstitutionRequest({
+        aggregatorName: "mx",
+        supportsHistory: true,
+      });
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+
+      jsonResponse.institutions.forEach((institution) => {
+        const hasExpectedAttributes = institution.aggregatorIntegrations.some(
+          (aggInt) =>
+            aggInt.aggregator.name === "mx" &&
+            aggInt.isActive &&
+            aggInt.supports_history &&
+            aggInt.supports_oauth,
+        );
+
+        expect(hasExpectedAttributes).toBeTruthy();
+      });
+    });
+
+    it("gets a list of active institutions with mx agg support, supports_history, has OAuth and 'Bank' in the name", async () => {
+      const req = buildInstitutionRequest({
+        search: "Bank",
+        aggregatorName: "mx",
+        supportsHistory: true,
+      });
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+      jsonResponse.institutions.forEach((institution) => {
+        expect(institution.name.includes("Bank")).toBeTruthy();
+        let hasExpectedAttributes = false;
+        institution.aggregatorIntegrations.forEach((aggInt) => {
+          if (aggInt.aggregator.name === "mx") {
+            hasExpectedAttributes =
+              aggInt.isActive &&
+              aggInt.supports_history &&
+              aggInt.supports_oauth;
+          }
+        });
+        expect(hasExpectedAttributes).toBeTruthy();
+      });
+    });
+
+    it("gets a list of active institutions with 'Wells' in the name", async () => {
+      const req = buildInstitutionRequest({
+        search: "Wells",
+      });
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+      jsonResponse.institutions.forEach((institution) => {
+        expect(institution.name.toLowerCase().includes("wells")).toBeTruthy();
+      });
+    });
+
+    it("includes institutions with inactive integrations when includeInactiveIntegrations is passed", async () => {
+      const req = buildInstitutionRequest({
+        includeInactiveIntegrations: true,
+        aggregatorName: ["mx", "sophtron", "finicity"],
+      });
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+
+      const inactiveInstitutionFound = jsonResponse.institutions.some(
+        (institution) => {
+          const activeAggregatorFound = institution.aggregatorIntegrations.some(
+            (aggInt) => aggInt.isActive,
+          );
+          return !activeAggregatorFound;
+        },
+      );
+
+      expect(inactiveInstitutionFound).toBeTruthy();
+    });
+
+    it("exludes institutions with inactive integrations when includeInactiveIntegrations is not passed", async () => {
+      const req = buildInstitutionRequest({
+        aggregatorName: ["mx", "sophtron", "finicity"],
+      });
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+
+      const inactiveInstitutionFound = jsonResponse.institutions.some(
+        (institution) => {
+          const activeAggregatorFound = institution.aggregatorIntegrations.some(
+            (aggInt) => aggInt.isActive,
+          );
+          return !activeAggregatorFound;
+        },
+      );
+
+      expect(inactiveInstitutionFound).toBeFalsy();
     });
   });
 
@@ -445,7 +726,6 @@ describe("institutionController", () => {
 
       await getInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -486,10 +766,8 @@ describe("institutionController", () => {
         }),
       );
 
-      const aggregatorIntegrationPermissionsMap =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (res.json as jest.Mock).mock.calls[0]?.[0]?.permissions
-          ?.aggregatorIntegrationPermissionsMap;
+      const aggregatorIntegrationPermissionsMap = (res.json as jest.Mock).mock
+        .calls[0]?.[0]?.permissions?.aggregatorIntegrationPermissionsMap;
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       expect(Object.values(aggregatorIntegrationPermissionsMap)[0]).toEqual(
@@ -511,7 +789,6 @@ describe("institutionController", () => {
 
       await getInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Institution not found",
@@ -529,7 +806,6 @@ describe("institutionController", () => {
 
       await getInstitution(req, res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Institution not found",
