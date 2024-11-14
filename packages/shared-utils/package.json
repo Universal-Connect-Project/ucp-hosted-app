@@ -2,8 +2,11 @@
   "name": "@repo/shared-utils",
   "version": "0.0.1",
   "description": "Shared utils for the universal connect project hosted apps",
-  "main": "./src/index.ts",
-  "scripts": {},
+  "main": "dist/src/index.js",
+  "scripts": {
+    "build": "npm run clean && npx tsc -b",
+    "clean": "rm -rf dist"
+  },
   "devDependencies": {
     "typescript": "^5.5.4"
   }

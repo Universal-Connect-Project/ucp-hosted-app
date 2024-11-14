@@ -1,14 +1,19 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "es2020",
     "moduleResolution": "node",
+    "outDir": "./dist",
     "strict": true,
     "skipLibCheck": true,
+    "module": "CommonJS",
     "esModuleInterop": true,
     "typeRoots": [
       "../../node_modules/@types",
       "../../node_modules/@testing-library"
     ]
   },
-  "include": ["src/**/*", "config"]
+  "references": [{ "path": "../../packages/shared-utils" }],
+  "include": ["src/**/*", "config/**/*"],
+  "exclude": ["**/*.test.ts", "**.*.cy", "test"]
 }

@@ -35,10 +35,10 @@ const cacheListLimiter = createLimiter({
 });
 
 sequelize
-  .sync()
+  .authenticate()
   .then(() => {
     defineAssociations();
-    console.log("Database & tables created!");
+    console.log("Database initialized");
   })
   .catch((error) => {
     console.error("Error syncing database:", error);
@@ -53,6 +53,7 @@ app.set("etag", "strong");
 app.use(express.json()); // http://expressjs.com/en/api.html#express.json
 app.use(express.urlencoded({ extended: false })); // http://expressjs.com/en/5x/api.html#express.urlencoded
 app.use(logger("dev"));
+app.set("trust proxy", 1);
 
 app.use(
   cors({
@@ -81,8 +82,8 @@ app.use("/permissions", permissionsRoutes);
 app.use("/aggregatorIntegrations", aggregatorIntegrationRoutes);
 app.use("/aggregators", aggregatorRoutes);
 
-app.listen(PORT, () => {
-  console.info(`App listening on port ${PORT}`);
+app.listen(process.env.PORT || PORT, () => {
+  console.info(`App listening on port ${process.env.PORT || PORT}`);
 });
 
 app.get("/ping", (req: Request, res: Response) => {

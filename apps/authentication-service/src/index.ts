@@ -12,11 +12,13 @@ const app = express();
 
 initExpress(app);
 
-app.listen(PORT, () => {
+const listeningPort = process.env.PORT || PORT;
+
+app.listen(listeningPort, () => {
   void getAccessToken()
     .then(() => {
       console.log(
-        `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${PORT}; ENV=${envs.ENV}`,
+        `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${listeningPort}; ENV=${envs.ENV}`,
       );
       console.log(
         `${ConsoleColors.FgGreen}Service is initialized and ready to roll${ConsoleColors.Reset}`,

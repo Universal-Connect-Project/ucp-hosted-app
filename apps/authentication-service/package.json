@@ -4,6 +4,7 @@
   "description": "UCP Authentication Service",
   "scripts": {
     "dev": "npx -y nodemon -r tsconfig-paths/register ./src/index.ts",
+    "build": "tsc && tsc-alias",
     "dev:rate-limit": "RATE_LIMIT_TEST=true npm run dev",
     "cypress:open": "cypress open --config specPattern='cypress/e2e/**/!(rateLimiting.cy.ts)'",
     "cypress:run": "cypress run --config specPattern='cypress/e2e/**/!(rateLimiting.cy.ts)'",
@@ -51,6 +52,7 @@
     "prettier": "^3.2.5",
     "ts-jest": "^29.1.5",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.5.4"
   }

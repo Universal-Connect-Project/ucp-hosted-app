@@ -1,0 +1,1 @@
+web: node apps/authentication-service/dist/index.js

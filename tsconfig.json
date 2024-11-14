@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@repo/shared-utils": ["packages/shared-utils/src"]
+    }
+  }
+}

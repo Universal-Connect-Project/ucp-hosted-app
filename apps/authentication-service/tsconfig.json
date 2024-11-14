@@ -1,7 +1,11 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2022",
     "moduleResolution": "node",
+    "outDir": "dist",
+    "module": "CommonJS",
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -13,5 +17,6 @@
       "@/*": ["./src/*"]
     }
   },
+  "references": [{ "path": "../../packages/shared-utils" }],
   "include": ["src/**/*"]
 }
