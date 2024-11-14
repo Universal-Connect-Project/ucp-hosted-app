@@ -68,6 +68,7 @@ jobs:
         with:
           project: apps/institution-service
           start: |
+            npm run buildSharedUtils
             npm run dev --workspace apps/authentication-service
             npm run dev --workspace apps/institution-service
           wait-on: "http://localhost:8089/ping, http://localhost:8088/ping"
