@@ -11,11 +11,12 @@
   },
   "homepage": "https://github.com/Universal-Connect-Project/ucp-hosted-app#readme",
   "scripts": {
-    "build": "",
+    "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "prettier": "turbo run prettier",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "prepare": "husky"
   },
   "devDependencies": {
     "husky": "^9.0.11",
