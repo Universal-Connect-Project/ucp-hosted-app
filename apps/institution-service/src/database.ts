@@ -10,13 +10,19 @@ const config: { [key: string]: string } = require(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 )[env];
 
-export default new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  {
-    dialect: config.dialect as Dialect | undefined,
-    host: config.host,
-    port: config.port as unknown as number,
-  },
-);
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, {
+      dialectOptions: {
+        ssl: {
+          required: true,
+          rejectUnauthorized: false,
+        },
+      },
+    })
+  : new Sequelize(config.database, config.username, config.password, {
+      dialect: config.dialect as Dialect | undefined,
+      host: config.host,
+      port: config.port as unknown as number,
+    });
+
+export default sequelize;

@@ -21,6 +21,7 @@ export const initExpress = (app: Application): void => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.set("json spaces", 2);
+  app.set("trust proxy", 1);
 
   const limiter = rateLimit({
     windowMs: rateLimitWindow * 60 * 1000,
