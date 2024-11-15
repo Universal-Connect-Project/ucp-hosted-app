@@ -1,25 +1,25 @@
 import { Client, ClientGrant } from "auth0";
 import { http, HttpResponse } from "msw";
 
-import { AUTH0_USER_BY_ID } from "@/test/handlers";
+import { AUTH0_USER_BY_ID } from "../../test/handlers";
 import {
-  exampleUserWithoutClient,
+  exampleAuth0Client,
+  exampleClientDesc,
+  exampleClientGrant,
+  exampleClientName,
+  exampleClientRotatedSecret,
+} from "../../test/testData/clients";
+import {
   exampleApiToken,
   exampleUserAlreadyHasAClientResponseError,
   exampleUserInfoResponse,
-} from "@/test/testData/users";
-import { server } from "@/test/testServer";
+  exampleUserWithoutClient,
+} from "../../test/testData/users";
+import { server } from "../../test/testServer";
 import {
-  exampleClientDesc,
-  exampleClientName,
-  exampleAuth0Client,
-  exampleClientRotatedSecret,
-  exampleClientGrant,
-} from "@/test/testData/clients";
-import {
-  getClient,
   createClient,
   deleteClient,
+  getClient,
   rotateClientSecret,
   setClientGrant,
 } from "./clientsService";

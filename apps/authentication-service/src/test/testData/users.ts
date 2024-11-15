@@ -1,13 +1,13 @@
-import envs from "@/config";
-import { sign, Algorithm, JwtPayload, SignOptions } from "jsonwebtoken";
-import { UserInfoResponse } from "auth0";
-import { User } from "@/shared/users/usersModel";
 import {
   AUTH0_CLIENT_AUDIENCE,
   DefaultPermissions,
   testRSAToken,
   UiClientPermissions,
 } from "@repo/shared-utils";
+import { UserInfoResponse } from "auth0";
+import { Algorithm, JwtPayload, sign, SignOptions } from "jsonwebtoken";
+import envs from "../../config";
+import { User } from "../../shared/users/usersModel";
 
 export const exampleUserID = "google-oauth2|0000000000000000000000000000000";
 export const exampleClientID: string = "test-client-id";

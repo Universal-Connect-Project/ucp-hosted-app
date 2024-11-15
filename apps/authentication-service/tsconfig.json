@@ -8,10 +8,7 @@
     "typeRoots": [
       "../../node_modules/@types",
       "../../node_modules/@testing-library"
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    ]
   },
   "include": ["src/**/*"]
 }

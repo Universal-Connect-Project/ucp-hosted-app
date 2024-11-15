@@ -1,20 +1,20 @@
 import { http, HttpResponse } from "msw";
 
-import { User } from "@/shared/users/usersModel";
-import { AUTH0_USER_BY_ID } from "@/test/handlers";
+import { User } from "../../shared/users/usersModel";
+import { AUTH0_USER_BY_ID } from "../../test/handlers";
 import {
   exampleClientID,
   exampleUserID,
   exampleUserInfoResponse,
   exampleUserWithClientId,
   getTestToken,
-} from "@/test/testData/users";
-import { server } from "@/test/testServer";
+} from "../../test/testData/users";
+import { server } from "../../test/testServer";
 import {
-  getUserClientId,
   getUserById,
-  setUserClientId,
+  getUserClientId,
   getUserIdFromToken,
+  setUserClientId,
 } from "./usersService";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return

@@ -1,5 +1,5 @@
-import { Keys } from "@/resources/clients/clientsModel";
-import { PORT } from "@/shared/consts";
+import { Keys } from "../../src/resources/clients/clientsModel";
+import { PORT } from "../../src/shared/consts";
 
 describe("Client API", () => {
   let accessToken: string;

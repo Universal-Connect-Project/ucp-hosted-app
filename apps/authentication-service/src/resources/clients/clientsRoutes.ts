@@ -1,14 +1,14 @@
 import express, { Application, RequestHandler } from "express";
 
 import { UiClientPermissions } from "@repo/shared-utils";
-import { validateAccessToken } from "@/middleware/authMiddleware";
+import { requiredScopes } from "express-oauth2-jwt-bearer";
+import { validateAccessToken } from "../../middleware/authMiddleware";
 import {
   clientsCreate,
   clientsDelete,
   clientsGet,
   clientsRotateSecrets,
-} from "@/resources/clients/clientsRoutesHandlersV1";
-import { requiredScopes } from "express-oauth2-jwt-bearer";
+} from "../../resources/clients/clientsRoutesHandlersV1";
 
 const clientsRouterV1 = express.Router();
 

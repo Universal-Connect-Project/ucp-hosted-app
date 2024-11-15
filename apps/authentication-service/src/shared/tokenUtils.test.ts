@@ -1,5 +1,5 @@
-import { getTestToken } from "@/test/testData/users";
 import fs from "fs";
+import { getTestToken } from "../test/testData/users";
 
 import {
   getCachedToken,
@@ -8,7 +8,7 @@ import {
   setCachedToken,
   setLocalToken,
   tokenFile,
-} from "@/shared/tokenUtils";
+} from "../shared/tokenUtils";
 
 let tokenBackup: string;
 const validTestToken: string = getTestToken();

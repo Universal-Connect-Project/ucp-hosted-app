@@ -1,15 +1,15 @@
 import { http, HttpResponse } from "msw";
 
+import envs from "../config";
 import {
   exampleAuth0Client,
   exampleClientGrant,
   exampleClientRotatedSecret,
-} from "@/test/testData/clients";
+} from "../test/testData/clients";
 import {
-  exampleUserWithClientId,
   exampleApiToken,
-} from "@/test/testData/users";
-import envs from "@/config";
+  exampleUserWithClientId,
+} from "../test/testData/users";
 
 const domain: string = envs.AUTH0_DOMAIN;
 const AUTH0_BASE_URL = `https://${domain}/`;

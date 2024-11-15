@@ -1,10 +1,9 @@
 import express from "express";
 
 import envs from "./config";
-import { PORT } from "./shared/consts";
 import { initExpress } from "./init";
-import { getAccessToken } from "@/shared/auth/authService";
-import { ConsoleColors } from "@/shared/consts";
+import { getAccessToken } from "./shared/auth/authService";
+import { ConsoleColors, PORT } from "./shared/consts";
 
 export const SERVICE_NAME = "ucp-authentication-service";
 

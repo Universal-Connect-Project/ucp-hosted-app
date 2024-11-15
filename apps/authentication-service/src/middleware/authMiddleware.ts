@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 
-import envs from "@/config";
 import { AUTH0_CLIENT_AUDIENCE } from "@repo/shared-utils";
+import envs from "../config";
 
 export const validateAccessToken: RequestHandler = auth({
   audience: AUTH0_CLIENT_AUDIENCE,
