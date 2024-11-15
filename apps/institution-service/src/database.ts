@@ -15,6 +15,7 @@ const sequelize = process.env.DATABASE_URL
       dialectOptions: {
         ssl: {
           required: true,
+          rejectUnauthorized: true,
         },
       },
     })

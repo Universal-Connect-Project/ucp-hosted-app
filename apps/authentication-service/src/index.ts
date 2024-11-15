@@ -11,8 +11,7 @@ const app = express();
 
 initExpress(app);
 
-const listeningPort =
-  process.env.NODE_ENV === "production" ? process.env.PORT || PORT : PORT;
+const listeningPort = process.env.PORT || PORT;
 
 app.listen(listeningPort, () => {
   void getAccessToken()
