@@ -82,8 +82,11 @@ app.use("/permissions", permissionsRoutes);
 app.use("/aggregatorIntegrations", aggregatorIntegrationRoutes);
 app.use("/aggregators", aggregatorRoutes);
 
-app.listen(process.env.PORT || PORT, () => {
-  console.info(`App listening on port ${process.env.PORT || PORT}`);
+const listeningPort =
+  process.env.NODE_ENV === "production" ? process.env.PORT || PORT : PORT;
+
+app.listen(listeningPort, () => {
+  console.info(`App listening on port ${listeningPort}`);
 });
 
 app.get("/ping", (req: Request, res: Response) => {
