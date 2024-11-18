@@ -1,14 +1,14 @@
 import { TokenSet } from "auth0";
 
-import envs from "@/config";
-import { ICredentialRequestBody } from "@/shared/auth/authModel";
+import envs from "../../config";
+import { ICredentialRequestBody } from "../../shared/auth/authModel";
 import {
   getCachedToken,
   getIsTokenExpired,
   getLocalToken,
   setCachedToken,
   setLocalToken,
-} from "@/shared/tokenUtils";
+} from "../../shared/tokenUtils";
 
 const domain: string = envs.AUTH0_DOMAIN;
 const audience: string = envs.AUTH0_M2M_AUDIENCE;

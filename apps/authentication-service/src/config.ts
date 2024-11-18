@@ -1,39 +1,34 @@
-import * as dotenv from "dotenv";
+import "dotenv/config";
 
-export const init = (path = ".env") => {
-  const result: dotenv.DotenvConfigOutput = dotenv.config({
-    path,
-  });
-
-  if (result.error) {
-    throw result.error;
-  }
-
-  const { parsed: envs } = result;
-
-  if (
-    !(
-      envs?.ENV &&
-      envs?.CLIENT_ORIGIN_URL &&
-      envs?.AUTH0_M2M_AUDIENCE &&
-      envs?.AUTH0_DOMAIN &&
-      envs?.AUTH0_CLIENT_ID &&
-      envs?.AUTH0_CLIENT_SECRET
-    )
-  ) {
+export const init = ({
+  authM2mAudience,
+  auth0Domain,
+  auth0ClientId,
+  auth0ClientSecret,
+}: {
+  authM2mAudience: string | undefined;
+  auth0Domain: string | undefined;
+  auth0ClientId: string | undefined;
+  auth0ClientSecret: string | undefined;
+}) => {
+  if (!(authM2mAudience && auth0Domain && auth0ClientId && auth0ClientSecret)) {
     throw new Error(
       "Missing required environment variables. Check README.md and `../.env.example` for more info.",
     );
   }
 
   return {
-    ENV: envs?.ENV,
-    CLIENT_ORIGIN_URL: envs?.CLIENT_ORIGIN_URL,
-    AUTH0_M2M_AUDIENCE: envs?.AUTH0_M2M_AUDIENCE,
-    AUTH0_DOMAIN: envs?.AUTH0_DOMAIN,
-    AUTH0_CLIENT_ID: envs?.AUTH0_CLIENT_ID,
-    AUTH0_CLIENT_SECRET: envs?.AUTH0_CLIENT_SECRET,
+    ENV: process.env?.NODE_ENV,
+    AUTH0_M2M_AUDIENCE: authM2mAudience,
+    AUTH0_DOMAIN: auth0Domain,
+    AUTH0_CLIENT_ID: auth0ClientId,
+    AUTH0_CLIENT_SECRET: auth0ClientSecret,
   };
 };
 
-export default init();
+export default init({
+  authM2mAudience: process.env?.AUTH0_M2M_AUDIENCE,
+  auth0Domain: process.env?.AUTH0_DOMAIN,
+  auth0ClientId: process.env?.AUTH0_CLIENT_ID,
+  auth0ClientSecret: process.env?.AUTH0_CLIENT_SECRET,
+});

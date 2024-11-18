@@ -2,26 +2,26 @@ import { Request, Response } from "express";
 import { http, HttpResponse } from "msw";
 
 import {
-  AUTH0_CLIENTS,
-  AUTH0_CLIENTS_BY_ID,
-  AUTH0_USER_BY_ID,
-} from "@/test/handlers";
-import { server } from "@/test/testServer";
-import {
   clientsCreate,
   clientsDelete,
   clientsGet,
   clientsRotateSecrets,
-} from "@/resources/clients/clientsRoutesHandlersV1";
+} from "../../resources/clients/clientsRoutesHandlersV1";
+import {
+  AUTH0_CLIENTS,
+  AUTH0_CLIENTS_BY_ID,
+  AUTH0_USER_BY_ID,
+} from "../../test/handlers";
 import {
   exampleUCPClient,
   exampleUCPClientRotatedSecret,
-} from "@/test/testData/clients";
+} from "../../test/testData/clients";
 import {
-  exampleUserWithoutClient,
   exampleUserInfoResponse,
+  exampleUserWithoutClient,
   getTestToken,
-} from "@/test/testData/users";
+} from "../../test/testData/users";
+import { server } from "../../test/testServer";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 jest.mock("auth0", () => ({

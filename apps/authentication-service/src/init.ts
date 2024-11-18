@@ -1,12 +1,12 @@
 import cors from "cors";
+import express, { Application, NextFunction, Request, Response } from "express";
+import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import nocache from "nocache";
-import { rateLimit } from "express-rate-limit";
-import express, { Application, NextFunction, Request, Response } from "express";
 
-import { errorHandler } from "@/middleware/errorMiddleware";
-import { notFoundHandler } from "@/middleware/notFoundMiddleware";
-import { clientsRoutes } from "@/resources/clients/clientsRoutes";
+import { errorHandler } from "./middleware/errorMiddleware";
+import { notFoundHandler } from "./middleware/notFoundMiddleware";
+import { clientsRoutes } from "./resources/clients/clientsRoutes";
 
 const shouldDoRateLimitTest = process.env.RATE_LIMIT_TEST === "true" || false;
 const rateLimitWindow = shouldDoRateLimitTest ? 0.05 : 2; // 3 seconds (test) / 2 minutes (production) minutes
@@ -21,6 +21,7 @@ export const initExpress = (app: Application): void => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.set("json spaces", 2);
+  app.set("trust proxy", 1);
 
   const limiter = rateLimit({
     windowMs: rateLimitWindow * 60 * 1000,

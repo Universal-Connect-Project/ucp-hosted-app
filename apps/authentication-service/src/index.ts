@@ -1,10 +1,9 @@
 import express from "express";
 
 import envs from "./config";
-import { PORT } from "./shared/consts";
 import { initExpress } from "./init";
-import { getAccessToken } from "@/shared/auth/authService";
-import { ConsoleColors } from "@/shared/consts";
+import { getAccessToken } from "./shared/auth/authService";
+import { ConsoleColors, PORT } from "./shared/consts";
 
 export const SERVICE_NAME = "ucp-authentication-service";
 
@@ -12,11 +11,13 @@ const app = express();
 
 initExpress(app);
 
-app.listen(PORT, () => {
+const listeningPort = process.env.PORT || PORT;
+
+app.listen(listeningPort, () => {
   void getAccessToken()
     .then(() => {
       console.log(
-        `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${PORT}; ENV=${envs.ENV}`,
+        `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${listeningPort}; ENV=${envs.ENV}`,
       );
       console.log(
         `${ConsoleColors.FgGreen}Service is initialized and ready to roll${ConsoleColors.Reset}`,

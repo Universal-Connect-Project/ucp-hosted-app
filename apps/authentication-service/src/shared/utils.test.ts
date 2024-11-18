@@ -1,6 +1,6 @@
 import { Request } from "express";
 
-import { getClientTokenFromRequest, parseResponse } from "@/shared/utils";
+import { getClientTokenFromRequest, parseResponse } from "../shared/utils";
 
 describe("utils", () => {
   describe("parseResponse", () => {

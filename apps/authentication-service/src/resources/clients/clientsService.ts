@@ -1,15 +1,15 @@
 import { Client, ClientCreate, ClientGrant, ClientGrantCreate } from "auth0";
 
-import envs from "@/config";
-import { getAccessToken } from "@/shared/auth/authService";
-import { parseResponse } from "@/shared/utils";
+import { WidgetHostPermissions } from "@repo/shared-utils";
+import envs from "../../config";
+import { ResponseMessage } from "../../resources/clients/clientsModel";
+import { getAccessToken } from "../../shared/auth/authService";
 import {
   getUserClientId,
   getUserIdFromToken,
   setUserClientId,
-} from "@/shared/users/usersService";
-import { ResponseMessage } from "@/resources/clients/clientsModel";
-import { WidgetHostPermissions } from "@repo/shared-utils";
+} from "../../shared/users/usersService";
+import { parseResponse } from "../../shared/utils";
 
 const authDomain = envs.AUTH0_DOMAIN;
 const widgetAudience = "ucp-widget-interactions";

@@ -1,14 +1,14 @@
 import { Client } from "auth0";
 import { Request, Response } from "express";
 
-import envs from "@/config";
+import envs from "../../config";
 import {
   createClient,
   deleteClient,
   getClient,
   rotateClientSecret,
-} from "@/resources/clients/clientsService";
-import { getClientTokenFromRequest } from "@/shared/utils";
+} from "../../resources/clients/clientsService";
+import { getClientTokenFromRequest } from "../../shared/utils";
 
 const handleError = (
   res: Response,

@@ -1,12 +1,12 @@
 import fs from "fs";
 import { http, HttpResponse } from "msw";
 
-import * as tokenUtil from "@/shared/tokenUtils";
-import { tokenFile } from "@/shared/tokenUtils";
-import { AUTH0_AUTH_TOKEN } from "@/test/handlers";
-import { server } from "@/test/testServer";
+import * as tokenUtil from "../../shared/tokenUtils";
+import { tokenFile } from "../../shared/tokenUtils";
+import { AUTH0_AUTH_TOKEN } from "../../test/handlers";
+import { exampleApiToken, exampleCachedToken } from "../../test/testData/users";
+import { server } from "../../test/testServer";
 import { getAccessToken } from "./authService";
-import { exampleCachedToken, exampleApiToken } from "@/test/testData/users";
 
 const exampleErrorString = "Failed to authenticate using M2M Credentials";
 
