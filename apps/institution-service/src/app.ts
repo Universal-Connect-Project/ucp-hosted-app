@@ -12,6 +12,7 @@ import institutionRoutes from "./routes/institutionRoutes";
 import permissionsRoutes from "./routes/permissionRoutes";
 import { PORT } from "./shared/const";
 
+console.log("test");
 const createLimiter = (
   options: { timeIntervalInMinutes: number; requestLimit: number } = {
     timeIntervalInMinutes: 1,
