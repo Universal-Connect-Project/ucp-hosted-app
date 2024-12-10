@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { Institution, InstitutionDetailPermissions } from "../api";
-import { Divider, Drawer, MenuItem, Typography } from "@mui/material";
+import { Button, Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import {
   CheckboxName,
   ChangeAggregatorIntegrationInputs,
@@ -79,7 +79,14 @@ const ChangeAggregatorIntegrationDrawer = ({
     ({ id }) => id === aggregatorIntegrationId,
   );
 
-  const canSelectAnAggregator = permissions?.hasAccessToAllAggregators;
+  const { aggregatorIntegrationPermissionsMap, hasAccessToAllAggregators } =
+    permissions || {};
+
+  const canDelete =
+    aggregatorIntegrationId &&
+    !!aggregatorIntegrationPermissionsMap?.[aggregatorIntegrationId]?.canDelete;
+
+  const canSelectAnAggregator = hasAccessToAllAggregators;
 
   const defaultValues = useMemo(() => {
     let aggregatorId: string | number = "";
@@ -334,6 +341,14 @@ const ChangeAggregatorIntegrationDrawer = ({
                 name="supportsOauth"
                 tooltipTitle={INSTITUTION_OAUTH_TOOLTIP_TEXT}
               />
+              {canDelete && (
+                <>
+                  <Divider className={styles.divider} />
+                  <Button color="error" fullWidth size="small" variant="text">
+                    REMOVE AGGREGATOR FROM INSTITUTION
+                  </Button>
+                </>
+              )}
             </DrawerContent>
           </DrawerContainer>
         </form>
