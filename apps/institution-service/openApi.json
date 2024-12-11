@@ -844,41 +844,6 @@
             "description": "ID of the aggregatorIntegration to delete"
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "aggregator_institution_id": {
-                    "type": "string",
-                    "example": "test_bank_1"
-                  },
-                  "isActive": {
-                    "type": "boolean",
-                    "example": false
-                  },
-                  "supports_oauth": {
-                    "type": "boolean"
-                  },
-                  "supports_identification": {
-                    "type": "boolean"
-                  },
-                  "supports_verification": {
-                    "type": "boolean"
-                  },
-                  "supports_aggregation": {
-                    "type": "boolean"
-                  },
-                  "supports_history": {
-                    "type": "boolean"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "204": {
             "description": "Success"
