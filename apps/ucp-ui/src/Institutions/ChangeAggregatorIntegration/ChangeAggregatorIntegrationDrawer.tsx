@@ -10,6 +10,7 @@ import {
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_OAUTH_LABEL_TEXT,
+  INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
 } from "./constants";
 import DrawerContainer from "../../shared/components/Drawer/DrawerContainer";
 import DrawerContent from "../../shared/components/Drawer/DrawerContent";
@@ -376,7 +377,7 @@ const ChangeAggregatorIntegrationDrawer = ({
                       size="small"
                       variant="text"
                     >
-                      REMOVE AGGREGATOR FROM INSTITUTION
+                      {INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT}
                     </Button>
                   </>
                 )}
