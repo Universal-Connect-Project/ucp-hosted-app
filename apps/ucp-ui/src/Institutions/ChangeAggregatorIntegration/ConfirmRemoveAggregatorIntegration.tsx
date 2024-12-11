@@ -7,7 +7,10 @@ import { INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT } from "../ChangeInstitution/const
 import DrawerContent from "../../shared/components/Drawer/DrawerContent";
 import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
 import { LoadingButton } from "@mui/lab";
-import { INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT } from "./constants";
+import {
+  INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_ERROR_TEXT,
+  INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+} from "./constants";
 import styles from "./changeAggregatorIntegration.module.css";
 import { useDeleteAggregatorIntegrationMutation } from "./api";
 import { AggregatorIntegration } from "../api";
@@ -76,7 +79,7 @@ const ConfirmRemoveAggregatorIntegration = ({
         <DrawerContent>
           {isError && (
             <FormSubmissionError
-              description="We could not remove this aggregator. Please try again in a few moments."
+              description={INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_ERROR_TEXT}
               formId={formId}
               title="Something went wrong"
             />

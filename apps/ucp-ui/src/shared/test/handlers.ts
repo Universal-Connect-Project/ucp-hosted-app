@@ -32,6 +32,10 @@ export const handlers = [
     `${INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL}/:integrationId`,
     () => HttpResponse.json({}),
   ),
+  http.delete(
+    `${INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL}/:integrationId`,
+    () => HttpResponse.json({}),
+  ),
   http.get(INSTITUTION_SERVICE_PERMISSIONS_URL, () =>
     HttpResponse.json(institutionPermissionsResponse),
   ),

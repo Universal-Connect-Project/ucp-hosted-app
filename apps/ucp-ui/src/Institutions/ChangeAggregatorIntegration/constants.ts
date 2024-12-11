@@ -30,6 +30,9 @@ export const INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT =
 export const INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT =
   "YES, REMOVE AGGREGATOR";
 
+export const INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_ERROR_TEXT =
+  "We could not remove this aggregator. Please try again in a few moments.";
+
 export interface ChangeAggregatorIntegrationInputs {
   aggregatorId: number | string;
   aggregatorInstitutionId: string;
