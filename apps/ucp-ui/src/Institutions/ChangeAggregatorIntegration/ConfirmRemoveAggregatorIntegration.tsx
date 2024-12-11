@@ -13,6 +13,7 @@ import { useDeleteAggregatorIntegrationMutation } from "./api";
 import { AggregatorIntegration } from "../api";
 import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
+import FormSubmissionError from "../../shared/components/FormSubmissionError";
 
 const formId = "confirmRemoveAggregatorIntegration";
 
@@ -23,13 +24,8 @@ const ConfirmRemoveAggregatorIntegration = ({
   aggregatorIntegration?: AggregatorIntegration;
   handleCloseDrawer: () => void;
 }) => {
-  const [
-    mutateDeleteAggregatorIntegration,
-    {
-      // isError,
-      isLoading,
-    },
-  ] = useDeleteAggregatorIntegrationMutation();
+  const [mutateDeleteAggregatorIntegration, { isError, isLoading }] =
+    useDeleteAggregatorIntegrationMutation();
 
   const dispatch = useAppDispatch();
 
@@ -78,6 +74,13 @@ const ConfirmRemoveAggregatorIntegration = ({
         }
       >
         <DrawerContent>
+          {isError && (
+            <FormSubmissionError
+              description="We could not remove this aggregator. Please try again in a few moments."
+              formId={formId}
+              title="Something went wrong"
+            />
+          )}
           <DrawerTitle>
             Are you sure you want to remove this aggregator integration?
           </DrawerTitle>
