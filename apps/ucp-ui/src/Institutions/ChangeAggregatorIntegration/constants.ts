@@ -24,6 +24,9 @@ export const INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_SUCCESS_TEXT =
 export const INSTITUTION_CHANGE_AGGREGATOR_ERROR_TEXT =
   "We couldn’t save your changes. Please try again in a few moments.";
 
+export const INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT =
+  "YES, REMOVE AGGREGATOR";
+
 export interface ChangeAggregatorIntegrationInputs {
   aggregatorId: number | string;
   aggregatorInstitutionId: string;
