@@ -1,6 +1,6 @@
 import { Institution, InstitutionDetailPermissions } from "../api";
 
-const aggregatorIntegrationThatCanBeEdited = {
+export const aggregatorIntegrationThatCanBeEdited = {
   aggregator: {
     displayName: "MX",
     name: "mx",

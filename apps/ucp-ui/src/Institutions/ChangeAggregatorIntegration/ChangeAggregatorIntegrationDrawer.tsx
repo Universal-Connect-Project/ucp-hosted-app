@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Institution, InstitutionDetailPermissions } from "../api";
-import { Divider, Drawer, MenuItem, Typography } from "@mui/material";
+import { Button, Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import {
   CheckboxName,
   ChangeAggregatorIntegrationInputs,
@@ -10,6 +10,7 @@ import {
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_OAUTH_LABEL_TEXT,
+  INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
 } from "./constants";
 import DrawerContainer from "../../shared/components/Drawer/DrawerContainer";
 import DrawerContent from "../../shared/components/Drawer/DrawerContent";
@@ -39,6 +40,7 @@ import FormSubmissionError from "../../shared/components/FormSubmissionError";
 import classNames from "classnames";
 import { DEFAULT_LOGO_URL } from "../Institution/constants";
 import NameLogo from "./NameLogo";
+import ConfirmRemoveAggregatorIntegration from "./ConfirmRemoveAggregatorIntegration";
 
 const formId = "changeAggregatorIntegration";
 
@@ -69,9 +71,23 @@ const ChangeAggregatorIntegrationDrawer = ({
     | typeof useCreateAggregatorIntegrationMutation
     | typeof useEditAggregatorIntegrationMutation;
 }) => {
+  const [
+    shouldShowConfirmRemoveAggregatorIntegration,
+    setShouldShowConfirmRemoveAggregatorIntegration,
+  ] = useState(false);
+
+  const handleShowConfirmRemoveAggregatorIntegration = () =>
+    setShouldShowConfirmRemoveAggregatorIntegration(true);
+
   const handleCloseDrawer = () => {
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldShowConfirmRemoveAggregatorIntegration(false);
+    }
+  }, [isOpen]);
 
   const shouldDisplayAggregatorSelect = !aggregatorIntegrationId;
 
@@ -79,7 +95,14 @@ const ChangeAggregatorIntegrationDrawer = ({
     ({ id }) => id === aggregatorIntegrationId,
   );
 
-  const canSelectAnAggregator = permissions?.hasAccessToAllAggregators;
+  const { aggregatorIntegrationPermissionsMap, hasAccessToAllAggregators } =
+    permissions || {};
+
+  const canDelete =
+    aggregatorIntegrationId &&
+    !!aggregatorIntegrationPermissionsMap?.[aggregatorIntegrationId]?.canDelete;
+
+  const canSelectAnAggregator = hasAccessToAllAggregators;
 
   const defaultValues = useMemo(() => {
     let aggregatorId: string | number = "";
@@ -183,57 +206,108 @@ const ChangeAggregatorIntegrationDrawer = ({
   return (
     <>
       <Drawer anchor="right" onClose={handleCloseDrawer} open={isOpen}>
-        <form
-          className={styles.form}
-          id={formId}
-          //   eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <DrawerContainer
-            closeButton={
-              <DrawerCloseButton handleClose={handleCloseDrawer}>
-                {INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT}
-              </DrawerCloseButton>
-            }
-            footer={
-              <DrawerStickyFooter>
-                <LoadingButton
-                  loading={isLoading}
-                  form={formId}
-                  type="submit"
-                  variant="contained"
-                >
-                  {INSTITUTION_CHANGE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT}
-                </LoadingButton>
-              </DrawerStickyFooter>
-            }
+        {shouldShowConfirmRemoveAggregatorIntegration ? (
+          <ConfirmRemoveAggregatorIntegration
+            aggregatorIntegration={aggregatorIntegration}
+            handleCloseDrawer={handleCloseDrawer}
+          />
+        ) : (
+          <form
+            className={styles.form}
+            id={formId}
+            //   eslint-disable-next-line @typescript-eslint/no-misused-promises
+            onSubmit={handleSubmit(onSubmit)}
           >
-            <DrawerContent>
-              {isError && (
-                <FormSubmissionError
-                  description={INSTITUTION_CHANGE_AGGREGATOR_ERROR_TEXT}
-                  formId={formId}
-                  title="Something went wrong"
-                />
-              )}
-              <DrawerTitle>{drawerTitle}</DrawerTitle>
-              <div className={styles.nameLogosContainer}>
-                {!shouldDisplayAggregatorSelect && (
-                  <NameLogo
-                    label="Aggregator"
-                    logo={aggregatorIntegration?.aggregator?.logo}
-                    name={aggregatorIntegration?.aggregator?.displayName}
+            <DrawerContainer
+              closeButton={
+                <DrawerCloseButton handleClose={handleCloseDrawer}>
+                  {INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT}
+                </DrawerCloseButton>
+              }
+              footer={
+                <DrawerStickyFooter>
+                  <LoadingButton
+                    loading={isLoading}
+                    form={formId}
+                    type="submit"
+                    variant="contained"
+                  >
+                    {
+                      INSTITUTION_CHANGE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT
+                    }
+                  </LoadingButton>
+                </DrawerStickyFooter>
+              }
+            >
+              <DrawerContent>
+                {isError && (
+                  <FormSubmissionError
+                    description={INSTITUTION_CHANGE_AGGREGATOR_ERROR_TEXT}
+                    formId={formId}
+                    title="Something went wrong"
                   />
                 )}
-                <NameLogo
-                  label="Institution"
-                  logo={logo || DEFAULT_LOGO_URL}
-                  name={name}
+                <DrawerTitle>{drawerTitle}</DrawerTitle>
+                <div className={styles.nameLogosContainer}>
+                  {!shouldDisplayAggregatorSelect && (
+                    <NameLogo
+                      label="Aggregator"
+                      logo={aggregatorIntegration?.aggregator?.logo}
+                      name={aggregatorIntegration?.aggregator?.displayName}
+                    />
+                  )}
+                  <NameLogo
+                    label="Institution"
+                    logo={logo || DEFAULT_LOGO_URL}
+                    name={name}
+                  />
+                </div>
+                {shouldDisplayAggregatorSelect && (
+                  <Controller
+                    name="aggregatorId"
+                    control={control}
+                    rules={{ required: REQUIRED_ERROR_TEXT }}
+                    render={({
+                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                      field: { ref, ...fieldProps },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        disabled={!canSelectAnAggregator}
+                        error={!!error}
+                        fullWidth
+                        helperText={error?.message}
+                        InputProps={{}}
+                        InputLabelProps={{ required: true }}
+                        label={
+                          INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT
+                        }
+                        select
+                        variant="filled"
+                        {...fieldProps}
+                      >
+                        {permissions?.aggregatorsThatCanBeAdded?.map(
+                          ({ displayName, id }) => (
+                            <MenuItem key={id} value={id}>
+                              {displayName}
+                            </MenuItem>
+                          ),
+                        )}
+                      </TextField>
+                    )}
+                  />
+                )}
+                <SectionHeaderSwitch
+                  control={control}
+                  label={
+                    INSTITUTION_AGGREGATOR_INTEGRATION_FORM_ACTIVE_LABEL_TEXT
+                  }
+                  name="isActive"
+                  tooltipTitle={INSTITUTION_ACTIVE_TOOLTIP_TEXT}
                 />
-              </div>
-              {shouldDisplayAggregatorSelect && (
+                <Divider className={styles.divider} />
                 <Controller
-                  name="aggregatorId"
+                  name="aggregatorInstitutionId"
                   control={control}
                   rules={{ required: REQUIRED_ERROR_TEXT }}
                   render={({
@@ -242,101 +316,75 @@ const ChangeAggregatorIntegrationDrawer = ({
                     fieldState: { error },
                   }) => (
                     <TextField
-                      disabled={!canSelectAnAggregator}
                       error={!!error}
                       fullWidth
                       helperText={error?.message}
-                      InputProps={{}}
                       InputLabelProps={{ required: true }}
                       label={
-                        INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT
+                        INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT
                       }
-                      select
                       variant="filled"
                       {...fieldProps}
-                    >
-                      {permissions?.aggregatorsThatCanBeAdded?.map(
-                        ({ displayName, id }) => (
-                          <MenuItem key={id} value={id}>
-                            {displayName}
-                          </MenuItem>
-                        ),
-                      )}
-                    </TextField>
+                    />
                   )}
                 />
-              )}
-              <SectionHeaderSwitch
-                control={control}
-                label={
-                  INSTITUTION_AGGREGATOR_INTEGRATION_FORM_ACTIVE_LABEL_TEXT
-                }
-                name="isActive"
-                tooltipTitle={INSTITUTION_ACTIVE_TOOLTIP_TEXT}
-              />
-              <Divider className={styles.divider} />
-              <Controller
-                name="aggregatorInstitutionId"
-                control={control}
-                rules={{ required: REQUIRED_ERROR_TEXT }}
-                render={({
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  field: { ref, ...fieldProps },
-                  fieldState: { error },
-                }) => (
-                  <TextField
-                    error={!!error}
-                    fullWidth
-                    helperText={error?.message}
-                    InputLabelProps={{ required: true }}
-                    label={
-                      INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT
-                    }
-                    variant="filled"
-                    {...fieldProps}
-                  />
-                )}
-              />
-              <div className={styles.jobTypesContainer}>
-                <div>
-                  <Typography
-                    className={classNames({
-                      [styles.textError]: isJobTypeError,
-                    })}
-                    variant="body1"
-                  >
-                    Job types supported*
-                  </Typography>
-                  <Typography
-                    className={classNames(styles.textSecondary, {
-                      [styles.textError]: isJobTypeError,
-                    })}
-                    variant="caption"
-                  >
-                    *At least one type required
-                  </Typography>
+                <div className={styles.jobTypesContainer}>
+                  <div>
+                    <Typography
+                      className={classNames({
+                        [styles.textError]: isJobTypeError,
+                      })}
+                      variant="body1"
+                    >
+                      Job types supported*
+                    </Typography>
+                    <Typography
+                      className={classNames(styles.textSecondary, {
+                        [styles.textError]: isJobTypeError,
+                      })}
+                      variant="caption"
+                    >
+                      *At least one type required
+                    </Typography>
+                  </div>
+                  {checkboxes.map(({ description, name, displayName }) => (
+                    <SupportsCheckbox
+                      control={control}
+                      description={description}
+                      key={name}
+                      label={displayName}
+                      name={name}
+                      triggerValidation={triggerJobTypesValidation}
+                      validate={validateAnyJobTypeSelected}
+                    />
+                  ))}
                 </div>
-                {checkboxes.map(({ description, name, displayName }) => (
-                  <SupportsCheckbox
-                    control={control}
-                    description={description}
-                    key={name}
-                    label={displayName}
-                    name={name}
-                    triggerValidation={triggerJobTypesValidation}
-                    validate={validateAnyJobTypeSelected}
-                  />
-                ))}
-              </div>
-              <SectionHeaderSwitch
-                control={control}
-                label={INSTITUTION_AGGREGATOR_INTEGRATION_FORM_OAUTH_LABEL_TEXT}
-                name="supportsOauth"
-                tooltipTitle={INSTITUTION_OAUTH_TOOLTIP_TEXT}
-              />
-            </DrawerContent>
-          </DrawerContainer>
-        </form>
+                <SectionHeaderSwitch
+                  control={control}
+                  label={
+                    INSTITUTION_AGGREGATOR_INTEGRATION_FORM_OAUTH_LABEL_TEXT
+                  }
+                  name="supportsOauth"
+                  tooltipTitle={INSTITUTION_OAUTH_TOOLTIP_TEXT}
+                />
+                {canDelete && (
+                  <>
+                    <Divider className={styles.divider} />
+                    <Button
+                      color="error"
+                      fullWidth
+                      onClick={handleShowConfirmRemoveAggregatorIntegration}
+                      size="small"
+                      variant="text"
+                    >
+                      {INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT}
+                    </Button>
+                  </>
+                )}
+              </DrawerContent>
+            </DrawerContainer>
+          </form>
+        )}
       </Drawer>
     </>
   );

@@ -6,6 +6,7 @@ import {
   INSTITUTION_CHANGE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
+  INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
 } from "./constants";
 import {
   testInstitution,
@@ -141,29 +142,89 @@ describe("ChangeAggregatorIntegration", () => {
 
       expect(await getAggregatorInstitutionIdInput()).toHaveValue("");
     });
+
+    it("doesn't render a remove button", async () => {
+      render(
+        <AddAggregatorIntegration
+          institution={testInstitution}
+          permissions={{
+            ...testInstitutionPermissions,
+          }}
+        />,
+      );
+
+      await openAddDrawer();
+
+      expect(
+        screen.queryByRole("button", {
+          name: INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
+        }),
+      ).not.toBeInTheDocument();
+    });
   });
 
   describe("edit integration", () => {
-    it("doesn't render an aggregator select and renders the aggregator name if an integrationId is provided", () => {
+    it("doesn't render an aggregator select, renders a remove button if they have access, and renders the aggregator name if an integrationId is provided", () => {
+      const aggregatorIntegration = testInstitution.aggregatorIntegrations[1];
+
       render(
         <EditAggregatorIntegration
-          aggregatorIntegrationId={testInstitution.aggregatorIntegrations[0].id}
+          aggregatorIntegrationId={aggregatorIntegration.id}
           institution={testInstitution}
           isOpen={true}
+          permissions={{
+            ...testInstitutionPermissions,
+          }}
           setIsOpen={() => {}}
         />,
       );
 
       expect(
-        screen.getByText(
-          testInstitution.aggregatorIntegrations[0].aggregator.displayName,
-        ),
+        screen.getByText(aggregatorIntegration.aggregator.displayName),
       ).toBeInTheDocument();
 
       expect(
         screen.queryByLabelText(
           INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
         ),
+      ).not.toBeInTheDocument();
+
+      expect(
+        screen.getByRole("button", {
+          name: INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it("doesn't render a remove button if they don't have access to delete", () => {
+      const aggregatorIntegration = testInstitution.aggregatorIntegrations[0];
+
+      render(
+        <EditAggregatorIntegration
+          aggregatorIntegrationId={aggregatorIntegration.id}
+          institution={testInstitution}
+          isOpen={true}
+          permissions={{
+            ...testInstitutionPermissions,
+          }}
+          setIsOpen={() => {}}
+        />,
+      );
+
+      expect(
+        screen.getByText(aggregatorIntegration.aggregator.displayName),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.queryByLabelText(
+          INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
+        ),
+      ).not.toBeInTheDocument();
+
+      expect(
+        screen.queryByRole("button", {
+          name: INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
+        }),
       ).not.toBeInTheDocument();
     });
   });

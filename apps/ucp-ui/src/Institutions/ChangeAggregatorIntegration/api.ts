@@ -22,6 +22,10 @@ export interface EditAggregatorIntegrationParams
   aggregatorIntegrationId: number;
 }
 
+interface DeleteAggregatorIntegrationParams {
+  aggregatorIntegrationId: number;
+}
+
 const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
 const transformBody = ({
@@ -62,7 +66,18 @@ export const institutionsApi = api.injectEndpoints({
       invalidatesTags: (result, error) =>
         !error ? [TagTypes.INSTITUTIONS] : [],
     }),
-    EditAggregatorIntegration: builder.mutation<
+    deleteAggregatorIntegration: builder.mutation<
+      void,
+      DeleteAggregatorIntegrationParams
+    >({
+      query: ({ aggregatorIntegrationId }) => ({
+        method: HttpMethods.DELETE,
+        url: `${INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL}/${aggregatorIntegrationId}`,
+      }),
+      invalidatesTags: (result, error) =>
+        !error ? [TagTypes.INSTITUTIONS] : [],
+    }),
+    editAggregatorIntegration: builder.mutation<
       void,
       EditAggregatorIntegrationParams
     >({
@@ -80,5 +95,6 @@ export const institutionsApi = api.injectEndpoints({
 
 export const {
   useCreateAggregatorIntegrationMutation,
+  useDeleteAggregatorIntegrationMutation,
   useEditAggregatorIntegrationMutation,
 } = institutionsApi;

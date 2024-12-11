@@ -108,6 +108,7 @@ const AggregatorIntegrations = ({
         aggregatorIntegrationId={aggregatorIntegrationIdToEdit}
         institution={institution}
         isOpen={isEditOpen}
+        permissions={permissions}
         setIsOpen={setIsEditOpen}
       />
       <InstitutionSection title="AGGREGATOR INTEGRATIONS">

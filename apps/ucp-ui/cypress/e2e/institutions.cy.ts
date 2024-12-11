@@ -24,6 +24,8 @@ import {
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
   INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_INSTITUTION_ID_LABEL_TEXT,
   INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_SUCCESS_TEXT,
+  INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
+  INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
 } from "../../src/Institutions/ChangeAggregatorIntegration/constants";
 import { supportsJobTypeMap } from "../../src/shared/constants/jobTypes";
 
@@ -100,7 +102,7 @@ describe("institutions", () => {
       });
   });
 
-  it("creates an institution, navigates to its page, edits the institution, adds an aggregator integration, and edits that aggregator integration", () => {
+  it("creates an institution, navigates to its page, edits the institution, adds an aggregator integration, edits that aggregator integration, and deletes the aggregator integration", () => {
     cy.loginSuperAdmin();
 
     cy.findByRole("button", {
@@ -202,5 +204,19 @@ describe("institutions", () => {
     );
 
     cy.findByText("testaggregatorinstitutionid edited").should("exist");
+
+    cy.findByTestId(
+      INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID,
+    ).click();
+
+    cy.findByRole("button", {
+      name: INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
+    }).click();
+
+    cy.findByRole("button", {
+      name: INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
+    }).click();
+
+    cy.findByText("Test Example A has been removed");
   });
 });
