@@ -1,14 +1,14 @@
-import { UUID } from "crypto";
-import { Request, Response } from "express";
-import { Op, ValidationError, literal } from "sequelize";
-import { Literal } from "sequelize/types/utils";
-import { validate } from "uuid";
+import {UUID} from "crypto";
+import {Request, Response} from "express";
+import {literal, Op, ValidationError} from "sequelize";
+import {Literal} from "sequelize/types/utils";
+import {validate} from "uuid";
 import db from "../database";
-import { Aggregator } from "../models/aggregator";
-import { AggregatorIntegration } from "../models/aggregatorIntegration";
-import { Institution } from "../models/institution";
-import { transformInstitutionToCachedInstitution } from "../services/institutionService";
-import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
+import {Aggregator} from "../models/aggregator";
+import {AggregatorIntegration} from "../models/aggregatorIntegration";
+import {Institution} from "../models/institution";
+import {transformInstitutionToCachedInstitution} from "../services/institutionService";
+import {DEFAULT_PAGINATION_PAGE_SIZE} from "../shared/const";
 import {
   getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
@@ -19,17 +19,7 @@ import {
 type SortDirection = "ASC" | "DESC" | "asc" | "desc";
 type SortString = `${string}:${SortDirection}`;
 type SortStringMulti = `${SortString},${SortString}`;
-const defaultSorting: SortStringMulti = "createdAt:DESC,name:ASC";
-
-const parseSort = (sortBy: SortStringMulti) => {
-  return sortBy
-    .split(",")
-    .filter((param: string) => param.includes(":"))
-    .map((param) => {
-      const [column, direction] = param.split(":");
-      return { column, direction };
-    });
-};
+type SortSequelize = { column: string; direction: string };
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -188,7 +178,11 @@ interface PaginationOptions {
   page: number;
   limit: number;
   offset: number;
-  sort?: SortString;
+  sort?: SortSequelize[];
+}
+
+interface SortOptions {
+  sort?: SortSequelize[];
 }
 
 type WhereConditions = {
@@ -207,9 +201,26 @@ const getPaginationOptions = (req: Request): PaginationOptions => {
   const limit =
     parseInt(req.query.pageSize as string, 10) || DEFAULT_PAGINATION_PAGE_SIZE;
   const offset = (page - 1) * limit;
-  const sort: SortString = (req.query.sort as SortString) || undefined;
 
-  return { page, limit, offset, sort };
+  return { page, limit, offset };
+};
+
+const parseSort = (sortBy: SortStringMulti) => {
+  return sortBy
+    .split(",")
+    .filter((param: string) => param.includes(":"))
+    .map((param) => {
+      const [column, direction] = param.split(":");
+      return { column, direction };
+    });
+};
+
+const getSortOption = (req: Request, defaultSortString?: SortStringMulti): SortOptions => {
+  const sort: SortSequelize[] = parseSort(
+    req.query.sort as SortStringMulti || defaultSortString || "",
+  );
+
+  return { sort };
 };
 
 const integrationFilterStrings = (req: Request): string => {
@@ -310,14 +321,9 @@ const aggregatorFilterLiteral = (req: Request): Literal => {
 
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   try {
-    const { limit, offset, page, sort } = getPaginationOptions(req);
+    const { limit, offset, page } = getPaginationOptions(req);
+    const { sort } = getSortOption(req, "createdAt:DESC,name:ASC");
 
-    console.log("---------------------------> sort", sort);
-    const sequelizeOrder = parseSort(
-      (sort as SortStringMulti) || defaultSorting,
-    );
-
-    console.log("---------------------------> sequelizeOrder", sequelizeOrder);
     const institutions = await Institution.findAll({
       attributes: { include: ["*"] },
       where: whereInstitutionConditions(req),
@@ -346,7 +352,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
           ],
         },
       ],
-      order: sequelizeOrder.map((order) => [order.column, order.direction]),
+      order: sort?.map((order) => [order.column, order.direction]) || [],
     });
 
     const count = await Institution.count({
