@@ -496,6 +496,44 @@ describe("/institutions", () => {
     );
   });
 
+  it("gets sorted paginated institution list with default sort options for testExampleA aggregator", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA`,
+      method: "GET",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as PaginatedInstitutionsResponse;
+
+      expect(response.status).to.eq(200);
+      expect(institutionResponse.totalRecords).to.eq(3);
+      expect(institutionResponse.institutions[0].id).to.eq(
+        "3b561893-e969-4a2c-9e58-3b81b203cdc1",
+      );
+    });
+  });
+
+  it("gets sorted paginated institution list with custom sort options for testExampleA aggregator", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA&sortBy=id:desc`,
+      method: "GET",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as PaginatedInstitutionsResponse;
+
+      expect(response.status).to.eq(200);
+      expect(institutionResponse.totalRecords).to.eq(3);
+      expect(institutionResponse.institutions[0].id).to.eq(
+        "7a909e62-98b6-4a34-8725-b2a6a63e830a",
+      );
+    });
+  });
+
   runTokenInvalidCheck({
     url: `http://localhost:${PORT}/institutions`,
     method: "GET",
