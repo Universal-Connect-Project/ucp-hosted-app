@@ -16,6 +16,21 @@ import {
   validateUserCanEditInstitution,
 } from "../shared/utils/permissionValidation";
 
+type SortDirection = "ASC" | "DESC" | "asc" | "desc";
+type SortString = `${string}:${SortDirection}`;
+type SortStringMulti = `${SortString},${SortString}`;
+const defaultSorting: SortStringMulti = "createdAt:DESC,name:ASC";
+
+const parseSort = (sortBy: SortStringMulti) => {
+  return sortBy
+    .split(",")
+    .filter((param: string) => param.includes(":"))
+    .map((param) => {
+      const [column, direction] = param.split(":");
+      return { column, direction };
+    });
+};
+
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
     const institutions = await Institution.findAll({
@@ -173,6 +188,7 @@ interface PaginationOptions {
   page: number;
   limit: number;
   offset: number;
+  sort?: SortString;
 }
 
 type WhereConditions = {
@@ -191,7 +207,9 @@ const getPaginationOptions = (req: Request): PaginationOptions => {
   const limit =
     parseInt(req.query.pageSize as string, 10) || DEFAULT_PAGINATION_PAGE_SIZE;
   const offset = (page - 1) * limit;
-  return { page, limit, offset };
+  const sort: SortString = (req.query.sort as SortString) || undefined;
+
+  return { page, limit, offset, sort };
 };
 
 const integrationFilterStrings = (req: Request): string => {
@@ -292,8 +310,14 @@ const aggregatorFilterLiteral = (req: Request): Literal => {
 
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   try {
-    const { limit, offset, page } = getPaginationOptions(req);
+    const { limit, offset, page, sort } = getPaginationOptions(req);
 
+    console.log("---------------------------> sort", sort);
+    const sequelizeOrder = parseSort(
+      (sort as SortStringMulti) || defaultSorting,
+    );
+
+    console.log("---------------------------> sequelizeOrder", sequelizeOrder);
     const institutions = await Institution.findAll({
       attributes: { include: ["*"] },
       where: whereInstitutionConditions(req),
@@ -322,10 +346,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
           ],
         },
       ],
-      order: [
-        ["createdAt", "DESC"],
-        ["name", "ASC"],
-      ],
+      order: sequelizeOrder.map((order) => [order.column, order.direction]),
     });
 
     const count = await Institution.count({
@@ -342,6 +363,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
       institutions: paginatedInstitutions,
     } as unknown as PaginatedInstitutionsResponse);
   } catch (error) {
+    console.log("------------------------> error", error);
     return res
       .status(500)
       .json({ error: "An error occurred while fetching institutions." });
