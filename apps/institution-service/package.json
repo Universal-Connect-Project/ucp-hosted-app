@@ -21,7 +21,7 @@
     "test:db:reset": "npx sequelize-cli db:drop --env test && npm run test:db:setup",
     "dev": "nodemon ./src/app.ts",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
-    "prettier": "prettier . --check"
+    "prettier": "prettier . --write"
   },
   "dependencies": {
     "@repo/shared-utils": "*",
