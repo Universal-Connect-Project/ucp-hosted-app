@@ -5,6 +5,7 @@ import { UUID } from "crypto";
 import { Request, Response } from "express";
 import { Model } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
+
 import { Institution } from "../models/institution";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
@@ -21,6 +22,9 @@ import {
   getPaginatedInstitutions,
   updateInstitution,
 } from "./institutionController";
+import * as institutionController from "./institutionController";
+
+const defaultSortPaginatedInstitutions = "createdAt:DESC,name:ASC";
 
 const createNewInstitution = async () => {
   return await Institution.create(testInstitution);
@@ -236,6 +240,7 @@ describe("institutionController", () => {
     supportsVerification,
     supportsOauth,
     includeInactiveIntegrations,
+    sortBy,
   }: {
     search?: string;
     page?: number;
@@ -247,6 +252,7 @@ describe("institutionController", () => {
     supportsVerification?: boolean;
     supportsOauth?: boolean;
     includeInactiveIntegrations?: boolean;
+    sortBy?: string;
   }): Request => {
     return {
       query: {
@@ -262,6 +268,7 @@ describe("institutionController", () => {
         includeInactiveIntegrations: includeInactiveIntegrations
           ? "true"
           : undefined,
+        sortBy,
       },
     } as unknown as Request;
   };
@@ -708,33 +715,104 @@ describe("institutionController", () => {
       expect(inactiveInstitutionFound).toBeFalsy();
     });
 
-    it("sorts the institutions", async () => {
+    it("calls getSortOption with default sort order if sortBy is not passed in to request", async () => {
       const req = buildInstitutionRequest({
-        aggregatorName: ["mx", "sophtron", "finicity"],
+        aggregatorName: ["testExampleA"],
       });
+
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      await getPaginatedInstitutions(req, res);
-
-      const jsonResponse = (res.json as jest.Mock).mock
-        .calls[0][0] as PaginatedInstitutionResponse;
-
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(jsonResponse.totalRecords).toBeGreaterThan(0);
-
-      const inactiveInstitutionFound = jsonResponse.institutions.some(
-        (institution) => {
-          const activeAggregatorFound = institution.aggregatorIntegrations.some(
-            (aggInt) => aggInt.isActive,
-          );
-          return !activeAggregatorFound;
-        },
+      const getSortOptionSpyDefault = jest.spyOn(
+        institutionController,
+        "getSortOption",
       );
 
-      expect(inactiveInstitutionFound).toBeFalsy();
+      await getPaginatedInstitutions(req, res);
+
+      expect(getSortOptionSpyDefault).toHaveBeenCalledWith(
+        req,
+        defaultSortPaginatedInstitutions,
+      );
+    });
+
+    it("calls getSortOption with passed-in sortBy value, when sortBy is provided", async () => {
+      const sortBy = "createdAt:DESC,id:ASC";
+
+      const req = buildInstitutionRequest({
+        aggregatorName: ["testExampleA"],
+        sortBy,
+      });
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const getSortOptionSpyCustom = jest.spyOn(
+        institutionController,
+        "getSortOption",
+      );
+
+      await getPaginatedInstitutions(req, res);
+
+      expect(getSortOptionSpyCustom).toHaveBeenCalledWith(
+        req,
+        defaultSortPaginatedInstitutions,
+      );
+    });
+
+    it("calls Institutions.findAll with default sort order if sortBy is not passed in to request", async () => {
+      const req = buildInstitutionRequest({
+        aggregatorName: ["testExampleA"],
+      });
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const findAllSpyCustom = jest.spyOn(Institution, "findAll");
+
+      await getPaginatedInstitutions(req, res);
+
+      expect(findAllSpyCustom).toHaveBeenCalledWith(
+        expect.objectContaining({
+          order: [
+            ["createdAt", "DESC"],
+            ["name", "ASC"],
+          ],
+        }),
+      );
+    });
+
+    it("calls Institutions.findAll with passed-in sortBy value, when sortBy is provided", async () => {
+      const sortBy = "createdAt:DESC,id:ASC";
+
+      const req = buildInstitutionRequest({
+        aggregatorName: ["testExampleA"],
+        sortBy,
+      });
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const findAllSpyCustom = jest.spyOn(Institution, "findAll");
+
+      await getPaginatedInstitutions(req, res);
+
+      expect(findAllSpyCustom).toHaveBeenCalledWith(
+        expect.objectContaining({
+          order: [
+            ["createdAt", "DESC"],
+            ["id", "ASC"],
+          ],
+        }),
+      );
     });
   });
 

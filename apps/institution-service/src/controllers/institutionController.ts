@@ -178,11 +178,10 @@ interface PaginationOptions {
   page: number;
   limit: number;
   offset: number;
-  sort?: SortSequelize[];
 }
 
 interface SortOptions {
-  sort?: SortSequelize[];
+  sortBy?: SortSequelize[];
 }
 
 type WhereConditions = {
@@ -205,7 +204,7 @@ const getPaginationOptions = (req: Request): PaginationOptions => {
   return { page, limit, offset };
 };
 
-const parseSort = (sortBy: SortStringMulti) => {
+const parseSort = (sortBy: SortStringMulti): SortSequelize[] => {
   return sortBy
     .split(",")
     .filter((param: string) => param.includes(":"))
@@ -215,15 +214,15 @@ const parseSort = (sortBy: SortStringMulti) => {
     });
 };
 
-const getSortOption = (
+export const getSortOption = (
   req: Request,
   defaultSortString?: SortStringMulti,
 ): SortOptions => {
-  const sort: SortSequelize[] = parseSort(
-    (req.query.sort as SortStringMulti) || defaultSortString || "",
+  const sortBy: SortSequelize[] = parseSort(
+    (req.query.sortBy as SortStringMulti) || defaultSortString || "",
   );
 
-  return { sort };
+  return { sortBy };
 };
 
 const integrationFilterStrings = (req: Request): string => {
@@ -325,7 +324,7 @@ const aggregatorFilterLiteral = (req: Request): Literal => {
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   try {
     const { limit, offset, page } = getPaginationOptions(req);
-    const { sort } = getSortOption(req, "createdAt:DESC,name:ASC");
+    const { sortBy } = getSortOption(req, "createdAt:DESC,name:ASC");
 
     const institutions = await Institution.findAll({
       attributes: { include: ["*"] },
@@ -355,7 +354,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
           ],
         },
       ],
-      order: sort?.map((order) => [order.column, order.direction]) || [],
+      order: sortBy?.map((order) => [order.column, order.direction]) || [],
     });
 
     const count = await Institution.count({
