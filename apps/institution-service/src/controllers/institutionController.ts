@@ -16,10 +16,11 @@ import {
   validateUserCanEditInstitution,
 } from "../shared/utils/permissionValidation";
 
-type SortDirection = "ASC" | "DESC" | "asc" | "desc";
-type SortString = `${string}:${SortDirection}`;
-type SortStringMulti = `${SortString},${SortString}`;
-type SortSequelize = { column: string; direction: string };
+enum SortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+type SortSequelize = { column: string; direction: SortDirection };
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -204,25 +205,28 @@ const getPaginationOptions = (req: Request): PaginationOptions => {
   return { page, limit, offset };
 };
 
-const parseSort = (sortBy: SortStringMulti): SortSequelize[] => {
-  return sortBy
-    .split(",")
-    .filter((param: string) => param.includes(":"))
-    .map((param) => {
-      const [column, direction] = param.split(":");
-      return { column, direction };
-    });
+const parseSort = (sortBy: string[]): SortSequelize[] => {
+  return sortBy.map((param) => {
+    const [column, direction = SortDirection.ASC] = param.split(":");
+    return { column, direction: direction as SortDirection };
+  });
 };
 
 export const getSortOption = (
   req: Request,
-  defaultSortString?: SortStringMulti,
+  defaultSortString: string[],
 ): SortOptions => {
-  const sortBy: SortSequelize[] = parseSort(
-    (req.query.sortBy as SortStringMulti) || defaultSortString || "",
-  );
-
-  return { sortBy };
+  if (!req.query?.sortBy) {
+    return { sortBy: parseSort(defaultSortString) };
+  } else {
+    return {
+      sortBy: parseSort(
+        Array.isArray(req.query.sortBy)
+          ? (req.query.sortBy as string[])
+          : ([req.query.sortBy] as string[]),
+      ),
+    };
+  }
 };
 
 const integrationFilterStrings = (req: Request): string => {
@@ -324,7 +328,7 @@ const aggregatorFilterLiteral = (req: Request): Literal => {
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   try {
     const { limit, offset, page } = getPaginationOptions(req);
-    const { sortBy } = getSortOption(req, "createdAt:DESC,name:ASC");
+    const { sortBy } = getSortOption(req, ["createdAt:DESC", "name"]);
 
     const institutions = await Institution.findAll({
       attributes: { include: ["*"] },

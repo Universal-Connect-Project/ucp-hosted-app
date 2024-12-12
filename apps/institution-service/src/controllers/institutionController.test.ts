@@ -24,7 +24,7 @@ import {
 } from "./institutionController";
 import * as institutionController from "./institutionController";
 
-const defaultSortPaginatedInstitutions = "createdAt:DESC,name:ASC";
+const defaultSortPaginatedInstitutions = ["createdAt:DESC", "name"];
 
 const createNewInstitution = async () => {
   return await Institution.create(testInstitution);
@@ -252,7 +252,7 @@ describe("institutionController", () => {
     supportsVerification?: boolean;
     supportsOauth?: boolean;
     includeInactiveIntegrations?: boolean;
-    sortBy?: string;
+    sortBy?: string[];
   }): Request => {
     return {
       query: {
@@ -739,7 +739,7 @@ describe("institutionController", () => {
     });
 
     it("calls getSortOption with passed-in sortBy value, when sortBy is provided", async () => {
-      const sortBy = "createdAt:DESC,id:ASC";
+      const sortBy = ["createdAt:DESC", "id"];
 
       const req = buildInstitutionRequest({
         aggregatorName: ["testExampleA"],
@@ -789,7 +789,7 @@ describe("institutionController", () => {
     });
 
     it("calls Institutions.findAll with passed-in sortBy value, when sortBy is provided", async () => {
-      const sortBy = "createdAt:DESC,id:ASC";
+      const sortBy = ["createdAt:DESC", "id"];
 
       const req = buildInstitutionRequest({
         aggregatorName: ["testExampleA"],

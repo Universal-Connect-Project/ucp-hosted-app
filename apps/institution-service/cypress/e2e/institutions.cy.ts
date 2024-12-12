@@ -515,7 +515,7 @@ describe("/institutions", () => {
     });
   });
 
-  it("gets sorted institution list with custom sort options", () => {
+  it("gets sorted institution list with a single, custom sort option", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA&sortBy=id:desc`,
       method: "GET",
@@ -530,6 +530,25 @@ describe("/institutions", () => {
       expect(institutionResponse.totalRecords).to.eq(3);
       expect(institutionResponse.institutions[0].id).to.eq(
         "7a909e62-98b6-4a34-8725-b2a6a63e830a",
+      );
+    });
+  });
+
+  it("gets sorted institution list with multiple, custom sort options", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA&sortBy=createdAt:desc&sortBy=name:desc`,
+      method: "GET",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as PaginatedInstitutionsResponse;
+
+      expect(response.status).to.eq(200);
+      expect(institutionResponse.totalRecords).to.eq(3);
+      expect(institutionResponse.institutions[0].id).to.eq(
+        "5e498f60-3496-4299-96ed-f8eb328ae8af",
       );
     });
   });
