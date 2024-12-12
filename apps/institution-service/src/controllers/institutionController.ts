@@ -371,7 +371,6 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
       institutions: paginatedInstitutions,
     } as unknown as PaginatedInstitutionsResponse);
   } catch (error) {
-    console.log("------------------------> error", error);
     return res
       .status(500)
       .json({ error: "An error occurred while fetching institutions." });
