@@ -496,7 +496,7 @@ describe("/institutions", () => {
     );
   });
 
-  it("gets sorted paginated institution list with default sort options for testExampleA aggregator", () => {
+  it("gets sorted institution list with default sort options", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA`,
       method: "GET",
@@ -515,7 +515,7 @@ describe("/institutions", () => {
     });
   });
 
-  it("gets sorted paginated institution list with custom sort options for testExampleA aggregator", () => {
+  it("gets sorted institution list with custom sort options", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA&sortBy=id:desc`,
       method: "GET",
