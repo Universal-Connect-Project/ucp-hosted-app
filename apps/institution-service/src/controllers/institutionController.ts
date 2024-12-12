@@ -1,14 +1,14 @@
-import {UUID} from "crypto";
-import {Request, Response} from "express";
-import {literal, Op, ValidationError} from "sequelize";
-import {Literal} from "sequelize/types/utils";
-import {validate} from "uuid";
+import { UUID } from "crypto";
+import { Request, Response } from "express";
+import { literal, Op, ValidationError } from "sequelize";
+import { Literal } from "sequelize/types/utils";
+import { validate } from "uuid";
 import db from "../database";
-import {Aggregator} from "../models/aggregator";
-import {AggregatorIntegration} from "../models/aggregatorIntegration";
-import {Institution} from "../models/institution";
-import {transformInstitutionToCachedInstitution} from "../services/institutionService";
-import {DEFAULT_PAGINATION_PAGE_SIZE} from "../shared/const";
+import { Aggregator } from "../models/aggregator";
+import { AggregatorIntegration } from "../models/aggregatorIntegration";
+import { Institution } from "../models/institution";
+import { transformInstitutionToCachedInstitution } from "../services/institutionService";
+import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
   getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
@@ -215,9 +215,12 @@ const parseSort = (sortBy: SortStringMulti) => {
     });
 };
 
-const getSortOption = (req: Request, defaultSortString?: SortStringMulti): SortOptions => {
+const getSortOption = (
+  req: Request,
+  defaultSortString?: SortStringMulti,
+): SortOptions => {
   const sort: SortSequelize[] = parseSort(
-    req.query.sort as SortStringMulti || defaultSortString || "",
+    (req.query.sort as SortStringMulti) || defaultSortString || "",
   );
 
   return { sort };

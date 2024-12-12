@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {UUID} from "crypto";
-import {Request, Response} from "express";
-import {Model} from "sequelize";
-import {v4 as uuidv4} from "uuid";
-import {Institution} from "../models/institution";
-import {DEFAULT_PAGINATION_PAGE_SIZE} from "../shared/const";
+import { UUID } from "crypto";
+import { Request, Response } from "express";
+import { Model } from "sequelize";
+import { v4 as uuidv4 } from "uuid";
+import { Institution } from "../models/institution";
+import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
   cachedInstitutionFromSeed,
   seedInstitutionId,
   seedInstitutionName,
   testInstitution,
 } from "../test/testData/institutions";
-import {createTestAuthorization} from "../test/utils";
+import { createTestAuthorization } from "../test/utils";
 import {
   createInstitution,
   getInstitution,
