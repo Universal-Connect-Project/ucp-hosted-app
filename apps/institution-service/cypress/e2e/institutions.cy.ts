@@ -536,7 +536,7 @@ describe("/institutions", () => {
 
   it("gets sorted institution list with multiple, custom sort options", () => {
     cy.request({
-      url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA&sortBy=createdAt:desc&sortBy=name:desc`,
+      url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA&sortBy=createdAt:desc&sortBy=id`,
       method: "GET",
       headers: {
         Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
@@ -548,7 +548,7 @@ describe("/institutions", () => {
       expect(response.status).to.eq(200);
       expect(institutionResponse.totalRecords).to.eq(3);
       expect(institutionResponse.institutions[0].id).to.eq(
-        "5e498f60-3496-4299-96ed-f8eb328ae8af",
+        "3b561893-e969-4a2c-9e58-3b81b203cdc1",
       );
     });
   });
