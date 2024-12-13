@@ -22,9 +22,6 @@ import {
   getPaginatedInstitutions,
   updateInstitution,
 } from "./institutionController";
-import * as institutionController from "./institutionController";
-
-const defaultSortPaginatedInstitutions = ["createdAt:DESC", "name"];
 
 const createNewInstitution = async () => {
   return await Institution.create(testInstitution);
@@ -715,56 +712,7 @@ describe("institutionController", () => {
       expect(inactiveInstitutionFound).toBeFalsy();
     });
 
-    it("calls getSortOption with default sort order if sortBy is not passed in to request", async () => {
-      const req = buildInstitutionRequest({
-        aggregatorName: ["testExampleA"],
-      });
-
-      const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      } as unknown as Response;
-
-      const getSortOptionSpyDefault = jest.spyOn(
-        institutionController,
-        "getSortOption",
-      );
-
-      await getPaginatedInstitutions(req, res);
-
-      expect(getSortOptionSpyDefault).toHaveBeenCalledWith(
-        req,
-        defaultSortPaginatedInstitutions,
-      );
-    });
-
-    it("calls getSortOption with passed-in sortBy value, when sortBy is provided", async () => {
-      const sortBy = ["createdAt:DESC", "id"];
-
-      const req = buildInstitutionRequest({
-        aggregatorName: ["testExampleA"],
-        sortBy,
-      });
-
-      const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      } as unknown as Response;
-
-      const getSortOptionSpyCustom = jest.spyOn(
-        institutionController,
-        "getSortOption",
-      );
-
-      await getPaginatedInstitutions(req, res);
-
-      expect(getSortOptionSpyCustom).toHaveBeenCalledWith(
-        req,
-        defaultSortPaginatedInstitutions,
-      );
-    });
-
-    it("calls Institutions.findAll with default sort order if sortBy is not passed in to request", async () => {
+    it("uses default sort order if sortBy is not passed in to request", async () => {
       const req = buildInstitutionRequest({
         aggregatorName: ["testExampleA"],
       });
@@ -788,7 +736,7 @@ describe("institutionController", () => {
       );
     });
 
-    it("calls Institutions.findAll with passed-in sortBy value, when sortBy is provided", async () => {
+    it("uses custom sort order when sortBy is provided", async () => {
       const sortBy = ["createdAt:DESC", "id"];
 
       const req = buildInstitutionRequest({

@@ -1,6 +1,6 @@
 import { UUID } from "crypto";
 import { Request, Response } from "express";
-import { literal, Op, ValidationError } from "sequelize";
+import { literal, Op, OrderItem, ValidationError } from "sequelize";
 import { Literal } from "sequelize/types/utils";
 import { validate } from "uuid";
 import db from "../database";
@@ -20,7 +20,7 @@ enum SortDirection {
   ASC = "ASC",
   DESC = "DESC",
 }
-type SortSequelize = { column: string; direction: SortDirection };
+type SortSequelize = { column: string; direction?: SortDirection };
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -181,10 +181,6 @@ interface PaginationOptions {
   offset: number;
 }
 
-interface SortOptions {
-  sortBy?: SortSequelize[];
-}
-
 type WhereConditions = {
   [key: string]: unknown;
   [Op.or]?: Array<
@@ -203,30 +199,6 @@ const getPaginationOptions = (req: Request): PaginationOptions => {
   const offset = (page - 1) * limit;
 
   return { page, limit, offset };
-};
-
-const parseSort = (sortBy: string[]): SortSequelize[] => {
-  return sortBy.map((param) => {
-    const [column, direction = SortDirection.ASC] = param.split(":");
-    return { column, direction: direction as SortDirection };
-  });
-};
-
-export const getSortOption = (
-  req: Request,
-  defaultSortString: string[],
-): SortOptions => {
-  if (!req.query?.sortBy) {
-    return { sortBy: parseSort(defaultSortString) };
-  } else {
-    return {
-      sortBy: parseSort(
-        Array.isArray(req.query.sortBy)
-          ? (req.query.sortBy as string[])
-          : ([req.query.sortBy] as string[]),
-      ),
-    };
-  }
 };
 
 const integrationFilterStrings = (req: Request): string => {
@@ -326,9 +298,19 @@ const aggregatorFilterLiteral = (req: Request): Literal => {
 };
 
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
+  const parseSort = (sortBy: string[]): SortSequelize[] => {
+    return sortBy.map((param) => {
+      const [column, direction = SortDirection.ASC] = param.split(":");
+      return { column, direction: direction as SortDirection };
+    });
+  };
+
   try {
     const { limit, offset, page } = getPaginationOptions(req);
-    const { sortBy } = getSortOption(req, ["createdAt:DESC", "name"]);
+
+    const sortBy = req.query?.sortBy
+      ? parseSort([req.query.sortBy] as string[])
+      : parseSort(["createdAt:DESC", "name"]);
 
     const institutions = await Institution.findAll({
       attributes: { include: ["*"] },
@@ -358,7 +340,9 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
           ],
         },
       ],
-      order: sortBy?.map((order) => [order.column, order.direction]) || [],
+      order: [
+        ...(sortBy?.map((order) => [order.column, order.direction]) || []),
+      ] as OrderItem[],
     });
 
     const count = await Institution.count({
