@@ -30,7 +30,7 @@ module.exports = {
           createdAt: createdAt ?? new Date(),
           updatedAt: updatedAt ?? new Date(),
         },
-        aggregatorIntegrations: aggregatorIntegrations.map((integration) => {
+        aggregatorIntegrations: aggregatorIntegrations?.map((integration) => {
           const {
             isActive,
             aggregatorId,
@@ -97,6 +97,16 @@ module.exports = {
     ]);
 
     const testBanks = [
+      buildTestBank({
+        institutionBody: {
+          id: crypto.randomUUID(),
+          name: "No aggregator integrations",
+          logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-78c7b591-6512-9c17-b092-1cddbd3c85ba_100x100.png",
+          url: "https://test.com",
+          is_test_bank: false,
+          routing_numbers: ["123456789"],
+        },
+      }),
       buildTestBank({
         institutionBody: {
           id: allAggregatorsInstitutionId,
@@ -229,7 +239,9 @@ module.exports = {
 
     await queryInterface.bulkInsert(
       "aggregatorIntegrations",
-      testBanks.flatMap((testBank) => testBank.aggregatorIntegrations),
+      testBanks
+        .flatMap((testBank) => testBank.aggregatorIntegrations)
+        .filter((integrations) => !!integrations),
     );
   },
 

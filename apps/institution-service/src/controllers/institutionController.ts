@@ -258,13 +258,17 @@ const whereInstitutionConditions = (req: Request): WhereConditions => {
     ];
   }
 
-  whereConditions[Op.and] = aggregatorFilterLiteral(req);
+  const aggregatorFilter = aggregatorFilterLiteral(req);
+
+  if (aggregatorFilter) {
+    whereConditions[Op.and] = aggregatorFilter;
+  }
 
   return whereConditions;
 };
 
-const aggregatorFilterLiteral = (req: Request): Literal => {
-  const { aggregatorName } = req.query;
+const aggregatorFilterLiteral = (req: Request): Literal | null => {
+  const { aggregatorName, includeInactiveIntegrations } = req.query;
 
   let aggQueryFilter = "";
   if (aggregatorName) {
@@ -277,6 +281,16 @@ const aggregatorFilterLiteral = (req: Request): Literal => {
     aggQueryFilter = `AND "aggregator"."name" IN (${escapedAggregatorNames.join(", ")})`;
   }
 
+  const integrationFilter = integrationFilterStrings(req);
+
+  if (
+    !integrationFilter &&
+    !aggQueryFilter &&
+    includeInactiveIntegrations === "true"
+  ) {
+    return null;
+  }
+
   return literal(`
     EXISTS (
       SELECT 1
@@ -284,7 +298,7 @@ const aggregatorFilterLiteral = (req: Request): Literal => {
       INNER JOIN "aggregators" AS "aggregator" 
       ON "aggregatorIntegration"."aggregatorId" = "aggregator"."id"
       WHERE "aggregatorIntegration"."institution_id" = "Institution"."id"
-      ${integrationFilterStrings(req)}
+      ${integrationFilter}
       ${aggQueryFilter}
     )
   `);
@@ -294,8 +308,19 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   try {
     const { limit, offset, page } = getPaginationOptions(req);
 
-    const institutions = await Institution.findAll({
-      attributes: { include: ["*"] },
+    const { count, rows } = await Institution.findAndCountAll({
+      distinct: true,
+      attributes: [
+        "id",
+        "name",
+        "keywords",
+        "logo",
+        "url",
+        "is_test_bank",
+        "routing_numbers",
+        "createdAt",
+        "updatedAt",
+      ],
       where: whereInstitutionConditions(req),
       include: [
         {
@@ -322,24 +347,20 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
           ],
         },
       ],
+      limit,
+      offset,
       order: [
         ["createdAt", "DESC"],
         ["name", "ASC"],
       ],
     });
 
-    const count = await Institution.count({
-      where: whereInstitutionConditions(req),
-    });
-
-    const paginatedInstitutions = institutions.slice(offset, page * limit);
-
     return res.status(200).json({
       currentPage: page,
       pageSize: limit,
       totalRecords: count,
       totalPages: Math.ceil(count / limit),
-      institutions: paginatedInstitutions,
+      institutions: rows,
     } as unknown as PaginatedInstitutionsResponse);
   } catch (error) {
     return res
