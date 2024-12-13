@@ -3,6 +3,7 @@ import { RequestHandler, Router } from "express";
 import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import {
   createInstitution,
+  deleteInstitution,
   getInstitution,
   getInstitutionCachedList,
   getPaginatedInstitutions,
@@ -56,5 +57,7 @@ router.put(
   ),
   updateInstitution as RequestHandler,
 );
+
+router.delete("/:id", deleteInstitution as RequestHandler);
 
 export default router;

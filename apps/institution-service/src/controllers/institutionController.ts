@@ -460,3 +460,19 @@ export const getInstitution = async (req: Request, res: Response) => {
       .json({ error: "An error occurred while requesting the institution" });
   }
 };
+
+export const deleteInstitution = async (req: Request, res: Response) => {
+  try {
+    await Institution.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    res.status(204).json({});
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "An error occurred while deleting the institution" });
+  }
+};
