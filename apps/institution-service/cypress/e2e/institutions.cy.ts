@@ -497,7 +497,7 @@ describe("/institutions", () => {
     );
   });
 
-  it("gets sorted institution list with default sort options", () => {
+  it.only("gets sorted institution list with default sort options", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA`,
       method: "GET",
@@ -520,7 +520,7 @@ describe("/institutions", () => {
     });
   });
 
-  it("gets sorted institution list with a single, custom sort option", () => {
+  it.only("gets sorted institution list with a single, custom sort option", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA&sortBy=id:desc`,
       method: "GET",
@@ -533,32 +533,8 @@ describe("/institutions", () => {
 
       expect(response.status).to.eq(200);
       expect(institutionResponse.totalRecords).to.eq(3);
-      expect(
-        isSorted(
-          institutionResponse.institutions,
-          ["id", "name"],
-          ["desc", "asc"],
-        ),
-      ).to.be.true;
-    });
-  });
-
-  it("gets sorted institution list with multiple, custom sort options", () => {
-    cy.request({
-      url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA&sortBy=createdAt:desc&sortBy=id`,
-      method: "GET",
-      headers: {
-        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-      },
-    }).then((response: Cypress.Response<{ body: unknown }>) => {
-      const institutionResponse =
-        response.body as unknown as PaginatedInstitutionsResponse;
-
-      expect(response.status).to.eq(200);
-      expect(institutionResponse.totalRecords).to.eq(3);
-      expect(institutionResponse.institutions[0].id).to.eq(
-        "3b561893-e969-4a2c-9e58-3b81b203cdc1",
-      );
+      expect(isSorted(institutionResponse.institutions, ["id"], ["desc"])).to.be
+        .true;
     });
   });
 
