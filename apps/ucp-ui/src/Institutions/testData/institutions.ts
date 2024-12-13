@@ -78,12 +78,22 @@ export const testInstitutionActiveAndInactive = {
   ],
 };
 
+export const testInstitutionNoAggregatorIntegrations = {
+  ...testInstitution,
+  id: "noAggregatorIntegrations",
+  name: "noAggregatorIntegrations",
+  aggregatorIntegrations: [],
+};
+
 export const institutionResponse = {
   institution: testInstitutionActiveAndInactive,
   permissions: testInstitutionPermissions,
 };
 
-export const institutions = [testInstitution];
+export const institutions = [
+  testInstitution,
+  testInstitutionNoAggregatorIntegrations,
+];
 
 export const institutionsPage1 = {
   currentPage: 1,

@@ -26,6 +26,7 @@ import {
   institutionsPage2,
   testInstitution,
   testInstitutionActiveAndInactive,
+  testInstitutionNoAggregatorIntegrations,
 } from "./testData/institutions";
 import { server } from "../shared/test/testServer";
 import { delay, http, HttpResponse } from "msw";
@@ -72,6 +73,18 @@ describe("<Institutions />", () => {
       await screen.findByRole("button", {
         name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,
       }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders a none chip if an institution is missing aggregatorIntegrations", async () => {
+    render(<Institutions />);
+
+    const rowWithNoAggregatorIntegrations = await screen.findByTestId(
+      `${INSTITUTIONS_ROW_TEST_ID}-${testInstitutionNoAggregatorIntegrations.id}`,
+    );
+
+    expect(
+      within(rowWithNoAggregatorIntegrations).getByText("None"),
     ).toBeInTheDocument();
   });
 
