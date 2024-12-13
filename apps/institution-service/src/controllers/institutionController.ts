@@ -369,6 +369,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
       offset,
       order: [
         ...(sortBy?.map((order) => [order.column, order.direction]) || []),
+        ["name", SortDirection.ASC],
       ] as OrderItem[],
     });
 

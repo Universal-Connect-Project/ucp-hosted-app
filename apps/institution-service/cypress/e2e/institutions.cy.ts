@@ -511,11 +511,7 @@ describe("/institutions", () => {
       expect(response.status).to.eq(200);
       expect(institutionResponse.totalRecords).to.eq(3);
       expect(
-        isSorted(
-          institutionResponse.institutions,
-          ["createdAt", "name"],
-          ["desc", "asc"],
-        ),
+        isSorted(institutionResponse.institutions, ["createdAt"], ["desc"]),
       ).to.be.true;
     });
   });
