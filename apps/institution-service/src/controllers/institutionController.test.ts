@@ -435,6 +435,59 @@ describe("institutionController", () => {
       });
     });
 
+    it("hides institutions that don't have aggregator integrations", async () => {
+      const req = {
+        query: {
+          search: "No aggregator integrations",
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          totalRecords: 0,
+          institutions: [],
+        }),
+      );
+    });
+
+    it("shows institutions that don't have aggregator integrations if includeInactiveIntegrations", async () => {
+      const req = {
+        query: {
+          includeInactiveIntegrations: "true",
+          search: "No aggregator integrations",
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          totalRecords: 1,
+          institutions: expect.arrayContaining([
+            expect.objectContaining({
+              aggregatorIntegrations: [],
+            }),
+          ]),
+        }),
+      );
+    });
+
     it("filters properly by aggregator", async () => {
       const req = {
         query: {
