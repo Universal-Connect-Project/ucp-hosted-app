@@ -81,3 +81,28 @@ export const createTestInstitution = (token: string) => {
     failOnStatusCode: false,
   });
 };
+
+export const isSorted = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  arr: Record<string, any>[],
+  properties: string[],
+  directions: ("asc" | "desc")[],
+) => {
+  for (let i = 0; i < arr.length - 1; i++) {
+    for (let j = 0; j < properties.length; j++) {
+      const prop = properties[j];
+      const dir = directions[j] || "asc"; // Default to ascending
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+      const a: any = arr[i][prop];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+      const b: any = arr[i + 1][prop];
+
+      if (a === b) continue; // If values are equal, check next property
+
+      if (dir === "asc" && a > b) return false;
+      if (dir === "desc" && a < b) return false;
+    }
+  }
+  return true;
+};

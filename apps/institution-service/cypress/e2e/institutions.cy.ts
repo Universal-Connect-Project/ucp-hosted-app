@@ -17,6 +17,7 @@ import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { getInstitutionsWithFiltersRequest } from "../shared/utils/institutions";
 import {
   createTestInstitution,
+  isSorted,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
@@ -509,9 +510,13 @@ describe("/institutions", () => {
 
       expect(response.status).to.eq(200);
       expect(institutionResponse.totalRecords).to.eq(3);
-      expect(institutionResponse.institutions[0].id).to.eq(
-        "3b561893-e969-4a2c-9e58-3b81b203cdc1",
-      );
+      expect(
+        isSorted(
+          institutionResponse.institutions,
+          ["createdAt", "name"],
+          ["desc", "asc"],
+        ),
+      ).to.be.true;
     });
   });
 
@@ -528,9 +533,13 @@ describe("/institutions", () => {
 
       expect(response.status).to.eq(200);
       expect(institutionResponse.totalRecords).to.eq(3);
-      expect(institutionResponse.institutions[0].id).to.eq(
-        "7a909e62-98b6-4a34-8725-b2a6a63e830a",
-      );
+      expect(
+        isSorted(
+          institutionResponse.institutions,
+          ["id", "name"],
+          ["desc", "asc"],
+        ),
+      ).to.be.true;
     });
   });
 

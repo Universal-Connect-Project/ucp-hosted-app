@@ -249,7 +249,7 @@ describe("institutionController", () => {
     supportsVerification?: boolean;
     supportsOauth?: boolean;
     includeInactiveIntegrations?: boolean;
-    sortBy?: string[];
+    sortBy?: string;
   }): Request => {
     return {
       query: {
@@ -775,11 +775,14 @@ describe("institutionController", () => {
         status: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      const findAllSpyCustom = jest.spyOn(Institution, "findAll");
+      const findAndCountAllSpyCustom = jest.spyOn(
+        Institution,
+        "findAndCountAll",
+      );
 
       await getPaginatedInstitutions(req, res);
 
-      expect(findAllSpyCustom).toHaveBeenCalledWith(
+      expect(findAndCountAllSpyCustom).toHaveBeenCalledWith(
         expect.objectContaining({
           order: [
             ["createdAt", "DESC"],
@@ -790,7 +793,7 @@ describe("institutionController", () => {
     });
 
     it("uses custom sort order when sortBy is provided", async () => {
-      const sortBy = ["createdAt:DESC", "id"];
+      const sortBy = "id";
 
       const req = buildInstitutionRequest({
         aggregatorName: ["testExampleA"],
@@ -802,16 +805,16 @@ describe("institutionController", () => {
         status: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      const findAllSpyCustom = jest.spyOn(Institution, "findAll");
+      const findAndCountAllSpyCustom = jest.spyOn(
+        Institution,
+        "findAndCountAll",
+      );
 
       await getPaginatedInstitutions(req, res);
 
-      expect(findAllSpyCustom).toHaveBeenCalledWith(
+      expect(findAndCountAllSpyCustom).toHaveBeenCalledWith(
         expect.objectContaining({
-          order: [
-            ["createdAt", "DESC"],
-            ["id", "ASC"],
-          ],
+          order: [["id", "ASC"]],
         }),
       );
     });
