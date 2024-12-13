@@ -297,66 +297,71 @@ const Institutions = () => {
                             </TableCell>
                             <TableCell>
                               <div className={styles.aggregatorsCell}>
-                                {[...aggregatorIntegrations]
-                                  .sort(aggregatorIntegrationsSortByName)
-                                  .map((aggregatorIntegration) => {
-                                    const {
-                                      aggregator: { displayName },
-                                      isActive,
-                                    } = aggregatorIntegration;
+                                {aggregatorIntegrations.length ? (
+                                  [...aggregatorIntegrations]
+                                    .sort(aggregatorIntegrationsSortByName)
+                                    .map((aggregatorIntegration) => {
+                                      const {
+                                        aggregator: { displayName },
+                                        isActive,
+                                      } = aggregatorIntegration;
 
-                                    if (
-                                      !isActive &&
-                                      !shouldShowInactiveIntegrations
-                                    ) {
-                                      return null;
-                                    }
+                                      if (
+                                        !isActive &&
+                                        !shouldShowInactiveIntegrations
+                                      ) {
+                                        return null;
+                                      }
 
-                                    const supportedTypes = Object.values(
-                                      supportsJobTypeMap,
-                                    ).filter(
-                                      ({ prop }) => aggregatorIntegration[prop],
-                                    );
+                                      const supportedTypes = Object.values(
+                                        supportsJobTypeMap,
+                                      ).filter(
+                                        ({ prop }) =>
+                                          aggregatorIntegration[prop],
+                                      );
 
-                                    const namesSupported = supportedTypes
-                                      .map(({ displayName }) => displayName)
-                                      .join(", ");
-                                    const numberSupported =
-                                      supportedTypes.length;
+                                      const namesSupported = supportedTypes
+                                        .map(({ displayName }) => displayName)
+                                        .join(", ");
+                                      const numberSupported =
+                                        supportedTypes.length;
 
-                                    return (
-                                      <SkeletonIfLoading
-                                        className={styles.chipSkeleton}
-                                        isLoading={isInstitutionsLoading}
-                                        key={displayName}
-                                      >
-                                        <Tooltip
-                                          disableInteractive
-                                          title={
-                                            numberSupported
-                                              ? `Supported job types: ${namesSupported}`
-                                              : null
-                                          }
+                                      return (
+                                        <SkeletonIfLoading
+                                          className={styles.chipSkeleton}
+                                          isLoading={isInstitutionsLoading}
+                                          key={displayName}
                                         >
-                                          <Chip
-                                            avatar={
-                                              <Avatar
-                                                className={styles.chipAvatar}
-                                              >
-                                                {numberSupported}
-                                              </Avatar>
+                                          <Tooltip
+                                            disableInteractive
+                                            title={
+                                              numberSupported
+                                                ? `Supported job types: ${namesSupported}`
+                                                : null
                                             }
-                                            data-testid={
-                                              INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
-                                            }
-                                            disabled={!isActive}
-                                            label={displayName}
-                                            size="small"
-                                          />
-                                        </Tooltip>
-                                      </SkeletonIfLoading>
-                                    );
-                                  })}
+                                          >
+                                            <Chip
+                                              avatar={
+                                                <Avatar
+                                                  className={styles.chipAvatar}
+                                                >
+                                                  {numberSupported}
+                                                </Avatar>
+                                              }
+                                              data-testid={
+                                                INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
+                                              }
+                                              disabled={!isActive}
+                                              label={displayName}
+                                              size="small"
+                                            />
+                                          </Tooltip>
+                                        </SkeletonIfLoading>
+                                      );
+                                    })
+                                ) : (
+                                  <Chip disabled label="None" size="small" />
+                                )}
                               </div>
                             </TableCell>
                           </TableRow>
