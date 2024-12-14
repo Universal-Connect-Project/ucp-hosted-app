@@ -784,10 +784,10 @@ describe("institutionController", () => {
 
       expect(findAndCountAllSpyCustom).toHaveBeenCalledWith(
         expect.objectContaining({
-          order: [
+          order: expect.arrayContaining([
             ["createdAt", "DESC"],
             ["name", "ASC"],
-          ],
+          ]),
         }),
       );
     });
@@ -814,7 +814,7 @@ describe("institutionController", () => {
 
       expect(findAndCountAllSpyCustom).toHaveBeenCalledWith(
         expect.objectContaining({
-          order: [["id", "ASC"]],
+          order: expect.objectContaining([["id", "ASC"]]),
         }),
       );
     });

@@ -516,7 +516,7 @@ describe("/institutions", () => {
     });
   });
 
-  it.only("gets sorted institution list with a single, custom sort option", () => {
+  it.only("gets sorted institution list with a custom sort option", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions?aggregatorName=testExampleA&sortBy=id:desc`,
       method: "GET",
