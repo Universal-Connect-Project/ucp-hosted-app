@@ -312,19 +312,17 @@ const aggregatorFilterLiteral = (req: Request): Literal | null => {
 };
 
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
-  const parseSort = (sortBy: string[]): SortSequelize[] => {
-    return sortBy.map((param) => {
-      const [column, direction = SortDirection.ASC] = param.split(":");
-      return { column, direction: direction as SortDirection };
-    });
+  const parseSort = (sortBy: string): SortSequelize => {
+    const [column, direction = SortDirection.ASC] = sortBy.split(":");
+    return { column, direction: direction as SortDirection };
   };
 
   try {
     const { limit, offset, page } = getPaginationOptions(req);
 
     const sortBy = req.query?.sortBy
-      ? parseSort([req.query.sortBy] as string[])
-      : parseSort(["createdAt:DESC", "name"]);
+      ? parseSort(req.query.sortBy as string)
+      : parseSort("createdAt:DESC");
 
     const { count, rows } = await Institution.findAndCountAll({
       distinct: true,
@@ -368,8 +366,8 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
       limit,
       offset,
       order: [
-        ...(sortBy?.map((order) => [order.column, order.direction]) || []),
-        ["name", SortDirection.ASC],
+        [sortBy.column, sortBy.direction],
+        sortBy.column !== "name" ? ["name", SortDirection.ASC] : null,
       ] as OrderItem[],
     });
 

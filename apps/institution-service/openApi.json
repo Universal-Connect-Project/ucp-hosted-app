@@ -585,16 +585,13 @@
             "in": "query",
             "name": "sortBy",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "type": "string"
             },
             "required": false,
             "style": "form",
             "explode": true,
-            "example": ["createdAt:DESC", "name"],
-            "description": "Fields to sort by. Use the field name followed by an optional colon and the sort direction: ASC (default) or DESC."
+            "example": "createdAt:DESC",
+            "description": "Field to sort by. Use the field name followed by an optional colon and the sort direction: ASC (default) or DESC."
           }
         ],
         "responses": {
