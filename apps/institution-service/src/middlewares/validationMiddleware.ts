@@ -109,14 +109,16 @@ export const createValidateUserCanActOnInstitution =
     };
 
     if (canUserActOnInstitution === true) {
-      return next();
+      next();
+
+      return;
     }
 
     const { error, status } =
       errorMap[canUserActOnInstitution] ||
       errorMap[ActOnInstitutionValidationErrorReason.GenericError];
 
-    return res.status(status).json({
+    res.status(status).json({
       error,
     });
   };
