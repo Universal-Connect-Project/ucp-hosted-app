@@ -7,6 +7,7 @@ import {
   ActOnInstitutionValidationErrorReason,
   getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
+  validateUserCanDeleteInstitution,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "./permissionValidation";
@@ -14,16 +15,30 @@ import {
 const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
 const allAggregatorsInstitutionId = "d7b98242-3645-4de4-b770-f59a197942cb";
 
-describe("permissionValidation", () => {
-  describe("validateUserCanEditInstitution", () => {
+const createValidateInstitutionPermissions = ({
+  adminPermission,
+  aggregatorPermission,
+  validateFunction,
+}: {
+  adminPermission: string;
+  aggregatorPermission: string;
+  validateFunction: ({
+    institutionId,
+    req,
+  }: {
+    institutionId: string;
+    req: Request;
+  }) => Promise<true | ActOnInstitutionValidationErrorReason>;
+}) =>
+  describe(`validate permissions for ${adminPermission}`, () => {
     it("returns true if they are a super admin", async () => {
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: "test",
           req: {
             headers: {
               authorization: createTestAuthorization({
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION],
+                permissions: [adminPermission],
               }),
             },
           } as Request,
@@ -33,12 +48,12 @@ describe("permissionValidation", () => {
 
     it("returns true if they are an aggregator and they're the only aggregatorIntegration", async () => {
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: mxOnlyInstitutionId,
           req: {
             headers: {
               authorization: createTestAuthorization({
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+                permissions: [aggregatorPermission],
               }),
             },
           } as Request,
@@ -50,13 +65,13 @@ describe("permissionValidation", () => {
       const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
 
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: mxOnlyInstitutionId,
           req: {
             headers: {
               authorization: createTestAuthorization({
                 aggregatorId: "sophtron",
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+                permissions: [aggregatorPermission],
               }),
             },
           } as Request,
@@ -66,7 +81,7 @@ describe("permissionValidation", () => {
 
     it("returns InsufficientScope if they're not an aggregator or super admin", async () => {
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: "test",
           req: {
             headers: {
@@ -83,12 +98,12 @@ describe("permissionValidation", () => {
       jest.spyOn(Institution, "findByPk").mockRejectedValue(new Error());
 
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: "test",
           req: {
             headers: {
               authorization: createTestAuthorization({
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+                permissions: [aggregatorPermission],
               }),
             },
           } as Request,
@@ -98,18 +113,31 @@ describe("permissionValidation", () => {
 
     it("returns InvalidInstitutionId if the institution isn't found", async () => {
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: crypto.randomUUID(),
           req: {
             headers: {
               authorization: createTestAuthorization({
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+                permissions: [aggregatorPermission],
               }),
             },
           } as Request,
         }),
       ).toBe(ActOnInstitutionValidationErrorReason.InvalidInstitutionId);
     });
+  });
+
+describe("permissionValidation", () => {
+  createValidateInstitutionPermissions({
+    adminPermission: UiUserPermissions.UPDATE_INSTITUTION,
+    aggregatorPermission: UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
+    validateFunction: validateUserCanEditInstitution,
+  });
+
+  createValidateInstitutionPermissions({
+    adminPermission: UiUserPermissions.DELETE_INSTITUTION,
+    aggregatorPermission: UiUserPermissions.DELETE_INSTITUTION_AGGREGATOR,
+    validateFunction: validateUserCanDeleteInstitution,
   });
 
   describe("validateUserCanActOnAggregatorIntegration", () => {
