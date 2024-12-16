@@ -82,7 +82,7 @@ export const createTestInstitution = (token: string) => {
   });
 };
 
-export const isSorted = (
+export const checkIsSorted = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   arr: Record<string, any>[],
   prop: string,

@@ -17,7 +17,7 @@ import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { getInstitutionsWithFiltersRequest } from "../shared/utils/institutions";
 import {
   createTestInstitution,
-  isSorted,
+  checkIsSorted,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
@@ -511,7 +511,7 @@ describe("/institutions", () => {
       expect(response.status).to.eq(200);
       expect(institutionResponse.totalRecords).to.eq(3);
       expect(
-        isSorted(institutionResponse.institutions, ["createdAt"], ["desc"]),
+        checkIsSorted(institutionResponse.institutions, "createdAt", "desc"),
       ).to.be.true;
     });
   });
@@ -529,8 +529,8 @@ describe("/institutions", () => {
 
       expect(response.status).to.eq(200);
       expect(institutionResponse.totalRecords).to.eq(3);
-      expect(isSorted(institutionResponse.institutions, ["id"], ["desc"])).to.be
-        .true;
+      expect(checkIsSorted(institutionResponse.institutions, "id", "desc")).to
+        .be.true;
     });
   });
 

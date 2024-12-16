@@ -314,7 +314,7 @@ const aggregatorFilterLiteral = (req: Request): Literal | null => {
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   const parseSort = (sortBy: string): SortSequelize => {
     const [column, direction = SortDirection.ASC] = sortBy.split(":");
-    return { column, direction: direction as SortDirection };
+    return { column, direction: direction.toUpperCase() as SortDirection };
   };
 
   try {
