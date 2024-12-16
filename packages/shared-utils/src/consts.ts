@@ -19,6 +19,8 @@ export const WidgetHostPermissions = {
 export const UiUserPermissions = {
   CREATE_INSTITUTION: "create:institution",
   CREATE_INSTITUTION_AGGREGATOR: "create:institution:aggregator",
+  DELETE_INSTITUTION: "delete:institution",
+  DELETE_INSTITUTION_AGGREGATOR: "delete:institution:aggregator",
   UPDATE_INSTITUTION: "update:institution",
   UPDATE_INSTITUTION_AGGREGATOR: "update:institution:aggregator",
   UPDATE_AGGREGATOR_INTEGRATION: "update:aggregatorIntegration",

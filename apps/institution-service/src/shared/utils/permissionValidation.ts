@@ -31,57 +31,63 @@ export interface DecodedToken {
   };
 }
 
-export enum EditInstitutionValidationErrorReason {
+export enum ActOnInstitutionValidationErrorReason {
   GenericError,
   InsufficientScope,
   InvalidInstitutionId,
   UsedByOtherAggregators,
 }
 
-export const validateUserCanEditInstitution = async ({
-  institutionId,
-  req,
-}: {
-  institutionId: string;
-  req: Request;
-}) => {
-  try {
-    const token = req.headers.authorization?.split(" ")?.[1] as string;
-    const decodedToken = jwt.decode(token) as DecodedToken;
-    const permissions = decodedToken.permissions;
+export const createValidateUserCanActOnInstitution =
+  ({
+    adminPermission,
+    aggregatorPermission,
+  }: {
+    adminPermission: string;
+    aggregatorPermission: string;
+  }) =>
+  async ({ institutionId, req }: { institutionId: string; req: Request }) => {
+    try {
+      const token = req.headers.authorization?.split(" ")?.[1] as string;
+      const decodedToken = jwt.decode(token) as DecodedToken;
+      const permissions = decodedToken.permissions;
 
-    if (permissions.includes(UiUserPermissions.UPDATE_INSTITUTION)) {
+      if (permissions.includes(adminPermission)) {
+        return true;
+      } else if (!permissions.includes(aggregatorPermission)) {
+        return ActOnInstitutionValidationErrorReason.InsufficientScope;
+      }
+
+      const institution = await Institution.findByPk(institutionId);
+
+      if (!institution) {
+        return ActOnInstitutionValidationErrorReason.InvalidInstitutionId;
+      }
+
+      const aggregatorId = decodedToken["ucw/appMetaData"].aggregatorId;
+
+      const aggregators = await institution?.getAggregators({ raw: true });
+      const hasOtherAggregators = aggregators?.some(
+        (aggregator) => aggregator.name !== aggregatorId,
+      );
+
+      if (hasOtherAggregators) {
+        return ActOnInstitutionValidationErrorReason.UsedByOtherAggregators;
+      }
+
       return true;
-    } else if (
-      !permissions.includes(UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR)
-    ) {
-      return EditInstitutionValidationErrorReason.InsufficientScope;
+    } catch {
+      return ActOnInstitutionValidationErrorReason.GenericError;
     }
+  };
 
-    const institution = await Institution.findByPk(institutionId);
+export const validateUserCanEditInstitution =
+  createValidateUserCanActOnInstitution({
+    adminPermission: UiUserPermissions.UPDATE_INSTITUTION,
+    aggregatorPermission: UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
+  });
 
-    if (!institution) {
-      return EditInstitutionValidationErrorReason.InvalidInstitutionId;
-    }
-
-    const aggregatorId = decodedToken["ucw/appMetaData"].aggregatorId;
-
-    const aggregators = await institution?.getAggregators({ raw: true });
-    const hasOtherAggregators = aggregators?.some(
-      (aggregator) => aggregator.name !== aggregatorId,
-    );
-
-    if (hasOtherAggregators) {
-      return EditInstitutionValidationErrorReason.UsedByOtherAggregators;
-    }
-
-    return true;
-  } catch {
-    return EditInstitutionValidationErrorReason.GenericError;
-  }
-};
-
-export enum EditAggregatorIntegrationValidationErrorReason {
+export enum ActOnAggregatorIntegrationValidationErrorReason {
   GenericError,
   InsufficientScope,
   InvalidAggregatorIntegrationId,
@@ -111,26 +117,26 @@ export const createValidateUserCanActOnAggregatorIntegration =
       if (permissions.includes(adminPermission)) {
         return true;
       } else if (!permissions.includes(aggregatorPermission)) {
-        return EditAggregatorIntegrationValidationErrorReason.InsufficientScope;
+        return ActOnAggregatorIntegrationValidationErrorReason.InsufficientScope;
       }
 
       const aggregatorIntegration = await AggregatorIntegration.findByPk(
         aggregatorIntegrationId,
       );
       if (!aggregatorIntegration) {
-        return EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId;
+        return ActOnAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId;
       }
 
       const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
       const aggregator = await aggregatorIntegration?.getAggregator();
 
       if (aggregatorName !== aggregator?.name) {
-        return EditAggregatorIntegrationValidationErrorReason.NotYourAggregator;
+        return ActOnAggregatorIntegrationValidationErrorReason.NotYourAggregator;
       }
 
       return true;
     } catch (err) {
-      return EditAggregatorIntegrationValidationErrorReason.GenericError;
+      return ActOnAggregatorIntegrationValidationErrorReason.GenericError;
     }
   };
 

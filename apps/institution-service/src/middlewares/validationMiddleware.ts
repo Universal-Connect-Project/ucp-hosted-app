@@ -7,9 +7,9 @@ import { Aggregator } from "../models/aggregator";
 import {
   validateUserCanDeleteAggregatorIntegration as deleteAggIntValidation,
   validateUserCanEditAggregatorIntegration as editAggIntValidation,
-  EditAggregatorIntegrationValidationErrorReason,
+  ActOnAggregatorIntegrationValidationErrorReason,
   validateUserCanEditInstitution as editInstitutionValidation,
-  EditInstitutionValidationErrorReason,
+  ActOnInstitutionValidationErrorReason,
 } from "../shared/utils/permissionValidation";
 
 export const validate = (schema: ObjectSchema) => {
@@ -82,19 +82,19 @@ export const validateUserCanEditInstitution = async (
   });
 
   const errorMap = {
-    [EditInstitutionValidationErrorReason.GenericError]: {
+    [ActOnInstitutionValidationErrorReason.GenericError]: {
       error: "Error validating user permission",
       status: 500,
     },
-    [EditInstitutionValidationErrorReason.InsufficientScope]: {
+    [ActOnInstitutionValidationErrorReason.InsufficientScope]: {
       error: "Insufficient permissions",
       status: 403,
     },
-    [EditInstitutionValidationErrorReason.InvalidInstitutionId]: {
+    [ActOnInstitutionValidationErrorReason.InvalidInstitutionId]: {
       error: "Institution not found",
       status: 404,
     },
-    [EditInstitutionValidationErrorReason.UsedByOtherAggregators]: {
+    [ActOnInstitutionValidationErrorReason.UsedByOtherAggregators]: {
       error: "Aggregator cannot edit an institution used by other aggregators",
       status: 403,
     },
@@ -106,7 +106,7 @@ export const validateUserCanEditInstitution = async (
 
   const { error, status } =
     errorMap[canUserEditInstitution] ||
-    errorMap[EditInstitutionValidationErrorReason.GenericError];
+    errorMap[ActOnInstitutionValidationErrorReason.GenericError];
 
   return res.status(status).json({
     error,
@@ -121,7 +121,7 @@ const createValidateUserCanDoActionOnAggregatorIntegration =
     }: {
       aggregatorIntegrationId: string;
       req: Request;
-    }) => Promise<true | EditAggregatorIntegrationValidationErrorReason>,
+    }) => Promise<true | ActOnAggregatorIntegrationValidationErrorReason>,
   ) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const canUserEditAggregatorIntegration = await validateFunction({
@@ -130,20 +130,20 @@ const createValidateUserCanDoActionOnAggregatorIntegration =
     });
 
     const errorMap = {
-      [EditAggregatorIntegrationValidationErrorReason.GenericError]: {
+      [ActOnAggregatorIntegrationValidationErrorReason.GenericError]: {
         error: "Error validating user permission",
         status: 500,
       },
-      [EditAggregatorIntegrationValidationErrorReason.InsufficientScope]: {
+      [ActOnAggregatorIntegrationValidationErrorReason.InsufficientScope]: {
         error: "Insufficient permissions",
         status: 403,
       },
-      [EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId]:
+      [ActOnAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId]:
         {
           error: "Aggregator Integration not found",
           status: 404,
         },
-      [EditAggregatorIntegrationValidationErrorReason.NotYourAggregator]: {
+      [ActOnAggregatorIntegrationValidationErrorReason.NotYourAggregator]: {
         error:
           "An Aggregator cannot edit or delete an aggregatorIntegration belonging to another aggregator",
         status: 403,
@@ -156,7 +156,7 @@ const createValidateUserCanDoActionOnAggregatorIntegration =
 
     const { error, status } =
       errorMap[canUserEditAggregatorIntegration] ||
-      errorMap[EditAggregatorIntegrationValidationErrorReason.GenericError];
+      errorMap[ActOnAggregatorIntegrationValidationErrorReason.GenericError];
 
     return res.status(status).json({
       error,

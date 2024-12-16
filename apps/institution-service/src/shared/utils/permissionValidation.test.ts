@@ -3,8 +3,8 @@ import { Request } from "express";
 import { Institution } from "../../models/institution";
 import { createTestAuthorization } from "../../test/utils";
 import {
-  EditAggregatorIntegrationValidationErrorReason,
-  EditInstitutionValidationErrorReason,
+  ActOnAggregatorIntegrationValidationErrorReason,
+  ActOnInstitutionValidationErrorReason,
   getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
   validateUserCanEditAggregatorIntegration,
@@ -61,7 +61,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditInstitutionValidationErrorReason.UsedByOtherAggregators);
+      ).toBe(ActOnInstitutionValidationErrorReason.UsedByOtherAggregators);
     });
 
     it("returns InsufficientScope if they're not an aggregator or super admin", async () => {
@@ -76,7 +76,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditInstitutionValidationErrorReason.InsufficientScope);
+      ).toBe(ActOnInstitutionValidationErrorReason.InsufficientScope);
     });
 
     it("returns GenericError if findByPk fails", async () => {
@@ -93,7 +93,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditInstitutionValidationErrorReason.GenericError);
+      ).toBe(ActOnInstitutionValidationErrorReason.GenericError);
     });
 
     it("returns InvalidInstitutionId if the institution isn't found", async () => {
@@ -108,7 +108,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditInstitutionValidationErrorReason.InvalidInstitutionId);
+      ).toBe(ActOnInstitutionValidationErrorReason.InvalidInstitutionId);
     });
   });
 
@@ -192,7 +192,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditAggregatorIntegrationValidationErrorReason.InsufficientScope);
+      ).toBe(ActOnAggregatorIntegrationValidationErrorReason.InsufficientScope);
     });
 
     it("returns InsufficientScope if they're trying to delete but only have edit permission", async () => {
@@ -209,7 +209,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditAggregatorIntegrationValidationErrorReason.InsufficientScope);
+      ).toBe(ActOnAggregatorIntegrationValidationErrorReason.InsufficientScope);
     });
 
     it("returns InvalidAggregatorIntegrationId if the integration isn't found", async () => {
@@ -227,7 +227,7 @@ describe("permissionValidation", () => {
           } as Request,
         }),
       ).toBe(
-        EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId,
+        ActOnAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId,
       );
     });
 
@@ -247,7 +247,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditAggregatorIntegrationValidationErrorReason.GenericError);
+      ).toBe(ActOnAggregatorIntegrationValidationErrorReason.GenericError);
     });
 
     it("returns NotYourAggregator if an aggregator attempts to edit a different aggregator's integration", async () => {
@@ -274,7 +274,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditAggregatorIntegrationValidationErrorReason.NotYourAggregator);
+      ).toBe(ActOnAggregatorIntegrationValidationErrorReason.NotYourAggregator);
     });
   });
 
