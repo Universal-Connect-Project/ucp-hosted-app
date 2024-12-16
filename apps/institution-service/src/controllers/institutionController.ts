@@ -470,9 +470,17 @@ export const getInstitution = async (req: Request, res: Response) => {
 
 export const deleteInstitution = async (req: Request, res: Response) => {
   try {
+    const institutionId = req.params.id;
+
+    const institution = await Institution.findByPk(institutionId);
+
+    if (!institution) {
+      return res.status(404).json({ error: "Institution not found" });
+    }
+
     await Institution.destroy({
       where: {
-        id: req.params.id,
+        id: institutionId,
       },
     });
 
