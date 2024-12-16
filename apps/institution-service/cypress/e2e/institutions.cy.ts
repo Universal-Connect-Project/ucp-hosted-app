@@ -1,6 +1,8 @@
 import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
-import { Institution } from "models/institution";
+
+import { Institution } from "../../src/models/institution";
+import { checkIsSorted } from "../../src/test/utils";
 import {
   InstitutionDetail,
   PaginatedInstitutionsResponse,
@@ -494,6 +496,41 @@ describe("/institutions", () => {
         });
       },
     );
+  });
+
+  it("gets sorted institution list with default sort options", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions`,
+      method: "GET",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as PaginatedInstitutionsResponse;
+
+      expect(response.status).to.eq(200);
+      expect(
+        checkIsSorted(institutionResponse.institutions, "createdAt", "desc"),
+      ).to.be.true;
+    });
+  });
+
+  it("gets sorted institution list with a custom sort option", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions?sortBy=id:desc`,
+      method: "GET",
+      headers: {
+        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+      },
+    }).then((response: Cypress.Response<{ body: unknown }>) => {
+      const institutionResponse =
+        response.body as unknown as PaginatedInstitutionsResponse;
+
+      expect(response.status).to.eq(200);
+      expect(checkIsSorted(institutionResponse.institutions, "id", "desc")).to
+        .be.true;
+    });
   });
 
   runTokenInvalidCheck({

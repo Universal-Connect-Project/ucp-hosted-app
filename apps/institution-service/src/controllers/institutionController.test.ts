@@ -2,9 +2,11 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { UUID } from "crypto";
+import { checkIsSorted } from "../test/utils";
 import { Request, Response } from "express";
 import { Model } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
+
 import { Institution } from "../models/institution";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
@@ -236,6 +238,7 @@ describe("institutionController", () => {
     supportsVerification,
     supportsOauth,
     includeInactiveIntegrations,
+    sortBy,
   }: {
     search?: string;
     page?: number;
@@ -247,6 +250,7 @@ describe("institutionController", () => {
     supportsVerification?: boolean;
     supportsOauth?: boolean;
     includeInactiveIntegrations?: boolean;
+    sortBy?: string;
   }): Request => {
     return {
       query: {
@@ -262,6 +266,7 @@ describe("institutionController", () => {
         includeInactiveIntegrations: includeInactiveIntegrations
           ? "true"
           : undefined,
+        sortBy,
       },
     } as unknown as Request;
   };
@@ -732,7 +737,7 @@ describe("institutionController", () => {
       expect(inactiveInstitutionFound).toBeTruthy();
     });
 
-    it("exludes institutions with inactive integrations when includeInactiveIntegrations is not passed", async () => {
+    it("excludes institutions with inactive integrations when includeInactiveIntegrations is not passed", async () => {
       const req = buildInstitutionRequest({
         aggregatorName: ["mx", "sophtron", "finicity"],
       });
@@ -759,6 +764,46 @@ describe("institutionController", () => {
       );
 
       expect(inactiveInstitutionFound).toBeFalsy();
+    });
+
+    it("uses default sort order if sortBy is not passed in to request", async () => {
+      const req = buildInstitutionRequest({});
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+
+      expect(
+        checkIsSorted(jsonResponse.institutions, "createdAt", "desc"),
+      ).toBeTruthy();
+    });
+
+    it("uses custom sort order when sortBy is provided", async () => {
+      const sortBy = "id";
+
+      const req = buildInstitutionRequest({
+        sortBy,
+      });
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await getPaginatedInstitutions(req, res);
+
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+
+      expect(
+        checkIsSorted(jsonResponse.institutions, "id", "asc"),
+      ).toBeTruthy();
     });
   });
 

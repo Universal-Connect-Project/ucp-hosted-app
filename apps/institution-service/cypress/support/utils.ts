@@ -1,5 +1,8 @@
-import { PORT } from "shared/const";
-import { InstitutionAttrs, testInstitution } from "test/testData/institutions";
+import { PORT } from "../../src/shared/const";
+import {
+  InstitutionAttrs,
+  testInstitution,
+} from "../../src/test/testData/institutions";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 
 interface runTokenInvalidCheckArgs {

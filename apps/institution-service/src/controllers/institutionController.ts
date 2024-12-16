@@ -1,6 +1,6 @@
 import { UUID } from "crypto";
 import { Request, Response } from "express";
-import { Op, ValidationError, literal } from "sequelize";
+import { literal, Op, OrderItem, ValidationError } from "sequelize";
 import { Literal } from "sequelize/types/utils";
 import { validate } from "uuid";
 import db from "../database";
@@ -15,6 +15,12 @@ import {
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "../shared/utils/permissionValidation";
+
+enum SortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+type SortSequelize = { column: string; direction?: SortDirection };
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -191,6 +197,7 @@ const getPaginationOptions = (req: Request): PaginationOptions => {
   const limit =
     parseInt(req.query.pageSize as string, 10) || DEFAULT_PAGINATION_PAGE_SIZE;
   const offset = (page - 1) * limit;
+
   return { page, limit, offset };
 };
 
@@ -305,8 +312,17 @@ const aggregatorFilterLiteral = (req: Request): Literal | null => {
 };
 
 export const getPaginatedInstitutions = async (req: Request, res: Response) => {
+  const parseSort = (sortBy: string): SortSequelize => {
+    const [column, direction = SortDirection.ASC] = sortBy.split(":");
+    return { column, direction: direction.toUpperCase() as SortDirection };
+  };
+
   try {
     const { limit, offset, page } = getPaginationOptions(req);
+
+    const sortBy = req.query?.sortBy
+      ? parseSort(req.query.sortBy as string)
+      : parseSort("createdAt:DESC");
 
     const { count, rows } = await Institution.findAndCountAll({
       distinct: true,
@@ -350,9 +366,9 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
       limit,
       offset,
       order: [
-        ["createdAt", "DESC"],
-        ["name", "ASC"],
-      ],
+        [sortBy.column, sortBy.direction],
+        sortBy.column !== "name" ? ["name", SortDirection.ASC] : null,
+      ] as OrderItem[],
     });
 
     return res.status(200).json({
