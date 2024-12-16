@@ -14,6 +14,7 @@ import { createAuthorizationHeader } from "../shared/utils/authorization";
 import {
   createTestInstitution,
   deleteAggregatorIntegration,
+  deleteInstitution,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
@@ -467,6 +468,10 @@ describe("DELETE /aggregatorIntegrations/:id", () => {
           },
         );
       });
+  });
+
+  afterEach(() => {
+    deleteInstitution({ institutionId: testInstitutionId });
   });
 
   it("should return 204 when aggregatorIntegration is sucessfully deleted and 404 when not found", () => {

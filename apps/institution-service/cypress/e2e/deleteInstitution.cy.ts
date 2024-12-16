@@ -85,7 +85,6 @@ describe("DELETE /institutions/:id (Institution delete)", () => {
                 AGGREGATOR_USER_ACCESS_TOKEN_ENV,
               ),
             },
-            failOnStatusCode: false,
           }).then((response: Cypress.Response<{ error: string }>) => {
             expect(response.status).to.eq(204);
           });

@@ -17,6 +17,7 @@ import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { getInstitutionsWithFiltersRequest } from "../shared/utils/institutions";
 import {
   createTestInstitution,
+  deleteInstitution,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
@@ -245,6 +246,8 @@ describe("POST /institutions (Institution create)", () => {
         institutionAttributes.forEach((attribute) => {
           expect(response.body.institution).to.haveOwnProperty(attribute);
         });
+
+        deleteInstitution({ institutionId: response.body.institution.id });
       },
     );
 
@@ -261,6 +264,8 @@ describe("POST /institutions (Institution create)", () => {
         institutionAttributes.forEach((attribute) => {
           expect(response.body.institution).to.haveOwnProperty(attribute);
         });
+
+        deleteInstitution({ institutionId: response.body.institution.id });
       },
     );
   });
@@ -275,6 +280,10 @@ describe("PUT /institutions/:id (Institution update)", () => {
         newInstitutionData = response.body.institution;
       },
     );
+  });
+
+  after(() => {
+    deleteInstitution({ institutionId: newInstitutionData.id });
   });
 
   runTokenInvalidCheck({
