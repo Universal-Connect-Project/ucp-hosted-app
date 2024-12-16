@@ -1,6 +1,7 @@
 import { PORT } from "shared/const";
 import { InstitutionAttrs, testInstitution } from "test/testData/institutions";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
+import { SUPER_USER_ACCESS_TOKEN_ENV } from "../shared/constants/accessTokens";
 
 interface runTokenInvalidCheckArgs {
   url: string;
@@ -77,6 +78,21 @@ export const createTestInstitution = (token: string) => {
     },
     headers: {
       Authorization: createAuthorizationHeader(token),
+    },
+    failOnStatusCode: false,
+  });
+};
+
+export const deleteInstitution = ({
+  institutionId,
+}: {
+  institutionId: string;
+}) => {
+  return cy.request({
+    url: `http://localhost:${PORT}/institutions/${institutionId}`,
+    method: "DELETE",
+    headers: {
+      Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
     },
     failOnStatusCode: false,
   });

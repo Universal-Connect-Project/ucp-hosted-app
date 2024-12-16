@@ -13,13 +13,13 @@ import {
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { runTokenInvalidCheck } from "../support/utils";
 
-const checkEditInstitutionPermissions = ({
+const checkEditAndDeleteInstitutionPermissions = ({
   accessTokenEnv,
-  canEditInstitution,
+  canActOnInstitution,
   institutionId,
 }: {
   accessTokenEnv: string;
-  canEditInstitution: boolean;
+  canActOnInstitution: boolean;
   institutionId: string;
 }) => {
   cy.request({
@@ -36,7 +36,10 @@ const checkEditInstitutionPermissions = ({
       }>,
     ) => {
       expect(response.body.permissions.canEditInstitution).to.eq(
-        canEditInstitution,
+        canActOnInstitution,
+      );
+      expect(response.body.permissions.canDeleteInstitution).to.eq(
+        canActOnInstitution,
       );
     },
   );
@@ -177,35 +180,35 @@ describe("GET /institutions/:id (Institution Details)", () => {
     );
   });
 
-  describe("edit permissions", () => {
-    it("returns that a regular user can't edit the institution", () => {
-      checkEditInstitutionPermissions({
+  describe("edit/delete permissions", () => {
+    it("returns that a regular user can't edit/delete the institution", () => {
+      checkEditAndDeleteInstitutionPermissions({
         accessTokenEnv: USER_ACCESS_TOKEN_ENV,
-        canEditInstitution: false,
+        canActOnInstitution: false,
         institutionId: institutionIdWithOnlyTestExampleAAggregator,
       });
     });
 
-    it("returns that a super admin can edit the institution", () => {
-      checkEditInstitutionPermissions({
+    it("returns that a super admin can edit/delete the institution", () => {
+      checkEditAndDeleteInstitutionPermissions({
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
-        canEditInstitution: true,
+        canActOnInstitution: true,
         institutionId: institutionIdWithOnlyTestExampleAAggregator,
       });
     });
 
-    it("returns that an aggregator can edit the institution if there are no other aggregator integrations", () => {
-      checkEditInstitutionPermissions({
+    it("returns that an aggregator can edit/delete the institution if there are no other aggregator integrations", () => {
+      checkEditAndDeleteInstitutionPermissions({
         accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-        canEditInstitution: true,
+        canActOnInstitution: true,
         institutionId: institutionIdWithOnlyTestExampleAAggregator,
       });
     });
 
-    it("returns that an aggregator can't edit the institution if there are other aggregator integrations", () => {
-      checkEditInstitutionPermissions({
+    it("returns that an aggregator can't edit/delete the institution if there are other aggregator integrations", () => {
+      checkEditAndDeleteInstitutionPermissions({
         accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-        canEditInstitution: false,
+        canActOnInstitution: false,
         institutionId: institutionIdWithOnlyTestExampleBAggregator,
       });
     });

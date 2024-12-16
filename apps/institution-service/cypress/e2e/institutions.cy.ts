@@ -266,9 +266,9 @@ describe("POST /institutions (Institution create)", () => {
   });
 });
 
-let newInstitutionData: Institution;
-
 describe("PUT /institutions/:id (Institution update)", () => {
+  let newInstitutionData: Institution;
+
   before(() => {
     createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
       (response: Cypress.Response<{ institution: Institution }>) => {
