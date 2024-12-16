@@ -89,8 +89,8 @@ export const isSorted = (
   direction: "asc" | "desc",
 ) => {
   for (let i = 1; i < arr.length; i++) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-    const a: any = arr[i - 1][prop];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const a = arr[i - 1][prop];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const b = arr[i][prop];
 
