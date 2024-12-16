@@ -85,24 +85,21 @@ export const createTestInstitution = (token: string) => {
 export const isSorted = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   arr: Record<string, any>[],
-  properties: string[],
-  directions: ("asc" | "desc")[],
+  prop: string,
+  direction: "asc" | "desc",
 ) => {
-  for (let i = 0; i < arr.length - 1; i++) {
-    for (let j = 0; j < properties.length; j++) {
-      const prop = properties[j];
-      const dir = directions[j] || "asc"; // Default to ascending
+  for (let i = 1; i < arr.length; i++) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+    const a: any = arr[i - 1][prop];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const b = arr[i][prop];
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-      const a: any = arr[i][prop];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-      const b: any = arr[i + 1][prop];
-
-      if (a === b) continue; // If values are equal, check next property
-
-      if (dir === "asc" && a > b) return false;
-      if (dir === "desc" && a < b) return false;
+    if (direction === "asc") {
+      if (a > b) return false;
+    } else {
+      if (a < b) return false;
     }
   }
+
   return true;
 };
