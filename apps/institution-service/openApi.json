@@ -390,6 +390,7 @@
                           "canEdit": false
                         }
                       },
+                      "canDeleteInstitution": false,
                       "canEditInstitution": false,
                       "aggregatorsThatCanBeAdded": [
                         {

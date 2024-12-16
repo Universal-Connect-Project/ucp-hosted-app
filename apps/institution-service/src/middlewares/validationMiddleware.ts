@@ -9,6 +9,7 @@ import {
   validateUserCanEditAggregatorIntegration as editAggIntValidation,
   ActOnAggregatorIntegrationValidationErrorReason,
   validateUserCanEditInstitution as editInstitutionValidation,
+  validateUserCanDeleteInstitution as deleteInstitutionValidation,
   ActOnInstitutionValidationErrorReason,
 } from "../shared/utils/permissionValidation";
 
@@ -71,47 +72,59 @@ export interface DecodedToken {
   };
 }
 
-export const validateUserCanEditInstitution = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const canUserEditInstitution = await editInstitutionValidation({
-    institutionId: req?.params?.id,
-    req,
-  });
+export const createValidateUserCanActOnInstitution =
+  (
+    validateFunction: ({
+      institutionId,
+      req,
+    }: {
+      institutionId: string;
+      req: Request;
+    }) => Promise<true | ActOnInstitutionValidationErrorReason>,
+  ) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    const canUserActOnInstitution = await validateFunction({
+      institutionId: req?.params?.id,
+      req,
+    });
 
-  const errorMap = {
-    [ActOnInstitutionValidationErrorReason.GenericError]: {
-      error: "Error validating user permission",
-      status: 500,
-    },
-    [ActOnInstitutionValidationErrorReason.InsufficientScope]: {
-      error: "Insufficient permissions",
-      status: 403,
-    },
-    [ActOnInstitutionValidationErrorReason.InvalidInstitutionId]: {
-      error: "Institution not found",
-      status: 404,
-    },
-    [ActOnInstitutionValidationErrorReason.UsedByOtherAggregators]: {
-      error: "Aggregator cannot edit an institution used by other aggregators",
-      status: 403,
-    },
+    const errorMap = {
+      [ActOnInstitutionValidationErrorReason.GenericError]: {
+        error: "Error validating user permission",
+        status: 500,
+      },
+      [ActOnInstitutionValidationErrorReason.InsufficientScope]: {
+        error: "Insufficient permissions",
+        status: 403,
+      },
+      [ActOnInstitutionValidationErrorReason.InvalidInstitutionId]: {
+        error: "Institution not found",
+        status: 404,
+      },
+      [ActOnInstitutionValidationErrorReason.UsedByOtherAggregators]: {
+        error:
+          "Aggregator cannot edit an institution used by other aggregators",
+        status: 403,
+      },
+    };
+
+    if (canUserActOnInstitution === true) {
+      return next();
+    }
+
+    const { error, status } =
+      errorMap[canUserActOnInstitution] ||
+      errorMap[ActOnInstitutionValidationErrorReason.GenericError];
+
+    return res.status(status).json({
+      error,
+    });
   };
 
-  if (canUserEditInstitution === true) {
-    return next();
-  }
-
-  const { error, status } =
-    errorMap[canUserEditInstitution] ||
-    errorMap[ActOnInstitutionValidationErrorReason.GenericError];
-
-  return res.status(status).json({
-    error,
-  });
-};
+export const validateUserCanEditInstitution =
+  createValidateUserCanActOnInstitution(editInstitutionValidation);
+export const validateUserCanDeleteInstitution =
+  createValidateUserCanActOnInstitution(deleteInstitutionValidation);
 
 const createValidateUserCanDoActionOnAggregatorIntegration =
   (

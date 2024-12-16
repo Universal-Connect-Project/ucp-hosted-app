@@ -814,6 +814,7 @@ describe("institutionController", () => {
           permissions: expect.objectContaining({
             aggregatorIntegrationPermissionsMap: expect.any(Object),
             aggregatorsThatCanBeAdded: [],
+            canDeleteInstitution: expect.any(Boolean),
             canEditInstitution: expect.any(Boolean),
           }),
         }),

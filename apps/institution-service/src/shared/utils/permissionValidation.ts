@@ -87,6 +87,12 @@ export const validateUserCanEditInstitution =
     aggregatorPermission: UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
   });
 
+export const validateUserCanDeleteInstitution =
+  createValidateUserCanActOnInstitution({
+    adminPermission: UiUserPermissions.DELETE_INSTITUTION,
+    aggregatorPermission: UiUserPermissions.DELETE_INSTITUTION_AGGREGATOR,
+  });
+
 export enum ActOnAggregatorIntegrationValidationErrorReason {
   GenericError,
   InsufficientScope,

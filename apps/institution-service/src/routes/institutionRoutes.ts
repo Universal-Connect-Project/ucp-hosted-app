@@ -12,6 +12,7 @@ import {
 import {
   institutionSchema,
   validate,
+  validateUserCanDeleteInstitution,
   validateUserCanEditInstitution,
 } from "../middlewares/validationMiddleware";
 import {
@@ -58,6 +59,13 @@ router.put(
   updateInstitution as RequestHandler,
 );
 
-router.delete("/:id", deleteInstitution as RequestHandler);
+router.delete(
+  "/:id",
+  [validateUIAudience, validateUserCanDeleteInstitution],
+  scopeIncludesAny(
+    `${UiUserPermissions.DELETE_INSTITUTION} ${UiUserPermissions.DELETE_INSTITUTION_AGGREGATOR}`,
+  ),
+  deleteInstitution as RequestHandler,
+);
 
 export default router;

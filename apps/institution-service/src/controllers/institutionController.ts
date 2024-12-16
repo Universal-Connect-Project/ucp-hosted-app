@@ -12,6 +12,7 @@ import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
   getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
+  validateUserCanDeleteInstitution,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "../shared/utils/permissionValidation";
@@ -152,6 +153,7 @@ export interface InstitutionPermissions {
     AggregatorIntegrationPermissions
   >;
   aggregatorsThatCanBeAdded: Aggregator[];
+  canDeleteInstitution: boolean;
   canEditInstitution: boolean;
   hasAccessToAllAggregators?: boolean;
 }
@@ -443,6 +445,11 @@ export const getInstitution = async (req: Request, res: Response) => {
       institution: institutionJson,
       permissions: {
         aggregatorIntegrationPermissionsMap,
+        canDeleteInstitution:
+          (await validateUserCanDeleteInstitution({
+            institutionId,
+            req,
+          })) === true,
         canEditInstitution:
           (await validateUserCanEditInstitution({
             institutionId,
