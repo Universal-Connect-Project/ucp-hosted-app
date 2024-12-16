@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { UUID } from "crypto";
+import { checkIsSorted } from "../test/utils";
 import { Request, Response } from "express";
 import { Model } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
@@ -766,37 +767,27 @@ describe("institutionController", () => {
     });
 
     it("uses default sort order if sortBy is not passed in to request", async () => {
-      const req = buildInstitutionRequest({
-        aggregatorName: ["testExampleA"],
-      });
+      const req = buildInstitutionRequest({});
 
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      const findAndCountAllSpyCustom = jest.spyOn(
-        Institution,
-        "findAndCountAll",
-      );
-
       await getPaginatedInstitutions(req, res);
 
-      expect(findAndCountAllSpyCustom).toHaveBeenCalledWith(
-        expect.objectContaining({
-          order: expect.arrayContaining([
-            ["createdAt", "DESC"],
-            ["name", "ASC"],
-          ]),
-        }),
-      );
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+
+      expect(
+        checkIsSorted(jsonResponse.institutions, "createdAt", "desc"),
+      ).toBeTruthy();
     });
 
     it("uses custom sort order when sortBy is provided", async () => {
       const sortBy = "id";
 
       const req = buildInstitutionRequest({
-        aggregatorName: ["testExampleA"],
         sortBy,
       });
 
@@ -805,18 +796,14 @@ describe("institutionController", () => {
         status: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      const findAndCountAllSpyCustom = jest.spyOn(
-        Institution,
-        "findAndCountAll",
-      );
-
       await getPaginatedInstitutions(req, res);
 
-      expect(findAndCountAllSpyCustom).toHaveBeenCalledWith(
-        expect.objectContaining({
-          order: expect.objectContaining([["id", "ASC"]]),
-        }),
-      );
+      const jsonResponse = (res.json as jest.Mock).mock
+        .calls[0][0] as PaginatedInstitutionResponse;
+
+      expect(
+        checkIsSorted(jsonResponse.institutions, "id", "asc"),
+      ).toBeTruthy();
     });
   });
 

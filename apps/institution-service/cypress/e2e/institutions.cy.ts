@@ -1,6 +1,8 @@
 import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
-import { Institution } from "models/institution";
+
+import { Institution } from "../../src/models/institution";
+import { checkIsSorted } from "../../src/test/utils";
 import {
   InstitutionDetail,
   PaginatedInstitutionsResponse,
@@ -17,7 +19,6 @@ import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { getInstitutionsWithFiltersRequest } from "../shared/utils/institutions";
 import {
   createTestInstitution,
-  checkIsSorted,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
