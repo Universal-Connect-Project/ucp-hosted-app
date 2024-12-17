@@ -55,7 +55,8 @@ jobs:
           echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
 
           echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}        
-          RATE_LIMIT_REQUEST_LIMIT=1000  >> ${ENV_FILE_PATH}
+          echo RATE_LIMIT_REQUEST_LIMIT=1000  >> ${ENV_FILE_PATH}
+          
           # Secrets (can't load these from another job, due to GH security features)
 
           # For authentication service
