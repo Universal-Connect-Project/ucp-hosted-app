@@ -43,3 +43,10 @@ export const DEFAULT_LOGO_URL =
 
 export const INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID =
   "editAggregatorIntegration";
+
+export enum SortOrder {
+  asc = "asc",
+  desc = "desc",
+}
+
+export type SortOrderType = keyof typeof SortOrder;

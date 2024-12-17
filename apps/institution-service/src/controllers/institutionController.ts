@@ -318,11 +318,24 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
   };
 
   try {
+    let order: OrderItem[] = [];
     const { limit, offset, page } = getPaginationOptions(req);
 
     const sortBy = req.query?.sortBy
       ? parseSort(req.query.sortBy as string)
       : parseSort("createdAt:DESC");
+
+    if (sortBy.column === "name") {
+      order = [
+        ["createdAt", SortDirection.DESC],
+        ["name", sortBy.direction as SortDirection],
+      ];
+    } else {
+      order = [
+        [sortBy.column, sortBy.direction as SortDirection],
+        ["name", SortDirection.ASC],
+      ];
+    }
 
     const { count, rows } = await Institution.findAndCountAll({
       distinct: true,
@@ -365,10 +378,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
       ],
       limit,
       offset,
-      order: [
-        [sortBy.column, sortBy.direction],
-        sortBy.column !== "name" ? ["name", SortDirection.ASC] : null,
-      ] as OrderItem[],
+      order,
     });
 
     return res.status(200).json({
