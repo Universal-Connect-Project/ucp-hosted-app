@@ -15,7 +15,8 @@ import { PORT } from "./shared/const";
 const createLimiter = (
   options: { timeIntervalInMinutes: number; requestLimit: number } = {
     timeIntervalInMinutes: 1,
-    requestLimit: 100,
+    requestLimit:
+      parseInt(process.env.RATE_LIMIT_REQUEST_LIMIT || "0", 10) || 100,
   },
 ) => {
   const { timeIntervalInMinutes, requestLimit } = options;

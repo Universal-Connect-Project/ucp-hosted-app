@@ -3,6 +3,7 @@ import { RequestHandler, Router } from "express";
 import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import {
   createInstitution,
+  deleteInstitution,
   getInstitution,
   getInstitutionCachedList,
   getPaginatedInstitutions,
@@ -11,6 +12,7 @@ import {
 import {
   institutionSchema,
   validate,
+  validateUserCanDeleteInstitution,
   validateUserCanEditInstitution,
 } from "../middlewares/validationMiddleware";
 import {
@@ -55,6 +57,15 @@ router.put(
     `${UiUserPermissions.UPDATE_INSTITUTION} ${UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR}`,
   ),
   updateInstitution as RequestHandler,
+);
+
+router.delete(
+  "/:id",
+  [validateUIAudience, validateUserCanDeleteInstitution],
+  scopeIncludesAny(
+    `${UiUserPermissions.DELETE_INSTITUTION} ${UiUserPermissions.DELETE_INSTITUTION_AGGREGATOR}`,
+  ),
+  deleteInstitution as RequestHandler,
 );
 
 export default router;
