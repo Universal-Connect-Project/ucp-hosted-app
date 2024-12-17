@@ -12,6 +12,7 @@ import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import {
   getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
+  validateUserCanDeleteInstitution,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "../shared/utils/permissionValidation";
@@ -158,6 +159,7 @@ export interface InstitutionPermissions {
     AggregatorIntegrationPermissions
   >;
   aggregatorsThatCanBeAdded: Aggregator[];
+  canDeleteInstitution: boolean;
   canEditInstitution: boolean;
   hasAccessToAllAggregators?: boolean;
 }
@@ -469,6 +471,11 @@ export const getInstitution = async (req: Request, res: Response) => {
       institution: institutionJson,
       permissions: {
         aggregatorIntegrationPermissionsMap,
+        canDeleteInstitution:
+          (await validateUserCanDeleteInstitution({
+            institutionId,
+            req,
+          })) === true,
         canEditInstitution:
           (await validateUserCanEditInstitution({
             institutionId,
@@ -484,5 +491,29 @@ export const getInstitution = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ error: "An error occurred while requesting the institution" });
+  }
+};
+
+export const deleteInstitution = async (req: Request, res: Response) => {
+  try {
+    const institutionId = req.params.id;
+
+    const institution = await Institution.findByPk(institutionId);
+
+    if (!institution) {
+      return res.status(404).json({ error: "Institution not found" });
+    }
+
+    await Institution.destroy({
+      where: {
+        id: institutionId,
+      },
+    });
+
+    res.status(204).json({});
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "An error occurred while deleting the institution" });
   }
 };

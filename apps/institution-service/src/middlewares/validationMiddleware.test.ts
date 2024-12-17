@@ -1,5 +1,5 @@
 import { UiUserPermissions } from "@repo/shared-utils";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Aggregator } from "../models/aggregator";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
@@ -12,25 +12,38 @@ import { createTestAuthorization } from "../test/utils";
 import {
   validateUserCanCreateAggregatorIntegration,
   validateUserCanDeleteAggregatorIntegration,
+  validateUserCanDeleteInstitution,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "./validationMiddleware";
 
-describe("validationMiddleware", () => {
-  describe("validateUserCanEditInstitution", () => {
+const createValidateUserCanActOnInstitutionTests = ({
+  adminPermission,
+  aggregatorPermission,
+  middleware,
+}: {
+  adminPermission: string;
+  aggregatorPermission: string;
+  middleware: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void>;
+}) =>
+  describe(`validation middleware for ${adminPermission} ${aggregatorPermission}`, () => {
     it("handles correct permissions", async () => {
       const next = jest.fn();
 
       const req = {
         headers: {
           authorization: createTestAuthorization({
-            permissions: [UiUserPermissions.UPDATE_INSTITUTION],
+            permissions: [adminPermission],
           }),
         },
       } as Request;
       const res = {} as unknown as Response;
 
-      await validateUserCanEditInstitution(req, res, next);
+      await middleware(req, res, next);
 
       expect(next).toHaveBeenCalled();
     });
@@ -43,7 +56,7 @@ describe("validationMiddleware", () => {
       const req = {
         headers: {
           authorization: createTestAuthorization({
-            permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+            permissions: [aggregatorPermission],
           }),
         },
       } as Request;
@@ -52,7 +65,7 @@ describe("validationMiddleware", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      await validateUserCanEditInstitution(req, res, next);
+      await middleware(req, res, next);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(500);
@@ -76,7 +89,7 @@ describe("validationMiddleware", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      await validateUserCanEditInstitution(req, res, next);
+      await middleware(req, res, next);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(403);
@@ -91,7 +104,7 @@ describe("validationMiddleware", () => {
       const req = {
         headers: {
           authorization: createTestAuthorization({
-            permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+            permissions: [aggregatorPermission],
           }),
         },
         params: {
@@ -103,7 +116,7 @@ describe("validationMiddleware", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      await validateUserCanEditInstitution(req, res, next);
+      await middleware(req, res, next);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(404);
@@ -121,7 +134,7 @@ describe("validationMiddleware", () => {
       const req = {
         headers: {
           authorization: createTestAuthorization({
-            permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+            permissions: [aggregatorPermission],
           }),
         },
         params: {
@@ -133,7 +146,7 @@ describe("validationMiddleware", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      await validateUserCanEditInstitution(req, res, next);
+      await middleware(req, res, next);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(403);
@@ -143,6 +156,20 @@ describe("validationMiddleware", () => {
       });
     });
   });
+
+describe("validationMiddleware", () => {
+  createValidateUserCanActOnInstitutionTests({
+    adminPermission: UiUserPermissions.UPDATE_INSTITUTION,
+    aggregatorPermission: UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
+    middleware: validateUserCanEditInstitution,
+  });
+
+  createValidateUserCanActOnInstitutionTests({
+    adminPermission: UiUserPermissions.DELETE_INSTITUTION,
+    aggregatorPermission: UiUserPermissions.DELETE_INSTITUTION_AGGREGATOR,
+    middleware: validateUserCanDeleteInstitution,
+  });
+
   describe("validateUserCanEditAggregatorIntegration", () => {
     it("passes validation when super user permission", async () => {
       const next = jest.fn();

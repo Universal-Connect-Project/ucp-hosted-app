@@ -3,10 +3,11 @@ import { Request } from "express";
 import { Institution } from "../../models/institution";
 import { createTestAuthorization } from "../../test/utils";
 import {
-  EditAggregatorIntegrationValidationErrorReason,
-  EditInstitutionValidationErrorReason,
+  ActOnAggregatorIntegrationValidationErrorReason,
+  ActOnInstitutionValidationErrorReason,
   getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
+  validateUserCanDeleteInstitution,
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "./permissionValidation";
@@ -14,16 +15,30 @@ import {
 const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
 const allAggregatorsInstitutionId = "d7b98242-3645-4de4-b770-f59a197942cb";
 
-describe("permissionValidation", () => {
-  describe("validateUserCanEditInstitution", () => {
+const createValidateInstitutionPermissions = ({
+  adminPermission,
+  aggregatorPermission,
+  validateFunction,
+}: {
+  adminPermission: string;
+  aggregatorPermission: string;
+  validateFunction: ({
+    institutionId,
+    req,
+  }: {
+    institutionId: string;
+    req: Request;
+  }) => Promise<true | ActOnInstitutionValidationErrorReason>;
+}) =>
+  describe(`validate permissions for ${adminPermission}`, () => {
     it("returns true if they are a super admin", async () => {
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: "test",
           req: {
             headers: {
               authorization: createTestAuthorization({
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION],
+                permissions: [adminPermission],
               }),
             },
           } as Request,
@@ -33,12 +48,12 @@ describe("permissionValidation", () => {
 
     it("returns true if they are an aggregator and they're the only aggregatorIntegration", async () => {
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: mxOnlyInstitutionId,
           req: {
             headers: {
               authorization: createTestAuthorization({
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+                permissions: [aggregatorPermission],
               }),
             },
           } as Request,
@@ -50,23 +65,23 @@ describe("permissionValidation", () => {
       const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
 
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: mxOnlyInstitutionId,
           req: {
             headers: {
               authorization: createTestAuthorization({
                 aggregatorId: "sophtron",
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+                permissions: [aggregatorPermission],
               }),
             },
           } as Request,
         }),
-      ).toBe(EditInstitutionValidationErrorReason.UsedByOtherAggregators);
+      ).toBe(ActOnInstitutionValidationErrorReason.UsedByOtherAggregators);
     });
 
     it("returns InsufficientScope if they're not an aggregator or super admin", async () => {
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: "test",
           req: {
             headers: {
@@ -76,40 +91,53 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditInstitutionValidationErrorReason.InsufficientScope);
+      ).toBe(ActOnInstitutionValidationErrorReason.InsufficientScope);
     });
 
     it("returns GenericError if findByPk fails", async () => {
       jest.spyOn(Institution, "findByPk").mockRejectedValue(new Error());
 
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: "test",
           req: {
             headers: {
               authorization: createTestAuthorization({
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+                permissions: [aggregatorPermission],
               }),
             },
           } as Request,
         }),
-      ).toBe(EditInstitutionValidationErrorReason.GenericError);
+      ).toBe(ActOnInstitutionValidationErrorReason.GenericError);
     });
 
     it("returns InvalidInstitutionId if the institution isn't found", async () => {
       expect(
-        await validateUserCanEditInstitution({
+        await validateFunction({
           institutionId: crypto.randomUUID(),
           req: {
             headers: {
               authorization: createTestAuthorization({
-                permissions: [UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR],
+                permissions: [aggregatorPermission],
               }),
             },
           } as Request,
         }),
-      ).toBe(EditInstitutionValidationErrorReason.InvalidInstitutionId);
+      ).toBe(ActOnInstitutionValidationErrorReason.InvalidInstitutionId);
     });
+  });
+
+describe("permissionValidation", () => {
+  createValidateInstitutionPermissions({
+    adminPermission: UiUserPermissions.UPDATE_INSTITUTION,
+    aggregatorPermission: UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR,
+    validateFunction: validateUserCanEditInstitution,
+  });
+
+  createValidateInstitutionPermissions({
+    adminPermission: UiUserPermissions.DELETE_INSTITUTION,
+    aggregatorPermission: UiUserPermissions.DELETE_INSTITUTION_AGGREGATOR,
+    validateFunction: validateUserCanDeleteInstitution,
   });
 
   describe("validateUserCanActOnAggregatorIntegration", () => {
@@ -192,7 +220,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditAggregatorIntegrationValidationErrorReason.InsufficientScope);
+      ).toBe(ActOnAggregatorIntegrationValidationErrorReason.InsufficientScope);
     });
 
     it("returns InsufficientScope if they're trying to delete but only have edit permission", async () => {
@@ -209,7 +237,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditAggregatorIntegrationValidationErrorReason.InsufficientScope);
+      ).toBe(ActOnAggregatorIntegrationValidationErrorReason.InsufficientScope);
     });
 
     it("returns InvalidAggregatorIntegrationId if the integration isn't found", async () => {
@@ -227,7 +255,7 @@ describe("permissionValidation", () => {
           } as Request,
         }),
       ).toBe(
-        EditAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId,
+        ActOnAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId,
       );
     });
 
@@ -247,7 +275,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditAggregatorIntegrationValidationErrorReason.GenericError);
+      ).toBe(ActOnAggregatorIntegrationValidationErrorReason.GenericError);
     });
 
     it("returns NotYourAggregator if an aggregator attempts to edit a different aggregator's integration", async () => {
@@ -274,7 +302,7 @@ describe("permissionValidation", () => {
             },
           } as Request,
         }),
-      ).toBe(EditAggregatorIntegrationValidationErrorReason.NotYourAggregator);
+      ).toBe(ActOnAggregatorIntegrationValidationErrorReason.NotYourAggregator);
     });
   });
 

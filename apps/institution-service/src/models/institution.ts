@@ -69,6 +69,7 @@ Institution.init(
   {
     tableName: "institutions",
     modelName: "Institution",
+    paranoid: true,
     sequelize,
   },
 );
