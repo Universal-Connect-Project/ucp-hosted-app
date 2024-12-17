@@ -1,4 +1,4 @@
-name: Institution E2E
+name: Institution E2E (General)
 
 on: pull_request
 
@@ -78,11 +78,11 @@ jobs:
           AGGREGATOR_ADMIN_USERNAME: ${{ secrets.AGGREGATOR_ADMIN_USERNAME }}
           AGGREGATOR_ADMIN_PASSWORD: ${{ secrets.AGGREGATOR_ADMIN_PASSWORD }}
           E2E_INSTITUTION_PASSWORD: ${{ secrets.E2E_INSTITUTION_PASSWORD }}
-          E2E_INSTITUTION_USERNAME: ${{ vars.E2E_INSTITUTION_USERNAME }}
+          E2E_INSTITUTION_USERNAME: ${{ env.E2E_INSTITUTION_USERNAME }}
           SUPER_ADMIN_PASSWORD: ${{ secrets.SUPER_ADMIN_PASSWORD }}
-          SUPER_ADMIN_USERNAME: ${{ vars.SUPER_ADMIN_USERNAME }}
-          WEB_UI_CLIENT_ID: ${{ vars.WEB_UI_CLIENT_ID }}
-          WIDGET_CLIENT_ID: ${{ vars.WIDGET_CLIENT_ID }}
+          SUPER_ADMIN_USERNAME: ${{ env.SUPER_ADMIN_USERNAME }}
+          WEB_UI_CLIENT_ID: ${{ env.WEB_UI_CLIENT_ID }}
+          WIDGET_CLIENT_ID: ${{ env.WIDGET_CLIENT_ID }}
           WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}
 
       - name: Upload screenshots
