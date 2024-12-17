@@ -45,7 +45,7 @@ describe("DELETE /institutions/:id (Institution delete)", () => {
           method: "DELETE",
           headers: {
             Authorization: createAuthorizationHeader(
-              SUPER_USER_ACCESS_TOKEN_ENV,
+              AGGREGATOR_USER_ACCESS_TOKEN_ENV,
             ),
           },
         }).then((response: Cypress.Response<{ message: string }>) => {
