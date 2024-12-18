@@ -1,5 +1,10 @@
 import React from "react";
-import { render, screen, userEvent } from "../../shared/test/testUtils";
+import {
+  expectLocation,
+  render,
+  screen,
+  userEvent,
+} from "../../shared/test/testUtils";
 import Institution from "../Institution/Institution";
 import {
   INSTITUTION_ARCHIVE_INSTITUTION_BUTTON_TEXT,
@@ -7,6 +12,7 @@ import {
   INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
 } from "./constants";
 import { testInstitution } from "../testData/institutions";
+import { INSTITUTIONS_ROUTE } from "../../shared/constants/routes";
 
 describe("<ConfirmArchiveInstitution />", () => {
   it("shows a snackbar on success and navigates to the institutions path", async () => {
@@ -33,5 +39,7 @@ describe("<ConfirmArchiveInstitution />", () => {
     expect(
       await screen.findByText(`${testInstitution?.name} has been archived`),
     ).toBeInTheDocument();
+
+    expectLocation(INSTITUTIONS_ROUTE);
   });
 });
