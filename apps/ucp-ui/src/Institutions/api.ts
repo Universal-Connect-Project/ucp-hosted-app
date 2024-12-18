@@ -47,6 +47,7 @@ export interface InstitutionDetailPermissions {
     AggregatorIntegrationPermissions
   >;
   aggregatorsThatCanBeAdded: Aggregator[];
+  canDeleteInstitution: boolean;
   canEditInstitution: boolean;
   hasAccessToAllAggregators: boolean;
 }

@@ -5,6 +5,8 @@ import {
 import { INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID } from "../../src/Institutions/Institution/constants";
 import {
   INSTITUTION_ADD_SUCCESS_TEXT,
+  INSTITUTION_ARCHIVE_INSTITUTION_BUTTON_TEXT,
+  INSTITUTION_ARCHIVE_INSTITUTION_SUBMIT_BUTTON_TEXT,
   INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
   INSTITUTION_EDIT_SUCCESS_TEXT,
   INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
@@ -102,7 +104,7 @@ describe("institutions", () => {
       });
   });
 
-  it("creates an institution, navigates to its page, edits the institution, adds an aggregator integration, edits that aggregator integration, and deletes the aggregator integration", () => {
+  it("creates an institution, navigates to its page, edits the institution, adds an aggregator integration, edits that aggregator integration, deletes the aggregator integration, and deletes the institution", () => {
     cy.loginSuperAdmin();
 
     cy.findByRole("button", {
@@ -218,5 +220,19 @@ describe("institutions", () => {
     }).click();
 
     cy.findByText("Test Example A has been removed");
+
+    cy.findByRole("button", {
+      name: INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
+    }).click();
+
+    cy.findByRole("button", {
+      name: INSTITUTION_ARCHIVE_INSTITUTION_BUTTON_TEXT,
+    }).click();
+
+    cy.findByRole("button", {
+      name: INSTITUTION_ARCHIVE_INSTITUTION_SUBMIT_BUTTON_TEXT,
+    }).click();
+
+    cy.findByText("Delete Me Edited has been archived");
   });
 });

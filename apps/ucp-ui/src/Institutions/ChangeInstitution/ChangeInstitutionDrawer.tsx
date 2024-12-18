@@ -1,6 +1,7 @@
-import { Drawer, Typography } from "@mui/material";
+import { Button, Divider, Drawer, Typography } from "@mui/material";
 import React, { useEffect, useMemo } from "react";
 import {
+  INSTITUTION_ARCHIVE_INSTITUTION_BUTTON_TEXT,
   INSTITUTION_CHANGE_ERROR_TEXT,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
@@ -48,9 +49,14 @@ import { LoadingButton } from "@mui/lab";
 import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
-import { Institution as InstitutionDetail } from "../api";
+import {
+  Institution as InstitutionDetail,
+  InstitutionDetailPermissions,
+} from "../api";
 import SectionHeader from "../../shared/components/Forms/SectionHeader";
 import SectionHeaderSwitch from "../../shared/components/Forms/SectionHeaderSwitch";
+import ConfirmArchiveInstitution from "./ConfirmArchiveInstitution";
+import { useConfirmationDrawer } from "../../shared/components/Drawer/ConfirmationDrawer";
 
 interface Inputs {
   name: string;
@@ -68,6 +74,7 @@ const ChangeInstitutionDrawer = ({
   institution,
   isOpen,
   onSuccess = () => {},
+  permissions,
   saveSuccessMessage,
   setIsOpen,
   useMutationFunction,
@@ -76,6 +83,7 @@ const ChangeInstitutionDrawer = ({
   institution?: InstitutionDetail;
   isOpen: boolean;
   onSuccess?: (arg: Institution) => void;
+  permissions?: InstitutionDetailPermissions;
   saveSuccessMessage: string;
   setIsOpen: (arg: boolean) => void;
   useMutationFunction:
@@ -85,6 +93,13 @@ const ChangeInstitutionDrawer = ({
   const handleCloseDrawer = () => {
     setIsOpen(false);
   };
+
+  const { handleShowConfirmation, shouldShowConfirmation } =
+    useConfirmationDrawer({
+      isOpen,
+    });
+
+  const canDelete = institution?.id && permissions?.canDeleteInstitution;
 
   const transformInstitutionArray = (array?: string[]) =>
     array?.map((value) => ({
@@ -179,78 +194,50 @@ const ChangeInstitutionDrawer = ({
   return (
     <>
       <Drawer anchor="right" onClose={handleCloseDrawer} open={isOpen}>
-        <form
-          className={styles.form}
-          id={formId}
-          //   eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <DrawerContainer
-            closeButton={
-              <DrawerCloseButton handleClose={handleCloseDrawer}>
-                {INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT}
-              </DrawerCloseButton>
-            }
-            footer={
-              <DrawerStickyFooter>
-                <LoadingButton
-                  loading={isChangeInstitutionLoading}
-                  form={formId}
-                  type="submit"
-                  variant="contained"
-                >
-                  {INSTITUTION_FORM_SUBMIT_BUTTON_TEXT}
-                </LoadingButton>
-              </DrawerStickyFooter>
-            }
+        {shouldShowConfirmation ? (
+          <ConfirmArchiveInstitution
+            handleCloseDrawer={handleCloseDrawer}
+            institution={institution}
+          />
+        ) : (
+          <form
+            className={styles.form}
+            id={formId}
+            //   eslint-disable-next-line @typescript-eslint/no-misused-promises
+            onSubmit={handleSubmit(onSubmit)}
           >
-            <DrawerContent>
-              {isChangeInstitutionError && (
-                <FormSubmissionError
-                  description={INSTITUTION_CHANGE_ERROR_TEXT}
-                  formId={formId}
-                  title="Something went wrong"
-                />
-              )}
-              <DrawerTitle>{drawerTitle}</DrawerTitle>
-              <Controller
-                name="name"
-                control={control}
-                rules={{ required: REQUIRED_ERROR_TEXT }}
-                render={({
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  field: { ref, ...fieldProps },
-                  fieldState: { error },
-                }) => (
-                  <TextField
-                    error={!!error}
-                    fullWidth
-                    helperText={error?.message}
-                    InputLabelProps={{ required: true }}
-                    label={INSTITUTION_FORM_NAME_LABEL_TEXT}
-                    variant="filled"
-                    {...fieldProps}
+            <DrawerContainer
+              closeButton={
+                <DrawerCloseButton handleClose={handleCloseDrawer}>
+                  {INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT}
+                </DrawerCloseButton>
+              }
+              footer={
+                <DrawerStickyFooter>
+                  <LoadingButton
+                    loading={isChangeInstitutionLoading}
+                    form={formId}
+                    type="submit"
+                    variant="contained"
+                  >
+                    {INSTITUTION_FORM_SUBMIT_BUTTON_TEXT}
+                  </LoadingButton>
+                </DrawerStickyFooter>
+              }
+            >
+              <DrawerContent>
+                {isChangeInstitutionError && (
+                  <FormSubmissionError
+                    description={INSTITUTION_CHANGE_ERROR_TEXT}
+                    formId={formId}
+                    title="Something went wrong"
                   />
                 )}
-              />
-              <div className={styles.inputStack}>
-                <Typography variant="body1">Institution Details</Typography>
-                {institution?.id && (
-                  <TextField
-                    disabled
-                    fullWidth
-                    label={INSTITUTION_FORM_UCP_ID_LABEL_TEXT}
-                    value={institution?.id}
-                    variant="filled"
-                  />
-                )}
+                <DrawerTitle>{drawerTitle}</DrawerTitle>
                 <Controller
-                  name="url"
+                  name="name"
                   control={control}
-                  rules={{
-                    required: REQUIRED_ERROR_TEXT,
-                    validate: validateUrlRule,
-                  }}
+                  rules={{ required: REQUIRED_ERROR_TEXT }}
                   render={({
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     field: { ref, ...fieldProps },
@@ -261,120 +248,169 @@ const ChangeInstitutionDrawer = ({
                       fullWidth
                       helperText={error?.message}
                       InputLabelProps={{ required: true }}
-                      label={INSTITUTION_FORM_URL_LABEL_TEXT}
+                      label={INSTITUTION_FORM_NAME_LABEL_TEXT}
                       variant="filled"
                       {...fieldProps}
                     />
                   )}
                 />
-                <Controller
-                  name="logoUrl"
-                  control={control}
-                  rules={{
-                    validate: validateUrlRule,
-                  }}
-                  render={({
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    field: { ref, ...fieldProps },
-                    fieldState: { error },
-                  }) => (
+                <div className={styles.inputStack}>
+                  <Typography variant="body1">Institution Details</Typography>
+                  {institution?.id && (
                     <TextField
-                      error={!!error}
+                      disabled
                       fullWidth
-                      helperText={error?.message}
-                      label={INSTITUTION_FORM_LOGO_URL_LABEL_TEXT}
+                      label={INSTITUTION_FORM_UCP_ID_LABEL_TEXT}
+                      value={institution?.id}
                       variant="filled"
-                      {...fieldProps}
                     />
                   )}
+                  <Controller
+                    name="url"
+                    control={control}
+                    rules={{
+                      required: REQUIRED_ERROR_TEXT,
+                      validate: validateUrlRule,
+                    }}
+                    render={({
+                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                      field: { ref, ...fieldProps },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        error={!!error}
+                        fullWidth
+                        helperText={error?.message}
+                        InputLabelProps={{ required: true }}
+                        label={INSTITUTION_FORM_URL_LABEL_TEXT}
+                        variant="filled"
+                        {...fieldProps}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="logoUrl"
+                    control={control}
+                    rules={{
+                      validate: validateUrlRule,
+                    }}
+                    render={({
+                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                      field: { ref, ...fieldProps },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        error={!!error}
+                        fullWidth
+                        helperText={error?.message}
+                        label={INSTITUTION_FORM_LOGO_URL_LABEL_TEXT}
+                        variant="filled"
+                        {...fieldProps}
+                      />
+                    )}
+                  />
+                </div>
+                <div className={styles.inputStack}>
+                  <SectionHeader
+                    sectionTitle="Routing Numbers"
+                    tooltipTitle={INSTITUTION_ROUTING_NUMBERS_TOOLTIP}
+                  />
+                  {routingNumberFields.map((item, index) => (
+                    <div className={styles.multipleInputsRow} key={item.id}>
+                      <Controller
+                        name={`routingNumbers.${index}.value`}
+                        control={control}
+                        defaultValue={item.value}
+                        rules={{
+                          minLength: {
+                            message: "Must be a 9 digit number",
+                            value: 9,
+                          },
+                        }}
+                        render={({
+                          field: { ref, ...fieldProps },
+                          fieldState: { error },
+                        }) => (
+                          <RoutingNumberInput
+                            error={!!error}
+                            fullWidth
+                            helperText={error?.message}
+                            inputRef={ref}
+                            label={INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT}
+                            variant="filled"
+                            {...fieldProps}
+                          />
+                        )}
+                      />
+                      <RemoveInput
+                        index={index}
+                        onRemove={routingNumbersRemove}
+                      />
+                    </div>
+                  ))}
+                  <AddInputButton
+                    onClick={() => routingNumbersAppend({ value: "" })}
+                  >
+                    {INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT}
+                  </AddInputButton>
+                </div>
+                <div className={styles.inputStack}>
+                  <SectionHeader
+                    sectionTitle="Search Keywords"
+                    tooltipTitle={INSTITUTION_KEYWORDS_TOOLTIP}
+                  />
+                  {keywordsFields.map((item, index) => (
+                    <div className={styles.multipleInputsRow} key={item.id}>
+                      <Controller
+                        name={`keywords.${index}.value`}
+                        control={control}
+                        defaultValue={item.value}
+                        render={({
+                          field: { ref, ...fieldProps },
+                          fieldState: { error },
+                        }) => (
+                          <TextField
+                            error={!!error}
+                            fullWidth
+                            helperText={error?.message}
+                            inputRef={ref}
+                            label={INSTITUTION_FORM_KEYWORD_LABEL_TEXT}
+                            variant="filled"
+                            {...fieldProps}
+                          />
+                        )}
+                      />
+                      <RemoveInput index={index} onRemove={keywordsRemove} />
+                    </div>
+                  ))}
+                  <AddInputButton onClick={() => keywordsAppend({ value: "" })}>
+                    {INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT}
+                  </AddInputButton>
+                </div>
+                <SectionHeaderSwitch
+                  control={control}
+                  label={INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT}
+                  name="isTestInstitution"
+                  tooltipTitle={INSTITUTION_TEST_INSTITUTION_TOOLTIP}
                 />
-              </div>
-              <div className={styles.inputStack}>
-                <SectionHeader
-                  sectionTitle="Routing Numbers"
-                  tooltipTitle={INSTITUTION_ROUTING_NUMBERS_TOOLTIP}
-                />
-                {routingNumberFields.map((item, index) => (
-                  <div className={styles.multipleInputsRow} key={item.id}>
-                    <Controller
-                      name={`routingNumbers.${index}.value`}
-                      control={control}
-                      defaultValue={item.value}
-                      rules={{
-                        minLength: {
-                          message: "Must be a 9 digit number",
-                          value: 9,
-                        },
-                      }}
-                      render={({
-                        field: { ref, ...fieldProps },
-                        fieldState: { error },
-                      }) => (
-                        <RoutingNumberInput
-                          error={!!error}
-                          fullWidth
-                          helperText={error?.message}
-                          inputRef={ref}
-                          label={INSTITUTION_FORM_ROUTING_NUMBER_LABEL_TEXT}
-                          variant="filled"
-                          {...fieldProps}
-                        />
-                      )}
-                    />
-                    <RemoveInput
-                      index={index}
-                      onRemove={routingNumbersRemove}
-                    />
-                  </div>
-                ))}
-                <AddInputButton
-                  onClick={() => routingNumbersAppend({ value: "" })}
-                >
-                  {INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT}
-                </AddInputButton>
-              </div>
-              <div className={styles.inputStack}>
-                <SectionHeader
-                  sectionTitle="Search Keywords"
-                  tooltipTitle={INSTITUTION_KEYWORDS_TOOLTIP}
-                />
-                {keywordsFields.map((item, index) => (
-                  <div className={styles.multipleInputsRow} key={item.id}>
-                    <Controller
-                      name={`keywords.${index}.value`}
-                      control={control}
-                      defaultValue={item.value}
-                      render={({
-                        field: { ref, ...fieldProps },
-                        fieldState: { error },
-                      }) => (
-                        <TextField
-                          error={!!error}
-                          fullWidth
-                          helperText={error?.message}
-                          inputRef={ref}
-                          label={INSTITUTION_FORM_KEYWORD_LABEL_TEXT}
-                          variant="filled"
-                          {...fieldProps}
-                        />
-                      )}
-                    />
-                    <RemoveInput index={index} onRemove={keywordsRemove} />
-                  </div>
-                ))}
-                <AddInputButton onClick={() => keywordsAppend({ value: "" })}>
-                  {INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT}
-                </AddInputButton>
-              </div>
-              <SectionHeaderSwitch
-                control={control}
-                label={INSTITUTION_FORM_TEST_INSTITUTION_LABEL_TEXT}
-                name="isTestInstitution"
-                tooltipTitle={INSTITUTION_TEST_INSTITUTION_TOOLTIP}
-              />
-            </DrawerContent>
-          </DrawerContainer>
-        </form>
+                {canDelete && (
+                  <>
+                    <Divider className={styles.divider} />
+                    <Button
+                      color="error"
+                      fullWidth
+                      onClick={handleShowConfirmation}
+                      size="small"
+                      variant="text"
+                    >
+                      {INSTITUTION_ARCHIVE_INSTITUTION_BUTTON_TEXT}
+                    </Button>
+                  </>
+                )}
+              </DrawerContent>
+            </DrawerContainer>
+          </form>
+        )}
       </Drawer>
     </>
   );

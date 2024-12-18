@@ -19,6 +19,9 @@ export const INSTITUTION_FORM_ADD_ROUTING_NUMBER_BUTTON_TEXT =
 
 export const INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT = "ADD KEYWORD";
 
+export const INSTITUTION_ARCHIVE_INSTITUTION_BUTTON_TEXT =
+  "ARCHIVE INSTITUTION";
+
 export const INSTITUTION_ADD_SUCCESS_TEXT = "Institution has been added.";
 
 export const INSTITUTION_EDIT_SUCCESS_TEXT =
@@ -30,3 +33,9 @@ export const INSTITUTION_CHANGE_ERROR_TEXT =
 export const REMOVE_INPUT_TEST_ID = "removeInput";
 
 export const INSTITUTION_EDIT_DETAILS_BUTTON_TEXT = "EDIT";
+
+export const INSTITUTION_ARCHIVE_INSTITUTION_SUBMIT_BUTTON_TEXT =
+  "YES, ARCHIVE INSTITUTION";
+
+export const INSTITUTION_ARCHIVE_INSTITUTION_ERROR_TEXT =
+  "We could not archive this institution. Please try again in a few moments. ";
