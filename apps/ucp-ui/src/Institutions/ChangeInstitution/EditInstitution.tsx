@@ -35,6 +35,7 @@ const EditInstitution = ({
           drawerTitle={INSTITUTION_EDIT_INSTITUTION_DRAWER_TITLE}
           institution={institution}
           isOpen={isOpen}
+          permissions={permissions}
           saveSuccessMessage={INSTITUTION_EDIT_SUCCESS_TEXT}
           setIsOpen={setIsOpen}
           useMutationFunction={useEditInstitutionMutation}
