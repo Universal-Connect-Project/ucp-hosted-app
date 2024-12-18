@@ -5,7 +5,7 @@ import ConfirmationDrawer, {
 } from "./ConfirmationDrawer";
 import { Button, Drawer } from "@mui/material";
 import { useDeleteInstitutionMutation } from "../../../Institutions/ChangeInstitution/api";
-import { render, screen, userEvent } from "../../test/testUtils";
+import { render, screen, userEvent, waitFor } from "../../test/testUtils";
 import { CONFIRMATION_DRAWER_CLOSE_BUTTON_TEXT } from "./confirmationDrawerConstants";
 import { server } from "../../test/testServer";
 import { http, HttpResponse } from "msw";
@@ -73,6 +73,38 @@ describe("<ConfirmationDrawer />", () => {
     expect(await screen.findByText(successMessage)).toBeInTheDocument();
 
     expect(onSuccess).toHaveBeenCalled();
+  });
+
+  it("closes the drawer with either close button", async () => {
+    render(<TestComponent />);
+
+    await userEvent.click(screen.getByText(openDrawerButtonText));
+
+    await userEvent.click(await screen.findByText(showConfirmationButtonText));
+
+    await userEvent.click(
+      (await screen.findAllByText(CONFIRMATION_DRAWER_CLOSE_BUTTON_TEXT))[0],
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.queryByText(CONFIRMATION_DRAWER_CLOSE_BUTTON_TEXT),
+      ).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(screen.getByText(openDrawerButtonText));
+
+    await userEvent.click(await screen.findByText(showConfirmationButtonText));
+
+    await userEvent.click(
+      (await screen.findAllByText(CONFIRMATION_DRAWER_CLOSE_BUTTON_TEXT))[1],
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.queryByText(CONFIRMATION_DRAWER_CLOSE_BUTTON_TEXT),
+      ).not.toBeInTheDocument(),
+    );
   });
 
   it("doesnt show confirmation after a drawer is reopened", async () => {
