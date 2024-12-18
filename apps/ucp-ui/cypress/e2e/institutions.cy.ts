@@ -106,6 +106,45 @@ describe("institutions", () => {
       });
   });
 
+  it("renders institutions, sorts, checks order, sort again and checks order a second time", () => {
+    cy.loginWithoutWidgetRole();
+
+    const rowRegex = new RegExp(INSTITUTIONS_ROW_TEST_ID);
+
+    cy.waitForLoad();
+
+    cy.findAllByTestId(rowRegex)
+      .eq(0)
+      .invoke("attr", "data-testid")
+      .then((testIdBeforeSort) => {
+        cy.get(INSTITUTIONS_TABLE_SORT_PARENT_CLASS)
+          .contains(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE)
+          .click();
+
+        cy.waitForLoad();
+
+        cy.findAllByTestId(rowRegex)
+          .eq(0)
+          .invoke("attr", "data-testid")
+          .then((testIdAfterSort) => {
+            expect(testIdAfterSort).not.to.eq(testIdBeforeSort);
+
+            cy.get(INSTITUTIONS_TABLE_SORT_PARENT_CLASS)
+              .contains(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE)
+              .click();
+
+            cy.waitForLoad();
+
+            cy.findAllByTestId(rowRegex)
+              .eq(0)
+              .invoke("attr", "data-testid")
+              .then((testIdFinalSort) => {
+                expect(testIdBeforeSort).to.eq(testIdFinalSort);
+              });
+          });
+      });
+  });
+
   it("creates an institution, navigates to its page, edits the institution, adds an aggregator integration, edits that aggregator integration, deletes the aggregator integration, and deletes the institution", () => {
     cy.loginSuperAdmin();
 
