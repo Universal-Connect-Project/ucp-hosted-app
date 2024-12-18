@@ -18,6 +18,7 @@ import {
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE,
+  INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS,
   INSTITUTIONS_TABLE_ROW_ROOT_CLASS,
   INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN,
   INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP,
@@ -315,13 +316,13 @@ describe("<Institutions />", () => {
 
     expect(
       container.querySelector(
-        `.Mui-active ${INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP}`,
+        `${INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS} ${INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP}`,
       ),
     ).not.toBeInTheDocument();
 
     expect(
       container.querySelector(
-        `.Mui-active ${INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN}`,
+        `${INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS} ${INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN}`,
       ),
     ).not.toBeInTheDocument();
 
@@ -376,7 +377,7 @@ describe("<Institutions />", () => {
     await waitForLoad();
 
     expect(
-      container?.querySelector(INSTITUTIONS_TABLE_ROW_ROOT_CLASS)?.children[1], // Second cell
+      container?.querySelector(INSTITUTIONS_TABLE_ROW_ROOT_CLASS)?.children[1], // Second column
     ).toHaveTextContent(testSortList[0].id);
 
     server.use(
@@ -395,7 +396,7 @@ describe("<Institutions />", () => {
     await waitForLoad();
 
     expect(
-      container?.querySelector(INSTITUTIONS_TABLE_ROW_ROOT_CLASS)?.children[1], // Second cell
+      container?.querySelector(INSTITUTIONS_TABLE_ROW_ROOT_CLASS)?.children[1], // Second column
     ).toHaveTextContent(testSortList[1].id);
   });
 });

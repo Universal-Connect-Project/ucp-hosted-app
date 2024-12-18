@@ -34,6 +34,8 @@ export const INSTITUTIONS_FILTER_AGGREGATORS_ERROR_TEXT =
   "We cannot load the Aggregator list to filter right now. Reload the page and try again.";
 
 export const INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE = "Institution";
+export const INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS = ".Mui-active";
+export const INSTITUTIONS_TABLE_SORT_PARENT_CLASS = ".MuiTableSortLabel-root";
 export const INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP =
   ".MuiTableSortLabel-iconDirectionAsc";
 export const INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN =
