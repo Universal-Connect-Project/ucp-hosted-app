@@ -55,6 +55,7 @@ export const testInstitutionPermissions = {
       displayName: "TestExampleA",
     },
   ],
+  canDeleteInstitution: true,
   canEditInstitution: true,
 } as InstitutionDetailPermissions;
 

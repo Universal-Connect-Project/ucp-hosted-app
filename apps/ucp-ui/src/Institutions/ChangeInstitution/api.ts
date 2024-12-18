@@ -14,6 +14,10 @@ export interface EditInstitutionParams extends CreateInstitution {
   institutionId: string;
 }
 
+interface DeleteInstitutionParams {
+  institutionId: string;
+}
+
 export interface Institution {
   institution: {
     id: string;
@@ -55,6 +59,17 @@ export const institutionsApi = api.injectEndpoints({
       invalidatesTags: (result, error) =>
         !error ? [TagTypes.INSTITUTIONS] : [],
     }),
+    deleteInstitution: builder.mutation<Institution, DeleteInstitutionParams>({
+      query: (params) => {
+        const { institutionId } = params;
+        return {
+          method: HttpMethods.DELETE,
+          url: `${INSTITUTION_SERVICE_CREATE_INSTITUTION_URL}/${institutionId}`,
+        };
+      },
+      invalidatesTags: (result, error) =>
+        !error ? [TagTypes.INSTITUTIONS] : [],
+    }),
     editInstitution: builder.mutation<Institution, EditInstitutionParams>({
       query: (params) => {
         const { institutionId } = params;
@@ -71,5 +86,8 @@ export const institutionsApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useCreateInstitutionMutation, useEditInstitutionMutation } =
-  institutionsApi;
+export const {
+  useCreateInstitutionMutation,
+  useDeleteInstitutionMutation,
+  useEditInstitutionMutation,
+} = institutionsApi;

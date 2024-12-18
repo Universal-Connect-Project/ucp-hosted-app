@@ -45,6 +45,9 @@ export const handlers = [
   http.get(`${INSTITUTION_SERVICE_INSTITUTIONS_URL}/:institutionId`, () =>
     HttpResponse.json(institutionResponse),
   ),
+  http.delete(`${INSTITUTION_SERVICE_INSTITUTIONS_URL}/:institutionId`, () =>
+    HttpResponse.json({}),
+  ),
   http.post(
     AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL,
     () => new HttpResponse(null, { status: 201 }),
