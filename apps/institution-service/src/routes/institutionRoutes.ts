@@ -30,6 +30,12 @@ router.get(
 );
 
 router.get(
+  "/cacheList/download",
+  [validateUIAudience],
+  getInstitutionCachedList as RequestHandler,
+);
+
+router.get(
   "/",
   [validateUIAudience],
   getPaginatedInstitutions as RequestHandler,
