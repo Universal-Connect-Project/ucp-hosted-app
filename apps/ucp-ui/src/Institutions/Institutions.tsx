@@ -44,11 +44,7 @@ import {
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
 } from "./constants";
-import {
-  DEFAULT_LOGO_URL,
-  SortOrder,
-  SortOrderType,
-} from "./Institution/constants";
+import { DEFAULT_LOGO_URL, SortOrder } from "./Institution/constants";
 import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
@@ -129,8 +125,8 @@ const Institutions = () => {
     searchParams.get("sortBy") || `createdAt:${SortOrder.desc}`,
   );
   const [sortByProp, setSortByProp] = useState(sortBy.split(":")[0]);
-  const [sortByOrder, setSortByOrder] = useState<SortOrderType>(
-    sortBy.split(":")[1] as SortOrderType,
+  const [sortByOrder, setSortByOrder] = useState<SortOrder>(
+    sortBy.split(":")[1] as SortOrder,
   );
 
   const [delayedSearch, setDelayedSearch] = useState(search);

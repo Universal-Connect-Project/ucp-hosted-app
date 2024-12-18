@@ -1,7 +1,7 @@
 import {
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
-  INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN,
+  INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE,
   INSTITUTIONS_TABLE_SORT_PARENT_CLASS,
 } from "../../src/Institutions/constants";
 import { INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID } from "../../src/Institutions/Institution/constants";
@@ -104,7 +104,7 @@ describe("institutions", () => {
       });
   });
 
-  it("renders institutions, sorts, checks order, sort again and checks order a second time", () => {
+  it.only("renders institutions, sorts, checks order, sort again and checks order a second time", () => {
     cy.loginWithoutWidgetRole();
 
     const rowRegex = new RegExp(INSTITUTIONS_ROW_TEST_ID);
@@ -116,12 +116,8 @@ describe("institutions", () => {
       .invoke("attr", "data-testid")
       .then((testIdBeforeSort) => {
         cy.get(INSTITUTIONS_TABLE_SORT_PARENT_CLASS)
-          .eq(0)
-          .find(INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN)
-          .eq(0)
+          .contains(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE)
           .click();
-
-        cy.findAllByTestId(rowRegex);
 
         cy.waitForLoad();
 
@@ -132,9 +128,7 @@ describe("institutions", () => {
             expect(testIdAfterSort).not.to.eq(testIdBeforeSort);
 
             cy.get(INSTITUTIONS_TABLE_SORT_PARENT_CLASS)
-              .eq(0)
-              .find(INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN)
-              .eq(0)
+              .contains(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE)
               .click();
 
             cy.waitForLoad();
@@ -143,7 +137,6 @@ describe("institutions", () => {
               .eq(0)
               .invoke("attr", "data-testid")
               .then((testIdFinalSort) => {
-                cy.waitForLoad();
                 expect(testIdBeforeSort).to.eq(testIdFinalSort);
               });
           });

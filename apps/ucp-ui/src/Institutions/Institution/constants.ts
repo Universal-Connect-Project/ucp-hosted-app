@@ -48,5 +48,3 @@ export enum SortOrder {
   asc = "asc",
   desc = "desc",
 }
-
-export type SortOrderType = keyof typeof SortOrder;
