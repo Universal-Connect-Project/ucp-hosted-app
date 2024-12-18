@@ -56,7 +56,7 @@ const ConfirmationDrawer = ({
   handleCloseDrawer: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   submitParams: any;
-  onSuccess: () => void;
+  onSuccess?: () => void;
   submitButtonText: string;
   successMessage: string;
   title: string;
@@ -74,7 +74,7 @@ const ConfirmationDrawer = ({
       .then(() => {
         dispatch(displaySnackbar(successMessage));
 
-        onSuccess();
+        onSuccess?.();
 
         handleCloseDrawer();
       })

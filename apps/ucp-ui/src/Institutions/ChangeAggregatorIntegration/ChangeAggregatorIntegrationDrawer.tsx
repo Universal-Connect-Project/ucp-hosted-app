@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Institution, InstitutionDetailPermissions } from "../api";
 import { Button, Divider, Drawer, MenuItem, Typography } from "@mui/material";
 import {
@@ -41,6 +41,7 @@ import classNames from "classnames";
 import { DEFAULT_LOGO_URL } from "../Institution/constants";
 import NameLogo from "./NameLogo";
 import ConfirmRemoveAggregatorIntegration from "./ConfirmRemoveAggregatorIntegration";
+import { useConfirmationDrawer } from "../../shared/components/Drawer/ConfirmationDrawer";
 
 const formId = "changeAggregatorIntegration";
 
@@ -71,23 +72,12 @@ const ChangeAggregatorIntegrationDrawer = ({
     | typeof useCreateAggregatorIntegrationMutation
     | typeof useEditAggregatorIntegrationMutation;
 }) => {
-  const [
-    shouldShowConfirmRemoveAggregatorIntegration,
-    setShouldShowConfirmRemoveAggregatorIntegration,
-  ] = useState(false);
-
-  const handleShowConfirmRemoveAggregatorIntegration = () =>
-    setShouldShowConfirmRemoveAggregatorIntegration(true);
+  const { handleShowConfirmation, shouldShowConfirmation } =
+    useConfirmationDrawer({ isOpen });
 
   const handleCloseDrawer = () => {
     setIsOpen(false);
   };
-
-  useEffect(() => {
-    if (isOpen) {
-      setShouldShowConfirmRemoveAggregatorIntegration(false);
-    }
-  }, [isOpen]);
 
   const shouldDisplayAggregatorSelect = !aggregatorIntegrationId;
 
@@ -206,7 +196,7 @@ const ChangeAggregatorIntegrationDrawer = ({
   return (
     <>
       <Drawer anchor="right" onClose={handleCloseDrawer} open={isOpen}>
-        {shouldShowConfirmRemoveAggregatorIntegration ? (
+        {shouldShowConfirmation ? (
           <ConfirmRemoveAggregatorIntegration
             aggregatorIntegration={aggregatorIntegration}
             handleCloseDrawer={handleCloseDrawer}
@@ -373,7 +363,7 @@ const ChangeAggregatorIntegrationDrawer = ({
                     <Button
                       color="error"
                       fullWidth
-                      onClick={handleShowConfirmRemoveAggregatorIntegration}
+                      onClick={handleShowConfirmation}
                       size="small"
                       variant="text"
                     >
