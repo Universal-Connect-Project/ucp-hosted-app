@@ -104,7 +104,7 @@ describe("institutions", () => {
       });
   });
 
-  it.only("renders institutions, sorts, checks order, sort again and checks order a second time", () => {
+  it("renders institutions, sorts, checks order, sort again and checks order a second time", () => {
     cy.loginWithoutWidgetRole();
 
     const rowRegex = new RegExp(INSTITUTIONS_ROW_TEST_ID);

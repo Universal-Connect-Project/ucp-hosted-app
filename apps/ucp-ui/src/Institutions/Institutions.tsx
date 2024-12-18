@@ -124,10 +124,6 @@ const Institutions = () => {
   const [sortBy, setSortBy] = useState(
     searchParams.get("sortBy") || `createdAt:${SortOrder.desc}`,
   );
-  const [sortByProp, setSortByProp] = useState(sortBy.split(":")[0]);
-  const [sortByOrder, setSortByOrder] = useState<SortOrder>(
-    sortBy.split(":")[1] as SortOrder,
-  );
 
   const [delayedSearch, setDelayedSearch] = useState(search);
 
@@ -193,22 +189,21 @@ const Institutions = () => {
     });
   };
 
-  const handleChangeSortBy = (id: string) => () => {
-    const newSortByProp = id;
-    const newSortOrder =
-      sortByProp === newSortByProp && sortByOrder === SortOrder.desc
-        ? SortOrder.asc
-        : SortOrder.desc;
-    const newSortBy = `${newSortByProp}:${newSortOrder}`;
+  const createSortHandler =
+    (id: string, sortByProp: string, sortByOrder: SortOrder) => () => {
+      const newSortByProp = id;
+      const newSortOrder =
+        sortByProp === newSortByProp && sortByOrder === SortOrder.desc
+          ? SortOrder.asc
+          : SortOrder.desc;
+      const newSortBy = `${newSortByProp}:${newSortOrder}`;
 
-    setSortByProp(newSortByProp);
-    setSortByOrder(newSortOrder);
-    setSortBy(newSortBy);
+      setSortBy(newSortBy);
 
-    handleChangeParams({
-      sortBy: newSortBy,
-    });
-  };
+      handleChangeParams({
+        sortBy: newSortBy,
+      });
+    };
 
   const {
     isError: isInstitutionPermissionsError,
@@ -281,13 +276,17 @@ const Institutions = () => {
                               )}
                               {sort ? (
                                 <TableSortLabel
-                                  active={sortByProp === sort}
+                                  active={sortBy.split(":")[0] === sort}
                                   direction={
-                                    sortByProp === sort
-                                      ? sortByOrder
+                                    sortBy.split(":")[0] === sort
+                                      ? (sortBy.split(":")[1] as SortOrder)
                                       : SortOrder.desc
                                   }
-                                  onClick={handleChangeSortBy(sort)}
+                                  onClick={createSortHandler(
+                                    sort,
+                                    sortBy.split(":")[0],
+                                    sortBy.split(":")[1] as SortOrder,
+                                  )}
                                 >
                                   <div>{label}</div>
                                 </TableSortLabel>
