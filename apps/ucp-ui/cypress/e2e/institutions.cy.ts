@@ -2,7 +2,6 @@ import {
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE,
-  INSTITUTIONS_TABLE_SORT_PARENT_CLASS,
 } from "../../src/Institutions/constants";
 import { INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID } from "../../src/Institutions/Institution/constants";
 import {
@@ -117,9 +116,7 @@ describe("institutions", () => {
       .eq(0)
       .invoke("attr", "data-testid")
       .then((testIdBeforeSort) => {
-        cy.get(INSTITUTIONS_TABLE_SORT_PARENT_CLASS)
-          .contains(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE)
-          .click();
+        cy.findByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE).click();
 
         cy.waitForLoad();
 
@@ -129,9 +126,7 @@ describe("institutions", () => {
           .then((testIdAfterSort) => {
             expect(testIdAfterSort).not.to.eq(testIdBeforeSort);
 
-            cy.get(INSTITUTIONS_TABLE_SORT_PARENT_CLASS)
-              .contains(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE)
-              .click();
+            cy.findByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE).click();
 
             cy.waitForLoad();
 
