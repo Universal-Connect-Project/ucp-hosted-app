@@ -9,6 +9,7 @@ import {
 import { INVALID_URL_TEXT } from "../../shared/utils/validation";
 import AddInstitution from "./AddInstitution";
 import {
+  INSTITUTION_ARCHIVE_INSTITUTION_BUTTON_TEXT,
   INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT,
   INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
   INSTITUTION_FORM_ADD_KEYWORD_BUTTON_TEXT,
@@ -199,5 +200,31 @@ describe("<ChangeInstitution />", () => {
     expect(
       await screen.findByLabelText(INSTITUTION_FORM_UCP_ID_LABEL_TEXT),
     ).toBeInTheDocument();
+  });
+
+  it("doesn't show a remove button if you don't have access to delete", async () => {
+    render(
+      <EditInstitution
+        institution={testInstitution}
+        permissions={{
+          ...testInstitutionPermissions,
+          canDeleteInstitution: false,
+        }}
+      />,
+    );
+
+    await userEvent.click(
+      await screen.findByRole("button", {
+        name: INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,
+      }),
+    );
+
+    expect(
+      await screen.findByText(INSTITUTION_DRAWER_CLOSE_BUTTON_TEXT),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByText(INSTITUTION_ARCHIVE_INSTITUTION_BUTTON_TEXT),
+    ).not.toBeInTheDocument();
   });
 });
