@@ -166,7 +166,7 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Institution Cache List"
+        "summary": "Institution Cache List with widget authorization"
       }
     },
     "/institutions/cacheList/download": {
@@ -261,7 +261,7 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Institution Cache List"
+        "summary": "Institution Cache List with permissions for regular UI users"
       }
     },
     "/institutions/{id}": {
