@@ -61,16 +61,24 @@ const checkCacheListResponse = (
   });
 };
 
+const cacheListDownloadUrl = `http://localhost:${PORT}/institutions/cacheList/download`;
+const cacheListUrl = `http://localhost:${PORT}/institutions/cacheList`;
+
 describe("get cache lists", () => {
   describe("/institutions/cacheList/download", () => {
-    it.only("gets institution cache list and filters out institutions without active aggregators", () => {
+    it("gets institution cache list and filters out institutions without active aggregators", () => {
       cy.request({
-        url: `http://localhost:${PORT}/institutions/cacheList/download`,
+        url: cacheListDownloadUrl,
         method: "GET",
         headers: {
           Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
         },
       }).then(checkCacheListResponse);
+    });
+
+    runTokenInvalidCheck({
+      url: cacheListDownloadUrl,
+      method: "GET",
     });
   });
 
@@ -108,7 +116,7 @@ describe("get cache lists", () => {
           const token = response.body.access_token as string;
 
           cy.request({
-            url: `http://localhost:${PORT}/institutions/cacheList`,
+            url: cacheListUrl,
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -133,11 +141,11 @@ describe("get cache lists", () => {
     });
 
     runTokenInvalidCheck({
-      url: `http://localhost:${PORT}/institutions/cacheList`,
+      url: cacheListUrl,
       method: "GET",
     });
     runInvalidPermissionCheck({
-      url: `http://localhost:${PORT}/institutions/cacheList`,
+      url: cacheListUrl,
       token_env_var: "NO_WIDGET_PERMISSION_ACCESS_TOKEN",
       method: "GET",
     });
