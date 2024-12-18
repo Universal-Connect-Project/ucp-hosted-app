@@ -1,5 +1,5 @@
 import { Button, Divider, Drawer, Typography } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   INSTITUTION_ARCHIVE_INSTITUTION_BUTTON_TEXT,
   INSTITUTION_CHANGE_ERROR_TEXT,
@@ -56,6 +56,7 @@ import {
 import SectionHeader from "../../shared/components/Forms/SectionHeader";
 import SectionHeaderSwitch from "../../shared/components/Forms/SectionHeaderSwitch";
 import ConfirmArchiveInstitution from "./ConfirmArchiveInstitution";
+import { useConfirmationDrawer } from "../../shared/components/Drawer/ConfirmationDrawer";
 
 interface Inputs {
   name: string;
@@ -93,19 +94,10 @@ const ChangeInstitutionDrawer = ({
     setIsOpen(false);
   };
 
-  const [
-    shouldShowConfirmArchiveInstitution,
-    setShouldShowConfirmArchiveInstitution,
-  ] = useState(false);
-
-  const handleShowConfirmArchiveInstitution = () =>
-    setShouldShowConfirmArchiveInstitution(true);
-
-  useEffect(() => {
-    if (isOpen) {
-      setShouldShowConfirmArchiveInstitution(false);
-    }
-  }, [isOpen]);
+  const { handleShowConfirmation, shouldShowConfirmation } =
+    useConfirmationDrawer({
+      isOpen,
+    });
 
   const canDelete = institution?.id && permissions?.canDeleteInstitution;
 
@@ -202,7 +194,7 @@ const ChangeInstitutionDrawer = ({
   return (
     <>
       <Drawer anchor="right" onClose={handleCloseDrawer} open={isOpen}>
-        {shouldShowConfirmArchiveInstitution ? (
+        {shouldShowConfirmation ? (
           <ConfirmArchiveInstitution
             handleCloseDrawer={handleCloseDrawer}
             institution={institution}
@@ -407,7 +399,7 @@ const ChangeInstitutionDrawer = ({
                     <Button
                       color="error"
                       fullWidth
-                      onClick={handleShowConfirmArchiveInstitution}
+                      onClick={handleShowConfirmation}
                       size="small"
                       variant="text"
                     >

@@ -1,4 +1,4 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import DrawerTitle from "./DrawerTitle";
 import { Button, Typography } from "@mui/material";
 import DrawerContainer from "./DrawerContainer";
@@ -11,6 +11,23 @@ import { useAppDispatch } from "../../utils/redux";
 import { displaySnackbar } from "../../reducers/snackbar";
 import FormSubmissionError from "../../components/FormSubmissionError";
 import { CONFIRMATION_DRAWER_CLOSE_BUTTON_TEXT } from "./confirmationDrawerConstants";
+
+export const useConfirmationDrawer = ({ isOpen }: { isOpen: boolean }) => {
+  const [shouldShowConfirmation, setShouldShowConfirmation] = useState(false);
+
+  const handleShowConfirmation = () => setShouldShowConfirmation(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldShowConfirmation(false);
+    }
+  }, [isOpen]);
+
+  return {
+    handleShowConfirmation,
+    shouldShowConfirmation,
+  };
+};
 
 export type UseMutation = () => [
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
