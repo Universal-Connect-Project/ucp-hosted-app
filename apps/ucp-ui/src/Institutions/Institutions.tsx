@@ -13,6 +13,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TableSortLabel,
   Tooltip,
 } from "@mui/material";
 import classNames from "classnames";
@@ -43,7 +44,7 @@ import {
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
 } from "./constants";
-import { DEFAULT_LOGO_URL } from "./Institution/constants";
+import { DEFAULT_LOGO_URL, SortOrder } from "./Institution/constants";
 import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
@@ -77,8 +78,14 @@ const Institutions = () => {
   const navigate = useNavigate();
 
   const tableHeadCells = [
-    { label: "Institution" },
-    { label: "UCP ID" },
+    {
+      label: "Institution",
+      sort: "name",
+    },
+    {
+      label: "UCP ID",
+      sort: "id",
+    },
     {
       label: "Aggregators",
       tooltip: INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP,
@@ -90,7 +97,7 @@ const Institutions = () => {
   const getBooleanFromSearchParams = (key: string) => {
     const value = searchParams.get(key);
 
-    return value === "true" ? true : false;
+    return value === "true";
   };
 
   const page = parseInt(searchParams.get("page") || "1", 10);
@@ -114,6 +121,12 @@ const Institutions = () => {
   );
   const search = searchParams.get("search") || "";
 
+  const [sortBy, setSortBy] = useState(
+    searchParams.get("sortBy") || `createdAt:${SortOrder.desc}`,
+  );
+  const sortByProp = sortBy.split(":")[0];
+  const sortByOrder = sortBy.split(":")[1] as SortOrder;
+
   const [delayedSearch, setDelayedSearch] = useState(search);
 
   const debouncedSetDelayedSearch = useMemo(
@@ -136,6 +149,7 @@ const Institutions = () => {
     search,
     supportsOauth,
     includeInactiveIntegrations,
+    sortBy,
   };
 
   const handleChangeParams = (changes: Record<string, string>) => {
@@ -174,6 +188,21 @@ const Institutions = () => {
   ) => {
     handleChangeParams({
       pageSize: parseInt(event.target.value, 10).toString(),
+    });
+  };
+
+  const createSortHandler = (id: string) => () => {
+    const newSortByProp = id;
+    const newSortOrder =
+      sortByProp === newSortByProp && sortByOrder === SortOrder.desc
+        ? SortOrder.asc
+        : SortOrder.desc;
+    const newSortBy = `${newSortByProp}:${newSortOrder}`;
+
+    setSortBy(newSortBy);
+
+    handleChangeParams({
+      sortBy: newSortBy,
     });
   };
 
@@ -233,7 +262,7 @@ const Institutions = () => {
                   <Table stickyHeader>
                     <TableHead>
                       <TableRow>
-                        {tableHeadCells.map(({ label, tooltip }) => (
+                        {tableHeadCells.map(({ label, tooltip, sort }) => (
                           <TableCell key={label}>
                             <div className={styles.tableHeadCell}>
                               {tooltip && (
@@ -246,7 +275,21 @@ const Institutions = () => {
                                   <InfoOutlined fontSize="inherit" />
                                 </Tooltip>
                               )}
-                              <div>{label}</div>
+                              {sort ? (
+                                <TableSortLabel
+                                  active={sortByProp === sort}
+                                  direction={
+                                    sortByProp === sort
+                                      ? sortByOrder
+                                      : SortOrder.desc
+                                  }
+                                  onClick={createSortHandler(sort)}
+                                >
+                                  <div>{label}</div>
+                                </TableSortLabel>
+                              ) : (
+                                <div>{label}</div>
+                              )}
                             </div>
                           </TableCell>
                         ))}
