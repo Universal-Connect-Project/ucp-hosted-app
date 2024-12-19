@@ -15,8 +15,7 @@ import { PORT } from "./shared/const";
 const createLimiter = (
   options: { timeIntervalInMinutes: number; requestLimit: number } = {
     timeIntervalInMinutes: 1,
-    requestLimit:
-      parseInt(process.env.RATE_LIMIT_REQUEST_LIMIT || "0", 10) || 100,
+    requestLimit: 100,
   },
 ) => {
   const { timeIntervalInMinutes, requestLimit } = options;
@@ -47,8 +46,10 @@ sequelize
 
 const app = express();
 
-app.use(defaultLimiter);
-app.use("/institutions/cacheList", cacheListLimiter);
+if (process.env.DISABLE_RATE_LIMITING !== "true") {
+  app.use(defaultLimiter);
+  app.use("/institutions/cacheList", cacheListLimiter);
+}
 
 app.set("etag", "strong");
 app.use(express.json()); // http://expressjs.com/en/api.html#express.json
