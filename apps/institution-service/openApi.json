@@ -166,7 +166,102 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Institution Cache List"
+        "summary": "Institution Cache List with widget authorization"
+      }
+    },
+    "/institutions/cacheList/download": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Get the entire institution list formatted to save in the UCW-app",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "id": "b2c01271-10e3-4f24-9236-44719e41fb40",
+                      "name": "FinBank Profiles - A",
+                      "keywords": ["finbank", "finicity"],
+                      "logo": "https://prod-carpintero-branding.s3.us-west-2.amazonaws.com/102105/icon.svg",
+                      "url": "http://www.finbank.com",
+                      "is_test_bank": true,
+                      "routing_numbers": [],
+                      "finicity": {
+                        "id": "102105",
+                        "supports_oauth": false,
+                        "supports_identification": true,
+                        "supports_verification": true,
+                        "supports_aggregation": true,
+                        "supports_history": false
+                      }
+                    },
+                    {
+                      "id": "a44e81b6-127f-46fb-be3f-8898354c95f1",
+                      "name": "MX Bank (Oauth)",
+                      "keywords": ["Gringotts", "MX Bank", "oauth"],
+                      "logo": "https://s3.amazonaws.com/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
+                      "url": "https://mx.com",
+                      "is_test_bank": true,
+                      "routing_numbers": [],
+                      "mx": {
+                        "id": "mx_bank_oauth",
+                        "supports_oauth": true,
+                        "supports_identification": true,
+                        "supports_verification": true,
+                        "supports_aggregation": false,
+                        "supports_history": false
+                      }
+                    },
+                    {
+                      "id": "ee0afbc5-47ab-4e6e-aa32-fea3a91fa606",
+                      "name": "Alabama Credit Union",
+                      "keywords": ["ACU", "Alabama CU", "Alabama Credit Union"],
+                      "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-c4d51160-465e-1d78-4a50-fd6836684c3a_100x100.png",
+                      "url": "https://www.alabamacu.com/",
+                      "is_test_bank": false,
+                      "routing_numbers": ["262277419"],
+                      "mx": {
+                        "id": "alabamacreditunion",
+                        "supports_oauth": false,
+                        "supports_identification": true,
+                        "supports_verification": true,
+                        "supports_aggregation": true,
+                        "supports_history": true
+                      },
+                      "sophtron": {
+                        "id": "4D1C263B-D291-4DF7-9F22-79E445E59526",
+                        "supports_oauth": false,
+                        "supports_identification": true,
+                        "supports_verification": true,
+                        "supports_aggregation": false,
+                        "supports_history": false
+                      },
+                      "finicity": {
+                        "id": "5411",
+                        "supports_oauth": false,
+                        "supports_identification": true,
+                        "supports_verification": false,
+                        "supports_aggregation": true,
+                        "supports_history": false
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Institution Cache List with permissions for regular UI users"
       }
     },
     "/institutions/{id}": {
