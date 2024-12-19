@@ -19,7 +19,6 @@ import {
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE,
   INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS,
-  INSTITUTIONS_TABLE_ROW_ROOT_CLASS,
   INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN,
   INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP,
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
@@ -357,17 +356,28 @@ describe("<Institutions />", () => {
       },
     ];
 
-    const { container } = render(<Institutions />);
+    render(<Institutions />);
 
     await waitForLoad();
 
     server.use(
-      http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, () =>
-        HttpResponse.json({
-          ...institutionsPage1,
-          institutions: [...testSortList],
-        }),
-      ),
+      http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, ({ request }) => {
+        const { searchParams } = new URL(request.url);
+        const sortBy = searchParams.get("sortBy") as string;
+
+        if (sortBy === "name:asc") {
+          return HttpResponse.json({
+            ...institutionsPage1,
+            institutions: [...testSortList],
+          });
+        }
+        if (sortBy === "name:desc") {
+          return HttpResponse.json({
+            ...institutionsPage1,
+            institutions: [...testSortList].reverse(),
+          });
+        }
+      }),
     );
 
     await userEvent.click(
@@ -377,17 +387,12 @@ describe("<Institutions />", () => {
     await waitForLoad();
 
     expect(
-      container?.querySelector(INSTITUTIONS_TABLE_ROW_ROOT_CLASS)?.children[1], // Second column
-    ).toHaveTextContent(testSortList[0].id);
-
-    server.use(
-      http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, () =>
-        HttpResponse.json({
-          ...institutionsPage1,
-          institutions: [...testSortList].reverse(),
-        }),
-      ),
-    );
+      within(
+        await screen.findByTestId(
+          `${INSTITUTIONS_ROW_TEST_ID}-${testSortList[0].id}`,
+        ),
+      ).getByText(testSortList[0].id),
+    ).toBeInTheDocument();
 
     await userEvent.click(
       screen.getByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE),
@@ -396,7 +401,11 @@ describe("<Institutions />", () => {
     await waitForLoad();
 
     expect(
-      container?.querySelector(INSTITUTIONS_TABLE_ROW_ROOT_CLASS)?.children[1], // Second column
-    ).toHaveTextContent(testSortList[1].id);
+      within(
+        await screen.findByTestId(
+          `${INSTITUTIONS_ROW_TEST_ID}-${testSortList[1].id}`,
+        ),
+      ).getByText(testSortList[1].id),
+    ).toBeInTheDocument();
   });
 });
