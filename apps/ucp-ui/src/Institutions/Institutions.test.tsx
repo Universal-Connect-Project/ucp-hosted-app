@@ -356,10 +356,6 @@ describe("<Institutions />", () => {
       },
     ];
 
-    render(<Institutions />);
-
-    await waitForLoad();
-
     server.use(
       http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, ({ request }) => {
         const { searchParams } = new URL(request.url);
@@ -380,6 +376,10 @@ describe("<Institutions />", () => {
       }),
     );
 
+    render(<Institutions />);
+
+    await waitForLoad();
+
     await userEvent.click(
       screen.getByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE),
     );
@@ -388,10 +388,8 @@ describe("<Institutions />", () => {
 
     expect(
       within(
-        await screen.findByTestId(
-          `${INSTITUTIONS_ROW_TEST_ID}-${testSortList[0].id}`,
-        ),
-      ).getByText(testSortList[0].id),
+        screen.getAllByTestId(new RegExp(INSTITUTIONS_ROW_TEST_ID))[0],
+      ).getByText(testSortList[1].id),
     ).toBeInTheDocument();
 
     await userEvent.click(
@@ -402,10 +400,8 @@ describe("<Institutions />", () => {
 
     expect(
       within(
-        await screen.findByTestId(
-          `${INSTITUTIONS_ROW_TEST_ID}-${testSortList[1].id}`,
-        ),
-      ).getByText(testSortList[1].id),
+        screen.getAllByTestId(new RegExp(INSTITUTIONS_ROW_TEST_ID))[0],
+      ).getByText(testSortList[0].id),
     ).toBeInTheDocument();
   });
 });
