@@ -507,7 +507,7 @@ describe("/institutions", () => {
     );
   });
 
-  it.only("gets sorted institution list with default sort options", () => {
+  it("gets sorted institution list with default sort options", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions`,
       method: "GET",
@@ -525,7 +525,7 @@ describe("/institutions", () => {
     });
   });
 
-  it.only("gets sorted institution list with a custom sort option", () => {
+  it("gets sorted institution list with a custom sort option", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions?sortBy=id:desc`,
       method: "GET",
