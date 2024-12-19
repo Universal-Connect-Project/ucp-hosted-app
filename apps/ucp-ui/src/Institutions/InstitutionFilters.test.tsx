@@ -142,6 +142,7 @@ describe("<InstitutionFilters />", () => {
         {},
       ),
       supportsOauth: "false",
+      sortBy: "createdAt:desc",
     };
     const expectedAggregatorNames = [];
 
@@ -225,7 +226,7 @@ describe("<InstitutionFilters />", () => {
     await waitFor(() => expect(latestSearchParams).toEqual(expectedParams));
 
     expect(Object.keys(latestSearchParams || {})).toHaveLength(
-      jobTypeCheckboxes.length + 3,
+      jobTypeCheckboxes.length + 4,
     );
     expect(latestAggregatorNames).toHaveLength(aggregators.length - 1);
   });

@@ -17,6 +17,10 @@ import {
   INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
+  INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE,
+  INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS,
+  INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN,
+  INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP,
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
 } from "./constants";
 import {
@@ -301,6 +305,103 @@ describe("<Institutions />", () => {
 
     expect(
       await screen.findByText(INSTITUTIONS_EMPTY_RESULTS_TEXT),
+    ).toBeInTheDocument();
+  });
+
+  it("initially shows no arrows, then shows down arrow when the first column is clicked, and then up arrow when it's clicked again", async () => {
+    const { container } = render(<Institutions />);
+
+    await waitForLoad();
+
+    expect(
+      container.querySelector(
+        `${INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS} ${INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP}`,
+      ),
+    ).not.toBeInTheDocument();
+
+    expect(
+      container.querySelector(
+        `${INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS} ${INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN}`,
+      ),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE),
+    );
+
+    expect(
+      container.querySelector(INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN),
+    ).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE),
+    );
+
+    expect(
+      container.querySelector(INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP),
+    ).toBeInTheDocument();
+  });
+
+  it("sorts correctly when headers are clicked", async () => {
+    const testSortList = [
+      {
+        ...testInstitution,
+        id: "9e7eaf0f-f3dc-4bd8-97b3-e09d85dcd0fa",
+        name: "AA Bank",
+      },
+      {
+        ...testInstitution,
+        id: "a47eca28-8929-410f-8f7e-317c9678110c",
+        name: "ZZ Bank",
+      },
+    ];
+
+    server.use(
+      http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, ({ request }) => {
+        const { searchParams } = new URL(request.url);
+        const sortBy = searchParams.get("sortBy") as string;
+
+        if (sortBy === "name:asc") {
+          return HttpResponse.json({
+            ...institutionsPage1,
+            institutions: [...testSortList],
+          });
+        }
+        if (sortBy === "name:desc") {
+          return HttpResponse.json({
+            ...institutionsPage1,
+            institutions: [...testSortList].reverse(),
+          });
+        }
+      }),
+    );
+
+    render(<Institutions />);
+
+    await waitForLoad();
+
+    await userEvent.click(
+      screen.getByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE),
+    );
+
+    await waitForLoad();
+
+    expect(
+      within(
+        screen.getAllByTestId(new RegExp(INSTITUTIONS_ROW_TEST_ID))[0],
+      ).getByText(testSortList[1].id),
+    ).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE),
+    );
+
+    await waitForLoad();
+
+    expect(
+      within(
+        screen.getAllByTestId(new RegExp(INSTITUTIONS_ROW_TEST_ID))[0],
+      ).getByText(testSortList[0].id),
     ).toBeInTheDocument();
   });
 });
