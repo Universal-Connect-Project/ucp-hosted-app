@@ -25,7 +25,6 @@ const GenericError = () => {
               endIcon={<ChevronRight />}
               variant="contained"
               color="primary"
-              className={styles.buttonHome}
               href="/"
             >
               Go Home
