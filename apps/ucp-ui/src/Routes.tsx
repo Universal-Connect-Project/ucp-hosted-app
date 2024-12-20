@@ -1,6 +1,7 @@
 import React from "react";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import GenericError from "./GenericError/GenericError";
 import ApiKeys from "./ApiKeys/ApiKeys";
 import Layout from "./Layout/Layout";
 import Institutions from "./Institutions/Institutions";
@@ -26,10 +27,14 @@ const Routes = () => {
           path: widgetManagementRoute.childRoute,
           element: <ApiKeys />,
         },
+        {
+          path: "/generic-error",
+          element: <GenericError />,
+        },
       ],
       path: "/",
       element: <Layout />,
-      errorElement: "Something went wrong",
+      errorElement: <GenericError />,
     },
   ]);
 
