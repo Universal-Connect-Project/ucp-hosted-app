@@ -1,0 +1,22 @@
+.pageContent {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  column-gap: 24px;
+}
+
+.leftContainer {
+  display: inherit;
+  justify-content: inherit;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 16px;
+}
+
+.leftContainerContent {
+  display: inherit;
+  flex-direction: inherit;
+  justify-content: inherit;
+  align-items: inherit;
+  row-gap: 44px;
+}
