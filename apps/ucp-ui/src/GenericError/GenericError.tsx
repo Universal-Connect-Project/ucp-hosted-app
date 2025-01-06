@@ -7,6 +7,7 @@ import PageContent from "../shared/components/PageContent";
 import HeroImage from "./HeroImage";
 import PageTitle from "../shared/components/PageTitle";
 import styles from "./genericError.module.css";
+import { GENERIC_ERROR_BUTTON_TEXT } from "./constants";
 
 const GenericError = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const GenericError = () => {
                 color="primary"
                 onClick={() => navigate("/")}
               >
-                Go Home
+                {GENERIC_ERROR_BUTTON_TEXT}
               </Button>
             </div>
           </div>
