@@ -1,6 +1,4 @@
-.container {
-  position: relative;
-
+.cell {
   &:not(:hover) {
     :global(.MuiIconButton-root) {
       display: none;
@@ -8,11 +6,16 @@
   }
 }
 
+.container {
+  position: relative;
+}
+
 .copyButton {
-  background-color: inherit;
+  background-color: var(--mui-palette-common-white);
   border-radius: 50%;
   position: absolute;
   right: 0;
   top: 50%;
   transform: translate(0, -50%);
+  z-index: 1;
 }
