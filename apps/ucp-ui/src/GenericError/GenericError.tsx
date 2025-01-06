@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Typography } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import PageContent from "../shared/components/PageContent";
 import HeroImage from "./HeroImage";
@@ -14,8 +14,6 @@ import {
 } from "./constants";
 
 const GenericError = () => {
-  const navigate = useNavigate();
-
   return (
     <>
       <PageContent>
@@ -27,10 +25,11 @@ const GenericError = () => {
                 {GENERIC_ERROR_PARAGRAPH_TEXT}
               </Typography>
               <Button
+                component={Link}
+                to="/"
                 endIcon={<ChevronRight />}
                 variant="contained"
                 color="primary"
-                onClick={() => navigate("/")}
               >
                 {GENERIC_ERROR_BUTTON_TEXT}
               </Button>

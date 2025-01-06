@@ -21,7 +21,7 @@ describe("<GenericError />", () => {
     ).toBeInTheDocument();
 
     await userEvent.click(
-      await screen.findByRole("button", {
+      await screen.findByRole("link", {
         name: GENERIC_ERROR_BUTTON_TEXT,
       }),
     );
