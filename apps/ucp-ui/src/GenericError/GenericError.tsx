@@ -18,9 +18,9 @@ const GenericError = () => {
     <>
       <PageContent>
         <div className={styles.pageContent}>
-          <div className={styles.contentGrid}>
+          <div className={styles.leftContainer}>
             <PageTitle>{GENERIC_ERROR_TITLE_TEXT}</PageTitle>
-            <div className={styles.description}>
+            <div className={styles.leftContainerContent}>
               <Typography variant="body1">
                 {GENERIC_ERROR_PARAGRAPH_TEXT}
               </Typography>
