@@ -6,9 +6,9 @@
 }
 
 .contentGrid {
-  display: flex;
+  display: inherit;
+  justify-content: inherit;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
   row-gap: 16px;
 }
