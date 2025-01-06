@@ -1,0 +1,18 @@
+.container {
+  position: relative;
+
+  &:not(:hover) {
+    :global(.MuiIconButton-root) {
+      display: none;
+    }
+  }
+}
+
+.copyButton {
+  background-color: inherit;
+  border-radius: 50%;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+}
