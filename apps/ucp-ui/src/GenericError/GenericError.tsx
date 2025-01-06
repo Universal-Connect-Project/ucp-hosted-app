@@ -15,9 +15,9 @@ const GenericError = () => {
           <div className={styles.contentGrid}>
             <PageTitle>Oops, something went wrong.</PageTitle>
             <br />
-            <Typography variant={"body1"}>
+            <Typography variant="body1">
               It looks like the page you&apos;re looking for doesn&apos;t exist
-              or something&apos;s broken on our end.{" "}
+              or something&apos;s broken on our end.
             </Typography>
             <br />
             <br />

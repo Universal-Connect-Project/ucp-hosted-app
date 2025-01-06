@@ -27,10 +27,6 @@ const Routes = () => {
           path: widgetManagementRoute.childRoute,
           element: <ApiKeys />,
         },
-        {
-          path: "/generic-error",
-          element: <GenericError />,
-        },
       ],
       path: "/",
       element: <Layout />,
