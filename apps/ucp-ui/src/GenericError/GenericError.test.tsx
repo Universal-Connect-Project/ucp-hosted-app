@@ -1,6 +1,11 @@
 import React from "react";
 
-import { render, screen, userEvent } from "../shared/test/testUtils";
+import {
+  expectLocation,
+  render,
+  screen,
+  userEvent,
+} from "../shared/test/testUtils";
 import {
   GENERIC_ERROR_BUTTON_TEXT,
   GENERIC_ERROR_TITLE_TEXT,
@@ -21,6 +26,6 @@ describe("<GenericError />", () => {
       }),
     );
 
-    expect(window.location.href).toBe("http://localhost/");
+    expectLocation("/");
   });
 });
