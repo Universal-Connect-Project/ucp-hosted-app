@@ -35,7 +35,7 @@ const GenericError = () => {
               </Button>
             </div>
           </div>
-          <div className={styles.contentGrid}>
+          <div>
             <HeroImage />
           </div>
         </div>
