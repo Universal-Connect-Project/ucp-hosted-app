@@ -7,7 +7,11 @@ import PageContent from "../shared/components/PageContent";
 import HeroImage from "./HeroImage";
 import PageTitle from "../shared/components/PageTitle";
 import styles from "./genericError.module.css";
-import { GENERIC_ERROR_BUTTON_TEXT } from "./constants";
+import {
+  GENERIC_ERROR_BUTTON_TEXT,
+  GENERIC_ERROR_PARAGRAPH_TEXT,
+  GENERIC_ERROR_TITLE_TEXT,
+} from "./constants";
 
 const GenericError = () => {
   const navigate = useNavigate();
@@ -17,11 +21,10 @@ const GenericError = () => {
       <PageContent>
         <div className={styles.pageContent}>
           <div className={styles.contentGrid}>
-            <PageTitle>Oops, something went wrong.</PageTitle>
+            <PageTitle>{GENERIC_ERROR_TITLE_TEXT}</PageTitle>
             <div className={styles.description}>
               <Typography variant="body1">
-                It looks like the page you&apos;re looking for doesn&apos;t
-                exist or something&apos;s broken on our end.
+                {GENERIC_ERROR_PARAGRAPH_TEXT}
               </Typography>
               <Button
                 endIcon={<ChevronRight />}
