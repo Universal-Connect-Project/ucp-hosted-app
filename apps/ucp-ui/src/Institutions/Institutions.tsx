@@ -483,7 +483,7 @@ const Institutions = () => {
                 {isInstitutionListEmpty && (
                   <Alert severity="info">
                     <AlertTitle>{INSTITUTIONS_EMPTY_RESULTS_TEXT}</AlertTitle>
-                    Try editing your filters to see more Instutitions.
+                    Try editing your filters to see more Institutions.
                   </Alert>
                 )}
               </Paper>
