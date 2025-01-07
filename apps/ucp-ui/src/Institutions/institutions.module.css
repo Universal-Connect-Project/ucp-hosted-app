@@ -63,6 +63,11 @@
   justify-content: space-between;
 }
 
+.headerRightContainer {
+  display: inherit;
+  column-gap: 12px;
+}
+
 .paginationContainer {
   display: flex;
   align-items: center;

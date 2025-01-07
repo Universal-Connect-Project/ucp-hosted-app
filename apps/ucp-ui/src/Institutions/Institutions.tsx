@@ -1,8 +1,10 @@
-import { InfoOutlined } from "@mui/icons-material";
+import React, { useEffect, useMemo, useState } from "react";
+import { FileDownload, InfoOutlined } from "@mui/icons-material";
 import {
   Alert,
   AlertTitle,
   Avatar,
+  Button,
   Chip,
   Pagination,
   Paper,
@@ -17,8 +19,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import classNames from "classnames";
-import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import debounce from "lodash.debounce";
 import FetchError from "../shared/components/FetchError";
 import PageContent from "../shared/components/PageContent";
 import PageTitle from "../shared/components/PageTitle";
@@ -32,6 +34,7 @@ import {
   AggregatorIntegration,
   useGetInstitutionPermissionsQuery,
   useGetInstitutionsQuery,
+  useLazyGetInstitutionsJsonQuery,
 } from "./api";
 import AddInstitution from "./ChangeInstitution/AddInstitution";
 import {
@@ -39,6 +42,8 @@ import {
   INSTITUTIONS_AGGREGATOR_INFO_TOOLTIP,
   INSTITUTIONS_EMPTY_RESULTS_TEXT,
   INSTITUTIONS_ERROR_TEXT,
+  INSTITUTIONS_JSON_BUTTON_TEXT,
+  INSTITUTIONS_JSON_ERROR_TEXT,
   INSTITUTIONS_PAGE_TITLE,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
@@ -48,7 +53,6 @@ import { DEFAULT_LOGO_URL, SortOrder } from "./Institution/constants";
 import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
-import debounce from "lodash.debounce";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -211,6 +215,11 @@ const Institutions = () => {
     refetch: refetchInstitutionPermissions,
   } = useGetInstitutionPermissionsQuery();
 
+  const [
+    triggerDownload,
+    { isError: isInstitutionJsonError, isLoading: isInstitutionJsonLoading },
+  ] = useLazyGetInstitutionsJsonQuery();
+
   const {
     data,
     isError: isInstitutionsError,
@@ -245,11 +254,29 @@ const Institutions = () => {
           title="We're unable to check permissions right now"
         />
       )}
+      {isInstitutionJsonError && (
+        <FetchError
+          description={INSTITUTIONS_JSON_ERROR_TEXT}
+          refetch={() => void triggerDownload({})}
+          title="Download failed"
+        />
+      )}
       <PageContent>
         <div className={styles.pageContainer}>
           <div className={styles.header}>
             <PageTitle>{INSTITUTIONS_PAGE_TITLE}</PageTitle>
-            <AddInstitution />
+            <div className={styles.headerRightContainer}>
+              <Button
+                disabled={isInstitutionJsonLoading}
+                onClick={() => void triggerDownload({})}
+                size="medium"
+                startIcon={<FileDownload />}
+                variant="text"
+              >
+                {INSTITUTIONS_JSON_BUTTON_TEXT}
+              </Button>
+              <AddInstitution />
+            </div>
           </div>
           <div className={styles.filterTableContainer}>
             <InstitutionFilters
