@@ -1,3 +1,4 @@
+import { GENERIC_ERROR_TITLE_TEXT } from "../../src/GenericError/constants";
 import { API_KEYS_CARD_TITLE_TEXT } from "../../src/ApiKeys/constants";
 import { SIDE_NAV_LOG_OUT_BUTTON_TEXT } from "../../src/Layout/constants";
 import {
@@ -7,11 +8,11 @@ import {
 import { INSTITUTIONS_PAGE_TITLE } from "../../src/Institutions/constants";
 
 describe("Health", () => {
-  it("renders a not found page", () => {
+  it("renders a generic error page", () => {
     cy.loginWithWidgetRole();
     cy.visit("/ninjas");
 
-    cy.findByText("Something went wrong").should("exist");
+    cy.findByText(GENERIC_ERROR_TITLE_TEXT).should("exist");
   });
 
   it("navigates to the different pages", () => {
