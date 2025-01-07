@@ -21,6 +21,7 @@ import {
 import classNames from "classnames";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import debounce from "lodash.debounce";
+import { useAppDispatch } from "../shared/utils/redux";
 import FetchError from "../shared/components/FetchError";
 import PageContent from "../shared/components/PageContent";
 import PageTitle from "../shared/components/PageTitle";
@@ -30,6 +31,7 @@ import {
 } from "../shared/components/Skeleton";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import { institutionRoute } from "../shared/constants/routes";
+import { displaySnackbar } from "../shared/reducers/snackbar";
 import {
   AggregatorIntegration,
   useGetInstitutionPermissionsQuery,
@@ -44,6 +46,7 @@ import {
   INSTITUTIONS_ERROR_TEXT,
   INSTITUTIONS_JSON_BUTTON_TEXT,
   INSTITUTIONS_JSON_ERROR_TEXT,
+  INSTITUTIONS_JSON_SNACKBAR_TEXT,
   INSTITUTIONS_PAGE_TITLE,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
@@ -97,6 +100,7 @@ const Institutions = () => {
   ];
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const dispatch = useAppDispatch();
 
   const getBooleanFromSearchParams = (key: string) => {
     const value = searchParams.get(key);
@@ -195,6 +199,11 @@ const Institutions = () => {
     });
   };
 
+  const handleDownloadFile = () => {
+    void triggerDownload({});
+    dispatch(displaySnackbar(INSTITUTIONS_JSON_SNACKBAR_TEXT));
+  };
+
   const createSortHandler = (id: string) => () => {
     const newSortByProp = id;
     const newSortOrder =
@@ -257,7 +266,7 @@ const Institutions = () => {
       {isInstitutionJsonError && (
         <FetchError
           description={INSTITUTIONS_JSON_ERROR_TEXT}
-          refetch={() => void triggerDownload({})}
+          refetch={() => handleDownloadFile()}
           title="Download failed"
         />
       )}
@@ -268,7 +277,7 @@ const Institutions = () => {
             <div className={styles.headerRightContainer}>
               <Button
                 disabled={isInstitutionJsonLoading}
-                onClick={() => void triggerDownload({})}
+                onClick={() => handleDownloadFile()}
                 size="medium"
                 startIcon={<FileDownload />}
                 variant="text"
