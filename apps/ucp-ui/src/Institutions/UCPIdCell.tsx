@@ -5,6 +5,10 @@ import { ContentCopy } from "@mui/icons-material";
 import { TextSkeletonIfLoading } from "../shared/components/Skeleton";
 import { useAppDispatch } from "../shared/utils/redux";
 import { displaySnackbar } from "../shared/reducers/snackbar";
+import {
+  INSTITUTIONS_TABLE_UCP_ID_COPY_BUTTON_TEST_ID,
+  INSTITUTIONS_TABLE_UCP_ID_COPY_SUCCESS_MESSAGE,
+} from "./constants";
 
 const UCPIdCell = ({ id, isLoading }: { id: string; isLoading: boolean }) => {
   const dispatch = useAppDispatch();
@@ -13,7 +17,7 @@ const UCPIdCell = ({ id, isLoading }: { id: string; isLoading: boolean }) => {
     event.stopPropagation();
 
     await navigator.clipboard.writeText(id);
-    dispatch(displaySnackbar("UCP ID has been copied to your clipboard"));
+    dispatch(displaySnackbar(INSTITUTIONS_TABLE_UCP_ID_COPY_SUCCESS_MESSAGE));
   };
 
   return (
@@ -22,7 +26,10 @@ const UCPIdCell = ({ id, isLoading }: { id: string; isLoading: boolean }) => {
         <div className={styles.container}>
           {id}
           <div className={styles.copyButton}>
-            <IconButton onClick={(event) => void handleCopyId(event)}>
+            <IconButton
+              data-testid={INSTITUTIONS_TABLE_UCP_ID_COPY_BUTTON_TEST_ID}
+              onClick={(event) => void handleCopyId(event)}
+            >
               <ContentCopy />
             </IconButton>
           </div>

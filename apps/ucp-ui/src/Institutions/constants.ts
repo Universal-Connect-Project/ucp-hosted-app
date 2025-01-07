@@ -41,3 +41,7 @@ export const INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN =
   ".MuiTableSortLabel-iconDirectionDesc";
 export const INSTITUTIONS_TABLE_ROW_ROOT_CLASS =
   ".MuiTableBody-root .MuiTableRow-root";
+
+export const INSTITUTIONS_TABLE_UCP_ID_COPY_BUTTON_TEST_ID = "copy-ucp-id";
+export const INSTITUTIONS_TABLE_UCP_ID_COPY_SUCCESS_MESSAGE =
+  "UCP ID has been copied to your clipboard";
