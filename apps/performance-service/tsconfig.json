@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "moduleResolution": "node",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "typeRoots": [
+      "../../node_modules/@types",
+      "../../node_modules/@testing-library"
+    ]
+  },
+  "include": ["src/**/*", "config"]
+}
