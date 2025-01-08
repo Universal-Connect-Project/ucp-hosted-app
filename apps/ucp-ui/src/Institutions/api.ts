@@ -1,4 +1,5 @@
 import { api, TagTypes } from "../baseApi";
+import { saveAs } from "file-saver";
 import { Aggregator } from "../shared/constants/aggregators";
 
 interface InstitutionPermissions {
@@ -112,33 +113,22 @@ export const institutionsApi = api.injectEndpoints({
       },
       providesTags: [TagTypes.INSTITUTIONS],
     }),
-    getInstitutionsJson: builder.query({
+    getInstitutionsJson: builder.query<void, void>({
       query: () => {
         return {
           url: `${INSTITUTION_SERVICE_INSTITUTIONS_URL}/cacheList/download`,
           responseHandler: async (response) => {
             const blob = await response.blob();
-            const contentDisposition = response.headers.get(
-              "content-disposition",
-            );
-            const fileName = contentDisposition?.split("filename=")[1]?.trim();
-            return { blob, fileName, mimeType: "application/json" };
+
+            saveAs(blob, "UCPInstitutions.json");
           },
         };
       },
-      transformResponse: ({
-        blob,
-        fileName,
-        mimeType,
-      }: {
-        blob: Blob;
-        fileName: string;
-        mimeType: string;
-      }) => {
-        handleExportsDownload(blob, fileName, mimeType);
+      transformResponse: () => {
+        // We don't want to cache the data
+        return undefined;
       },
       keepUnusedDataFor: 0,
-      providesTags: [TagTypes.INSTITUTIONS_JSON],
     }),
   }),
   overrideExisting: false,
@@ -150,18 +140,3 @@ export const {
   useGetInstitutionsQuery,
   useLazyGetInstitutionsJsonQuery,
 } = institutionsApi;
-
-const handleExportsDownload = (
-  blob: Blob,
-  fileName: string,
-  mimeType: string,
-) => {
-  const url = window.URL.createObjectURL(new Blob([blob], { type: mimeType }));
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", fileName || "download");
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.URL.revokeObjectURL(url);
-};

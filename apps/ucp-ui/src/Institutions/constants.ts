@@ -45,4 +45,3 @@ export const INSTITUTIONS_TABLE_ROW_ROOT_CLASS =
 export const INSTITUTIONS_JSON_ERROR_TEXT =
   "Something went wrong while downloading the file. Please try again.";
 export const INSTITUTIONS_JSON_BUTTON_TEXT = "Download full JSON file";
-export const INSTITUTIONS_JSON_SNACKBAR_TEXT = "Your JSON file is downloading.";
