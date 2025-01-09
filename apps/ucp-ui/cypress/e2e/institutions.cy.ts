@@ -1,7 +1,7 @@
 import {
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
-  INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE,
+  INSTITUTIONS_TABLE_UCP_ID_HEADER_TEXT,
 } from "../../src/Institutions/constants";
 import { INSTITUTION_EDIT_AGGREGATOR_INTEGRATION_BUTTON_TEST_ID } from "../../src/Institutions/Institution/constants";
 import {
@@ -116,7 +116,7 @@ describe("institutions", () => {
       .eq(0)
       .invoke("attr", "data-testid")
       .then((testIdBeforeSort) => {
-        cy.findByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE).click();
+        cy.findByText(INSTITUTIONS_TABLE_UCP_ID_HEADER_TEXT).click();
 
         cy.waitForLoad();
 
@@ -126,7 +126,7 @@ describe("institutions", () => {
           .then((testIdAfterSort) => {
             expect(testIdAfterSort).not.to.eq(testIdBeforeSort);
 
-            cy.findByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE).click();
+            cy.findByText(INSTITUTIONS_TABLE_UCP_ID_HEADER_TEXT).click();
 
             cy.waitForLoad();
 
@@ -134,7 +134,7 @@ describe("institutions", () => {
               .eq(0)
               .invoke("attr", "data-testid")
               .then((testIdFinalSort) => {
-                expect(testIdBeforeSort).to.eq(testIdFinalSort);
+                expect(testIdAfterSort).not.to.eq(testIdFinalSort);
               });
           });
       });
