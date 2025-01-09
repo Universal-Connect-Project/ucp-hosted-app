@@ -42,6 +42,8 @@ import {
   INSTITUTIONS_PAGE_TITLE,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
+  INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE,
+  INSTITUTIONS_TABLE_UCP_ID_HEADER_TEXT,
   INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID,
 } from "./constants";
 import { DEFAULT_LOGO_URL, SortOrder } from "./Institution/constants";
@@ -79,11 +81,11 @@ const Institutions = () => {
 
   const tableHeadCells = [
     {
-      label: "Institution",
+      label: INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE,
       sort: "name",
     },
     {
-      label: "UCP ID",
+      label: INSTITUTIONS_TABLE_UCP_ID_HEADER_TEXT,
       sort: "id",
     },
     {
