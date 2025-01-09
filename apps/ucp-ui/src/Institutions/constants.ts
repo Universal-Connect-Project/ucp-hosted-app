@@ -41,3 +41,5 @@ export const INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN =
   ".MuiTableSortLabel-iconDirectionDesc";
 export const INSTITUTIONS_TABLE_ROW_ROOT_CLASS =
   ".MuiTableBody-root .MuiTableRow-root";
+
+export const INSTITUTIONS_TABLE_UCP_ID_HEADER_TEXT = "UCP ID";
