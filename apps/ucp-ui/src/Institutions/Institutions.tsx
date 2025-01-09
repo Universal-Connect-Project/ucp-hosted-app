@@ -194,9 +194,9 @@ const Institutions = () => {
   const createSortHandler = (id: string) => () => {
     const newSortByProp = id;
     const newSortOrder =
-      sortByProp === newSortByProp && sortByOrder === SortOrder.desc
-        ? SortOrder.asc
-        : SortOrder.desc;
+      sortByProp === newSortByProp && sortByOrder === SortOrder.asc
+        ? SortOrder.desc
+        : SortOrder.asc;
     const newSortBy = `${newSortByProp}:${newSortOrder}`;
 
     setSortBy(newSortBy);
@@ -281,7 +281,7 @@ const Institutions = () => {
                                   direction={
                                     sortByProp === sort
                                       ? sortByOrder
-                                      : SortOrder.desc
+                                      : SortOrder.asc
                                   }
                                   onClick={createSortHandler(sort)}
                                 >
