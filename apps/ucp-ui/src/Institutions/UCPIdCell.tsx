@@ -25,7 +25,7 @@ const UCPIdCell = ({ id, isLoading }: { id: string; isLoading: boolean }) => {
       <TextSkeletonIfLoading isLoading={isLoading}>
         <div className={styles.container}>
           {id}
-          <div className={styles.copyButton}>
+          <div className={styles.copyButtonContainer}>
             <IconButton
               data-testid={INSTITUTIONS_TABLE_UCP_ID_COPY_BUTTON_TEST_ID}
               onClick={(event) => void handleCopyId(event)}
