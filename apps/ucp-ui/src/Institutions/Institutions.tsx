@@ -55,6 +55,7 @@ import { DEFAULT_LOGO_URL, SortOrder } from "./Institution/constants";
 import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
+import UCPIdCell from "./UCPIdCell";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -364,13 +365,10 @@ const Institutions = () => {
                                 </TextSkeletonIfLoading>
                               </div>
                             </TableCell>
-                            <TableCell>
-                              <TextSkeletonIfLoading
-                                isLoading={isInstitutionsLoading}
-                              >
-                                <div>{id}</div>
-                              </TextSkeletonIfLoading>
-                            </TableCell>
+                            <UCPIdCell
+                              id={id}
+                              isLoading={isInstitutionsLoading}
+                            />
                             <TableCell>
                               <div className={styles.aggregatorsCell}>
                                 {aggregatorIntegrations.length ? (
