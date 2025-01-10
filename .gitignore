@@ -29,5 +29,6 @@ dist-ssr
 # Cypress
 cypress.env.json
 **/cypress/screenshots/
+**/cypress/downloads/
 **/cypress/videos/
 **/coverage/
