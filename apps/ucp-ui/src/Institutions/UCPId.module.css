@@ -1,0 +1,19 @@
+.cell {
+  &:not(:hover) {
+    :global(.MuiIconButton-root) {
+      display: none;
+    }
+  }
+}
+
+.container {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  justify-content: space-between;
+}
+
+.copyButtonContainer {
+  min-height: 40px;
+  min-width: 40px;
+}
