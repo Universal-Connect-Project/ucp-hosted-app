@@ -195,10 +195,6 @@ const Institutions = () => {
     });
   };
 
-  const handleDownloadFile = () => {
-    void triggerDownload();
-  };
-
   const createSortHandler = (id: string) => () => {
     const newSortByProp = id;
     const newSortOrder =
@@ -223,6 +219,10 @@ const Institutions = () => {
     triggerDownload,
     { isError: isInstitutionJsonError, isLoading: isInstitutionJsonLoading },
   ] = useLazyGetInstitutionsJsonQuery();
+
+  const handleDownloadFile = () => {
+    void triggerDownload();
+  };
 
   const {
     data,
@@ -269,7 +269,7 @@ const Institutions = () => {
         <div className={styles.pageContainer}>
           <div className={styles.header}>
             <PageTitle>{INSTITUTIONS_PAGE_TITLE}</PageTitle>
-            <div className={styles.headerRightContainer}>
+            <div className={styles.headerButtonContainer}>
               <LoadingButton
                 loading={isInstitutionJsonLoading}
                 onClick={handleDownloadFile}
