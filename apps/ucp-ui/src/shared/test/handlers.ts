@@ -10,6 +10,7 @@ import {
   institutionPermissionsResponse,
 } from "./testData/institution";
 import {
+  INSTITUTION_SERVICE_INSTITUTIONS_DOWNLOAD_URL,
   INSTITUTION_SERVICE_INSTITUTIONS_URL,
   INSTITUTION_SERVICE_PERMISSIONS_URL,
 } from "../../Institutions/api";
@@ -38,6 +39,9 @@ export const handlers = [
   ),
   http.get(INSTITUTION_SERVICE_PERMISSIONS_URL, () =>
     HttpResponse.json(institutionPermissionsResponse),
+  ),
+  http.get(INSTITUTION_SERVICE_INSTITUTIONS_DOWNLOAD_URL, () =>
+    HttpResponse.json({}),
   ),
   http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, () =>
     HttpResponse.json(institutionsPage1),

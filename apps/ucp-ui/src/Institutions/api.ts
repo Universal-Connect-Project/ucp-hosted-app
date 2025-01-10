@@ -1,5 +1,5 @@
 import { api, TagTypes } from "../baseApi";
-import { saveAs } from "file-saver";
+import { saveAs } from "../shared/utils/fileSaver";
 import { Aggregator } from "../shared/constants/aggregators";
 
 interface InstitutionPermissions {
@@ -82,6 +82,7 @@ const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
 export const INSTITUTION_SERVICE_PERMISSIONS_URL = `${INSTITUTION_SERVICE_BASE_URL}/permissions`;
 export const INSTITUTION_SERVICE_INSTITUTIONS_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions`;
+export const INSTITUTION_SERVICE_INSTITUTIONS_DOWNLOAD_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions/cacheList/download`;
 
 export const institutionsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -116,11 +117,13 @@ export const institutionsApi = api.injectEndpoints({
     getInstitutionsJson: builder.query<void, void>({
       query: () => {
         return {
-          url: `${INSTITUTION_SERVICE_INSTITUTIONS_URL}/cacheList/download`,
+          url: INSTITUTION_SERVICE_INSTITUTIONS_DOWNLOAD_URL,
           responseHandler: async (response) => {
-            const blob = await response.blob();
+            if (response.ok) {
+              const blob = await response.blob();
 
-            saveAs(blob, "UCPInstitutions.json");
+              saveAs(blob, "UCPInstitutions.json");
+            }
           },
         };
       },
