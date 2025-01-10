@@ -1,5 +1,6 @@
 import {
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
+  INSTITUTIONS_JSON_BUTTON_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTIONS_TABLE_UCP_ID_HEADER_TEXT,
 } from "../../src/Institutions/constants";
@@ -31,8 +32,19 @@ import {
   INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
 } from "../../src/Institutions/ChangeAggregatorIntegration/constants";
 import { supportsJobTypeMap } from "../../src/shared/constants/jobTypes";
+import { join } from "path";
 
 describe("institutions", () => {
+  it("downloads the institutions json", () => {
+    cy.loginWithoutWidgetRole();
+
+    cy.findByText(INSTITUTIONS_JSON_BUTTON_TEXT).click();
+
+    const downloadsFolder = Cypress.config("downloadsFolder");
+
+    cy.readFile(join(downloadsFolder, "UCPInstitutions.json"));
+  });
+
   it("renders institutions, changes rows per page, paginates, and filters. It keeps the filters on reload", () => {
     cy.loginWithoutWidgetRole();
 
