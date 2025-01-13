@@ -3,7 +3,6 @@ import "dotenv/config";
 
 export default defineConfig({
   env: {
-    CLIENT_ORIGIN_URL: process.env.CLIENT_ORIGIN_URL,
     AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
     AUTH0_M2M_AUDIENCE: process.env.AUTH0_M2M_AUDIENCE,
     AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
