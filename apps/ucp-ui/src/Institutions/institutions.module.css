@@ -63,6 +63,11 @@
   justify-content: space-between;
 }
 
+.headerButtonContainer {
+  display: flex;
+  column-gap: 12px;
+}
+
 .paginationContainer {
   display: flex;
   align-items: center;

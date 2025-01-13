@@ -5,6 +5,7 @@ import {
   render,
   screen,
   userEvent,
+  waitFor,
   waitForLoad,
   within,
 } from "../shared/test/testUtils";
@@ -15,6 +16,8 @@ import {
   INSTITUTIONS_EMPTY_RESULTS_TEXT,
   INSTITUTIONS_ERROR_TEXT,
   INSTITUTIONS_FILTER_INCLUDE_INACTIVE_INTEGRATIONS_LABEL_TEXT,
+  INSTITUTIONS_JSON_BUTTON_TEXT,
+  INSTITUTIONS_JSON_ERROR_TEXT,
   INSTITUTIONS_PERMISSIONS_ERROR_TEXT,
   INSTITUTIONS_ROW_TEST_ID,
   INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE,
@@ -35,6 +38,7 @@ import {
 import { server } from "../shared/test/testServer";
 import { delay, http, HttpResponse } from "msw";
 import {
+  INSTITUTION_SERVICE_INSTITUTIONS_DOWNLOAD_URL,
   INSTITUTION_SERVICE_INSTITUTIONS_URL,
   INSTITUTION_SERVICE_PERMISSIONS_URL,
 } from "./api";
@@ -43,6 +47,7 @@ import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
 import { INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT } from "./ChangeInstitution/constants";
 import { institutionRoute } from "../shared/constants/routes";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
+import * as fileSaver from "../shared/utils/fileSaver";
 
 const findRowById = async (id: string) => {
   expect(
@@ -51,6 +56,39 @@ const findRowById = async (id: string) => {
 };
 
 describe("<Institutions />", () => {
+  it("doesn't download a file if it's a failure. Shows an error on download json failure allows retry", async () => {
+    jest.spyOn(fileSaver, "saveAs");
+
+    server.use(
+      http.get(
+        INSTITUTION_SERVICE_INSTITUTIONS_DOWNLOAD_URL,
+        () => new HttpResponse(null, { status: 400 }),
+      ),
+    );
+
+    render(<Institutions />);
+
+    await userEvent.click(screen.getByText(INSTITUTIONS_JSON_BUTTON_TEXT));
+
+    expect(
+      await screen.findByText(INSTITUTIONS_JSON_ERROR_TEXT),
+    ).toBeInTheDocument();
+
+    expect(fileSaver.saveAs).toHaveBeenCalledTimes(0);
+
+    server.use(
+      http.get(INSTITUTION_SERVICE_INSTITUTIONS_DOWNLOAD_URL, () =>
+        HttpResponse.json({}),
+      ),
+    );
+
+    await userEvent.click(screen.getByText(TRY_AGAIN_BUTTON_TEXT));
+
+    await waitFor(() => {
+      expect(fileSaver.saveAs).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it("shows an error on permissions load failure and allows retry", async () => {
     server.use(
       http.get(
