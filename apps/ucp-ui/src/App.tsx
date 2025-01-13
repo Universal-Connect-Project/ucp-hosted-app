@@ -14,7 +14,11 @@ import {
 } from "@repo/shared-utils";
 import "./style.module.css";
 import { LDProvider } from "launchdarkly-react-client-sdk";
-import { LAUNCH_DARKLY_CLIENT_ID } from "./shared/constants/environment";
+import {
+  AUTH0_CLIENT_ID,
+  AUTH0_DOMAIN,
+  LAUNCH_DARKLY_CLIENT_ID,
+} from "./shared/constants/environment";
 
 const App: React.FC = () => {
   const scope = [DefaultPermissions, UiClientPermissions, UiUserPermissions]
@@ -27,8 +31,8 @@ const App: React.FC = () => {
       <CssVarsProvider theme={muiTheme}>
         <ReduxProvider store={store}>
           <Auth0Provider
-            domain="dev-d23wau8o0uc5hw8n.us.auth0.com"
-            clientId="osS8CuafkPsJlfz5mfKRgYH942Pmwpxd"
+            domain={AUTH0_DOMAIN}
+            clientId={AUTH0_CLIENT_ID}
             authorizationParams={{
               audience: AUTH0_CLIENT_AUDIENCE as string,
               redirect_uri: window.location.origin,

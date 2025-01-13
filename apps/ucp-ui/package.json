@@ -10,6 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier . --check",
     "dev": "webpack serve --open --mode=development",
+    "prod": "webpack serve --open --mode=development --env production",
     "test": "DEBUG_PRINT_LIMIT=100000 jest",
     "test:watch": "DEBUG_PRINT_LIMIT=100000 jest --watch"
   },
