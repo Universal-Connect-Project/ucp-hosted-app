@@ -14,7 +14,6 @@ describe("config", () => {
   it("errors if missing required envs", () => {
     expect(() => {
       init({
-        authM2mAudience: undefined,
         auth0Domain: undefined,
         auth0ClientId: undefined,
         auth0ClientSecret: undefined,
