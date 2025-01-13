@@ -6,7 +6,6 @@ describe("config", () => {
   });
 
   it("has required envs", () => {
-    expect(envs.AUTH0_M2M_AUDIENCE).toBeDefined();
     expect(envs.AUTH0_DOMAIN).toBeDefined();
     expect(envs.AUTH0_CLIENT_ID).toBeDefined();
     expect(envs.AUTH0_CLIENT_SECRET).toBeDefined();

@@ -11,7 +11,7 @@ import {
 } from "../../shared/tokenUtils";
 
 const domain: string = envs.AUTH0_DOMAIN;
-const audience: string = envs.AUTH0_M2M_AUDIENCE;
+const audience: string = `https://${domain}/api/v2/`;
 const clientId: string = envs.AUTH0_CLIENT_ID;
 const clientSecret: string = envs.AUTH0_CLIENT_SECRET;
 
