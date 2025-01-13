@@ -11,6 +11,7 @@
     "cypress:run:rate-limit": "cypress run --config specPattern='cypress/e2e/rateLimiting.cy.ts'",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier . --check",
+    "prod": "PRODUCTION=true npm run dev",
     "test": "jest",
     "test:watch": "jest --watch"
   },

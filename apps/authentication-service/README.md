@@ -16,9 +16,8 @@ If you want to run this project by itself, without running the other services in
 
 All of these commands should be run from the root of the monorepo:
 
-1. Run `cp ./apps/authentication-service/src/.env.example ./apps/authentication-service/src/.env` to copy the example
-   .env file for this project
-1. Set up your environment variables in the new .env file
+1. Run `npm run copyAuthenticationEnv` to copy the secret .env files for this service
+1. Set up your environment variables in the new .env files
 1. Run `npm run dev --workspace apps/authentication-service` to start the server
 
 ## Auth0
