@@ -1,11 +1,10 @@
 import { api, TagTypes } from "../../baseApi";
+import { INSTITUTION_SERVICE_BASE_URL } from "../../shared/constants/environment";
 import { Aggregator } from "../constants/aggregators";
 
 interface AggregatorsResponse {
   aggregators: Aggregator[];
 }
-
-const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
 export const INSTITUTION_SERVICE_AGGREGATORS_URL = `${INSTITUTION_SERVICE_BASE_URL}/aggregators`;
 

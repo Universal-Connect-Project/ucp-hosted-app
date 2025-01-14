@@ -1,0 +1,14 @@
+{
+  "environments": {
+    "review": {
+      "addons": [
+        {
+          "plan": "heroku-postgresql:essential-0"
+        }
+      ],
+      "scripts": {
+        "postdeploy": "npm run db:migrate --workspace=apps/institution-service && npm run db:load --workspace=apps/institution-service"
+      }
+    }
+  }
+}

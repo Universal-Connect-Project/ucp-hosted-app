@@ -1,4 +1,5 @@
 import { api, TagTypes } from "../../baseApi";
+import { INSTITUTION_SERVICE_BASE_URL } from "../../shared/constants/environment";
 import { HttpMethods } from "../../shared/constants/http";
 
 interface ChangeAggregatorIntegrationParams {
@@ -25,8 +26,6 @@ export interface EditAggregatorIntegrationParams
 interface DeleteAggregatorIntegrationParams {
   aggregatorIntegrationId: number;
 }
-
-const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
 const transformBody = ({
   aggregatorInstitutionId,

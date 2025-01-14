@@ -13,11 +13,13 @@
   "scripts": {
     "build": "turbo build",
     "copyAuthenticationEnv": "tee ./apps/authentication-service/env/secretStaging.env ./apps/authentication-service/env/secretProduction.env < ./apps/authentication-service/env/secretStaging.env.example",
+    "heroku-postbuild": "echo HEROKU_APP_NAME=$HEROKU_APP_NAME >> apps/ucp-ui/env/production.env && echo REVIEW_APP=$REVIEW_APP >> apps/ucp-ui/env/production.env && turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "prettier": "turbo run prettier",
     "prod": "turbo run prod",
     "test": "turbo run test",
+    "reviewApp:start:services": "concurrently \"PORT=8089 npx ts-node --transpile-only apps/authentication-service/src/index.ts\" \"PORT=8088 npx ts-node --transpile-only apps/institution-service/src/app.ts\" \"node proxyServer.js\"",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -31,5 +33,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "concurrently": "^9.1.2",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.3"
+  }
 }

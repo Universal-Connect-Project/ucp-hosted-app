@@ -1,6 +1,7 @@
 import { api, TagTypes } from "../baseApi";
 import { saveAs } from "../shared/utils/fileSaver";
 import { Aggregator } from "../shared/constants/aggregators";
+import { INSTITUTION_SERVICE_BASE_URL } from "../shared/constants/environment";
 
 interface InstitutionPermissions {
   canCreateInstitution: boolean;
@@ -77,8 +78,6 @@ export interface InstitutionsParams extends InstitutionParamsBooleans {
 interface GetInstitution {
   id: string;
 }
-
-const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
 export const INSTITUTION_SERVICE_PERMISSIONS_URL = `${INSTITUTION_SERVICE_BASE_URL}/permissions`;
 export const INSTITUTION_SERVICE_INSTITUTIONS_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions`;
