@@ -3,15 +3,9 @@ name: Auth E2E (Clients)
 on: pull_request
 
 jobs:
-  setup-env:
-    name: "Load ENV Vars"
-    uses: ./.github/workflows/setup-env.yml
-    secrets: inherit
-
   e2e-tests:
     name: "Cypress (Clients)"
     runs-on: ubuntu-latest
-    needs: [setup-env]
 
     steps:
       - name: Checkout
@@ -25,11 +19,8 @@ jobs:
 
       - name: "Create env file"
         run: |
-          ENV_FILE_PATH=./apps/authentication-service/.env
+          ENV_FILE_PATH=./apps/authentication-service/env/secretStaging.env
           touch ${ENV_FILE_PATH}
-
-          # Vars
-          echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
 
           # Secrets (can't load these from another job, due to GH security features)
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
