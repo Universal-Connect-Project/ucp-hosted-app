@@ -55,7 +55,6 @@ jobs:
         run: |
           ENV_FILE_PATH=./apps/institution-service/.env
           touch ${ENV_FILE_PATH}
-          touch ${INST_ENV_FILE_PATH}
 
           # Vars
           echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
