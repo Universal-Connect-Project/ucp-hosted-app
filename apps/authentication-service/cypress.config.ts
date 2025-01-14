@@ -1,13 +1,5 @@
 import { defineConfig } from "cypress";
-import dotenv from "dotenv";
-import path from "path";
-
-dotenv.config({
-  path: [
-    path.join(__dirname, "./env/secretStaging.env"),
-    path.join(__dirname, "./env/staging.env"),
-  ],
-});
+import "./src/dotEnv";
 
 export default defineConfig({
   env: {
