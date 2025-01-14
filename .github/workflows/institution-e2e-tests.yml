@@ -57,7 +57,7 @@ jobs:
           project: apps/institution-service
           start: |
             npm run dev --workspace apps/authentication-service
-            DISABLE_RATE_LIMITING=true npm run dev --workspace apps/institution-service
+            npm run dev:noRateLimiting --workspace apps/institution-service
           wait-on: "http://localhost:8089/ping, http://localhost:8088/ping"
           spec: apps/institution-service/cypress/e2e/*.cy.ts
         env:
