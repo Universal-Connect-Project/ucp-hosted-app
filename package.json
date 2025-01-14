@@ -23,7 +23,7 @@
     "prettier": "turbo run prettier",
     "prod": "turbo run prod",
     "test": "turbo run test",
-    "reviewApp:start:services": "concurrently \"PORT=8089 npx ts-node --transpile-only apps/authentication-service/src/index.ts\" \"PORT=8088 npx ts-node --transpile-only apps/institution-service/src/app.ts\" \"node proxyServer.js\"",
+    "concurrently:start:services": "concurrently \"PORT=8089 npx ts-node --transpile-only apps/authentication-service/src/index.ts\" \"PORT=8088 npx ts-node --transpile-only apps/institution-service/src/app.ts\" \"node proxyServer.js\"",
     "prepare": "husky"
   },
   "devDependencies": {
