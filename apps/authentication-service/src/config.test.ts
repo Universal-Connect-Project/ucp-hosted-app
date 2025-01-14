@@ -12,14 +12,16 @@ describe("config", () => {
   });
 
   it("errors if missing required envs", () => {
+    const originalEnv = process.env;
+
+    process.env = {};
+
     expect(() => {
-      init({
-        auth0Domain: undefined,
-        auth0ClientId: undefined,
-        auth0ClientSecret: undefined,
-      });
+      init();
     }).toThrow(
-      "Missing required environment variables. Check README.md and `../.env.example` for more info.",
+      "Missing required environment variables. Check README.md and your env files for more info.",
     );
+
+    process.env = originalEnv;
   });
 });
