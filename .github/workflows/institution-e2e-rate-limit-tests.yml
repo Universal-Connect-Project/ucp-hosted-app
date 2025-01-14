@@ -3,15 +3,9 @@ name: Institution E2E (Rate Limiting)
 on: pull_request
 
 jobs:
-  setup-env:
-    name: "Load ENV Vars"
-    uses: ./.github/workflows/setup-env.yml
-    secrets: inherit
-
   e2e-tests:
     name: Cypress (Institutions)
     runs-on: ubuntu-latest
-    needs: [setup-env]
 
     services:
       postgres:
@@ -42,17 +36,7 @@ jobs:
 
       - name: Setup Postgres Database
         run: |
-          npm run db:setup --workspace apps/institution-service    
-
-      - name: "Create env file"
-        run: |
-          ENV_FILE_PATH=./apps/institution-service/.env
-          touch ${ENV_FILE_PATH}
-
-          # Vars
-          echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
-
-          # Secrets (can't load these from another job, due to GH security features)      
+          npm run db:setup --workspace apps/institution-service     
 
       - name: Cypress run (Rate Limit cacheList endpoint)
         uses: cypress-io/github-action@v6

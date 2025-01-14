@@ -51,26 +51,13 @@ jobs:
 
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
 
-      - name: "Create institution env file"
-        run: |
-          ENV_FILE_PATH=./apps/institution-service/.env
-          touch ${ENV_FILE_PATH}
-
-          # Vars
-          echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
-
-          echo DISABLE_RATE_LIMITING=true  >> ${ENV_FILE_PATH}
-          
-          # Secrets (can't load these from another job, due to GH security features)
-          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
-
       - name: Cypress run (General)
         uses: cypress-io/github-action@v6
         with:
           project: apps/institution-service
           start: |
             npm run dev --workspace apps/authentication-service
-            npm run dev --workspace apps/institution-service
+            DISABLE_RATE_LIMITING=true npm run dev --workspace apps/institution-service
           wait-on: "http://localhost:8089/ping, http://localhost:8088/ping"
           spec: apps/institution-service/cypress/e2e/*.cy.ts
         env:
