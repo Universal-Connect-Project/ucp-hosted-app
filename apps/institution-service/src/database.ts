@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "./dotEnv";
 import path from "path";
 import { Dialect, Sequelize } from "sequelize";
 
