@@ -3,15 +3,10 @@ name: Auth E2E (Widget Auth)
 on: pull_request
 
 jobs:
-  setup-env:
-    name: "Load ENV Vars"
-    uses: ./.github/workflows/setup-env.yml
-    secrets: inherit
 
   e2e-tests:
     name: "Cypress (Widget Auth)"
     runs-on: ubuntu-latest
-    needs: [setup-env]
 
     services:
       postgres:
@@ -50,16 +45,6 @@ jobs:
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
           
           cat ${ENV_FILE_PATH}
-
-      - name: "Create institution env file"
-        run: |
-          ENV_FILE_PATH=./apps/institution-service/.env
-          touch ${ENV_FILE_PATH}
-
-          # Vars
-          echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
-
-          # Secrets for institution list
 
       - name: Cypress run (Standard suite)
         uses: cypress-io/github-action@v6
