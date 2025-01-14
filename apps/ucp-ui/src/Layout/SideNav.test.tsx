@@ -9,7 +9,6 @@ import {
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
-import * as launchDarkly from "launchdarkly-react-client-sdk";
 import SideNav from "./SideNav";
 import {
   institutionRoute,
@@ -27,13 +26,7 @@ jest.mock("@auth0/auth0-react", () => ({
   withAuthenticationRequired: (component: any): any => component,
 }));
 
-jest.mock("launchdarkly-react-client-sdk");
-
 describe("<SideNav />", () => {
-  beforeEach(() => {
-    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({});
-  });
-
   it("calls logout on click", async () => {
     render(<Routes />, { shouldRenderRouter: false });
 
@@ -42,25 +35,7 @@ describe("<SideNav />", () => {
     await waitFor(() => expect(mockLogout).toHaveBeenCalled());
   });
 
-  it("doesnt render institutions if the flag is off", () => {
-    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({
-      institutionsPage: false,
-    });
-
-    render(<Routes />, { shouldRenderRouter: false });
-
-    expect(
-      screen.queryByRole("link", {
-        name: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
-      }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("renders institutions if the flag is on", () => {
-    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({
-      institutionsPage: true,
-    });
-
+  it("renders institutions", () => {
     render(<Routes />, { shouldRenderRouter: false });
 
     expect(
@@ -95,10 +70,6 @@ describe("<SideNav />", () => {
   });
 
   it("adds a selected status for each routes match paths", () => {
-    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({
-      institutionsPage: true,
-    });
-
     const result1 = render(<SideNav />, {
       initialRoute: institutionRoute.fullRoute,
     });

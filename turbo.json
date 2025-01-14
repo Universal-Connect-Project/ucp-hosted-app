@@ -33,6 +33,10 @@
     "dev:e2e": {
       "cache": false,
       "persistent": true
+    },
+    "prod": {
+      "cache": false,
+      "persistent": true
     }
   }
 }
