@@ -14,6 +14,7 @@
     "build": "if [ -z \"$UCP_UI_REVIEW_APP\" ]; then npm run build:main; else npm run build:review; fi",
     "build:review": "npm run heroku:review:setupEnv && turbo build",
     "build:main": "turbo build",
+    "build:prod": "turbo build:prod",
     "copyAuthenticationEnv": "tee ./apps/authentication-service/env/secretStaging.env ./apps/authentication-service/env/secretProduction.env < ./apps/authentication-service/env/secretStaging.env.example",
     "heroku:review:setupEnv": "npm run heroku:ucpUiReviewApp:envVars && npm run heroku:authService:envVars",
     "heroku:ucpUiReviewApp:envVars": "echo HEROKU_APP_NAME=$HEROKU_APP_NAME >> apps/ucp-ui/env/staging.env && echo UCP_UI_REVIEW_APP=$UCP_UI_REVIEW_APP >> apps/ucp-ui/env/staging.env",
