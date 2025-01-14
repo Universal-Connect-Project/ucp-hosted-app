@@ -9,6 +9,11 @@ app.use('/authentication-service', createProxyMiddleware({ target: 'http://local
 
 app.use('/', express.static('apps/ucp-ui/dist'));
 
+// Handle SPA routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'apps/ucp-ui/dist', 'index.html'));
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Proxy server running on port ${PORT}`);
