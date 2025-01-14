@@ -44,27 +44,25 @@ jobs:
         run: |
           npm run db:setup --workspace apps/institution-service
 
-      - name: "Create env file"
+      - name: "Create authentication env file"
+        run: |
+          ENV_FILE_PATH=./apps/authentication-service/env/secretStaging.env
+          touch ${ENV_FILE_PATH}
+
+          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
+
+      - name: "Create institution env file"
         run: |
           ENV_FILE_PATH=./apps/institution-service/.env
-          AUTH_ENV_FILE_PATH=./apps/authentication-service/.env
           touch ${ENV_FILE_PATH}
-          touch ${AUTH_ENV_FILE_PATH}
 
           # Vars
           echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
 
-          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}        
           echo DISABLE_RATE_LIMITING=true  >> ${ENV_FILE_PATH}
           
           # Secrets (can't load these from another job, due to GH security features)
-
-          # For authentication service
-          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
-          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}  
-
-          # Copy the env file to the authentication service
-          cp ${ENV_FILE_PATH} ${AUTH_ENV_FILE_PATH}
+          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
 
       - name: Cypress run (General)
         uses: cypress-io/github-action@v6

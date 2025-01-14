@@ -12,6 +12,7 @@
   "homepage": "https://github.com/Universal-Connect-Project/ucp-hosted-app#readme",
   "scripts": {
     "build": "turbo build",
+    "copyAuthenticationEnv": "tee ./apps/authentication-service/env/secretStaging.env ./apps/authentication-service/env/secretProduction.env < ./apps/authentication-service/env/secretStaging.env.example",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "prettier": "turbo run prettier",

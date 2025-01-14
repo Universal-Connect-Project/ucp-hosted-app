@@ -1,6 +1,6 @@
 import express from "express";
 
-import envs from "./config";
+import "./config";
 import { initExpress } from "./init";
 import { getAccessToken } from "./shared/auth/authService";
 import { ConsoleColors, PORT } from "./shared/consts";
@@ -17,7 +17,7 @@ app.listen(listeningPort, () => {
   void getAccessToken()
     .then(() => {
       console.log(
-        `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${listeningPort}; ENV=${envs.ENV}`,
+        `\n${ConsoleColors.FgMagenta}${SERVICE_NAME} is listening on PORT ${listeningPort};`,
       );
       console.log(
         `${ConsoleColors.FgGreen}Service is initialized and ready to roll${ConsoleColors.Reset}`,

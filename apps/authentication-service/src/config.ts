@@ -1,30 +1,23 @@
-import "dotenv/config";
+import "./dotEnv";
 
-export const init = ({
-  auth0Domain,
-  auth0ClientId,
-  auth0ClientSecret,
-}: {
-  auth0Domain: string | undefined;
-  auth0ClientId: string | undefined;
-  auth0ClientSecret: string | undefined;
-}) => {
-  if (!(auth0Domain && auth0ClientId && auth0ClientSecret)) {
+export const init = () => {
+  const requiredVariables = [
+    "AUTH0_DOMAIN",
+    "AUTH0_CLIENT_ID",
+    "AUTH0_CLIENT_SECRET",
+  ];
+
+  if (requiredVariables.some((key) => !process.env[key])) {
     throw new Error(
-      "Missing required environment variables. Check README.md and `../.env.example` for more info.",
+      "Missing required environment variables. Check README.md and your env files for more info.",
     );
   }
 
   return {
-    ENV: process.env?.NODE_ENV,
-    AUTH0_DOMAIN: auth0Domain,
-    AUTH0_CLIENT_ID: auth0ClientId,
-    AUTH0_CLIENT_SECRET: auth0ClientSecret,
+    AUTH0_DOMAIN: process.env?.AUTH0_DOMAIN as string,
+    AUTH0_CLIENT_ID: process.env?.AUTH0_CLIENT_ID as string,
+    AUTH0_CLIENT_SECRET: process.env?.AUTH0_CLIENT_SECRET as string,
   };
 };
 
-export default init({
-  auth0Domain: process.env?.AUTH0_DOMAIN,
-  auth0ClientId: process.env?.AUTH0_CLIENT_ID,
-  auth0ClientSecret: process.env?.AUTH0_CLIENT_SECRET,
-});
+export default init();

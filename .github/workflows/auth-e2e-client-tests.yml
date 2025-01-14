@@ -3,15 +3,9 @@ name: Auth E2E (Clients)
 on: pull_request
 
 jobs:
-  setup-env:
-    name: "Load ENV Vars"
-    uses: ./.github/workflows/setup-env.yml
-    secrets: inherit
-
   e2e-tests:
     name: "Cypress (Clients)"
     runs-on: ubuntu-latest
-    needs: [setup-env]
 
     steps:
       - name: Checkout
@@ -25,26 +19,28 @@ jobs:
 
       - name: "Create env file"
         run: |
-          ENV_FILE_PATH=./apps/authentication-service/.env
+          ENV_FILE_PATH=./apps/authentication-service/env/secretStaging.env
           touch ${ENV_FILE_PATH}
-
-          # Vars
-          echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
 
           # Secrets (can't load these from another job, due to GH security features)
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
-          echo E2E_CLIENT_SECRET=${{ secrets.E2E_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
-          echo AUTH_PASSWORD_WITH_KEY_ROLES=${{ secrets.AUTH_PASSWORD_WITH_KEY_ROLES }} >> ${ENV_FILE_PATH}
-          echo AUTH_PASSWORD_WITHOUT_KEY_ROLES=${{ secrets.AUTH_PASSWORD_WITHOUT_KEY_ROLES }} >> ${ENV_FILE_PATH}
 
       - name: Cypress run (Standard suite)
         uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_AUTH_PASSWORD_WITH_KEY_ROLES: ${{ secrets.AUTH_PASSWORD_WITH_KEY_ROLES }}
+          CYPRESS_AUTH_USERNAME_WITH_KEY_ROLES: ${{ vars.AUTH_USERNAME_WITH_KEY_ROLES }}
+          CYPRESS_AUTH_PASSWORD_WITHOUT_KEY_ROLES: ${{ secrets.AUTH_PASSWORD_WITHOUT_KEY_ROLES }}
+          CYPRESS_AUTH_USERNAME_WITHOUT_KEY_ROLES: ${{ vars.AUTH_USERNAME_WITHOUT_KEY_ROLES }}
+          CYPRESS_E2E_CLIENT_SECRET: ${{ secrets.E2E_CLIENT_SECRET }}
+          CYPRESS_E2E_CLIENT_ID: ${{ vars.E2E_CLIENT_ID }}
+          
         with:
           project: apps/authentication-service
           start: npm run dev --workspace apps/authentication-service
           wait-on: "http://localhost:8089/ping"
           spec: apps/authentication-service/cypress/e2e/clients.cy.ts
-
+      
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         if: failure()
