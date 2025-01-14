@@ -4,7 +4,7 @@
   "description": "Frontend for the universal connect project",
   "type": "module",
   "scripts": {
-    "build": "webpack --mode staging --env staging",
+    "build": "webpack --mode production --env staging",
     "build:prod": "webpack --mode production --env production",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
