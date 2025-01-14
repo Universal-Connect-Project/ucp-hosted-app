@@ -3,15 +3,9 @@ name: Institution E2E (General)
 on: pull_request
 
 jobs:
-  setup-env:
-    name: "Load ENV Vars"
-    uses: ./.github/workflows/setup-env.yml
-    secrets: inherit
-
   e2e-tests:
     name: Cypress (Institutions)
     runs-on: ubuntu-latest
-    needs: [setup-env]
 
     services:
       postgres:
