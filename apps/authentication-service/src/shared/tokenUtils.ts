@@ -4,7 +4,7 @@ import os from "os";
 import path from "path";
 
 let token: string | undefined;
-const tokenFileName: string = "brkn-arrw.txt";
+const tokenFileName: string = `${process.env.PRODUCTION === "true" ? "prod" : "staging"}authenticationServiceToken.txt`;
 
 export const tokenFile: string = path.join(os.tmpdir(), tokenFileName);
 
