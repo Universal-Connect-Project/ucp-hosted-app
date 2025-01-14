@@ -1,19 +1,19 @@
 import { defineConfig } from "cypress";
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({
+  path: [
+    path.join(__dirname, "./env/secretStaging.env"),
+    path.join(__dirname, "./env/staging.env"),
+  ],
+});
 
 export default defineConfig({
   env: {
     AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
     AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
     AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
-    E2E_CLIENT_ID: process.env.E2E_CLIENT_ID,
-    E2E_CLIENT_SECRET: process.env.E2E_CLIENT_SECRET,
-    AUTH_USERNAME_WITH_KEY_ROLES: process.env.AUTH_USERNAME_WITH_KEY_ROLES,
-    AUTH_PASSWORD_WITH_KEY_ROLES: process.env.AUTH_PASSWORD_WITH_KEY_ROLES,
-    AUTH_USERNAME_WITHOUT_KEY_ROLES:
-      process.env.AUTH_USERNAME_WITHOUT_KEY_ROLES,
-    AUTH_PASSWORD_WITHOUT_KEY_ROLES:
-      process.env.AUTH_PASSWORD_WITHOUT_KEY_ROLES,
   },
   e2e: {
     setupNodeEvents(on, config) {
