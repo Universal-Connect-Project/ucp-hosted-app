@@ -59,13 +59,10 @@ jobs:
           # Vars
           echo -e "${{ needs.setup-env.outputs.env_vars }}" >> ${ENV_FILE_PATH}
 
-          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}        
           echo DISABLE_RATE_LIMITING=true  >> ${ENV_FILE_PATH}
           
           # Secrets (can't load these from another job, due to GH security features)
-
-          # Copy the env file to the authentication service
-          cp ${ENV_FILE_PATH} ${AUTH_ENV_FILE_PATH}
+          echo WIDGET_CLIENT_SECRET=${{ secrets.WIDGET_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
 
       - name: Cypress run (General)
         uses: cypress-io/github-action@v6
