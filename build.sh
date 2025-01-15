@@ -10,7 +10,5 @@ elif [ -n "$PRODUCTION" ]; then
   echo "Running build:prod..."
   npm run build:prod
 else
-  echo "No environment variable set. Building Staging"
-  npm run build:staging
-  exit 1
+  echo "No environment variable set. No build started..."
 fi
