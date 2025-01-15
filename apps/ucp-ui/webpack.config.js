@@ -1,7 +1,7 @@
-import path from "path";
-import HtmlWebpackPlugin from "html-webpack-plugin";
 import Dotenv from "dotenv-webpack";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import path from "path";
 
 export default ({ production }) => {
   const environmentString = production ? "production" : "staging";
@@ -10,7 +10,7 @@ export default ({ production }) => {
     entry: "./src/index.tsx",
     devServer: {
       historyApiFallback: true,
-      port: 3000,
+      port: process.env.port || 3000,
     },
     output: {
       filename: "bundle.js",

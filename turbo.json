@@ -10,6 +10,14 @@
         "dist"
       ]
     },
+    "build:prod": {
+      "dependsOn": [
+        "^build:prod"
+      ],
+      "outputs": [
+        "dist"
+      ]
+    },
     "lint": {
       "dependsOn": [
         "^lint"
