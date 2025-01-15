@@ -1,6 +1,6 @@
 import express from "express";
 import path from "path";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
 // Create __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
