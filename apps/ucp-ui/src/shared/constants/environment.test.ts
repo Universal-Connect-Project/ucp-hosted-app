@@ -1,6 +1,6 @@
 describe("Environment based urls", () => {
   beforeEach(() => {
-    delete process.env.UCP_UI_REVIEW_APP;
+    delete process.env.REVIEW_APP;
     delete process.env.HEROKU_APP_NAME;
     delete process.env.INSTITUTION_SERVICE_BASE_URL;
     delete process.env.AUTHENTICATION_SERVICE_BASE_URL;
@@ -8,8 +8,8 @@ describe("Environment based urls", () => {
     jest.resetModules();
   });
 
-  it("should return the review app URL for institution service if UCP_UI_REVIEW_APP is set", async () => {
-    process.env.UCP_UI_REVIEW_APP = "true";
+  it("should return the review app URL for institution service if REVIEW_APP is set", async () => {
+    process.env.REVIEW_APP = "true";
     process.env.HEROKU_APP_NAME = "my-review-app";
 
     const { INSTITUTION_SERVICE_BASE_URL } = await import("./environment");
@@ -17,7 +17,7 @@ describe("Environment based urls", () => {
     expect(INSTITUTION_SERVICE_BASE_URL).toBe(expectedUrl);
   });
 
-  it("should return the fallback URL for institution service if UCP_UI_REVIEW_APP is not set", async () => {
+  it("should return the fallback URL for institution service if REVIEW_APP is not set", async () => {
     process.env.INSTITUTION_SERVICE_BASE_URL = "http://custom-url.com";
 
     const { INSTITUTION_SERVICE_BASE_URL } = await import("./environment");
@@ -29,8 +29,8 @@ describe("Environment based urls", () => {
     expect(INSTITUTION_SERVICE_BASE_URL).toBe("http://localhost:8088");
   });
 
-  it("should return the review app URL for authentication service if UCP_UI_REVIEW_APP is set", async () => {
-    process.env.UCP_UI_REVIEW_APP = "true";
+  it("should return the review app URL for authentication service if REVIEW_APP is set", async () => {
+    process.env.REVIEW_APP = "true";
     process.env.HEROKU_APP_NAME = "my-review-app";
 
     const { AUTHENTICATION_SERVICE_BASE_URL } = await import("./environment");
@@ -38,7 +38,7 @@ describe("Environment based urls", () => {
     expect(AUTHENTICATION_SERVICE_BASE_URL).toBe(expectedUrl);
   });
 
-  it("should return the fallback URL for authentication service if UCP_UI_REVIEW_APP is not set", async () => {
+  it("should return the fallback URL for authentication service if REVIEW_APP is not set", async () => {
     process.env.AUTHENTICATION_SERVICE_BASE_URL = "http://custom-auth-url.com";
 
     const { AUTHENTICATION_SERVICE_BASE_URL } = await import("./environment");
