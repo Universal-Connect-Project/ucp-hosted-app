@@ -1,1 +1,1 @@
-web: npx ts-node --transpile-only apps/institution-service/src/app.ts
+web: npm run db:migrate --workspace=apps/institution-service && npx ts-node --transpile-only apps/institution-service/src/app.ts
