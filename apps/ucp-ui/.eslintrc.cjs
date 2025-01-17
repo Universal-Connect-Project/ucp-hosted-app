@@ -22,6 +22,7 @@ module.exports = {
     "jest.config.cjs",
     "jestSetup.js",
     "jest.polyfills.js",
+    "server.js",
   ],
   overrides: [
     {

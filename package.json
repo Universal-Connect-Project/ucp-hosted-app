@@ -11,13 +11,20 @@
   },
   "homepage": "https://github.com/Universal-Connect-Project/ucp-hosted-app#readme",
   "scripts": {
-    "build": "turbo build",
+    "build": "./build.sh",
+    "build:review": "npm run heroku:review:setupEnv && turbo build",
+    "build:staging": "npm run heroku:staging:setupEnv && turbo build",
+    "build:prod": "npm run heroku:production:setupEnv && turbo build:prod",
     "copyAuthenticationEnv": "tee ./apps/authentication-service/env/secretStaging.env ./apps/authentication-service/env/secretProduction.env < ./apps/authentication-service/env/secretStaging.env.example",
+    "heroku:review:setupEnv": "echo HEROKU_APP_NAME=$HEROKU_APP_NAME >> apps/ucp-ui/env/staging.env && echo REVIEW_APP=$REVIEW_APP >> apps/ucp-ui/env/staging.env",
+    "heroku:staging:setupEnv": "echo AUTHENTICATION_SERVICE_BASE_URL=$AUTHENTICATION_SERVICE_BASE_URL >> apps/ucp-ui/env/staging.env && echo INSTITUTION_SERVICE_BASE_URL=$INSTITUTION_SERVICE_BASE_URL >> apps/ucp-ui/env/staging.env",
+    "heroku:production:setupEnv": "echo AUTHENTICATION_SERVICE_BASE_URL=$AUTHENTICATION_SERVICE_BASE_URL >> apps/ucp-ui/env/production.env && echo INSTITUTION_SERVICE_BASE_URL=$INSTITUTION_SERVICE_BASE_URL >> apps/ucp-ui/env/production.env",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "prettier": "turbo run prettier",
     "prod": "turbo run prod",
     "test": "turbo run test",
+    "concurrently:start:services": "concurrently \"PORT=8089 npx ts-node --transpile-only apps/authentication-service/src/index.ts\" \"PORT=8088 npx ts-node --transpile-only apps/institution-service/src/app.ts\" \"node proxyServer.js\"",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -31,5 +38,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "concurrently": "^9.1.2",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.3"
+  }
 }

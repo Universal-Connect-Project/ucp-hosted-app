@@ -1,4 +1,5 @@
 import { api, TagTypes } from "../../baseApi";
+import { INSTITUTION_SERVICE_BASE_URL } from "../../shared/constants/environment";
 import { HttpMethods } from "../../shared/constants/http";
 
 export interface CreateInstitution {
@@ -23,8 +24,6 @@ export interface Institution {
     id: string;
   };
 }
-
-const INSTITUTION_SERVICE_BASE_URL = `http://localhost:8088`;
 
 export const INSTITUTION_SERVICE_CREATE_INSTITUTION_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions`;
 export const INSTITUTION_SERVICE_EDIT_INSTITUTION_URL = `${INSTITUTION_SERVICE_BASE_URL}/institutions/:institutionId`;

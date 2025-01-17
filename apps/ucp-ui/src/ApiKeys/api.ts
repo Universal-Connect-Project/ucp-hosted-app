@@ -1,12 +1,11 @@
 import { api, TagTypes } from "../baseApi";
+import { AUTHENTICATION_SERVICE_BASE_URL } from "../shared/constants/environment";
 import { HttpMethods } from "../shared/constants/http";
 
 interface ApiKeys {
   clientId: string;
   clientSecret: string;
 }
-
-const AUTHENTICATION_SERVICE_BASE_URL = `http://localhost:8089`;
 
 export const AUTHENTICATION_SERVICE_CREATE_API_KEYS_URL = `${AUTHENTICATION_SERVICE_BASE_URL}/v1/clients/keys`;
 export const AUTHENTICATION_SERVICE_GET_API_KEYS_URL = `${AUTHENTICATION_SERVICE_BASE_URL}/v1/clients/keys`;
