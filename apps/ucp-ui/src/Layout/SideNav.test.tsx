@@ -32,7 +32,13 @@ describe("<SideNav />", () => {
 
     await userEvent.click(screen.getByText(SIDE_NAV_LOG_OUT_BUTTON_TEXT));
 
-    await waitFor(() => expect(mockLogout).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mockLogout).toHaveBeenCalledWith({
+        logoutParams: {
+          returnTo: window.location.origin,
+        },
+      }),
+    );
   });
 
   it("renders institutions", () => {
