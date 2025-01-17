@@ -76,7 +76,13 @@ const SideNav = () => {
         </List>
         <div className={styles.buttonContainer}>
           <Button
-            onClick={() => void logout()}
+            onClick={() =>
+              void logout({
+                logoutParams: {
+                  returnTo: window.location.origin,
+                },
+              })
+            }
             size="medium"
             startIcon={<Logout />}
             variant="outlined"
