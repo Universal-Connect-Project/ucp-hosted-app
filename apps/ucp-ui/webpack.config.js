@@ -2,6 +2,7 @@ import Dotenv from "dotenv-webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
+import CopyWebpackPlugin from "copy-webpack-plugin";
 
 export default ({ production }) => {
   const environmentString = production ? "production" : "staging";
@@ -51,6 +52,9 @@ export default ({ production }) => {
         path: `./env/${environmentString}.env`,
       }),
       new MiniCssExtractPlugin(),
+      new CopyWebpackPlugin({
+        patterns: ["assets"],
+      }),
     ],
   };
 };
