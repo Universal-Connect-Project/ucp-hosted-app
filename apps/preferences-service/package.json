@@ -1,0 +1,32 @@
+{
+  "name": "preferences-service",
+  "version": "1.0.0",
+  "description": "Preferences service",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "dev": "nodemon ./src/app.ts",
+    "prod": "PRODUCTION=true npm run dev",
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
+    "prettier": "prettier . --check"
+  },
+  "dependencies": {
+    "@repo/shared-utils": "*",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-oauth2-jwt-bearer": "^1.6.0",
+    "express-rate-limit": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.12",
+    "cypress": "^13.13.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
