@@ -8,7 +8,9 @@
     "dev": "nodemon ./src/app.ts",
     "prod": "PRODUCTION=true npm run dev",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
-    "prettier": "prettier . --check"
+    "prettier": "prettier . --check",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@repo/shared-utils": "*",
