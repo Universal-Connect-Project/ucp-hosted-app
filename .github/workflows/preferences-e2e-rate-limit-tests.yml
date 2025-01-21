@@ -1,0 +1,37 @@
+name: Preferences E2E (Rate Limiting)
+
+on: pull_request
+
+jobs:
+  e2e-tests:
+    name: Cypress (Preferences)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          check-latest: true
+
+      - name: Install dependencies
+        run: npm ci 
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          project: apps/preferences-service
+          start: |
+            npm run dev --workspace apps/preferences-service
+          wait-on: "http://localhost:8091/ping"
+          spec: apps/preferences-service/cypress/e2e/rateLimiting/rateLimiting.cy.ts
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: apps/preferences-service/cypress/screenshots

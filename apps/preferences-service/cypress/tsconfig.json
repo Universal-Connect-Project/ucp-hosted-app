@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "../src",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ES2022",
+    "moduleResolution": "Node",
+    "types": ["cypress", "node"]
+  },
+  "include": ["**/*.ts"]
+}
