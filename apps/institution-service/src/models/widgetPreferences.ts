@@ -23,6 +23,11 @@ export class WidgetPreferences extends Model {
 
 WidgetPreferences.init(
   {
+    id: {
+      type: DataTypes.STRING,
+      unique: true,
+      primaryKey: true,
+    },
     defaultAggregatorId: {
       allowNull: true,
       type: DataTypes.INTEGER,

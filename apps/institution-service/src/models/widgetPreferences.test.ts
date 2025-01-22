@@ -42,4 +42,24 @@ describe("Widget Preferences model", () => {
       }),
     ).rejects.toThrow();
   });
+
+  it("errors if you try to create a widget preferences without an id", async () => {
+    await expect(() => WidgetPreferences.create({})).rejects.toThrow();
+  });
+
+  it("errors if you try to create a widget preferences with a duplicate id", async () => {
+    const newInstitutionAttributes = {
+      id: uuidv4(),
+    };
+    const createdWidgetPreferences = await WidgetPreferences.create(
+      newInstitutionAttributes,
+    );
+
+    await expect(() =>
+      WidgetPreferences.create(newInstitutionAttributes),
+    ).rejects.toThrow();
+
+    // db cleanup
+    void createdWidgetPreferences.destroy();
+  });
 });
