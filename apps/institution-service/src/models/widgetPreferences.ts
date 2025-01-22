@@ -1,0 +1,38 @@
+import {
+  Association,
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  Model,
+} from "sequelize";
+import sequelize from "../database";
+import { Aggregator } from "./aggregator";
+
+export class WidgetPreferences extends Model {
+  declare id: string;
+
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
+
+  declare defaultAggregatorId: ForeignKey<Aggregator["id"]>;
+
+  declare static associations: {
+    aggregator: Association<WidgetPreferences, Aggregator>;
+  };
+}
+
+WidgetPreferences.init(
+  {
+    defaultAggregatorId: {
+      allowNull: true,
+      type: DataTypes.INTEGER,
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
+  },
+  {
+    tableName: "widgetPreferences",
+    modelName: "WidgetPreferences",
+    sequelize,
+  },
+);
