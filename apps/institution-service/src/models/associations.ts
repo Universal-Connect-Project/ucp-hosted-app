@@ -1,6 +1,7 @@
 import { Aggregator } from "./aggregator";
 import { AggregatorIntegration } from "./aggregatorIntegration";
 import { Institution } from "./institution";
+import { SupportedAggregator } from "./supportedAggregator";
 import { WidgetPreferences } from "./widgetPreferences";
 
 export const defineAssociations = () => {
@@ -43,5 +44,17 @@ export const defineAssociations = () => {
     foreignKey: "id",
     sourceKey: "defaultAggregatorId",
     as: "defaultAggregator",
+  });
+
+  WidgetPreferences.hasMany(SupportedAggregator, {
+    sourceKey: "id",
+    foreignKey: "widgetPreferencesId",
+    as: "supportedAggregators",
+  });
+
+  Aggregator.hasMany(SupportedAggregator, {
+    sourceKey: "id",
+    foreignKey: "aggregatorId",
+    as: "supportedAggregators",
   });
 };
