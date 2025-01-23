@@ -1,6 +1,7 @@
 import { Aggregator } from "./aggregator";
 import { AggregatorIntegration } from "./aggregatorIntegration";
 import { Institution } from "./institution";
+import { WidgetPreferences } from "./widgetPreferences";
 
 export const defineAssociations = () => {
   Institution.hasMany(AggregatorIntegration, {
@@ -36,5 +37,11 @@ export const defineAssociations = () => {
   AggregatorIntegration.belongsTo(Aggregator, {
     foreignKey: "aggregatorId",
     as: "aggregator",
+  });
+
+  WidgetPreferences.hasOne(Aggregator, {
+    foreignKey: "id",
+    sourceKey: "defaultAggregatorId",
+    as: "defaultAggregator",
   });
 };
