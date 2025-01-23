@@ -40,7 +40,8 @@ export const defineAssociations = () => {
   });
 
   WidgetPreferences.hasOne(Aggregator, {
-    foreignKey: "defaultAggregatorId",
-    as: "aggregator",
+    foreignKey: "id",
+    sourceKey: "defaultAggregatorId",
+    as: "defaultAggregator",
   });
 };
