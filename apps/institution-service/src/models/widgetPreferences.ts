@@ -17,7 +17,7 @@ export class WidgetPreferences extends Model {
   declare defaultAggregatorId: ForeignKey<Aggregator["id"]>;
 
   declare static associations: {
-    aggregator: Association<WidgetPreferences, Aggregator>;
+    defaultAggregator: Association<WidgetPreferences, Aggregator>;
   };
 }
 
