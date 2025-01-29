@@ -28,6 +28,9 @@ jobs:
             npm run dev --workspace apps/performance-service
           wait-on: "http://localhost:8090/ping"
           spec: apps/performance-service/cypress/e2e/general/*.cy.ts
+        env:
+          CYPRESS_WIDGET_CLIENT_ID: ${{ vars.WIDGET_CLIENT_ID }}
+          CYPRESS_WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
