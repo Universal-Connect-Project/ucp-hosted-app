@@ -1,4 +1,4 @@
-import { validateSchema } from "@repo/backend-utils";
+import { validateRequestBody } from "@repo/backend-utils";
 import { UiUserPermissions } from "@repo/shared-utils";
 import { RequestHandler, Router } from "express";
 import { scopeIncludesAny } from "express-oauth2-jwt-bearer";
@@ -23,7 +23,7 @@ router.put(
   [
     validateUIAudience,
     validateUserCanEditAggregatorIntegration,
-    validateSchema(aggregatorIntegrationUpdateSchema),
+    validateRequestBody(aggregatorIntegrationUpdateSchema),
   ],
   scopeIncludesAny(
     `${UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION} ${UiUserPermissions.UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR}`,
@@ -35,7 +35,7 @@ router.post(
   "/",
   [
     validateUIAudience,
-    validateSchema(aggregatorIntegrationCreateSchema),
+    validateRequestBody(aggregatorIntegrationCreateSchema),
     validateUserCanCreateAggregatorIntegration,
   ],
   scopeIncludesAny(

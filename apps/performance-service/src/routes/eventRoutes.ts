@@ -1,4 +1,4 @@
-import { validateSchema } from "@repo/backend-utils";
+import { validateRequestBody } from "@repo/backend-utils";
 import { WidgetHostPermissions } from "@repo/shared-utils";
 import { RequestHandler, Router } from "express";
 import { requiredScopes } from "express-oauth2-jwt-bearer";
@@ -17,7 +17,7 @@ const router = Router();
 
 router.post(
   "/:id/connectionStart",
-  [validateWidgetAudience, validateSchema(startEventSchema)],
+  [validateWidgetAudience, validateRequestBody(startEventSchema)],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
   createStartEvent as RequestHandler,
 );

@@ -15,7 +15,7 @@ export const validateAccessToken = ({
     tokenSigningAlg: "RS256",
   });
 
-export const validateSchema = (schema: ObjectSchema) => {
+export const validateRequestBody = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const { error } = schema.validate(req.body);
 
