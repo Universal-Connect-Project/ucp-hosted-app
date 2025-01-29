@@ -1,29 +1,17 @@
 import { UiUserPermissions } from "@repo/shared-utils";
 import { UUID } from "crypto";
 import { NextFunction, Request, Response } from "express";
-import Joi, { ObjectSchema } from "joi";
+import Joi from "joi";
 import jwt from "jsonwebtoken";
 import { Aggregator } from "../models/aggregator";
 import {
-  validateUserCanDeleteAggregatorIntegration as deleteAggIntValidation,
-  validateUserCanEditAggregatorIntegration as editAggIntValidation,
   ActOnAggregatorIntegrationValidationErrorReason,
-  validateUserCanEditInstitution as editInstitutionValidation,
-  validateUserCanDeleteInstitution as deleteInstitutionValidation,
   ActOnInstitutionValidationErrorReason,
+  validateUserCanDeleteAggregatorIntegration as deleteAggIntValidation,
+  validateUserCanDeleteInstitution as deleteInstitutionValidation,
+  validateUserCanEditAggregatorIntegration as editAggIntValidation,
+  validateUserCanEditInstitution as editInstitutionValidation,
 } from "../shared/utils/permissionValidation";
-
-export const validate = (schema: ObjectSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const { error } = schema.validate(req.body);
-
-    if (error) {
-      return res.status(400).json({ error: error.details[0].message });
-    }
-
-    next();
-  };
-};
 
 export const institutionSchema = Joi.object({
   name: Joi.string(),

@@ -1,7 +1,7 @@
-import "./dotEnv";
 import cors from "cors";
 import express, { Request, Response } from "express";
 import logger from "morgan";
+import "./dotEnv";
 
 import { rateLimit } from "express-rate-limit";
 import sequelize from "./database";
@@ -84,9 +84,10 @@ app.use("/permissions", permissionsRoutes);
 app.use("/aggregatorIntegrations", aggregatorIntegrationRoutes);
 app.use("/aggregators", aggregatorRoutes);
 
-console.log("PORT is ", process.env.PORT || PORT);
 app.listen(process.env.PORT || PORT, () => {
-  console.info(`App listening on port ${process.env.PORT || PORT}`);
+  console.info(
+    `Institution Service listening on port ${process.env.PORT || PORT}`,
+  );
 });
 
 app.get("/ping", (req: Request, res: Response) => {
