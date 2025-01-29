@@ -1,0 +1,308 @@
+{
+  "info": {
+    "description": "Performance Service",
+    "title": "UCP Performance Service",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.0",
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Performance Service Dev",
+      "url": "http://localhost:8090"
+    }
+  ],
+  "paths": {
+    "/events/{connectionId}/connectionStart": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Begin tracking the bank connection process",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "connectionId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Connection ID from assigned aggregator"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobType": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "aggregate",
+                        "verification",
+                        "identity",
+                        "fullhistory",
+                        "all"
+                      ]
+                    }
+                  },
+                  "institutionId": {
+                    "type": "string"
+                  },
+                  "aggregatorId": {
+                    "type": "string"
+                  },
+                  "ClientId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "Connection Tracking started",
+                    "event": {
+                      "connectionId": "MBR-123-455-123",
+                      "institutionId": "13213-12312-123",
+                      "aggregatorId": "mx",
+                      "clientId": "54321",
+                      "jobType": "aggregate",
+                      "startedAt": "2024-09-10T16:07:46.038Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "\"institutionId\" is required"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/events/{connectionId}/connectionPause": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Pause the duration tracking on a connection",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "connectionId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Connection ID from assigned aggregator"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "Duration tracking paused",
+                    "event": {
+                      "connectionId": "MBR-123-455-123",
+                      "institutionId": "13213-12312-123",
+                      "aggregatorId": "mx",
+                      "clientId": "54321",
+                      "jobType": "aggregate",
+                      "userInteractionTime": 0,
+                      "pausedAt": "2024-09-10T16:07:51.038Z",
+                      "startedAt": "2024-09-10T16:07:46.038Z",
+                      "successAt": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "\"id\" was not found"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/events/{connectionId}/connectionResume": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Resume the duration tracking on a connection",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "connectionId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Connection ID from assigned aggregator"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "Duration tracking resumed",
+                    "event": {
+                      "connectionId": "MBR-123-455-123",
+                      "institutionId": "13213-12312-123",
+                      "aggregatorId": "mx",
+                      "clientId": "54321",
+                      "jobType": "aggregate",
+                      "userInteractionTime": 140,
+                      "pausedAt": "2024-09-10T16:07:51.038Z",
+                      "startedAt": "2024-09-10T16:07:46.038Z",
+                      "successAt": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "\"id\" was not found"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/events/{connectionId}/connectionSuccess": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Record the moment a connection was successful",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "connectionId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Connection ID from assigned aggregator"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "Successful connection recorded",
+                    "event": {
+                      "connectionId": "MBR-123-455-123",
+                      "institutionId": "13213-12312-123",
+                      "aggregatorId": "mx",
+                      "clientId": "54321",
+                      "jobType": "aggregate",
+                      "userInteractionTime": 140,
+                      "pausedAt": null,
+                      "startedAt": "2024-09-10T16:07:46.038Z",
+                      "successAt": "2024-09-10T16:08:46.038Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "\"id\" was not found"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  }
+}

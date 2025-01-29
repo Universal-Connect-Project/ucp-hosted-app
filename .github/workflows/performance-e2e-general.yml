@@ -1,4 +1,4 @@
-name: Performance E2E (Rate Limiting)
+name: Performance E2E (General)
 
 on: pull_request
 
@@ -27,7 +27,7 @@ jobs:
           start: |
             npm run dev --workspace apps/performance-service
           wait-on: "http://localhost:8090/ping"
-          spec: apps/performance-service/cypress/e2e/rateLimiting/rateLimiting.cy.ts
+          spec: apps/performance-service/cypress/e2e/general/*.cy.ts
         env:
           CYPRESS_WIDGET_CLIENT_ID: ${{ vars.WIDGET_CLIENT_ID }}
           CYPRESS_WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}

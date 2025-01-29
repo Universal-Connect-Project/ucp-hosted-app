@@ -15,6 +15,47 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
+import { JwtPayload } from "jsonwebtoken";
+import { WIDGET_ACCESS_TOKEN } from "../shared/constants/accessTokens";
 import "./commands";
 
-before(() => {});
+const authenticateAndStoreToken = ({
+  audience,
+  variableName,
+  clientParams,
+}: {
+  audience: string;
+  variableName: string;
+  clientParams?: {
+    clientIdString: string;
+    clientSecretString: string;
+  };
+}) => {
+  const { clientIdString, clientSecretString } = clientParams;
+  const requestBody = {
+    grant_type: "client_credentials",
+    audience,
+    client_id: Cypress.env(clientIdString) as string,
+    client_secret: Cypress.env(clientSecretString) as string,
+  };
+
+  cy.request({
+    method: "POST",
+    url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
+    body: requestBody,
+  }).then((response: Cypress.Response<JwtPayload>) => {
+    Cypress.env(variableName, response.body.access_token);
+  });
+};
+
+before(() => {
+  authenticateAndStoreToken({
+    audience: AUTH0_WIDGET_AUDIENCE,
+    variableName: WIDGET_ACCESS_TOKEN,
+    clientParams: {
+      clientIdString: "WIDGET_CLIENT_ID",
+      clientSecretString: "WIDGET_CLIENT_SECRET",
+    },
+  });
+});

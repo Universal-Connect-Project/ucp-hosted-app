@@ -43,7 +43,7 @@ jobs:
           ENV_FILE_PATH=./apps/authentication-service/env/secretStaging.env
           touch ${ENV_FILE_PATH}
 
-          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}          
+          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
 
       - name: Cypress run (General)
         uses: cypress-io/github-action@v6

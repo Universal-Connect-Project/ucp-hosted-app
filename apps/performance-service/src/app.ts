@@ -1,7 +1,9 @@
+import "./dotEnv";
 import cors from "cors";
 import express, { Request, Response } from "express";
 import { rateLimit } from "express-rate-limit";
 import logger from "morgan";
+import eventRoutes from "./routes/eventRoutes";
 import { PORT } from "./shared/consts/port";
 
 const app = express();
@@ -40,7 +42,11 @@ app.get("/ping", (_req: Request, res: Response) => {
   );
 });
 
-console.log("PORT is ", process.env.PORT || PORT);
+// Routes
+app.use("/events", eventRoutes);
+
 app.listen(process.env.PORT || PORT, () => {
-  console.info(`App listening on port ${process.env.PORT || PORT}`);
+  console.info(
+    `Performance Service listening on port ${process.env.PORT || PORT}`,
+  );
 });

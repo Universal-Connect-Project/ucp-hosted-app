@@ -1,0 +1,6 @@
+{
+  "watch": ["."],
+  "ext": "js,ts,json,env",
+  "ignore": ["./cypress/**"],
+  "exec": "ts-node src/app.ts"
+}

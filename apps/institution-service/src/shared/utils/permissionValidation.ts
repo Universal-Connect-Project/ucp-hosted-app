@@ -1,3 +1,4 @@
+import { validateAccessToken } from "@repo/backend-utils";
 import {
   AUTH0_CLIENT_AUDIENCE,
   AUTH0_WIDGET_AUDIENCE,
@@ -5,24 +6,20 @@ import {
 } from "@repo/shared-utils";
 import { UUID } from "crypto";
 import { Request } from "express";
-import { auth } from "express-oauth2-jwt-bearer";
 import jwt from "jsonwebtoken";
 import { Aggregator } from "../../models/aggregator";
 import { AggregatorIntegration } from "../../models/aggregatorIntegration";
 import { Institution } from "../../models/institution";
 
-const validateAccessToken = (audience: string | undefined) =>
-  auth({
-    audience: audience,
-    issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
-    tokenSigningAlg: "RS256",
-  });
+export const validateUIAudience = validateAccessToken({
+  audience: AUTH0_CLIENT_AUDIENCE,
+  auth0Domain: process.env.AUTH0_DOMAIN as string,
+});
 
-export const validateUIAudience = validateAccessToken(AUTH0_CLIENT_AUDIENCE);
-
-export const validateWidgetAudience = validateAccessToken(
-  AUTH0_WIDGET_AUDIENCE,
-);
+export const validateWidgetAudience = validateAccessToken({
+  audience: AUTH0_WIDGET_AUDIENCE,
+  auth0Domain: process.env.AUTH0_DOMAIN as string,
+});
 
 export interface DecodedToken {
   permissions: string[];
