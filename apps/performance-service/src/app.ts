@@ -1,8 +1,8 @@
+import "./dotEnv";
 import cors from "cors";
 import express, { Request, Response } from "express";
 import { rateLimit } from "express-rate-limit";
 import logger from "morgan";
-import "./dotEnv";
 import eventRoutes from "./routes/eventRoutes";
 import { PORT } from "./shared/consts/port";
 
