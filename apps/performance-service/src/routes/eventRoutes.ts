@@ -8,12 +8,20 @@ import {
   updateConnectionResume,
   updateSuccessEvent,
 } from "../controllers/eventController";
-import {
-  startEventSchema,
-  validateWidgetAudience,
-} from "../middlewares/validationMiddleware";
+import { validateWidgetAudience } from "../middlewares/validationMiddleware";
+import { JobTypes } from "@repo/shared-utils";
+import Joi from "joi";
 
 const router = Router();
+
+export const startEventSchema = Joi.object({
+  jobType: Joi.array()
+    .items(Joi.string().valid(...Object.values(JobTypes)))
+    .required(),
+  institutionId: Joi.string().required(),
+  aggregatorId: Joi.string().required(),
+  clientId: Joi.string().required(),
+});
 
 router.post(
   "/:id/connectionStart",

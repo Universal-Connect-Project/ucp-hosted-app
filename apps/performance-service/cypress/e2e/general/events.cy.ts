@@ -3,6 +3,7 @@ import {
   createAuthorizationHeader,
   runTokenInvalidCheck,
 } from "../../shared/utils/authorization";
+import { JobTypes } from "@repo/shared-utils";
 
 describe("connection event endpoints", () => {
   const connectionId = "MBR-123";
@@ -10,7 +11,7 @@ describe("connection event endpoints", () => {
   describe("/events/:connectionId/connectionStart", () => {
     const eventStartUrl = `events/${connectionId}/connectionStart`;
     const eventRequestBody = {
-      jobType: "aggregation",
+      jobType: [JobTypes.AGGREGATE],
       institutionId: "test",
       aggregatorId: "test",
       clientId: "test",
@@ -53,36 +54,28 @@ describe("connection event endpoints", () => {
     });
 
     it("fails when jobType is not one of the allowed values", () => {
-      const invalidJobTypes = ["invalidType", "", null, 123, true];
-      invalidJobTypes.forEach((invalidJobType) => {
-        const invalidBody = { ...eventRequestBody, jobType: invalidJobType };
+      const invalidBody = { ...eventRequestBody, jobType: ["invalidType"] };
 
-        cy.request({
-          url: eventStartUrl,
-          method: "POST",
-          failOnStatusCode: false,
-          headers: {
-            Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
-          },
-          body: invalidBody,
-        }).then((response: { status: number; body: { error: string } }) => {
-          expect(response.status).to.eq(400);
-          expect(response.body).to.have.property("error");
-          expect(response.body.error).to.include("jobType");
-        });
+      cy.request({
+        url: eventStartUrl,
+        method: "POST",
+        failOnStatusCode: false,
+        headers: {
+          Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
+        },
+        body: invalidBody,
+      }).then((response: { status: number; body: { error: string } }) => {
+        expect(response.status).to.eq(400);
+        expect(response.body).to.have.property("error");
+        expect(response.body.error).to.include("jobType");
       });
     });
 
-    it("succeeds when jobType is one of the allowed values", () => {
-      const validJobTypes = [
-        "aggregation",
-        "verification",
-        "identity",
-        "fullhistory",
-        "all",
-      ];
-      validJobTypes.forEach((validJobType) => {
-        const validBody = { ...eventRequestBody, jobType: validJobType };
+    const validJobTypes = Object.values(JobTypes);
+
+    validJobTypes.forEach((validJobType) => {
+      it(`succeeds when jobType is ${validJobType}`, () => {
+        const validBody = { ...eventRequestBody, jobType: [validJobType] };
 
         cy.request({
           url: eventStartUrl,

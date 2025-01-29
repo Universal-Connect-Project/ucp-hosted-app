@@ -4,6 +4,14 @@ export const DefaultPermissions = {
   EMAIL: "email",
 };
 
+export const JobTypes = {
+  AGGREGATE: "aggregate",
+  VERIFICATION: "verification",
+  IDENTITY: "identity",
+  FULL_HISTORY: "fullhistory",
+  ALL: "all",
+};
+
 export const UiClientPermissions = {
   READ_KEYS: "read:keys",
   CREATE_KEYS: "create:keys",

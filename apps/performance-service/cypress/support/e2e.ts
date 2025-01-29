@@ -15,62 +15,31 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import {
-  AUTH0_WIDGET_AUDIENCE,
-  DefaultPermissions,
-  UiClientPermissions,
-  UiUserPermissions,
-} from "@repo/shared-utils";
+import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
 import { WIDGET_ACCESS_TOKEN } from "../shared/constants/accessTokens";
 import "./commands";
 
 const authenticateAndStoreToken = ({
   audience,
-  passwordEnvString,
-  usernameEnvString,
   variableName,
   clientParams,
 }: {
   audience: string;
-  passwordEnvString: string;
-  usernameEnvString: string;
   variableName: string;
   clientParams?: {
     clientIdString: string;
     clientSecretString: string;
   };
 }) => {
-  const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
+  const { clientIdString, clientSecretString } = clientParams;
+  const requestBody = {
+    grant_type: "client_credentials",
+    audience,
+    client_id: Cypress.env(clientIdString) as string,
+    client_secret: Cypress.env(clientSecretString) as string,
+  };
 
-  const allPermissionsScope = [
-    DefaultPermissions,
-    UiClientPermissions,
-    UiUserPermissions,
-  ]
-    .map((permissions) => Object.values(permissions))
-    .reduce((acc, permissions) => [...acc, ...permissions], [])
-    .join(" ");
-
-  let requestBody = {};
-  if (clientParams) {
-    const { clientIdString, clientSecretString } = clientParams;
-    requestBody = {
-      grant_type: "client_credentials",
-      audience,
-      client_id: Cypress.env(clientIdString) as string,
-      client_secret: Cypress.env(clientSecretString) as string,
-    };
-  } else {
-    requestBody = {
-      audience,
-      client_id: ucpWebUiClientId,
-      grant_type: "password",
-      password: Cypress.env(passwordEnvString) as string,
-      username: Cypress.env(usernameEnvString) as string,
-      scope: allPermissionsScope,
-    };
-  }
   cy.request({
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
@@ -83,8 +52,6 @@ const authenticateAndStoreToken = ({
 before(() => {
   authenticateAndStoreToken({
     audience: AUTH0_WIDGET_AUDIENCE,
-    passwordEnvString: "",
-    usernameEnvString: "",
     variableName: WIDGET_ACCESS_TOKEN,
     clientParams: {
       clientIdString: "WIDGET_CLIENT_ID",

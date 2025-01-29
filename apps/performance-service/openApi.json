@@ -48,12 +48,22 @@
                 "type": "object",
                 "properties": {
                   "jobType": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "aggregate",
+                        "verification",
+                        "identity",
+                        "fullhistory",
+                        "all"
+                      ]
+                    }
                   },
                   "institutionId": {
                     "type": "string"
                   },
-                  "AggregatorId": {
+                  "aggregatorId": {
                     "type": "string"
                   },
                   "ClientId": {
@@ -76,9 +86,9 @@
                     "event": {
                       "connectionId": "MBR-123-455-123",
                       "institutionId": "13213-12312-123",
-                      "AggregatorId": "mx",
+                      "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregation",
+                      "jobType": "aggregate",
                       "startedAt": "2024-09-10T16:07:46.038Z"
                     }
                   }
@@ -136,9 +146,9 @@
                     "event": {
                       "connectionId": "MBR-123-455-123",
                       "institutionId": "13213-12312-123",
-                      "AggregatorId": "mx",
+                      "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregation",
+                      "jobType": "aggregate",
                       "userInteractionTime": 0,
                       "pausedAt": "2024-09-10T16:07:51.038Z",
                       "startedAt": "2024-09-10T16:07:46.038Z",
@@ -199,9 +209,9 @@
                     "event": {
                       "connectionId": "MBR-123-455-123",
                       "institutionId": "13213-12312-123",
-                      "AggregatorId": "mx",
+                      "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregation",
+                      "jobType": "aggregate",
                       "userInteractionTime": 140,
                       "pausedAt": "2024-09-10T16:07:51.038Z",
                       "startedAt": "2024-09-10T16:07:46.038Z",
@@ -262,9 +272,9 @@
                     "event": {
                       "connectionId": "MBR-123-455-123",
                       "institutionId": "13213-12312-123",
-                      "AggregatorId": "mx",
+                      "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregation",
+                      "jobType": "aggregate",
                       "userInteractionTime": 140,
                       "pausedAt": null,
                       "startedAt": "2024-09-10T16:07:46.038Z",
