@@ -36,7 +36,7 @@ describe("connection event life cycle", () => {
 
       // STEP 5 after processing time make sure it deleted
       cy.wait(5000); // 5 seconds for Redis processing poller to process the event
-      unpauseConnectionEventRequest(connectionId).then((response) => {
+      unpauseConnectionEventRequest(connectionId, false).then((response) => {
         expect(response.status).to.eq(400);
         expect(response.body).to.include({ error: "Connection not found" });
       });

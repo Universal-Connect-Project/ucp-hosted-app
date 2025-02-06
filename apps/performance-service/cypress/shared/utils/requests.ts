@@ -37,10 +37,14 @@ export const pauseConnectionEventRequest = (connectionId: string) => {
   });
 };
 
-export const unpauseConnectionEventRequest = (connectionId: string) => {
+export const unpauseConnectionEventRequest = (
+  connectionId: string,
+  failOnStatusCode: boolean = true,
+) => {
   return cy.request({
     url: `events/${connectionId}/connectionResume`,
     method: "PUT",
+    failOnStatusCode,
     headers: {
       Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
     },
