@@ -41,8 +41,8 @@ jobs:
           spec: apps/performance-service/cypress/e2e/general/*.cy.ts
         env:
           REDIS_SERVER: redis://localhost:6379
-          EVENT_PROCESSING_TIME_LIMIT_SECONDS: 5
-          POLL_INTERVAL_SECONDS: 2
+          EVENT_PROCESSING_TIME_LIMIT_SECONDS: 3
+          POLL_INTERVAL_SECONDS: 1
           CYPRESS_WIDGET_CLIENT_ID: ${{ vars.WIDGET_CLIENT_ID }}
           CYPRESS_WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}
 
