@@ -1,47 +1,123 @@
 import { Request, Response } from "express";
+import { setEvent, getEvent } from "../services/storageClient/redis";
 
-export const createStartEvent = (req: Request, res: Response) => {
+interface CreateStartRequest {
+  jobType: string[];
+  institutionId: string;
+  aggregatorId: string;
+  clientId: string;
+}
+
+export interface EventObject {
+  connectionId: string;
+  jobType: string[];
+  institutionId: string;
+  aggregatorId: string;
+  clientId: string;
+  startedAt: number;
+  userInteractionTime: number;
+  pausedAt: number | null | undefined;
+  successAt: number;
+}
+
+export const createStartEvent = async (req: Request, res: Response) => {
   try {
-    // TODO: interact with Redis to create Event with the required fields
-    res.status(201).json({ message: "TODO: implement start in next ticket" });
+    const { connectionId } = req.params;
+    const { jobType, institutionId, aggregatorId, clientId } =
+      req.body as CreateStartRequest;
+    const eventBody = {
+      connectionId,
+      institutionId,
+      aggregatorId,
+      clientId,
+      jobType,
+      startedAt: Date.now(),
+    };
+    const eventObj = (await getEvent(connectionId)) as EventObject;
+    if (eventObj) {
+      return res.status(200).json({
+        message: "Connection event already started",
+        event: eventObj,
+      });
+    }
+
+    await setEvent(connectionId, eventBody);
+
+    res.status(201).json({
+      message: `Started tracking connection: ${connectionId}`,
+      event: eventBody,
+    });
   } catch (error) {
     res.status(400).json({ error: error });
   }
 };
 
-export const updateConnectionPause = (req: Request, res: Response) => {
+export const updateConnectionPause = async (req: Request, res: Response) => {
   try {
-    // TODO: interact with Redis to update event to track when user interaction is happening
-    // so we can remove time spent by the user when collecting the duration metric
-    res
-      .status(200)
-      .json({ message: "TODO: implement update challenge in next ticket" });
+    const { connectionId } = req.params;
+    const eventObj = (await getEvent(connectionId)) as EventObject;
+    if (eventObj.pausedAt) {
+      res.status(200).json({
+        message: "Connection process was already paused. Nothing changed.",
+        event: eventObj,
+      });
+    } else {
+      eventObj.pausedAt = Date.now();
+      eventObj.userInteractionTime = eventObj.userInteractionTime ?? 0;
+      await setEvent(connectionId, eventObj);
+      res.status(200).json({
+        message: "Connection process paused duration tracking.",
+        event: eventObj,
+      });
+    }
   } catch (error) {
-    res.status(400).json({ error: error });
+    res.status(400).json({ error });
   }
 };
 
-export const updateConnectionResume = (req: Request, res: Response) => {
+export const updateConnectionResume = async (req: Request, res: Response) => {
   try {
-    // TODO: interact with Redis to update event to track when user interaction is happening
-    // so we can remove time spent by the user when collecting the duration metric
-    res
-      .status(200)
-      .json({ message: "TODO: implement challenge resumed in next ticket" });
+    const { connectionId } = req.params;
+    const eventObj = (await getEvent(connectionId)) as EventObject;
+    if (eventObj?.pausedAt) {
+      const pauseDurationMilliseconds = Date.now() - eventObj.pausedAt;
+      eventObj.userInteractionTime += pauseDurationMilliseconds;
+      eventObj.pausedAt = null;
+
+      await setEvent(connectionId, eventObj);
+      res.status(200).json({
+        message: "Connection process resumed duration tracking.",
+        event: eventObj,
+      });
+    } else {
+      res.status(200).json({
+        message: "Connection was not paused. Nothing changed.",
+        event: eventObj,
+      });
+    }
   } catch (error) {
-    res.status(400).json({ error: error });
+    res.status(400).json({ error });
   }
 };
 
-export const updateSuccessEvent = (req: Request, res: Response) => {
+export const updateSuccessEvent = async (req: Request, res: Response) => {
   try {
-    // TODO: interact with Redis to get all fields and the time between start and now minus
-    // time spent in mfa to get duration then send the data to the time series database
-    // and clear the redis object.
-    res
-      .status(200)
-      .json({ message: "TODO: implement success event in next ticket" });
+    const { connectionId } = req.params;
+    const eventObj = (await getEvent(connectionId)) as EventObject;
+    if (eventObj?.successAt) {
+      res.status(200).json({
+        message: "Connection was already completed. Nothing changed.",
+        event: eventObj,
+      });
+    } else {
+      const updatedObj = { ...eventObj, successAt: Date.now() };
+      await setEvent(connectionId, updatedObj);
+      res.status(200).json({
+        message: "Connection was completed successfully.",
+        event: updatedObj,
+      });
+    }
   } catch (error) {
-    res.status(400).json({ error: error });
+    res.status(400).json({ error });
   }
 };

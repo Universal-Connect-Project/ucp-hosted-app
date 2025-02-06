@@ -1,15 +1,16 @@
-import { WIDGET_ACCESS_TOKEN } from "../../shared/constants/accessTokens";
-import {
-  createAuthorizationHeader,
-  runTokenInvalidCheck,
-} from "../../shared/utils/authorization";
+import { runTokenInvalidCheck } from "../../shared/utils/authorization";
 import { JobTypes } from "@repo/shared-utils";
+import {
+  markSuccessfulEventRequest,
+  pauseConnectionEventRequest,
+  startConnectionEventRequest,
+  unpauseConnectionEventRequest,
+} from "../../shared/utils/requests";
 
 describe("connection event endpoints", () => {
-  const connectionId = "MBR-123";
+  const connectionId = crypto.randomUUID();
 
   describe("/events/:connectionId/connectionStart", () => {
-    const eventStartUrl = `events/${connectionId}/connectionStart`;
     const eventRequestBody = {
       jobType: [JobTypes.AGGREGATE],
       institutionId: "test",
@@ -20,12 +21,8 @@ describe("connection event endpoints", () => {
     const requiredFields = Object.keys(eventRequestBody);
 
     it("gets success status when requested with the proper permission", () => {
-      cy.request({
-        url: eventStartUrl,
-        method: "POST",
-        headers: {
-          Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
-        },
+      startConnectionEventRequest({
+        connectionId,
         body: eventRequestBody,
       }).then((response) => {
         expect(response.status).to.eq(201);
@@ -37,14 +34,10 @@ describe("connection event endpoints", () => {
         const bodyWithMissingField = { ...eventRequestBody };
         delete bodyWithMissingField[field];
 
-        cy.request({
-          url: eventStartUrl,
-          method: "POST",
-          failOnStatusCode: false,
-          headers: {
-            Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
-          },
+        startConnectionEventRequest({
+          connectionId: crypto.randomUUID(),
           body: bodyWithMissingField,
+          failOnStatusCode: false,
         }).then((response: { status: number; body: { error: string } }) => {
           expect(response.status).to.eq(400);
           expect(response.body).to.have.property("error");
@@ -56,14 +49,10 @@ describe("connection event endpoints", () => {
     it("fails when jobType is not one of the allowed values", () => {
       const invalidBody = { ...eventRequestBody, jobType: ["invalidType"] };
 
-      cy.request({
-        url: eventStartUrl,
-        method: "POST",
-        failOnStatusCode: false,
-        headers: {
-          Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
-        },
+      startConnectionEventRequest({
+        connectionId: crypto.randomUUID(),
         body: invalidBody,
+        failOnStatusCode: false,
       }).then((response: { status: number; body: { error: string } }) => {
         expect(response.status).to.eq(400);
         expect(response.body).to.have.property("error");
@@ -77,12 +66,8 @@ describe("connection event endpoints", () => {
       it(`succeeds when jobType is ${validJobType}`, () => {
         const validBody = { ...eventRequestBody, jobType: [validJobType] };
 
-        cy.request({
-          url: eventStartUrl,
-          method: "POST",
-          headers: {
-            Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
-          },
+        startConnectionEventRequest({
+          connectionId: crypto.randomUUID(),
           body: validBody,
         }).then((response) => {
           expect(response.status).to.eq(201);
@@ -91,70 +76,46 @@ describe("connection event endpoints", () => {
     });
 
     runTokenInvalidCheck({
-      url: eventStartUrl,
+      url: `events/${connectionId}/connectionStart`,
       method: "POST",
     });
   });
 
   describe("/events/:connectionId/connectionPause", () => {
-    const eventPauseUrl = `events/${connectionId}/connectionPause`;
-
     it("gets success status when requested with the proper permission", () => {
-      cy.request({
-        url: eventPauseUrl,
-        method: "PUT",
-        headers: {
-          Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
-        },
-      }).then((response) => {
+      pauseConnectionEventRequest(connectionId).then((response) => {
         expect(response.status).to.eq(200);
       });
     });
 
     runTokenInvalidCheck({
-      url: eventPauseUrl,
+      url: `events/${connectionId}/connectionPause`,
       method: "PUT",
     });
   });
 
   describe("/events/:connectionId/connectionResume", () => {
-    const eventResumeUrl = `events/${connectionId}/connectionResume`;
-
     it("gets success status when requested with the proper permission", () => {
-      cy.request({
-        url: eventResumeUrl,
-        method: "PUT",
-        headers: {
-          Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
-        },
-      }).then((response) => {
+      unpauseConnectionEventRequest(connectionId).then((response) => {
         expect(response.status).to.eq(200);
       });
     });
 
     runTokenInvalidCheck({
-      url: eventResumeUrl,
+      url: `events/${connectionId}/connectionResume`,
       method: "PUT",
     });
   });
 
   describe("/events/:connectionId/connectionSuccess", () => {
-    const eventSuccessUrl = `events/${connectionId}/connectionSuccess`;
-
     it("gets success status when requested with the proper permission", () => {
-      cy.request({
-        url: eventSuccessUrl,
-        method: "PUT",
-        headers: {
-          Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
-        },
-      }).then((response) => {
+      markSuccessfulEventRequest(connectionId).then((response) => {
         expect(response.status).to.eq(200);
       });
     });
 
     runTokenInvalidCheck({
-      url: eventSuccessUrl,
+      url: `events/${connectionId}/connectionSuccess`,
       method: "PUT",
     });
   });

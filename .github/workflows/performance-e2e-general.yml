@@ -7,6 +7,17 @@ jobs:
     name: Cypress (Performance)
     runs-on: ubuntu-latest
 
+    services:
+      redis:
+        image: redis:7.2-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 20s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,6 +40,9 @@ jobs:
           wait-on: "http://localhost:8090/ping"
           spec: apps/performance-service/cypress/e2e/general/*.cy.ts
         env:
+          REDIS_SERVER: redis://localhost:6379
+          EVENT_PROCESSING_TIME_LIMIT_SECONDS: 5
+          POLL_INTERVAL_SECONDS: 2
           CYPRESS_WIDGET_CLIENT_ID: ${{ vars.WIDGET_CLIENT_ID }}
           CYPRESS_WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}
 
