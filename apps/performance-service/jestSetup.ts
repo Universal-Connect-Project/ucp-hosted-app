@@ -1,6 +1,8 @@
 import { clearRedisMock } from "./src/__mocks__/redis";
 
-beforeAll(() => {});
+beforeAll(() => {
+  jest.useFakeTimers();
+});
 
 afterEach(async () => {
   clearRedisMock();

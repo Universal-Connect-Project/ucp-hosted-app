@@ -79,17 +79,17 @@ describe("redis", () => {
 
   describe("getEvent", () => {
     it("calls get on the client with event subdirectory", async () => {
-      await getEvent("test");
+      const testValue = { a: "b" };
 
-      expect(mockGet).toHaveBeenCalledWith(`${EVENT_SUBDIRECTORY}:test`);
+      await setEvent("test", testValue);
+      const value = await getEvent("test");
+
+      expect(value).toEqual(testValue);
     });
   });
 
   describe("beginPollAndProcessEvents", () => {
-    it("triggers the process function and calls keys in the event subdirectory on the client and finds no matching keys", async () => {
-      jest.useFakeTimers();
-      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
-
+    it("triggers the process function on an interval", async () => {
       const poller = beginPollAndProcessEvents();
 
       jest.advanceTimersByTime(
@@ -97,15 +97,20 @@ describe("redis", () => {
       );
 
       await clearIntervalAsync(poller);
-
-      expect(mockKeys).toHaveBeenCalledWith(`${EVENT_SUBDIRECTORY}:*`);
-      expect(consoleSpy).toHaveBeenCalledWith("No matching keys found.");
     });
   });
 
   describe("processEvents", () => {
+    it("checks redis for items in the event subdirectory", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+      await processEvents();
+
+      expect(mockKeys).toHaveBeenCalledWith(`${EVENT_SUBDIRECTORY}:*`);
+      expect(consoleSpy).toHaveBeenCalledWith("No matching keys found.");
+    });
+
     it("processes events that have existed longer than the processing threshold (15 mins)", async () => {
-      jest.useFakeTimers();
       const connectionEventId = "MBR-123";
       await setEvent(connectionEventId, {
         startedAt: minutesAgo(20),

@@ -46,9 +46,7 @@ export const getEvent = async (key: string) => {
 
 export const beginPollAndProcessEvents = () => {
   return setIntervalAsync(
-    async () => {
-      await processEvents();
-    },
+    processEvents,
     Number(process.env.POLL_INTERVAL_SECONDS) * 1000,
   );
 };

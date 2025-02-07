@@ -54,6 +54,7 @@ export const createStartEvent = async (req: Request, res: Response) => {
 
 export const updateConnectionPause = async (req: Request, res: Response) => {
   try {
+    const dateNow = Date.now();
     const { connectionId } = req.params;
     const eventObj = (await getEvent(connectionId)) as EventObject;
     if (eventObj.pausedAt) {
@@ -62,7 +63,7 @@ export const updateConnectionPause = async (req: Request, res: Response) => {
         event: eventObj,
       });
     } else {
-      eventObj.pausedAt = Date.now();
+      eventObj.pausedAt = dateNow;
       eventObj.userInteractionTime = eventObj.userInteractionTime ?? 0;
       await setEvent(connectionId, eventObj);
       res.status(200).json({
@@ -77,10 +78,11 @@ export const updateConnectionPause = async (req: Request, res: Response) => {
 
 export const updateConnectionResume = async (req: Request, res: Response) => {
   try {
+    const dateNow = Date.now();
     const { connectionId } = req.params;
     const eventObj = (await getEvent(connectionId)) as EventObject;
     if (eventObj?.pausedAt) {
-      const pauseDurationMilliseconds = Date.now() - eventObj.pausedAt;
+      const pauseDurationMilliseconds = dateNow - eventObj.pausedAt;
       eventObj.userInteractionTime += pauseDurationMilliseconds;
       eventObj.pausedAt = null;
 
@@ -102,6 +104,7 @@ export const updateConnectionResume = async (req: Request, res: Response) => {
 
 export const updateSuccessEvent = async (req: Request, res: Response) => {
   try {
+    const dateNow = Date.now();
     const { connectionId } = req.params;
     const eventObj = (await getEvent(connectionId)) as EventObject;
     if (eventObj?.successAt) {
@@ -110,7 +113,7 @@ export const updateSuccessEvent = async (req: Request, res: Response) => {
         event: eventObj,
       });
     } else {
-      const updatedObj = { ...eventObj, successAt: Date.now() };
+      const updatedObj = { ...eventObj, successAt: dateNow };
       await setEvent(connectionId, updatedObj);
       res.status(200).json({
         message: "Connection was completed successfully.",
