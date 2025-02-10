@@ -8,7 +8,6 @@ import {
   updateSuccessEvent,
 } from "./eventController";
 
-import { set as mockSet } from "../__mocks__/redis";
 import { getEvent } from "../services/storageClient/redis";
 
 const connectionId = "MBR-123";
@@ -27,7 +26,7 @@ const preCheckMockResponse = {
 
 const expectRedisEventToEqual = async (
   connectionId: string,
-  valueCheck: jest.Expect,
+  valueCheck: jest.Expect | undefined,
 ) => {
   const event = await getEvent(connectionId);
   expect(event).toEqual(valueCheck);
@@ -105,7 +104,13 @@ describe("eventController", () => {
           message: "Connection event already started",
         }),
       );
-      expect(mockSet).toHaveBeenCalledTimes(1);
+
+      await expectRedisEventToEqual(
+        connectionId,
+        expect.objectContaining({
+          startedAt: expect.any(Number),
+        }),
+      );
     });
   });
 
@@ -260,17 +265,19 @@ describe("eventController", () => {
 
       await updateConnectionResume(mockRequest, res);
 
+      const expectedBody = expect.objectContaining({
+        connectionId,
+        startedAt: expect.any(Number),
+      });
+
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: "Connection was not paused. Nothing changed.",
-        event: expect.objectContaining({
-          connectionId,
-          startedAt: expect.any(Number),
-        }),
+        event: expectedBody,
       });
 
-      expect(mockSet).toHaveBeenCalledTimes(1);
+      await expectRedisEventToEqual(connectionId, expectedBody);
     });
 
     it("should return 400 status and error message when an error is thrown", async () => {
@@ -290,7 +297,7 @@ describe("eventController", () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: new Error(errorMessage) });
 
-      expect(mockSet).not.toHaveBeenCalled();
+      await expectRedisEventToEqual(connectionId, undefined);
     });
   });
 
