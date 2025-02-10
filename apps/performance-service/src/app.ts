@@ -5,6 +5,7 @@ import { rateLimit } from "express-rate-limit";
 import logger from "morgan";
 import eventRoutes from "./routes/eventRoutes";
 import { PORT } from "./shared/consts/port";
+import { beginPollAndProcessEvents } from "./services/storageClient/redis";
 
 const app = express();
 
@@ -49,4 +50,5 @@ app.listen(process.env.PORT || PORT, () => {
   console.info(
     `Performance Service listening on port ${process.env.PORT || PORT}`,
   );
+  beginPollAndProcessEvents();
 });

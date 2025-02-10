@@ -8,7 +8,10 @@ import {
   updateConnectionResume,
   updateSuccessEvent,
 } from "../controllers/eventController";
-import { validateWidgetAudience } from "../middlewares/validationMiddleware";
+import {
+  validateConnectionId,
+  validateWidgetAudience,
+} from "../middlewares/validationMiddleware";
 import { JobTypes } from "@repo/shared-utils";
 import Joi from "joi";
 
@@ -24,29 +27,29 @@ export const startEventSchema = Joi.object({
 });
 
 router.post(
-  "/:id/connectionStart",
+  "/:connectionId/connectionStart",
   [validateWidgetAudience, validateRequestBody(startEventSchema)],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
   createStartEvent as RequestHandler,
 );
 
 router.put(
-  "/:id/connectionPause",
-  [validateWidgetAudience],
+  "/:connectionId/connectionPause",
+  [validateWidgetAudience, validateConnectionId],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
   updateConnectionPause as RequestHandler,
 );
 
 router.put(
-  "/:id/connectionResume",
-  [validateWidgetAudience],
+  "/:connectionId/connectionResume",
+  [validateWidgetAudience, validateConnectionId],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
   updateConnectionResume as RequestHandler,
 );
 
 router.put(
-  "/:id/connectionSuccess",
-  [validateWidgetAudience],
+  "/:connectionId/connectionSuccess",
+  [validateWidgetAudience, validateConnectionId],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
   updateSuccessEvent as RequestHandler,
 );
