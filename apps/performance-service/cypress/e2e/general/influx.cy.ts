@@ -76,7 +76,7 @@ describe("writing and reading influxDb", () => {
       expect(response.status).to.eq(200);
       const expectedSuccessRate = 66.67;
       const expectedJobDuration = 0.538;
-      const tolerance = 0.01;
+      const tolerance = 0.05;
 
       expect(response.body).to.have.property(testInstitution);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

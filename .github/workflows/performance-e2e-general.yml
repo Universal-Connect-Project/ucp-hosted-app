@@ -25,6 +25,9 @@ jobs:
           INFLUXDB_ADMIN_USER: admin
           INFLUXDB_ADMIN_PASSWORD: password
           INFLUXDB_HTTP_AUTH_ENABLED: "false" # Disables authentication
+          INFLUXDB_ORG: ucp-org
+          INFLUXDB_BUCKET: performance
+          INFLUXDB_TOKEN: my-secret-token
         options: >-
           --health-cmd "curl --silent --fail http://localhost:8086/health || exit 1"
           --health-interval 10s
@@ -45,6 +48,27 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Setup InfluxDB Bucket & Org
+        run: |
+          curl -X POST http://localhost:8086/api/v2/setup \
+            --header "Content-Type: application/json" \
+            --data '{
+              "username": "admin",
+              "password": "password",
+              "org": "ucp-org",
+              "bucket": "performance",
+              "token": "my-secret-token"
+            }'
+
+      - name: Wait for InfluxDB to be Ready
+        run: |
+          for i in {1..12}; do
+            curl --silent --fail http://localhost:8086/health && echo "InfluxDB is ready!" && exit 0
+            echo "Waiting for InfluxDB..."
+            sleep 5
+          done
+          echo "InfluxDB did not start in time" && exit 1
 
       - name: Cypress run
         uses: cypress-io/github-action@v6

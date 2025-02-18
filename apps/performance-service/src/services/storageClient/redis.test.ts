@@ -17,8 +17,19 @@ import {
 import { clearIntervalAsync } from "set-interval-async";
 import { EventObject } from "../../controllers/eventController";
 import { minutesAgo } from "../../shared/tests/utils";
+import { WriteApi } from "@influxdata/influxdb-client";
+import * as influxDb from "../influxDb";
 
 describe("redis", () => {
+  beforeEach(() => {
+    const mockWriteApi = {
+      writePoint: jest.fn(),
+      close: jest.fn().mockResolvedValue(undefined),
+    } as unknown as WriteApi;
+
+    jest.spyOn(influxDb, "createNewWriteApi").mockReturnValue(mockWriteApi);
+  });
+
   describe("get", () => {
     it("gets a JSON.parsed value from the cache", async () => {
       const values = [

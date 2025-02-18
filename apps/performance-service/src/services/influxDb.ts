@@ -124,8 +124,8 @@ async function writeData(data: {
 
     writeApi.writePoint(successRatePoint);
 
-    console.log("Data written successfully!");
     await writeApi.close();
+    console.log("Data written successfully!");
     return true;
   } catch (error) {
     console.error("Error writing to InfluxDB:", error);
