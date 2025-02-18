@@ -6,6 +6,7 @@ import logger from "morgan";
 import eventRoutes from "./routes/eventRoutes";
 import { PORT } from "./shared/consts/port";
 import { beginPollAndProcessEvents } from "./services/storageClient/redis";
+import metricsRoutes from "./routes/metricsRoutes";
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.get("/ping", (_req: Request, res: Response) => {
 
 // Routes
 app.use("/events", eventRoutes);
+app.use("/metrics", metricsRoutes);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(

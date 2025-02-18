@@ -101,20 +101,24 @@ describe("redis", () => {
   });
 
   describe("processEvents", () => {
+    const processingTimeLimitMins =
+      Number(process.env.EVENT_PROCESSING_TIME_LIMIT_SECONDS || 900) / 60;
+
     it("checks redis for items in the event subdirectory", async () => {
       const consoleSpy = jest.spyOn(console, "log").mockImplementation();
 
       await processEvents();
 
       expect(mockKeys).toHaveBeenCalledWith(`${EVENT_SUBDIRECTORY}:*`);
-      expect(consoleSpy).toHaveBeenCalledWith("No matching keys found.");
+      expect(consoleSpy).toHaveBeenCalledWith("Nothing to process.");
     });
 
-    it("processes events that have existed longer than the processing threshold (15 mins)", async () => {
+    it("processes events that have existed longer than the processing threshold", async () => {
       const connectionEventId = "MBR-123";
       await setEvent(connectionEventId, {
-        startedAt: minutesAgo(20),
-        successAt: minutesAgo(16),
+        jobTypes: ["aggregate"],
+        startedAt: minutesAgo(processingTimeLimitMins + 5),
+        successAt: minutesAgo(processingTimeLimitMins + 1),
       } as EventObject);
 
       await processEvents();
@@ -127,11 +131,12 @@ describe("redis", () => {
       );
     });
 
-    it("does not processes events that have existed less than the processing threshold (15 mins)", async () => {
+    it("does not processes events that have existed less than the processing threshold", async () => {
       const connectionEventId = "MBR-123";
       await setEvent(connectionEventId, {
-        startedAt: minutesAgo(5),
-        successAt: minutesAgo(1),
+        jobTypes: ["aggregate"],
+        startedAt: minutesAgo(processingTimeLimitMins - 3),
+        successAt: minutesAgo(processingTimeLimitMins - 2),
       } as EventObject);
 
       await processEvents();

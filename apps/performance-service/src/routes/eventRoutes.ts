@@ -18,7 +18,7 @@ import Joi from "joi";
 const router = Router();
 
 export const startEventSchema = Joi.object({
-  jobType: Joi.array()
+  jobTypes: Joi.array()
     .items(Joi.string().valid(...Object.values(JobTypes)))
     .required(),
   institutionId: Joi.string().required(),

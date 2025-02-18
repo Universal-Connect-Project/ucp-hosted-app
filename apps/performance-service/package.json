@@ -5,16 +5,18 @@
   "scripts": {
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "dev": "concurrently --kill-others \"nodemon ./src/app.ts\" \"npm run redisserver\"",
+    "dev": "concurrently --kill-others \"nodemon ./src/app.ts\" \"npm run redisserver\" \"npm run start:influxDb\"",
     "start:e2e": "nodemon ./src/app.ts",
     "prod": "PRODUCTION=true npm run dev",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "redisserver": "docker run --rm --name ucw_redis -p 6379:6379 redis:7.2-alpine",
+    "start:influxDb": "sh -c './scripts/start-influx.sh'",
     "prettier": "prettier . --check",
     "test": "jest",
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@influxdata/influxdb-client": "^1.35.0",
     "@repo/backend-utils": "*",
     "@repo/shared-utils": "*",
     "cors": "^2.8.5",

@@ -21,6 +21,64 @@
     }
   ],
   "paths": {
+    "/metrics/allPerformanceData": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "All performance data for the last 30 days",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "Wells Fargo": {
+                      "aggregate": {
+                        "successRate": {
+                          "mx": 100,
+                          "sophtron": 50,
+                          "finicity": 100
+                        },
+                        "jobDuration": {
+                          "mx": 40.06266666666666666,
+                          "sophtron": 114.067,
+                          "testAggregatorId2": 56.374
+                        }
+                      },
+                      "verification": {
+                        "successRate": {
+                          "mx": 50
+                        },
+                        "jobDuration": {}
+                      }
+                    },
+                    "Chase": {
+                      "aggregate": {
+                        "successRate": {
+                          "mx": 66.67
+                        },
+                        "jobDuration": {
+                          "mx": 30.5325
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/events/{connectionId}/connectionStart": {
       "post": {
         "security": [
@@ -47,7 +105,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "jobType": {
+                  "jobTypes": {
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -88,7 +146,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregate",
+                      "jobTypes": ["aggregate"],
                       "startedAt": "2024-09-10T16:07:46.038Z"
                     }
                   }
@@ -148,7 +206,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregate",
+                      "jobTypes": ["aggregate"],
                       "userInteractionTime": 0,
                       "pausedAt": "2024-09-10T16:07:51.038Z",
                       "startedAt": "2024-09-10T16:07:46.038Z",
@@ -211,7 +269,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregate",
+                      "jobTypes": ["aggregate"],
                       "userInteractionTime": 140,
                       "pausedAt": "2024-09-10T16:07:51.038Z",
                       "startedAt": "2024-09-10T16:07:46.038Z",
@@ -274,7 +332,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregate",
+                      "jobTypes": ["aggregate"],
                       "userInteractionTime": 140,
                       "pausedAt": null,
                       "startedAt": "2024-09-10T16:07:46.038Z",

@@ -9,6 +9,7 @@ import {
 } from "./eventController";
 
 import { getEvent } from "../services/storageClient/redis";
+import { JobTypes } from "@repo/shared-utils";
 
 const connectionId = "MBR-123";
 
@@ -36,7 +37,7 @@ describe("eventController", () => {
   describe("createStartEvent", () => {
     it("should add the event to redis and return the event response", async () => {
       const eventBody = {
-        jobType: ["aggregate"],
+        jobTypes: [JobTypes.AGGREGATE],
         institutionId: "testInstitutionId",
         aggregatorId: "testAggregatorId",
         clientId: "testClientId",

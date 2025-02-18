@@ -5,7 +5,7 @@ import { JobTypes } from "@repo/shared-utils";
 export const startConnectionEventRequest = ({
   connectionId,
   body = {
-    jobType: [JobTypes.AGGREGATE],
+    jobTypes: [JobTypes.AGGREGATE],
     institutionId: "testInstitutionId",
     aggregatorId: "testAggregatorId",
     clientId: "testClientId",
@@ -55,6 +55,16 @@ export const markSuccessfulEventRequest = (connectionId: string) => {
   return cy.request({
     url: `events/${connectionId}/connectionSuccess`,
     method: "PUT",
+    headers: {
+      Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
+    },
+  });
+};
+
+export const getAllPerformanceData = () => {
+  return cy.request({
+    url: "metrics/allPerformanceData",
+    method: "GET",
     headers: {
       Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
     },
