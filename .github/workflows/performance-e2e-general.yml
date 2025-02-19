@@ -61,15 +61,6 @@ jobs:
               "token": "my-secret-token"
             }'
 
-      - name: Wait for InfluxDB to be Ready
-        run: |
-          for i in {1..12}; do
-            curl --silent --fail http://localhost:8086/health && echo "InfluxDB is ready!" && exit 0
-            echo "Waiting for InfluxDB..."
-            sleep 5
-          done
-          echo "InfluxDB did not start in time" && exit 1
-
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
