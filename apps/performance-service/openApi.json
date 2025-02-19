@@ -41,8 +41,8 @@
                     "cbc051c6-55c0-40fd-8e90-d88ec9866164": {
                       "transactions": {
                         "successRate": {
-                          "mx": 100,
-                          "sophtron": 50,
+                          "mx": 71,
+                          "sophtron": 70,
                           "finicity": 100
                         },
                         "jobDuration": {
@@ -54,6 +54,12 @@
                       "account_verification": {
                         "successRate": {
                           "mx": 50
+                        },
+                        "jobDuration": {}
+                      },
+                      "account_verification_transactions": {
+                        "successRate": {
+                          "sophtron": 55
                         },
                         "jobDuration": {}
                       }

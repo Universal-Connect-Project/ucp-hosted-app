@@ -20,6 +20,14 @@ export const createNewWriteApi = (): WriteApi => {
   return client.getWriteApi(ORG, BUCKET);
 };
 
+interface EventData {
+  institutionId: string;
+  jobTypes: string;
+  aggregatorId: string;
+  successRate: number;
+  jobDuration: number;
+}
+
 export async function getAndTransformAllInstitutionMetrics() {
   const fluxQuery = `
     duration = from(bucket: "performance")
@@ -47,7 +55,7 @@ export async function getAndTransformAllInstitutionMetrics() {
         )
     `;
 
-  const results = await queryApi.collectRows(fluxQuery);
+  const results: EventData[] = await queryApi.collectRows(fluxQuery);
   return transformAllInstitutionsToJson(results);
 }
 
@@ -58,18 +66,12 @@ interface QueryJobMetrics {
 
 type InstitutionMetrics = Record<string, Record<string, QueryJobMetrics>>;
 
-function transformAllInstitutionsToJson(data: unknown[]) {
+function transformAllInstitutionsToJson(data: EventData[]) {
   const jsonOutput: InstitutionMetrics = {};
 
   data.forEach((row) => {
     const { institutionId, jobTypes, aggregatorId, successRate, jobDuration } =
-      row as {
-        institutionId: string;
-        jobTypes: string;
-        aggregatorId: string;
-        successRate: number;
-        jobDuration: number;
-      };
+      row;
 
     if (!jsonOutput[institutionId]) jsonOutput[institutionId] = {};
     if (!jsonOutput[institutionId][jobTypes]) {
