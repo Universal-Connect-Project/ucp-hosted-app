@@ -38,8 +38,8 @@
                 "schema": {
                   "type": "object",
                   "example": {
-                    "Wells Fargo": {
-                      "aggregate": {
+                    "cbc051c6-55c0-40fd-8e90-d88ec9866164": {
+                      "transactions": {
                         "successRate": {
                           "mx": 100,
                           "sophtron": 50,
@@ -51,15 +51,15 @@
                           "testAggregatorId2": 56.374
                         }
                       },
-                      "verification": {
+                      "account_verification": {
                         "successRate": {
                           "mx": 50
                         },
                         "jobDuration": {}
                       }
                     },
-                    "Chase": {
-                      "aggregate": {
+                    "ae94909a-c798-4ef2-8bd2-65b2d3cafa43": {
+                      "transactions": {
                         "successRate": {
                           "mx": 66.67
                         },
