@@ -1,5 +1,5 @@
 import { runTokenInvalidCheck } from "../../shared/utils/authorization";
-import { JobTypes } from "@repo/shared-utils";
+import { ComboJobTypes } from "@repo/shared-utils";
 import {
   markSuccessfulEventRequest,
   pauseConnectionEventRequest,
@@ -12,7 +12,7 @@ describe("connection event endpoints", () => {
 
   describe("/events/:connectionId/connectionStart", () => {
     const eventRequestBody = {
-      jobTypes: [JobTypes.AGGREGATE],
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
       institutionId: "test",
       aggregatorId: "test",
       clientId: "test",
@@ -60,7 +60,7 @@ describe("connection event endpoints", () => {
       });
     });
 
-    const validJobTypes = Object.values(JobTypes);
+    const validJobTypes = Object.values(ComboJobTypes);
 
     validJobTypes.forEach((validJobType) => {
       it(`succeeds when jobTypes is [${validJobType}]`, () => {

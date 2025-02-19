@@ -1,11 +1,11 @@
 import { WIDGET_ACCESS_TOKEN } from "../constants/accessTokens";
 import { createAuthorizationHeader } from "./authorization";
-import { JobTypes } from "@repo/shared-utils";
+import { ComboJobTypes } from "@repo/shared-utils";
 
 export const startConnectionEventRequest = ({
   connectionId,
   body = {
-    jobTypes: [JobTypes.AGGREGATE],
+    jobTypes: [ComboJobTypes.TRANSACTIONS],
     institutionId: "testInstitutionId",
     aggregatorId: "testAggregatorId",
     clientId: "testClientId",

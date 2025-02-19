@@ -12,6 +12,13 @@ export const JobTypes = {
   ALL: "all",
 };
 
+export enum ComboJobTypes {
+  ACCOUNT_NUMBER = "account_verification",
+  ACCOUNT_OWNER = "identity_verification",
+  TRANSACTIONS = "transactions",
+  TRANSACTION_HISTORY = "transaction_history",
+}
+
 export const UiClientPermissions = {
   READ_KEYS: "read:keys",
   CREATE_KEYS: "create:keys",

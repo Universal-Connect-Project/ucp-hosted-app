@@ -1,4 +1,4 @@
-import { JobTypes } from "@repo/shared-utils";
+import { ComboJobTypes } from "@repo/shared-utils";
 import {
   getAllPerformanceData,
   markSuccessfulEventRequest,
@@ -15,7 +15,7 @@ describe("writing and reading influxDb", () => {
         aggregatorId: "mx",
         institutionId: testInstitution,
         clientId: "client123",
-        jobTypes: [JobTypes.AGGREGATE],
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
         pauseDuration: 200,
         successDuration: 500,
         isSuccess: true,
@@ -24,7 +24,7 @@ describe("writing and reading influxDb", () => {
         aggregatorId: "mx",
         institutionId: testInstitution,
         clientId: "client123",
-        jobTypes: [JobTypes.AGGREGATE],
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
         successDuration: 500,
         isSuccess: true,
       },
@@ -32,7 +32,7 @@ describe("writing and reading influxDb", () => {
         aggregatorId: "mx",
         institutionId: testInstitution,
         clientId: "client123",
-        jobTypes: [JobTypes.AGGREGATE],
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
         isSuccess: false,
       },
     ] as {
@@ -81,12 +81,12 @@ describe("writing and reading influxDb", () => {
       expect(response.body).to.have.property(testInstitution);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(response.body[testInstitution]).to.have.nested.property(
-        `${JobTypes.AGGREGATE}.successRate.mx`,
+        `${ComboJobTypes.TRANSACTIONS}.successRate.mx`,
         expectedSuccessRate,
       );
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(response.body[testInstitution])
-        .to.have.nested.property(`${JobTypes.AGGREGATE}.jobDuration.mx`)
+        .to.have.nested.property(`${ComboJobTypes.TRANSACTIONS}.jobDuration.mx`)
         .that.is.closeTo(expectedJobDuration, tolerance);
     });
   });

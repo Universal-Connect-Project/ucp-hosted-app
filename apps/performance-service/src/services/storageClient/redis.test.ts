@@ -19,7 +19,7 @@ import { EventObject } from "../../controllers/eventController";
 import { minutesAgo } from "../../shared/tests/utils";
 import { WriteApi } from "@influxdata/influxdb-client";
 import * as influxDb from "../influxDb";
-import { JobTypes } from "@repo/shared-utils";
+import { ComboJobTypes } from "@repo/shared-utils";
 
 describe("redis", () => {
   beforeEach(() => {
@@ -128,7 +128,7 @@ describe("redis", () => {
     it("processes events that have existed longer than the processing threshold", async () => {
       const connectionEventId = "MBR-123";
       await setEvent(connectionEventId, {
-        jobTypes: [JobTypes.AGGREGATE],
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
         startedAt: minutesAgo(processingTimeLimitMins + 5),
         successAt: minutesAgo(processingTimeLimitMins + 1),
       } as EventObject);
@@ -146,7 +146,7 @@ describe("redis", () => {
     it("does not processes events that have existed less than the processing threshold", async () => {
       const connectionEventId = "MBR-123";
       await setEvent(connectionEventId, {
-        jobTypes: [JobTypes.AGGREGATE],
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
         startedAt: minutesAgo(processingTimeLimitMins - 3),
         successAt: minutesAgo(processingTimeLimitMins - 2),
       } as EventObject);

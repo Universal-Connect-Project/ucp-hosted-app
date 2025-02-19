@@ -110,11 +110,10 @@
                     "items": {
                       "type": "string",
                       "enum": [
-                        "aggregate",
-                        "verification",
-                        "identity",
-                        "fullhistory",
-                        "all"
+                        "account_verification",
+                        "identity_verification",
+                        "transactions",
+                        "transaction_history"
                       ]
                     }
                   },
@@ -146,7 +145,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobTypes": ["aggregate"],
+                      "jobTypes": ["transactions"],
                       "startedAt": "2024-09-10T16:07:46.038Z"
                     }
                   }
@@ -206,7 +205,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobTypes": ["aggregate"],
+                      "jobTypes": ["transactions"],
                       "userInteractionTime": 0,
                       "pausedAt": "2024-09-10T16:07:51.038Z",
                       "startedAt": "2024-09-10T16:07:46.038Z",
@@ -269,7 +268,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobTypes": ["aggregate"],
+                      "jobTypes": ["transactions"],
                       "userInteractionTime": 140,
                       "pausedAt": "2024-09-10T16:07:51.038Z",
                       "startedAt": "2024-09-10T16:07:46.038Z",
@@ -332,7 +331,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobTypes": ["aggregate"],
+                      "jobTypes": ["transactions"],
                       "userInteractionTime": 140,
                       "pausedAt": null,
                       "startedAt": "2024-09-10T16:07:46.038Z",
