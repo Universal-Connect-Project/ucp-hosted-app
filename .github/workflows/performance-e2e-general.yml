@@ -64,7 +64,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           project: apps/performance-service
-          start: npm run start:e2e
+          start: npm run start --workspace apps/performance-service
           wait-on: "http://localhost:8090/ping"
           spec: apps/performance-service/cypress/e2e/general/*.cy.ts
         env:

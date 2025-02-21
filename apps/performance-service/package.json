@@ -6,6 +6,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "dev": "concurrently --kill-others \"nodemon ./src/app.ts\" \"npm run redisserver\" \"npm run start:influxDb\"",
+    "start": "nodemon ./src/app.ts",
     "start:e2e": "nodemon ./src/app.ts",
     "prod": "PRODUCTION=true npm run dev",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
