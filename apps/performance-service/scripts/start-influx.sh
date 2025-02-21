@@ -1,6 +1,6 @@
 #!/bin/sh
 # Skip script if running in GitHub Actions
-if [ "$GITHUB_ACTIONS" = "true" ]; then
+if [ "$GITHUB_ACTION" = "true" ]; then
   echo "Skipping InfluxDB setup in GitHub Actions."
   exit 0
 fi

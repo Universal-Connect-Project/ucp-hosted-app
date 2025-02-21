@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ "$GITHUB_ACTIONS" = "true" ]; then
+if [ "$GITHUB_ACTION" = "true" ]; then
   echo "Skipping Redis in GitHub Actions."
   exit 0
 fi
