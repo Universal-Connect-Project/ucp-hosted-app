@@ -2,6 +2,7 @@ import { setIntervalAsync } from "set-interval-async";
 import "../../dotEnv";
 import { createClient } from "redis";
 import { EventObject } from "../../controllers/eventController";
+import { recordPerformanceMetric } from "../influxDb";
 
 export const EVENT_SUBDIRECTORY = "event";
 
@@ -46,8 +47,8 @@ export const getEvent = async (key: string) => {
 
 export const beginPollAndProcessEvents = () => {
   return setIntervalAsync(
-    processEvents,
-    Number(process.env.POLL_INTERVAL_SECONDS) * 1000,
+    async () => processEvents(),
+    Number(process.env.POLL_INTERVAL_SECONDS || 30) * 1000,
   );
 };
 
@@ -56,7 +57,7 @@ export const processEvents = async () => {
 
   const eventKeys = await redisClient.keys(`${EVENT_SUBDIRECTORY}:*`);
   if (!eventKeys.length) {
-    console.log("No matching keys found.");
+    console.log("Nothing to process.");
     return;
   }
 
@@ -71,10 +72,14 @@ export const processEvents = async () => {
     if (ageSeconds >= Number(process.env.EVENT_PROCESSING_TIME_LIMIT_SECONDS)) {
       console.log(`Processing key "${key}" (age: ${ageSeconds}s)`);
 
-      // TODO: Send data to TimeSeriesDB once setup
+      const processedEvent = await recordPerformanceMetric(data);
 
-      await del(key);
-      console.log(`Key "${key}" deleted after processing.`);
+      if (processedEvent) {
+        await del(key);
+        console.log(`Key "${key}" deleted after processing.`);
+      } else {
+        console.log("Data is not writing to Influx");
+      }
     }
   }
 };

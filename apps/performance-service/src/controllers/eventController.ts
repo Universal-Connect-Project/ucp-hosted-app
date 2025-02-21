@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { setEvent, getEvent } from "../services/storageClient/redis";
 
 interface CreateStartRequest {
-  jobType: string[];
+  jobTypes: string[];
   institutionId: string;
   aggregatorId: string;
   clientId: string;
@@ -10,27 +10,27 @@ interface CreateStartRequest {
 
 export interface EventObject {
   connectionId: string;
-  jobType: string[];
+  jobTypes: string[];
   institutionId: string;
   aggregatorId: string;
   clientId: string;
   startedAt: number;
   userInteractionTime: number;
   pausedAt: number | null | undefined;
-  successAt: number;
+  successAt?: number;
 }
 
 export const createStartEvent = async (req: Request, res: Response) => {
   try {
     const { connectionId } = req.params;
-    const { jobType, institutionId, aggregatorId, clientId } =
+    const { jobTypes, institutionId, aggregatorId, clientId } =
       req.body as CreateStartRequest;
     const eventBody = {
       connectionId,
       institutionId,
       aggregatorId,
       clientId,
-      jobType,
+      jobTypes,
       startedAt: Date.now(),
     };
     const eventObj = (await getEvent(connectionId)) as EventObject;

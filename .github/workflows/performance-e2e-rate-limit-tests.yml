@@ -25,7 +25,7 @@ jobs:
         with:
           project: apps/performance-service
           start: |
-            npm run dev --workspace apps/performance-service
+            npm run start --workspace apps/performance-service
           wait-on: "http://localhost:8090/ping"
           spec: apps/performance-service/cypress/e2e/rateLimiting/rateLimiting.cy.ts
         env:

@@ -105,8 +105,8 @@ const login = (args: LoginArgs) => {
 };
 
 const clientLoginArgs: LoginArgs = {
-  usernameEnvKey: "AUTH_USERNAME_WITH_KEY_ROLES",
-  passwordEnvKey: "AUTH_PASSWORD_WITH_KEY_ROLES",
+  usernameEnvKey: "AUTH_USERNAME_WITH_WIDGET_ROLE",
+  passwordEnvKey: "AUTH_PASSWORD_WITH_WIDGET_ROLE",
   grantType: "password",
   audience: AUTH0_CLIENT_AUDIENCE,
   clientId: Cypress.env("E2E_CLIENT_ID") as string,

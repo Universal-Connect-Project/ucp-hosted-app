@@ -12,14 +12,14 @@ import {
   validateConnectionId,
   validateWidgetAudience,
 } from "../middlewares/validationMiddleware";
-import { JobTypes } from "@repo/shared-utils";
+import { ComboJobTypes } from "@repo/shared-utils";
 import Joi from "joi";
 
 const router = Router();
 
 export const startEventSchema = Joi.object({
-  jobType: Joi.array()
-    .items(Joi.string().valid(...Object.values(JobTypes)))
+  jobTypes: Joi.array()
+    .items(Joi.string().valid(...Object.values(ComboJobTypes)))
     .required(),
   institutionId: Joi.string().required(),
   aggregatorId: Joi.string().required(),
