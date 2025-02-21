@@ -41,7 +41,7 @@ fi
 
 check_influxdb_ready() {
   local attempts=0
-  local max_attempts=10
+  local max_attempts=2
   local delay=2 # seconds
 
   while [ $attempts -lt $max_attempts ]; do
