@@ -70,7 +70,9 @@ function transformAllInstitutionsToJson(data: EventData[]) {
     const { institutionId, jobTypes, aggregatorId, successRate, jobDuration } =
       row;
 
-    if (!jsonOutput[institutionId]) jsonOutput[institutionId] = {};
+    if (!jsonOutput[institutionId]) {
+      jsonOutput[institutionId] = {};
+    }
     if (!jsonOutput[institutionId][jobTypes]) {
       jsonOutput[institutionId][jobTypes] = {
         successRate: {},
