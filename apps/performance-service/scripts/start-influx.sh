@@ -1,4 +1,9 @@
 #!/bin/sh
+# Skip script if running in GitHub Actions
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+  echo "Skipping InfluxDB setup in GitHub Actions."
+  exit 0
+fi
 
 check_container_running() {
   if docker ps --format '{{.Names}}' | grep -q "influxdb"; then
