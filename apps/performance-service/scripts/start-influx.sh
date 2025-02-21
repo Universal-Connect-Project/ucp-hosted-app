@@ -1,6 +1,6 @@
 #!/bin/sh
 # Skip script if running in GitHub Actions
-if [ "$GITHUB_ACTION" = "true" ]; then
+if [ "$GITHUB_ACTIONS" = "true" ]; then
   echo "Skipping InfluxDB setup in GitHub Actions."
   exit 0
 fi
@@ -74,7 +74,9 @@ if docker ps --format '{{.Names}}' | grep -q "influxdb"; then
     fi
   else
     echo "InfluxDB did not become ready after multiple attempts."
+    exit 0
   fi
 else
   echo "InfluxDB is not running, cannot create testBucket."
+  exit 0
 fi
