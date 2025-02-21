@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { queryApi } from "../services/influxDb";
 import {
-  influxQueryResults,
-  transformedInstitutionData,
+  createTestScenarioEvents,
+  expectedTransformedInstitutionData,
 } from "../shared/tests/testData/influx";
 import { getPerformanceRoutingJson } from "./metricsController";
+import { wait } from "../shared/tests/utils";
 
 describe("getPerformanceRoutingJson", () => {
   it("queries influxdb and transforms the data properly", async () => {
@@ -16,11 +17,24 @@ describe("getPerformanceRoutingJson", () => {
       send: jest.fn(),
     } as unknown as Response;
 
-    jest.spyOn(queryApi, "collectRows").mockResolvedValue(influxQueryResults);
+    const testInstitutionId = `bank1-${crypto.randomUUID()}`;
+    const testInstitutionId2 = `bank2-${crypto.randomUUID()}`;
+
+    await createTestScenarioEvents(testInstitutionId, testInstitutionId2);
+    await wait(2000);
 
     await getPerformanceRoutingJson(req, res);
 
-    expect(res.send).toHaveBeenCalledWith(transformedInstitutionData);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const results = (res.send as jest.Mock).mock.calls[0][0];
+    expect(results).toEqual(
+      expect.objectContaining(
+        expectedTransformedInstitutionData(
+          testInstitutionId,
+          testInstitutionId2,
+        ),
+      ),
+    );
   });
 
   it("returns 400 and an error on failure", async () => {

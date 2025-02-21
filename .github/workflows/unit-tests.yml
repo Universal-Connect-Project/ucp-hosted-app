@@ -21,6 +21,22 @@ jobs:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
 
+      influxdb:
+        image: influxdb:2.7
+        env:
+          INFLUXDB_ADMIN_USER: admin
+          INFLUXDB_ADMIN_PASSWORD: password
+          INFLUXDB_HTTP_AUTH_ENABLED: "false" # Disables authentication
+          INFLUXDB_ORG: ucp-org
+          INFLUXDB_TOKEN: my-secret-token
+        options: >-
+          --health-cmd "curl --silent --fail http://localhost:8086/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 8086:8086
+
     steps:
       - name: Checkout under $GITHUB_WORKSPACE
         uses: actions/checkout@v4
@@ -39,13 +55,25 @@ jobs:
         run: |
           npm run test:db:setup --workspace apps/institution-service
 
+      - name: Setup InfluxDB Bucket & Org
+        run: |
+          curl -X POST http://localhost:8086/api/v2/setup \
+            --header "Content-Type: application/json" \
+            --data '{
+              "username": "admin",
+              "password": "password",
+              "org": "ucp-org",
+              "bucket": "testBucket",
+              "token": "my-secret-token"
+            }'
+
       - name: "Create authentication env file"
         run: |
           ENV_FILE_PATH=./apps/authentication-service/env/secretStaging.env
           touch ${ENV_FILE_PATH}
 
           # Secrets (can't load these from another job, due to GH security features)
-          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}   
+          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
 
       - name: Run Jest Tests
         run: npm run test

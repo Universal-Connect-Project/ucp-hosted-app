@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { EventObject } from "../controllers/eventController";
 import {
-  influxQueryResults,
-  transformedInstitutionData,
+  createTestScenarioEvents,
+  expectedTransformedInstitutionData,
 } from "../shared/tests/testData/influx";
+import { getLatestDataPoint, wait } from "../shared/tests/utils";
 import {
   getAndTransformAllInstitutionMetrics,
   recordPerformanceMetric,
 } from "./influxDb";
-import { queryApi } from "./influxDb";
-import * as influxDb from "./influxDb";
-import { WriteApi } from "@influxdata/influxdb-client";
+import { writeApi } from "./influxDb";
 
 describe("recordPerformanceMetric", () => {
   const event: EventObject = {
@@ -27,72 +25,100 @@ describe("recordPerformanceMetric", () => {
   };
 
   it("records correct duration and success metrics on successful event", async () => {
-    const mockWriteApi = {
-      writePoint: jest.fn(),
-      close: jest.fn().mockResolvedValue(undefined),
-    } as unknown as WriteApi;
-
-    jest.spyOn(influxDb, "createNewWriteApi").mockReturnValue(mockWriteApi);
-
-    const result = await recordPerformanceMetric(event);
+    const institutionId = `testMetrics-${crypto.randomUUID()}`;
+    const result = await recordPerformanceMetric({ ...event, institutionId });
     expect(result).toBe(true);
 
-    expect(mockWriteApi.writePoint).toHaveBeenCalledTimes(2);
+    await wait(2000);
 
-    expect(mockWriteApi.writePoint).toHaveBeenCalledWith(
+    const successDataPoint = await getLatestDataPoint(
+      "successRateMetrics",
+      institutionId,
+    );
+    expect(successDataPoint).toEqual(
       expect.objectContaining({
-        tags: expect.objectContaining({
-          jobTypes: event.jobTypes.sort().join("_"),
-          institutionId: event.institutionId,
-          clientId: event.clientId,
-          aggregatorId: event.aggregatorId,
-        }),
-        fields: expect.objectContaining({
-          jobDuration: "3000i",
-        }),
+        result: "_result",
+        table: 0,
+        _start: expect.any(String),
+        _stop: expect.any(String),
+        _time: expect.any(String),
+        _value: 1,
+        _field: "isSuccess",
+        _measurement: "successRateMetrics",
+        aggregatorId: "agg_789",
+        clientId: "client_456",
+        institutionId,
+        jobTypes: "jobA_jobB",
       }),
     );
 
-    expect(mockWriteApi.writePoint).toHaveBeenCalledWith(
+    const durationDataPoint = await getLatestDataPoint(
+      "durationMetrics",
+      institutionId,
+    );
+    expect(durationDataPoint).toEqual(
       expect.objectContaining({
-        fields: expect.objectContaining({ isSuccess: "1i" }),
+        result: "_result",
+        table: 0,
+        _start: expect.any(String),
+        _stop: expect.any(String),
+        _time: expect.any(String),
+        _value: 3000,
+        _field: "jobDuration",
+        _measurement: "durationMetrics",
+        aggregatorId: "agg_789",
+        clientId: "client_456",
+        institutionId,
+        jobTypes: "jobA_jobB",
       }),
     );
   });
 
   it("records success metrics but not duration metric on an unsuccessful event", async () => {
-    const mockWriteApi = {
-      writePoint: jest.fn(),
-      close: jest.fn().mockResolvedValue(undefined),
-    } as unknown as WriteApi;
-
-    jest.spyOn(influxDb, "createNewWriteApi").mockReturnValue(mockWriteApi);
+    const testInstitutionId = `testNoDuration-${crypto.randomUUID()}`;
 
     const result = await recordPerformanceMetric({
       ...event,
+      institutionId: testInstitutionId,
       successAt: undefined,
     });
     expect(result).toBe(true);
 
-    expect(mockWriteApi.writePoint).toHaveBeenCalledTimes(1);
+    await wait(2000);
 
-    expect(mockWriteApi.writePoint).toHaveBeenCalledWith(
+    const successDataPoint = await getLatestDataPoint(
+      "successRateMetrics",
+      testInstitutionId,
+    );
+    expect(successDataPoint).toEqual(
       expect.objectContaining({
-        fields: expect.objectContaining({ isSuccess: "0i" }),
+        result: "_result",
+        table: 0,
+        _start: expect.any(String),
+        _stop: expect.any(String),
+        _time: expect.any(String),
+        _value: 0,
+        _field: "isSuccess",
+        _measurement: "successRateMetrics",
+        aggregatorId: "agg_789",
+        clientId: "client_456",
+        institutionId: testInstitutionId,
+        jobTypes: "jobA_jobB",
       }),
     );
+
+    const durationDataPoint = await getLatestDataPoint(
+      "durationMetrics",
+      testInstitutionId,
+    );
+    expect(durationDataPoint).toBeNull();
   });
 
   it("should return false and log an error if writePoint throws", async () => {
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
-    const mockWriteApi = {
-      writePoint: jest.fn().mockImplementation(() => {
-        throw new Error("InfluxDB write error");
-      }),
-      close: jest.fn().mockResolvedValue(undefined),
-    } as unknown as WriteApi;
-
-    jest.spyOn(influxDb, "createNewWriteApi").mockReturnValue(mockWriteApi);
+    jest.spyOn(writeApi, "writePoint").mockImplementation(() => {
+      throw new Error("InfluxDB write error");
+    });
 
     const result = await recordPerformanceMetric(event);
 
@@ -106,9 +132,21 @@ describe("recordPerformanceMetric", () => {
 
 describe("getAndTransformAllInstitutionMetrics", () => {
   it("queries influxdb and transforms the data properly", async () => {
-    jest.spyOn(queryApi, "collectRows").mockResolvedValue(influxQueryResults);
+    const testInstitutionId = `bank1-${crypto.randomUUID()}`;
+    const testInstitutionId2 = `bank2-${crypto.randomUUID()}`;
+
+    await createTestScenarioEvents(testInstitutionId, testInstitutionId2);
+
+    await wait(2000);
 
     const results = await getAndTransformAllInstitutionMetrics();
-    expect(results).toEqual(transformedInstitutionData);
+    expect(results).toEqual(
+      expect.objectContaining(
+        expectedTransformedInstitutionData(
+          testInstitutionId,
+          testInstitutionId2,
+        ),
+      ),
+    );
   });
 });

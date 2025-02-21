@@ -116,6 +116,10 @@ describe("eventController", () => {
   });
 
   describe("updateConnectionPause", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
     it("should update the redis event with a pausedAt attribute and userInteractionTime of 0", async () => {
       const res = {
         json: jest.fn(),

@@ -10,9 +10,9 @@
     "prod": "PRODUCTION=true npm run dev",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "redisserver": "docker run --rm --name ucw_redis -p 6379:6379 redis:7.2-alpine",
-    "start:influxDb": "sh -c './scripts/start-influx.sh'",
     "prettier": "prettier . --check",
     "test": "jest",
+    "start:influxDb": "sh -c './scripts/start-influx.sh'",
     "test:watch": "jest --watch"
   },
   "dependencies": {

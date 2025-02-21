@@ -11,14 +11,11 @@ const url: string = process.env.INFLUX_URL || "http://localhost:8086";
 const token: string = process.env.INFLUX_TOKEN || "my-secret-token";
 
 const ORG = "ucp-org";
-const BUCKET = "performance";
+const BUCKET = process.env.NODE_ENV === "test" ? "testBucket" : "performance";
 
 const client = new InfluxDB({ url, token });
 export const queryApi: QueryApi = client.getQueryApi(ORG);
-
-export const createNewWriteApi = (): WriteApi => {
-  return client.getWriteApi(ORG, BUCKET);
-};
+export const writeApi: WriteApi = client.getWriteApi(ORG, BUCKET);
 
 interface EventData {
   institutionId: string;
@@ -30,14 +27,14 @@ interface EventData {
 
 export async function getAndTransformAllInstitutionMetrics() {
   const fluxQuery = `
-    duration = from(bucket: "performance")
+    duration = from(bucket: "${BUCKET}")
       |> range(start: -30d)
       |> filter(fn: (r) => r._measurement == "durationMetrics")
       |> group(columns: ["institutionId", "jobTypes", "aggregatorId"])
       |> mean(column: "_value")
       |> rename(columns: {_value: "jobDuration"})
 
-    success = from(bucket: "performance")
+    success = from(bucket: "${BUCKET}")
         |> range(start: -30d)
         |> filter(fn: (r) => r._measurement == "successRateMetrics")
         |> group(columns: ["institutionId", "jobTypes", "aggregatorId"])
@@ -103,8 +100,6 @@ async function writeData(data: {
   isSuccess: boolean;
   jobDuration: number;
 }): Promise<boolean> {
-  const writeApi = createNewWriteApi();
-
   try {
     if (data.isSuccess) {
       const durationPoint = new Point("durationMetrics")
@@ -126,7 +121,7 @@ async function writeData(data: {
 
     writeApi.writePoint(successRatePoint);
 
-    await writeApi.close();
+    await writeApi.flush();
     console.log("Data written successfully!");
     return true;
   } catch (error) {

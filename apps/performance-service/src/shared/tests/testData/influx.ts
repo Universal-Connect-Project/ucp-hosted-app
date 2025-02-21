@@ -1,91 +1,189 @@
 import { ComboJobTypes } from "@repo/shared-utils";
+import { EventObject } from "../../../controllers/eventController";
+import { recordPerformanceMetric } from "../../../services/influxDb";
 
-export const influxQueryResults = [
-  {
-    result: "_result",
-    table: 0,
-    aggregatorId: "mx",
-    institutionId: "Wells Fargo",
-    jobTypes: ComboJobTypes.TRANSACTIONS,
-    jobDuration: 6095,
-    successRate: 0.5,
-  },
-  {
-    result: "_result",
-    table: 1,
-    aggregatorId: "sophtron",
-    institutionId: "Wells Fargo",
-    jobTypes: ComboJobTypes.TRANSACTIONS,
-    jobDuration: 9095,
-    successRate: 0.881234,
-  },
-  {
-    result: "_result",
-    table: 2,
-    aggregatorId: "finicity",
-    institutionId: "Wells Fargo",
-    jobTypes: ComboJobTypes.TRANSACTIONS,
-    jobDuration: 4321,
-    successRate: 0.221234,
-  },
-  {
-    result: "_result",
-    table: 3,
-    aggregatorId: "finicity",
-    institutionId: "Wells Fargo",
-    jobTypes: ComboJobTypes.ACCOUNT_NUMBER,
-    jobDuration: 5000,
-    successRate: 0.95,
-  },
-  {
-    result: "_result",
-    table: 4,
-    aggregatorId: "mx",
-    institutionId: "Chase",
-    jobTypes: [ComboJobTypes.TRANSACTIONS, ComboJobTypes.ACCOUNT_NUMBER]
-      .sort()
-      .join("_"),
-    jobDuration: 5000,
-    successRate: 0.95,
-  },
-  {
-    result: "_result",
-    table: 4,
-    aggregatorId: "finicity",
-    institutionId: "Chase",
-    jobTypes: ComboJobTypes.ACCOUNT_NUMBER,
-    jobDuration: 0,
-    successRate: 0,
-  },
-];
+export const createTestScenarioEvents = async (
+  institutionId1: string,
+  institutionId2: string,
+) => {
+  const events: EventObject[] = [
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "mx",
+      startedAt: 1700000000000,
+      successAt: 1700000010000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "mx",
+      startedAt: 1700000000000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "sophtron",
+      startedAt: 1700000000000,
+      successAt: 1700000030000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "sophtron",
+      startedAt: 1700000000000,
+      successAt: 1700000020000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "sophtron",
+      startedAt: 1700000000000,
+      successAt: 1700000010000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "sophtron",
+      startedAt: 1700000000000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "finicity",
+      startedAt: 1700000000000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "finicity",
+      startedAt: 1700000000000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "finicity",
+      startedAt: 1700000000000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
+      institutionId: institutionId1,
+      aggregatorId: "finicity",
+      startedAt: 1700000000000,
+      successAt: 1700000030000,
+      userInteractionTime: 0,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
+      institutionId: institutionId1,
+      aggregatorId: "finicity",
+      startedAt: 1700000000000,
+      successAt: 1700000010000,
+      userInteractionTime: 5000,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.TRANSACTIONS, ComboJobTypes.ACCOUNT_NUMBER],
+      institutionId: institutionId2,
+      aggregatorId: "mx",
+      startedAt: 1700000000000,
+      successAt: 1700000010000,
+      userInteractionTime: 5000,
+    },
+    {
+      connectionId: "MBR-123",
+      pausedAt: null,
+      clientId: "client_456",
+      jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
+      institutionId: institutionId2,
+      aggregatorId: "finicity",
+      startedAt: 1700000000000,
+      userInteractionTime: 0,
+    },
+  ];
 
-export const transformedInstitutionData = {
-  "Wells Fargo": {
+  await Promise.all(
+    events.map((event: EventObject) => recordPerformanceMetric(event)),
+  );
+};
+
+export const expectedTransformedInstitutionData = (
+  institutionId1: string,
+  institutionId2: string,
+) => {
+  const obj: Record<string, unknown> = {};
+
+  obj[institutionId1] = {
     transactions: {
       successRate: {
         mx: 50,
-        sophtron: 88.12,
-        finicity: 22.12,
+        sophtron: 75,
+        finicity: 25,
       },
       jobDuration: {
-        mx: 6.095,
-        sophtron: 9.095,
-        finicity: 4.321,
+        mx: 10,
+        sophtron: 20,
+        finicity: 30,
       },
     },
     account_verification: {
       successRate: {
-        finicity: 95,
+        finicity: 100,
       },
       jobDuration: {
         finicity: 5,
       },
     },
-  },
-  Chase: {
+  };
+
+  obj[institutionId2] = {
     account_verification_transactions: {
       successRate: {
-        mx: 95,
+        mx: 100,
       },
       jobDuration: {
         mx: 5,
@@ -97,5 +195,7 @@ export const transformedInstitutionData = {
       },
       jobDuration: {},
     },
-  },
+  };
+
+  return obj;
 };
