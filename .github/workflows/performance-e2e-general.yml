@@ -18,6 +18,23 @@ jobs:
         ports:
           - 6379:6379
 
+      influxdb:
+        image: influxdb:2.7
+        env:
+          INFLUXDB_ADMIN_USER: admin
+          INFLUXDB_ADMIN_PASSWORD: password
+          INFLUXDB_HTTP_AUTH_ENABLED: "false" # Disables authentication
+          INFLUXDB_ORG: ucp-org
+          INFLUXDB_BUCKET: performance
+          INFLUXDB_TOKEN: my-secret-token
+        options: >-
+          --health-cmd "curl --silent --fail http://localhost:8086/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 8086:8086
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,16 +48,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Setup InfluxDB Bucket & Org
+        run: |
+          curl -X POST http://localhost:8086/api/v2/setup \
+            --header "Content-Type: application/json" \
+            --data '{
+              "username": "admin",
+              "password": "password",
+              "org": "ucp-org",
+              "bucket": "performance",
+              "token": "my-secret-token"
+            }'
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           project: apps/performance-service
-          start: |
-            npm run start:e2e --workspace apps/performance-service
+          start: npm run start --workspace apps/performance-service
           wait-on: "http://localhost:8090/ping"
           spec: apps/performance-service/cypress/e2e/general/*.cy.ts
         env:
           REDIS_SERVER: redis://localhost:6379
+          INFLUX_URL: http://localhost:8086
           EVENT_PROCESSING_TIME_LIMIT_SECONDS: 3
           POLL_INTERVAL_SECONDS: 1
           CYPRESS_WIDGET_CLIENT_ID: ${{ vars.WIDGET_CLIENT_ID }}

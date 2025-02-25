@@ -1,5 +1,5 @@
 import { runTokenInvalidCheck } from "../../shared/utils/authorization";
-import { JobTypes } from "@repo/shared-utils";
+import { ComboJobTypes } from "@repo/shared-utils";
 import {
   markSuccessfulEventRequest,
   pauseConnectionEventRequest,
@@ -12,7 +12,7 @@ describe("connection event endpoints", () => {
 
   describe("/events/:connectionId/connectionStart", () => {
     const eventRequestBody = {
-      jobType: [JobTypes.AGGREGATE],
+      jobTypes: [ComboJobTypes.TRANSACTIONS],
       institutionId: "test",
       aggregatorId: "test",
       clientId: "test",
@@ -46,8 +46,8 @@ describe("connection event endpoints", () => {
       });
     });
 
-    it("fails when jobType is not one of the allowed values", () => {
-      const invalidBody = { ...eventRequestBody, jobType: ["invalidType"] };
+    it("fails when jobTypes is not one of the allowed values", () => {
+      const invalidBody = { ...eventRequestBody, jobTypes: ["invalidType"] };
 
       startConnectionEventRequest({
         connectionId: crypto.randomUUID(),
@@ -56,15 +56,15 @@ describe("connection event endpoints", () => {
       }).then((response: { status: number; body: { error: string } }) => {
         expect(response.status).to.eq(400);
         expect(response.body).to.have.property("error");
-        expect(response.body.error).to.include("jobType");
+        expect(response.body.error).to.include("jobTypes");
       });
     });
 
-    const validJobTypes = Object.values(JobTypes);
+    const validJobTypes = Object.values(ComboJobTypes);
 
     validJobTypes.forEach((validJobType) => {
-      it(`succeeds when jobType is ${validJobType}`, () => {
-        const validBody = { ...eventRequestBody, jobType: [validJobType] };
+      it(`succeeds when jobTypes is [${validJobType}]`, () => {
+        const validBody = { ...eventRequestBody, jobTypes: [validJobType] };
 
         startConnectionEventRequest({
           connectionId: crypto.randomUUID(),

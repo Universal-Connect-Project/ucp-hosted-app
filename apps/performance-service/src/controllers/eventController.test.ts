@@ -9,6 +9,7 @@ import {
 } from "./eventController";
 
 import { getEvent } from "../services/storageClient/redis";
+import { ComboJobTypes } from "@repo/shared-utils";
 
 const connectionId = "MBR-123";
 
@@ -36,7 +37,7 @@ describe("eventController", () => {
   describe("createStartEvent", () => {
     it("should add the event to redis and return the event response", async () => {
       const eventBody = {
-        jobType: ["aggregate"],
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
         institutionId: "testInstitutionId",
         aggregatorId: "testAggregatorId",
         clientId: "testClientId",
@@ -115,6 +116,10 @@ describe("eventController", () => {
   });
 
   describe("updateConnectionPause", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
     it("should update the redis event with a pausedAt attribute and userInteractionTime of 0", async () => {
       const res = {
         json: jest.fn(),

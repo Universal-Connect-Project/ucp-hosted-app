@@ -21,6 +21,70 @@
     }
   ],
   "paths": {
+    "/metrics/allPerformanceData": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "All performance data for the last 30 days",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "cbc051c6-55c0-40fd-8e90-d88ec9866164": {
+                      "transactions": {
+                        "successRate": {
+                          "mx": 71,
+                          "sophtron": 70,
+                          "finicity": 100
+                        },
+                        "jobDuration": {
+                          "mx": 40.06266666666666666,
+                          "sophtron": 114.067,
+                          "testAggregatorId2": 56.374
+                        }
+                      },
+                      "account_verification": {
+                        "successRate": {
+                          "mx": 50
+                        },
+                        "jobDuration": {}
+                      },
+                      "account_verification_transactions": {
+                        "successRate": {
+                          "sophtron": 55
+                        },
+                        "jobDuration": {}
+                      }
+                    },
+                    "ae94909a-c798-4ef2-8bd2-65b2d3cafa43": {
+                      "transactions": {
+                        "successRate": {
+                          "mx": 66.67
+                        },
+                        "jobDuration": {
+                          "mx": 30.5325
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/events/{connectionId}/connectionStart": {
       "post": {
         "security": [
@@ -47,16 +111,15 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "jobType": {
+                  "jobTypes": {
                     "type": "array",
                     "items": {
                       "type": "string",
                       "enum": [
-                        "aggregate",
-                        "verification",
-                        "identity",
-                        "fullhistory",
-                        "all"
+                        "account_verification",
+                        "identity_verification",
+                        "transactions",
+                        "transaction_history"
                       ]
                     }
                   },
@@ -88,7 +151,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregate",
+                      "jobTypes": ["transactions"],
                       "startedAt": "2024-09-10T16:07:46.038Z"
                     }
                   }
@@ -148,7 +211,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregate",
+                      "jobTypes": ["transactions"],
                       "userInteractionTime": 0,
                       "pausedAt": "2024-09-10T16:07:51.038Z",
                       "startedAt": "2024-09-10T16:07:46.038Z",
@@ -211,7 +274,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregate",
+                      "jobTypes": ["transactions"],
                       "userInteractionTime": 140,
                       "pausedAt": "2024-09-10T16:07:51.038Z",
                       "startedAt": "2024-09-10T16:07:46.038Z",
@@ -274,7 +337,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "clientId": "54321",
-                      "jobType": "aggregate",
+                      "jobTypes": ["transactions"],
                       "userInteractionTime": 140,
                       "pausedAt": null,
                       "startedAt": "2024-09-10T16:07:46.038Z",
