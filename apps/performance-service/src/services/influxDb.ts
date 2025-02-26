@@ -10,7 +10,7 @@ import {
 const url: string = process.env.INFLUX_URL || "http://localhost:8086";
 const token: string = process.env.INFLUX_TOKEN || "my-secret-token";
 
-const ORG = "ucp-org";
+const ORG = process.env.INFLUX_ORG || "ucp-org";
 const BUCKET = process.env.NODE_ENV === "test" ? "testBucket" : "performance";
 
 const client = new InfluxDB({ url, token });
