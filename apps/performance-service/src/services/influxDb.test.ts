@@ -48,7 +48,7 @@ describe("recordPerformanceMetric", () => {
         aggregatorId: "agg_789",
         clientId: "client_456",
         institutionId,
-        jobTypes: "jobA_jobB",
+        jobTypes: "jobA,jobB",
       }),
     );
 
@@ -69,7 +69,7 @@ describe("recordPerformanceMetric", () => {
         aggregatorId: "agg_789",
         clientId: "client_456",
         institutionId,
-        jobTypes: "jobA_jobB",
+        jobTypes: "jobA,jobB",
       }),
     );
   });
@@ -103,7 +103,7 @@ describe("recordPerformanceMetric", () => {
         aggregatorId: "agg_789",
         clientId: "client_456",
         institutionId: testInstitutionId,
-        jobTypes: "jobA_jobB",
+        jobTypes: "jobA,jobB",
       }),
     );
 
