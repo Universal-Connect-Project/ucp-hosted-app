@@ -135,7 +135,7 @@ async function writeData(data: {
 export const recordPerformanceMetric = async (
   event: EventObject,
 ): Promise<boolean> => {
-  const jobTypesKey = [...event.jobTypes].sort().join("_");
+  const jobTypesKey = [...event.jobTypes].sort().join(",");
 
   const totalDuration = event?.successAt
     ? event.successAt - event.startedAt - (event.userInteractionTime || 0)

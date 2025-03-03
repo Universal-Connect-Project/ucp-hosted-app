@@ -181,7 +181,7 @@ export const expectedTransformedInstitutionData = (
   };
 
   obj[institutionId2] = {
-    account_verification_transactions: {
+    "account_verification,transactions": {
       successRate: {
         mx: 100,
       },
