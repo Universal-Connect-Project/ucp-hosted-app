@@ -4,11 +4,20 @@
       "addons": [
         {
           "plan": "heroku-postgresql:essential-0"
+        },
+        {
+          "plan": "upstash-redis:free"
         }
       ],
       "scripts": {
         "postdeploy": "npm run db:migrate --workspace=apps/institution-service && npm run db:load --workspace=apps/institution-service"
       }
+    }
+  },
+  "env": {
+    "REDIS_ENABLE_TLS": {
+      "description": "Whether to configure Redis with TLS or not",
+      "value": "true"
     }
   }
 }

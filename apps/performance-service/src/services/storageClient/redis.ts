@@ -7,7 +7,7 @@ import { recordPerformanceMetric } from "../influxDb";
 export const EVENT_SUBDIRECTORY = "event";
 
 const redisClient = createClient({
-  url: process.env.REDIS_SERVER,
+  url: process.env.UPSTASH_REDIS_URL || process.env.REDIS_SERVER,
   ...(process.env.REDIS_ENABLE_TLS && {
     socket: {
       tls: true,
