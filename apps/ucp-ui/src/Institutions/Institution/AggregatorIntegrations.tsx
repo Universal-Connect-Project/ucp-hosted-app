@@ -94,6 +94,8 @@ const AggregatorIntegrations = ({
       supports_history: false,
       supports_identification: false,
       supports_verification: true,
+      supportsRewards: false,
+      supportsBalance: false,
     },
   ] as AggregatorIntegration[];
 

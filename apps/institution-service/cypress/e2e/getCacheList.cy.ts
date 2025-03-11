@@ -56,6 +56,8 @@ const checkCacheListResponse = (
     "supports_identification",
     "supports_aggregation",
     "supports_history",
+    "supportsRewards",
+    "supportsBalance",
   ].forEach((attribute) => {
     expect(aggregator).to.haveOwnProperty(attribute);
   });

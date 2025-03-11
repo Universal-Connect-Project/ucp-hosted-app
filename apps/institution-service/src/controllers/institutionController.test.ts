@@ -236,6 +236,8 @@ describe("institutionController", () => {
     supportsIdentification,
     supportsAggregation,
     supportsHistory,
+    supportsRewards,
+    supportsBalance,
     supportsVerification,
     supportsOauth,
     includeInactiveIntegrations,
@@ -248,6 +250,8 @@ describe("institutionController", () => {
     supportsIdentification?: boolean;
     supportsAggregation?: boolean;
     supportsHistory?: boolean;
+    supportsRewards?: boolean;
+    supportsBalance?: boolean;
     supportsVerification?: boolean;
     supportsOauth?: boolean;
     includeInactiveIntegrations?: boolean;
@@ -262,6 +266,8 @@ describe("institutionController", () => {
         supportsIdentification: supportsIdentification ? "true" : undefined,
         supportsAggregation: supportsAggregation ? "true" : undefined,
         supportsHistory: supportsHistory ? "true" : undefined,
+        supportsRewards: supportsRewards ? "true" : undefined,
+        supportsBalance: supportsBalance ? "true" : undefined,
         supportsVerification: supportsVerification ? "true" : undefined,
         supportsOauth: supportsOauth ? "true" : undefined,
         includeInactiveIntegrations: includeInactiveIntegrations
@@ -285,6 +291,8 @@ describe("institutionController", () => {
             supports_identification: boolean;
             supports_verification: boolean;
             supports_history: boolean;
+            supportsRewards: boolean;
+            supportsBalance: boolean;
             supports_oauth: boolean;
             aggregator: {
               name: string;
@@ -339,6 +347,8 @@ describe("institutionController", () => {
                   supports_verification: expect.any(Boolean),
                   supports_aggregation: expect.any(Boolean),
                   supports_history: expect.any(Boolean),
+                  supportsRewards: expect.any(Boolean),
+                  supportsBalance: expect.any(Boolean),
                   isActive: expect.any(Boolean),
                   aggregator: expect.objectContaining({
                     name: expect.any(String),
@@ -411,6 +421,8 @@ describe("institutionController", () => {
       "supports_verification",
       "supports_aggregation",
       "supports_history",
+      "supportsRewards",
+      "supportsBalance",
     ].forEach((keyword) => {
       const req = {
         query: {
@@ -572,6 +584,8 @@ describe("institutionController", () => {
         supportsVerification: true,
         supportsAggregation: true,
         supportsHistory: true,
+        supportsRewards: true,
+        supportsBalance: true,
       });
       const res = {
         json: jest.fn(),
@@ -590,6 +604,8 @@ describe("institutionController", () => {
             aggInt.supports_aggregation &&
             aggInt.supports_identification &&
             aggInt.supports_verification &&
+            aggInt.supportsRewards &&
+            aggInt.supportsBalance &&
             aggInt.supports_history,
         );
 
@@ -847,6 +863,8 @@ describe("institutionController", () => {
                 supports_verification: expect.any(Boolean),
                 supports_aggregation: expect.any(Boolean),
                 supports_history: expect.any(Boolean),
+                supportsRewards: expect.any(Boolean),
+                supportsBalance: expect.any(Boolean),
                 isActive: expect.any(Boolean),
                 aggregator: expect.objectContaining({
                   name: expect.any(String),

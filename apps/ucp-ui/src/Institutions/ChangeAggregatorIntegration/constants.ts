@@ -42,10 +42,14 @@ export interface ChangeAggregatorIntegrationInputs {
   supportsFullHistory: boolean;
   supportsOauth: boolean;
   supportsVerification: boolean;
+  supportsRewards: boolean;
+  supportsBalance: boolean;
 }
 
 export type CheckboxName =
   | "supportsAggregation"
   | "supportsIdentification"
   | "supportsFullHistory"
+  | "supportsRewards"
+  | "supportsBalance"
   | "supportsVerification";

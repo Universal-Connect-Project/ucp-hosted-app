@@ -43,6 +43,8 @@ export const aggregatorIntegrationUpdateSchema = Joi.object({
   supports_verification: Joi.boolean(),
   supports_aggregation: Joi.boolean(),
   supports_history: Joi.boolean(),
+  supportsRewards: Joi.boolean(),
+  supportsBalance: Joi.boolean(),
   isActive: Joi.boolean(),
 });
 

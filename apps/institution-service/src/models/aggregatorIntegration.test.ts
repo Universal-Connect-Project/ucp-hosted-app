@@ -21,6 +21,8 @@ describe("AggregatorIntegration Model", () => {
     expect(createdAggregator.supports_verification).toBeFalsy();
     expect(createdAggregator.supports_aggregation).toBeTruthy();
     expect(createdAggregator.supports_history).toBeTruthy();
+    expect(createdAggregator.supportsRewards).toBeFalsy();
+    expect(createdAggregator.supportsBalance).toBeFalsy();
     expect(createdAggregator.institution_id).toBe(seedInstitutionId);
 
     // db cleanup

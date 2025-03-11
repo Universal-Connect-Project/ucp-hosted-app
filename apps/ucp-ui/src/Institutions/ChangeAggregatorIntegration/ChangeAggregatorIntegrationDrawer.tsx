@@ -113,6 +113,8 @@ const ChangeAggregatorIntegrationDrawer = ({
         aggregatorIntegration?.supports_identification || false,
       supportsOauth: aggregatorIntegration?.supports_oauth || false,
       supportsFullHistory: aggregatorIntegration?.supports_history || false,
+      supportsRewards: aggregatorIntegration?.supportsRewards || false,
+      supportsBalance: aggregatorIntegration?.supportsBalance || false,
       supportsVerification:
         aggregatorIntegration?.supports_verification || false,
     };
@@ -143,6 +145,16 @@ const ChangeAggregatorIntegrationDrawer = ({
       description: supportsJobTypeMap.verification.description,
       name: "supportsVerification",
       displayName: supportsJobTypeMap.verification.displayName,
+    },
+    {
+      description: supportsJobTypeMap.rewards.description,
+      name: "supportsRewards",
+      displayName: supportsJobTypeMap.rewards.displayName,
+    },
+    {
+      description: supportsJobTypeMap.balance.description,
+      name: "supportsBalance",
+      displayName: supportsJobTypeMap.balance.displayName,
     },
   ];
 

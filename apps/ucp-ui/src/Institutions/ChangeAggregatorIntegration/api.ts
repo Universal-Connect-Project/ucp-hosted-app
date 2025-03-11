@@ -10,6 +10,8 @@ interface ChangeAggregatorIntegrationParams {
   supportsFullHistory: boolean;
   supportsOauth: boolean;
   supportsVerification: boolean;
+  supportsRewards: boolean;
+  supportsBalance: boolean;
 }
 
 export interface CreateAggregatorIntegrationParams
@@ -35,6 +37,8 @@ const transformBody = ({
   supportsFullHistory,
   supportsOauth,
   supportsVerification,
+  supportsRewards,
+  supportsBalance,
 }: ChangeAggregatorIntegrationParams) => ({
   aggregator_institution_id: aggregatorInstitutionId,
   isActive,
@@ -43,6 +47,8 @@ const transformBody = ({
   supports_history: supportsFullHistory,
   supports_oauth: supportsOauth,
   supports_verification: supportsVerification,
+  supportsRewards,
+  supportsBalance,
 });
 
 export const INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL = `${INSTITUTION_SERVICE_BASE_URL}/aggregatorIntegrations`;

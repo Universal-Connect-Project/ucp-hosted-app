@@ -27,6 +27,8 @@ interface AggregatorIntegration {
   supports_verification: boolean;
   supports_aggregation: boolean;
   supports_history: boolean;
+  supportsRewards: boolean;
+  supportsBalance: boolean;
   isActive: boolean;
 }
 
@@ -111,6 +113,16 @@ describe("PUT /aggregatorIntegrations/:id (AggregatorIntegration update)", () =>
       },
       {
         attribute: "supports_history",
+        value: true,
+        status: 200,
+      },
+      {
+        attribute: "supportsRewards",
+        value: true,
+        status: 200,
+      },
+      {
+        attribute: "supportsBalance",
         value: true,
         status: 200,
       },

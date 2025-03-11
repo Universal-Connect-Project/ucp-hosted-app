@@ -148,14 +148,14 @@ describe("<Institutions />", () => {
       rowWithTestInstitution,
     ).getAllByTestId(new RegExp(INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID));
 
-    expect(within(mxChip).getByText(4)).toBeInTheDocument();
+    expect(within(mxChip).getByText(6)).toBeInTheDocument();
     expect(within(mxChip).getByText("MX")).toBeInTheDocument();
 
     await userEvent.hover(mxChip);
 
     expect(
       await screen.findByText(
-        "Supported job types: Aggregation, Full History, Identification, Verification",
+        "Supported job types: Aggregation, Full History, Identification, Verification, Rewards, Balance",
       ),
     );
 

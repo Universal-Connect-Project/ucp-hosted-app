@@ -114,6 +114,8 @@ const Institutions = () => {
     "supportsIdentification",
   );
   const supportsHistory = getBooleanFromSearchParams("supportsHistory");
+  const supportsRewards = getBooleanFromSearchParams("supportsRewards");
+  const supportsBalance = getBooleanFromSearchParams("supportsBalance");
   const supportsVerification = getBooleanFromSearchParams(
     "supportsVerification",
   );
@@ -151,6 +153,8 @@ const Institutions = () => {
     supportsAggregation,
     supportsIdentification,
     supportsHistory,
+    supportsRewards,
+    supportsBalance,
     supportsVerification,
     aggregatorName,
     search,

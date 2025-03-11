@@ -15,6 +15,8 @@ interface AggregatorIntegrationBody {
   supports_verification: boolean;
   supports_aggregation: boolean;
   supports_history: boolean;
+  supportsRewards: boolean;
+  supportsBalance: boolean;
 }
 
 export const defaultTestAggregator: AggregatorIntegrationBody = {
@@ -27,4 +29,6 @@ export const defaultTestAggregator: AggregatorIntegrationBody = {
   supports_verification: false,
   supports_aggregation: true,
   supports_history: false,
+  supportsRewards: false,
+  supportsBalance: false,
 };

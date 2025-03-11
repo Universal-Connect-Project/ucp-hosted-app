@@ -6,4 +6,6 @@ export const createTestAggregatorIntegrationBody = {
   supports_verification: true,
   supports_aggregation: true,
   supports_history: true,
+  supportsRewards: true,
+  supportsBalance: true,
 };
