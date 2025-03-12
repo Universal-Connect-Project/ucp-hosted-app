@@ -39,6 +39,8 @@ export const cachedInstitutionFromSeed = {
     supports_identification: true,
     supports_oauth: true,
     supports_verification: true,
+    supportsRewards: true,
+    supportsBalance: true,
   },
 };
 
@@ -60,6 +62,8 @@ export const institutionWithAggregatorQueryObj = {
         supports_identification: true,
         supports_oauth: true,
         supports_verification: true,
+        supportsRewards: true,
+        supportsBalance: true,
       },
       aggregator: {
         name: "sophtron",

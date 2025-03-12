@@ -32,6 +32,8 @@ export function transformInstitutionToCachedInstitution(
       supports_identification,
       supports_oauth,
       supports_verification,
+      supportsRewards,
+      supportsBalance,
     } = dataValues;
     institutionObj[aggregator?.name as aggregatorKey] = {
       id,
@@ -40,6 +42,8 @@ export function transformInstitutionToCachedInstitution(
       supports_identification,
       supports_oauth,
       supports_verification,
+      supportsRewards,
+      supportsBalance,
     } as unknown as InstitutionAggregator;
   });
   return institutionObj;

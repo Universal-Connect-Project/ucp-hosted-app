@@ -41,6 +41,14 @@ export const jobTypeCheckboxes = [
     label: supportsJobTypeMap.fullHistory.displayName,
     prop: "supportsHistory",
   },
+  {
+    label: supportsJobTypeMap.rewards.displayName,
+    prop: "supportsRewards",
+  },
+  {
+    label: supportsJobTypeMap.balance.displayName,
+    prop: "supportsBalance",
+  },
 ];
 
 const InstitutionFilters = ({

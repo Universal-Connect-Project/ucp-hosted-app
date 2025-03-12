@@ -25,6 +25,8 @@ export class AggregatorIntegration extends Model<
   declare supports_verification: CreationOptional<boolean>;
   declare supports_aggregation: CreationOptional<boolean>;
   declare supports_history: CreationOptional<boolean>;
+  declare supportsRewards: CreationOptional<boolean>;
+  declare supportsBalance: CreationOptional<boolean>;
   declare institution_id: ForeignKey<Institution["id"]>;
   declare aggregatorId: ForeignKey<Aggregator["id"]>;
 
@@ -65,6 +67,8 @@ AggregatorIntegration.init(
       defaultValue: true,
     },
     supports_history: { type: DataTypes.BOOLEAN, defaultValue: false },
+    supportsRewards: { type: DataTypes.BOOLEAN, defaultValue: false },
+    supportsBalance: { type: DataTypes.BOOLEAN, defaultValue: false },
     createdAt: { type: DataTypes.DATE, defaultValue: new Date() },
     updatedAt: { type: DataTypes.DATE, defaultValue: new Date() },
   },

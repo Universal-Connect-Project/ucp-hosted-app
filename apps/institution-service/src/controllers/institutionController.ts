@@ -36,6 +36,8 @@ export const getInstitutionCachedList = async (req: Request, res: Response) => {
             "supports_verification",
             "supports_aggregation",
             "supports_history",
+            "supportsRewards",
+            "supportsBalance",
           ],
           where: {
             isActive: true,
@@ -126,6 +128,8 @@ export interface AggregatorIntegrationResponse {
   supports_verification: boolean;
   supports_aggregation: boolean;
   supports_history: boolean;
+  supportsRewards: boolean;
+  supportsBalance: boolean;
   isActive: boolean;
   aggregator: {
     name: string;
@@ -208,6 +212,8 @@ const integrationFilterStrings = (req: Request): string => {
     supportsIdentification,
     supportsAggregation,
     supportsHistory,
+    supportsRewards,
+    supportsBalance,
     supportsVerification,
     supportsOauth,
     includeInactiveIntegrations,
@@ -237,6 +243,16 @@ const integrationFilterStrings = (req: Request): string => {
   if (supportsOauth === "true") {
     integrationFilterStringList.push(
       'AND "aggregatorIntegration"."supports_oauth" = TRUE',
+    );
+  }
+  if (supportsRewards === "true") {
+    integrationFilterStringList.push(
+      'AND "aggregatorIntegration"."supportsRewards" = TRUE',
+    );
+  }
+  if (supportsBalance === "true") {
+    integrationFilterStringList.push(
+      'AND "aggregatorIntegration"."supportsBalance" = TRUE',
     );
   }
   if (includeInactiveIntegrations !== "true" && aggregatorName) {
@@ -365,6 +381,8 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
             "supports_verification",
             "supports_aggregation",
             "supports_history",
+            "supportsRewards",
+            "supportsBalance",
             "isActive",
           ],
           required: false,
@@ -417,6 +435,8 @@ export const getInstitution = async (req: Request, res: Response) => {
             "supports_verification",
             "supports_aggregation",
             "supports_history",
+            "supportsRewards",
+            "supportsBalance",
             "createdAt",
             "updatedAt",
             "isActive",

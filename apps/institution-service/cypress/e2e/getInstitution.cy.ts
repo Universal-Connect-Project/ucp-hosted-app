@@ -143,6 +143,8 @@ describe("GET /institutions/:id (Institution Details)", () => {
               "supports_verification",
               "supports_aggregation",
               "supports_history",
+              "supportsRewards",
+              "supportsBalance",
             ].forEach((key) => {
               expect(integration).to.have.property(key);
             });

@@ -17,6 +17,8 @@ export interface AggregatorIntegration {
   supports_identification: boolean;
   supports_oauth: boolean;
   supports_verification: boolean;
+  supportsRewards: boolean;
+  supportsBalance: boolean;
 }
 
 export interface Institution {
@@ -66,6 +68,8 @@ export interface InstitutionParamsBooleans {
   supportsIdentification?: boolean;
   supportsOauth?: boolean;
   supportsVerification?: boolean;
+  supportsRewards?: boolean;
+  supportsBalance?: boolean;
 }
 
 export interface InstitutionsParams extends InstitutionParamsBooleans {

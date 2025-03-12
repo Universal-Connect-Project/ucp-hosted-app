@@ -5,6 +5,8 @@ interface JobType {
     | "supports_aggregation"
     | "supports_history"
     | "supports_identification"
+    | "supportsRewards"
+    | "supportsBalance"
     | "supports_verification";
 }
 
@@ -28,5 +30,15 @@ export const supportsJobTypeMap: Record<string, JobType> = {
     description: "Account and routing/transit number information",
     displayName: "Verification",
     prop: "supports_verification",
+  },
+  rewards: {
+    description: "Account Rewards",
+    displayName: "Rewards",
+    prop: "supportsRewards",
+  },
+  balance: {
+    description: "Account Balance",
+    displayName: "Balance",
+    prop: "supportsBalance",
   },
 };

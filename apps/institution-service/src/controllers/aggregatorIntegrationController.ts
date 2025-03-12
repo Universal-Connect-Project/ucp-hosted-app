@@ -12,6 +12,8 @@ interface AggregatorIntegrationParams {
   supports_verification: boolean;
   supports_aggregation: boolean;
   supports_history: boolean;
+  supportsRewards: boolean;
+  supportsBalance: boolean;
   isActive: boolean;
 }
 

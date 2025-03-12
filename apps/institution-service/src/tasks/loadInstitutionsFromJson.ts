@@ -35,6 +35,8 @@ export interface InstitutionAggregator {
   supports_verification: boolean;
   supports_aggregation: boolean;
   supports_history: boolean;
+  supportsRewards: boolean;
+  supportsBalance: boolean;
 }
 
 async function loadInstitutionData() {
@@ -115,6 +117,8 @@ async function loadInstitutionData() {
         supports_identification: mx.supports_identification,
         supports_verification: mx.supports_verification,
         supports_history: mx.supports_history,
+        supportsRewards: mx.supportsRewards,
+        supportsBalance: mx.supportsBalance,
         supports_aggregation: mx.supports_aggregation,
       } as AggregatorIntegration);
     }
@@ -131,6 +135,8 @@ async function loadInstitutionData() {
         supports_identification: sophtron.supports_identification,
         supports_verification: sophtron.supports_verification,
         supports_history: sophtron.supports_history,
+        supportsRewards: sophtron.supportsRewards,
+        supportsBalance: sophtron.supportsBalance,
         supports_aggregation: sophtron.supports_aggregation,
       } as AggregatorIntegration);
     }
@@ -146,6 +152,8 @@ async function loadInstitutionData() {
         supports_identification: finicity.supports_identification,
         supports_verification: finicity.supports_verification,
         supports_history: finicity.supports_history,
+        supportsRewards: finicity.supportsRewards,
+        supportsBalance: finicity.supportsBalance,
         supports_aggregation: finicity.supports_aggregation,
       } as AggregatorIntegration);
     }
@@ -161,6 +169,8 @@ async function loadInstitutionData() {
         supports_identification: testExampleA.supports_identification,
         supports_verification: testExampleA.supports_verification,
         supports_history: testExampleA.supports_history,
+        supportsRewards: testExampleA.supportsRewards,
+        supportsBalance: testExampleA.supportsBalance,
         supports_aggregation: testExampleA.supports_aggregation,
       } as AggregatorIntegration);
     }
@@ -175,6 +185,8 @@ async function loadInstitutionData() {
         supports_identification: testExampleB.supports_identification,
         supports_verification: testExampleB.supports_verification,
         supports_history: testExampleB.supports_history,
+        supportsRewards: testExampleB.supportsRewards,
+        supportsBalance: testExampleB.supportsBalance,
         supports_aggregation: testExampleB.supports_aggregation,
       } as AggregatorIntegration);
     }

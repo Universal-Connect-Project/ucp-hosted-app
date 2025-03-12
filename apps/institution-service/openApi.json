@@ -104,7 +104,9 @@
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_aggregation": true,
-                        "supports_history": false
+                        "supports_history": false,
+                        "supportsBalance": false,
+                        "supportsRewards": false
                       }
                     },
                     {
@@ -121,7 +123,9 @@
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_aggregation": false,
-                        "supports_history": false
+                        "supports_history": false,
+                        "supportsBalance": false,
+                        "supportsRewards": false
                       }
                     },
                     {
@@ -138,7 +142,9 @@
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_aggregation": true,
-                        "supports_history": true
+                        "supports_history": true,
+                        "supportsBalance": true,
+                        "supportsRewards": true
                       },
                       "sophtron": {
                         "id": "4D1C263B-D291-4DF7-9F22-79E445E59526",
@@ -146,7 +152,9 @@
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_aggregation": false,
-                        "supports_history": false
+                        "supports_history": false,
+                        "supportsBalance": false,
+                        "supportsRewards": false
                       },
                       "finicity": {
                         "id": "5411",
@@ -154,7 +162,9 @@
                         "supports_identification": true,
                         "supports_verification": false,
                         "supports_aggregation": true,
-                        "supports_history": false
+                        "supports_history": false,
+                        "supportsBalance": false,
+                        "supportsRewards": false
                       }
                     }
                   ]
@@ -199,7 +209,9 @@
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_aggregation": true,
-                        "supports_history": false
+                        "supports_history": false,
+                        "supportsBalance": false,
+                        "supportsRewards": false
                       }
                     },
                     {
@@ -216,7 +228,9 @@
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_aggregation": false,
-                        "supports_history": false
+                        "supports_history": false,
+                        "supportsBalance": false,
+                        "supportsRewards": false
                       }
                     },
                     {
@@ -233,7 +247,9 @@
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_aggregation": true,
-                        "supports_history": true
+                        "supports_history": true,
+                        "supportsBalance": true,
+                        "supportsRewards": true
                       },
                       "sophtron": {
                         "id": "4D1C263B-D291-4DF7-9F22-79E445E59526",
@@ -241,7 +257,9 @@
                         "supports_identification": true,
                         "supports_verification": true,
                         "supports_aggregation": false,
-                        "supports_history": false
+                        "supports_history": false,
+                        "supportsBalance": false,
+                        "supportsRewards": false
                       },
                       "finicity": {
                         "id": "5411",
@@ -249,7 +267,9 @@
                         "supports_identification": true,
                         "supports_verification": false,
                         "supports_aggregation": true,
-                        "supports_history": false
+                        "supports_history": false,
+                        "supportsBalance": false,
+                        "supportsRewards": false
                       }
                     }
                   ]
@@ -463,6 +483,8 @@
                           "supports_verification": true,
                           "supports_aggregation": true,
                           "supports_history": true,
+                          "supportsBalance": true,
+                          "supportsRewards": true,
                           "createdAt": "2024-09-23T15:33:58.173Z",
                           "updatedAt": "2024-09-23T15:33:58.173Z",
                           "isActive": true,
@@ -481,6 +503,8 @@
                           "supports_verification": true,
                           "supports_aggregation": true,
                           "supports_history": false,
+                          "supportsBalance": false,
+                          "supportsRewards": false,
                           "createdAt": "2024-09-23T15:33:58.173Z",
                           "updatedAt": "2024-09-23T15:33:58.173Z",
                           "isActive": true,
@@ -499,6 +523,8 @@
                           "supports_verification": false,
                           "supports_aggregation": true,
                           "supports_history": false,
+                          "supportsBalance": false,
+                          "supportsRewards": false,
                           "createdAt": "2024-09-23T15:33:58.173Z",
                           "updatedAt": "2024-09-23T15:33:58.173Z",
                           "isActive": false,
@@ -763,6 +789,8 @@
                               "supports_verification": false,
                               "supports_aggregation": true,
                               "supports_history": false,
+                              "supportsBalance": false,
+                              "supportsRewards": false,
                               "isActive": true,
                               "aggregator": {
                                 "name": "mx",
@@ -778,6 +806,8 @@
                               "supports_verification": false,
                               "supports_aggregation": true,
                               "supports_history": false,
+                              "supportsBalance": false,
+                              "supportsRewards": false,
                               "isActive": true,
                               "aggregator": {
                                 "name": "sophtron",
@@ -806,6 +836,8 @@
                               "supports_verification": false,
                               "supports_aggregation": true,
                               "supports_history": false,
+                              "supportsBalance": false,
+                              "supportsRewards": false,
                               "isActive": true,
                               "aggregator": {
                                 "name": "mx",
@@ -821,6 +853,8 @@
                               "supports_verification": false,
                               "supports_aggregation": true,
                               "supports_history": false,
+                              "supportsBalance": false,
+                              "supportsRewards": false,
                               "isActive": false,
                               "aggregator": {
                                 "name": "finicity",
@@ -849,6 +883,8 @@
                               "supports_verification": false,
                               "supports_aggregation": true,
                               "supports_history": false,
+                              "supportsBalance": false,
+                              "supportsRewards": false,
                               "isActive": true,
                               "aggregator": {
                                 "name": "mx",
@@ -864,6 +900,8 @@
                               "supports_verification": false,
                               "supports_aggregation": true,
                               "supports_history": false,
+                              "supportsBalance": false,
+                              "supportsRewards": false,
                               "isActive": true,
                               "aggregator": {
                                 "name": "sophtron",
@@ -1075,6 +1113,12 @@
                   },
                   "supports_history": {
                     "type": "boolean"
+                  },
+                  "supportsBalance": {
+                    "type": "boolean"
+                  },
+                  "supportsRewards": {
+                    "type": "boolean"
                   }
                 }
               }
@@ -1100,6 +1144,8 @@
                       "supports_verification": false,
                       "supports_aggregation": false,
                       "supports_history": false,
+                      "supportsBalance": false,
+                      "supportsRewards": false,
                       "createdAt": "2024-09-23T15:33:58.173Z",
                       "updatedAt": "2024-10-01T17:20:34.740Z",
                       "institution_id": "7a909e62-98b6-4a34-8725-b2a6a63e830a"
@@ -1189,6 +1235,12 @@
                   },
                   "supports_history": {
                     "type": "boolean"
+                  },
+                  "supportsBalance": {
+                    "type": "boolean"
+                  },
+                  "supportsRewards": {
+                    "type": "boolean"
                   }
                 }
               }
@@ -1214,6 +1266,8 @@
                       "supports_verification": false,
                       "supports_aggregation": false,
                       "supports_history": false,
+                      "supportsBalance": false,
+                      "supportsRewards": false,
                       "createdAt": "2024-09-23T15:33:58.173Z",
                       "updatedAt": "2024-10-01T17:20:34.740Z",
                       "institution_id": "7a909e62-98b6-4a34-8725-b2a6a63e830a"

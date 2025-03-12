@@ -76,6 +76,8 @@ describe("<AggregatorIntegrations />", () => {
         supports_aggregation:
           aggregatorIntegrationToBeEdited.supports_aggregation,
         supports_history: aggregatorIntegrationToBeEdited.supports_history,
+        supportsRewards: aggregatorIntegrationToBeEdited.supportsRewards,
+        supportsBalance: aggregatorIntegrationToBeEdited.supportsBalance,
         supports_identification:
           aggregatorIntegrationToBeEdited.supports_identification,
         supports_oauth: aggregatorIntegrationToBeEdited.supports_oauth,

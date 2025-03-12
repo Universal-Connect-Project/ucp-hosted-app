@@ -36,6 +36,8 @@ describe("updateAggregatorIntegration", () => {
         supports_verification: false,
         supports_aggregation: false,
         supports_history: false,
+        supportsRewards: false,
+        supportsBalance: false,
       },
     } as unknown as Request;
 
@@ -58,6 +60,8 @@ describe("updateAggregatorIntegration", () => {
           supports_verification: false,
           supports_aggregation: false,
           supports_history: false,
+          supportsRewards: false,
+          supportsBalance: false,
         }),
       }),
     );
@@ -163,6 +167,8 @@ describe("createAggregatorIntegration", () => {
       supports_verification: true,
       supports_aggregation: false,
       supports_history: true,
+      supportsRewards: true,
+      supportsBalance: true,
       institution_id: secondSeedInstitutionId,
       aggregatorId: mxAggregatorId,
       aggregator_institution_id: "testBankId",

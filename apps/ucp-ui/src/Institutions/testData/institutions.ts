@@ -13,6 +13,8 @@ export const aggregatorIntegrationThatCanBeEdited = {
   supports_verification: true,
   supports_aggregation: true,
   supports_history: true,
+  supportsRewards: true,
+  supportsBalance: true,
 };
 
 export const testInstitution = {
@@ -37,6 +39,8 @@ export const testInstitution = {
       supports_verification: true,
       supports_aggregation: true,
       supports_history: false,
+      supportsRewards: false,
+      supportsBalance: false,
     },
     aggregatorIntegrationThatCanBeEdited,
   ],
@@ -70,6 +74,8 @@ export const testInstitutionActiveAndInactive = {
       supports_identification: true,
       supports_oauth: true,
       supports_verification: true,
+      supportsRewards: true,
+      supportsBalance: true,
     },
     {
       ...testInstitution.aggregatorIntegrations[1],
