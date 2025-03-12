@@ -51,13 +51,13 @@
                           "testAggregatorId2": 56.374
                         }
                       },
-                      "account_verification": {
+                      "accountNumber": {
                         "successRate": {
                           "mx": 50
                         },
                         "jobDuration": {}
                       },
-                      "account_verification_transactions": {
+                      "accountNumber,transactions": {
                         "successRate": {
                           "sophtron": 55
                         },
@@ -116,10 +116,10 @@
                     "items": {
                       "type": "string",
                       "enum": [
-                        "account_verification",
-                        "identity_verification",
+                        "accountNumber",
+                        "accountOwner",
                         "transactions",
-                        "transaction_history"
+                        "transactionHistory"
                       ]
                     }
                   },
