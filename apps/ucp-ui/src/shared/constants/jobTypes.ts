@@ -13,22 +13,22 @@ interface JobType {
 export const supportsJobTypeMap: Record<string, JobType> = {
   aggregation: {
     description: "Accounts and recent transaction data",
-    displayName: "Aggregation",
+    displayName: "Transactions",
     prop: "supports_aggregation",
   },
   fullHistory: {
     description: "A set timeframe of transaction history for an account",
-    displayName: "Full History",
+    displayName: "Transaction History",
     prop: "supports_history",
   },
   identification: {
     description: "Customer data available",
-    displayName: "Identification",
+    displayName: "Account Owner",
     prop: "supports_identification",
   },
   verification: {
     description: "Account and routing/transit number information",
-    displayName: "Verification",
+    displayName: "Account Number",
     prop: "supports_verification",
   },
   rewards: {

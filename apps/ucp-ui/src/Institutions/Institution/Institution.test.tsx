@@ -45,6 +45,7 @@ import {
   INSTITUTION_ACTIVE_TOOLTIP_TEXT,
   INSTITUTION_OAUTH_TOOLTIP_TEXT,
 } from "../../shared/constants/institution";
+import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
 
 describe("<Institution />", () => {
   it("shows a loading state, renders all the fields, renders an edit button, and sorts the aggregator integrations by display name", async () => {
@@ -68,10 +69,9 @@ describe("<Institution />", () => {
         "Inactive",
         "Yes",
         "No",
-        "Aggregation",
-        "Identification",
-        "Full History",
-        "Verification",
+        ...Object.values(supportsJobTypeMap).map(
+          ({ displayName }) => displayName,
+        ),
       ].map(async (text) =>
         expect((await screen.findAllByText(text)).length).toBeGreaterThan(0),
       ),

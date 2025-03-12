@@ -221,7 +221,9 @@ describe("institutions", () => {
 
     cy.findByRole("option", { name: "Test Example A" }).click();
 
-    cy.findByRole("checkbox", { name: "Aggregation" }).click();
+    cy.findByRole("checkbox", {
+      name: supportsJobTypeMap.aggregation.displayName,
+    }).click();
 
     cy.findByLabelText(
       new RegExp(
