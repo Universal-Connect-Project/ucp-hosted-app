@@ -158,7 +158,7 @@ export const expectedTransformedInstitutionData = (
   const obj: Record<string, unknown> = {};
 
   obj[institutionId1] = {
-    transactions: {
+    [`${ComboJobTypes.TRANSACTIONS}`]: {
       successRate: {
         mx: 50,
         sophtron: 75,
@@ -170,7 +170,7 @@ export const expectedTransformedInstitutionData = (
         finicity: 30,
       },
     },
-    account_verification: {
+    [`${ComboJobTypes.ACCOUNT_NUMBER}`]: {
       successRate: {
         finicity: 100,
       },
@@ -181,7 +181,7 @@ export const expectedTransformedInstitutionData = (
   };
 
   obj[institutionId2] = {
-    "account_verification,transactions": {
+    [`${ComboJobTypes.ACCOUNT_NUMBER},${ComboJobTypes.TRANSACTIONS}`]: {
       successRate: {
         mx: 100,
       },
@@ -189,7 +189,7 @@ export const expectedTransformedInstitutionData = (
         mx: 5,
       },
     },
-    account_verification: {
+    [`${ComboJobTypes.ACCOUNT_NUMBER}`]: {
       successRate: {
         finicity: 0,
       },

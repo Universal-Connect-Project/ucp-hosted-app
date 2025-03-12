@@ -13,10 +13,10 @@ export const JobTypes = {
 };
 
 export const ComboJobTypes = {
-  ACCOUNT_NUMBER: "account_verification",
-  ACCOUNT_OWNER: "identity_verification",
+  ACCOUNT_NUMBER: "accountNumber",
+  ACCOUNT_OWNER: "accountOwner",
   TRANSACTIONS: "transactions",
-  TRANSACTION_HISTORY: "transaction_history",
+  TRANSACTION_HISTORY: "transactionHistory",
 };
 
 export const UiClientPermissions = {
