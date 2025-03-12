@@ -22,6 +22,7 @@ import { server } from "../../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL } from "./api";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
+import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
 
 const openDrawer = async () =>
   await userEvent.click(
@@ -102,7 +103,9 @@ describe("<AddAggregatorIntegration />", () => {
       }),
     );
 
-    await userEvent.click(screen.getByText("Aggregation"));
+    await userEvent.click(
+      screen.getByText(supportsJobTypeMap.aggregation.displayName),
+    );
 
     await submitForm();
 

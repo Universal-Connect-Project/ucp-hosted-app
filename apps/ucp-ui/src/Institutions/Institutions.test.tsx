@@ -155,7 +155,9 @@ describe("<Institutions />", () => {
 
     expect(
       await screen.findByText(
-        "Supported job types: Aggregation, Full History, Identification, Verification, Rewards, Balance",
+        `Supported job types: ${Object.values(supportsJobTypeMap)
+          .map(({ displayName }) => displayName)
+          .join(", ")}`,
       ),
     );
 
