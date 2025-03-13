@@ -25,7 +25,7 @@ export interface DecodedToken {
   azp: string;
 }
 
-const getClientIdFromRequest = (req: Request) => {
+export const getClientIdFromRequest = (req: Request) => {
   const accessToken = getAccessTokenFromRequest(req);
   const decodedToken: DecodedToken = jwtDecode(accessToken);
 

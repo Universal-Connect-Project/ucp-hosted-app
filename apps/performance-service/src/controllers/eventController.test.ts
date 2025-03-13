@@ -10,12 +10,16 @@ import {
 
 import { getEvent } from "../services/storageClient/redis";
 import { ComboJobTypes } from "@repo/shared-utils";
+import { createFakeAccessToken } from "../shared/tests/utils";
 
 const connectionId = "MBR-123";
 
 const mockRequest = {
   params: {
     connectionId,
+  },
+  headers: {
+    authorization: createFakeAccessToken(),
   },
   body: {},
 } as unknown as Request;
@@ -36,15 +40,18 @@ const expectRedisEventToEqual = async (
 describe("eventController", () => {
   describe("createStartEvent", () => {
     it("should add the event to redis and return the event response", async () => {
+      const clientId = "testClientId";
       const eventBody = {
         jobTypes: [ComboJobTypes.TRANSACTIONS],
         institutionId: "testInstitutionId",
         aggregatorId: "testAggregatorId",
-        clientId: "testClientId",
       };
       const req = {
         params: {
           connectionId,
+        },
+        headers: {
+          authorization: createFakeAccessToken(clientId),
         },
         body: eventBody,
       } as unknown as Request;
@@ -58,6 +65,7 @@ describe("eventController", () => {
       const expectedUpdatedBody = expect.objectContaining({
         connectionId,
         ...eventBody,
+        clientId,
         startedAt: expect.any(Number),
       });
 

@@ -9,6 +9,7 @@ import {
   updateSuccessEvent,
 } from "../controllers/eventController";
 import {
+  validateClientAccess,
   validateConnectionId,
   validateWidgetAudience,
 } from "../middlewares/validationMiddleware";
@@ -34,21 +35,21 @@ router.post(
 
 router.put(
   "/:connectionId/connectionPause",
-  [validateWidgetAudience, validateConnectionId],
+  [validateWidgetAudience, validateConnectionId, validateClientAccess],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
   updateConnectionPause as RequestHandler,
 );
 
 router.put(
   "/:connectionId/connectionResume",
-  [validateWidgetAudience, validateConnectionId],
+  [validateWidgetAudience, validateConnectionId, validateClientAccess],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
   updateConnectionResume as RequestHandler,
 );
 
 router.put(
   "/:connectionId/connectionSuccess",
-  [validateWidgetAudience, validateConnectionId],
+  [validateWidgetAudience, validateConnectionId, validateClientAccess],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
   updateSuccessEvent as RequestHandler,
 );
