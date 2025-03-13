@@ -6,7 +6,7 @@ import {
   getClient,
   rotateClientSecret,
 } from "../../resources/clients/clientsService";
-import { getClientTokenFromRequest } from "../../shared/utils";
+import { getAccessTokenFromRequest } from "@repo/backend-utils";
 
 const handleError = (
   res: Response,
@@ -37,7 +37,7 @@ const handleError = (
 };
 
 export const clientsCreate = async (req: Request, res: Response) => {
-  const clientToken = getClientTokenFromRequest(req);
+  const clientToken = getAccessTokenFromRequest(req);
 
   const clientBody = {
     name: `ucp-${crypto.randomUUID()}`,
@@ -65,7 +65,7 @@ export const clientsCreate = async (req: Request, res: Response) => {
 };
 
 export const clientsGet = async (req: Request, res: Response) => {
-  const clientToken = getClientTokenFromRequest(req);
+  const clientToken = getAccessTokenFromRequest(req);
 
   try {
     const client: Client = await getClient(clientToken);
@@ -79,7 +79,7 @@ export const clientsGet = async (req: Request, res: Response) => {
 };
 
 export const clientsDelete = async (req: Request, res: Response) => {
-  const clientToken = getClientTokenFromRequest(req);
+  const clientToken = getAccessTokenFromRequest(req);
 
   try {
     const response = await deleteClient(clientToken);
@@ -90,7 +90,7 @@ export const clientsDelete = async (req: Request, res: Response) => {
 };
 
 export const clientsRotateSecrets = async (req: Request, res: Response) => {
-  const clientToken = getClientTokenFromRequest(req);
+  const clientToken = getAccessTokenFromRequest(req);
 
   try {
     const client: Client = await rotateClientSecret(clientToken);

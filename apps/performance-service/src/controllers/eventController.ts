@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { setEvent, getEvent } from "../services/storageClient/redis";
+import { getAccessTokenFromRequest } from "@repo/backend-utils";
+import { jwtDecode } from "jwt-decode";
 
 interface CreateStartRequest {
   jobTypes: string[];
   institutionId: string;
   aggregatorId: string;
-  clientId: string;
 }
 
 export interface EventObject {
@@ -20,10 +21,22 @@ export interface EventObject {
   successAt?: number;
 }
 
+export interface DecodedToken {
+  azp: string;
+}
+
+const getClientIdFromRequest = (req: Request) => {
+  const accessToken = getAccessTokenFromRequest(req);
+  const decodedToken: DecodedToken = jwtDecode(accessToken);
+
+  return decodedToken.azp;
+};
+
 export const createStartEvent = async (req: Request, res: Response) => {
   try {
+    const clientId = getClientIdFromRequest(req);
     const { connectionId } = req.params;
-    const { jobTypes, institutionId, aggregatorId, clientId } =
+    const { jobTypes, institutionId, aggregatorId } =
       req.body as CreateStartRequest;
     const eventBody = {
       connectionId,

@@ -14,7 +14,6 @@ describe("writing and reading influxDb", () => {
       {
         aggregatorId: "mx",
         institutionId: testInstitution,
-        clientId: "client123",
         jobTypes: [ComboJobTypes.TRANSACTIONS],
         pauseDuration: 200,
         successDuration: 500,
@@ -23,7 +22,6 @@ describe("writing and reading influxDb", () => {
       {
         aggregatorId: "mx",
         institutionId: testInstitution,
-        clientId: "client123",
         jobTypes: [ComboJobTypes.TRANSACTIONS],
         successDuration: 500,
         isSuccess: true,
@@ -31,14 +29,12 @@ describe("writing and reading influxDb", () => {
       {
         aggregatorId: "mx",
         institutionId: testInstitution,
-        clientId: "client123",
         jobTypes: [ComboJobTypes.TRANSACTIONS],
         isSuccess: false,
       },
     ] as {
       aggregatorId: string;
       institutionId: string;
-      clientId: string;
       pauseDuration?: number;
       successDuration?: number;
       jobTypes: string[];
@@ -53,7 +49,6 @@ describe("writing and reading influxDb", () => {
         body: {
           aggregatorId: testDataPoint.aggregatorId,
           institutionId: testDataPoint.institutionId,
-          clientId: testDataPoint.clientId,
           jobTypes: testDataPoint.jobTypes,
         },
       });

@@ -8,7 +8,6 @@ export const startConnectionEventRequest = ({
     jobTypes: [ComboJobTypes.TRANSACTIONS],
     institutionId: "testInstitutionId",
     aggregatorId: "testAggregatorId",
-    clientId: "testClientId",
   },
   failOnStatusCode = true,
 }: {

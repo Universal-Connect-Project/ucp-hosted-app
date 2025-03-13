@@ -1,6 +1,4 @@
-import { Request } from "express";
-
-import { getClientTokenFromRequest, parseResponse } from "../shared/utils";
+import { parseResponse } from "../shared/utils";
 
 describe("utils", () => {
   describe("parseResponse", () => {
@@ -49,19 +47,6 @@ describe("utils", () => {
       await expect(parseResponse(response)).rejects.toEqual(
         new Error("Bad request"),
       );
-    });
-  });
-
-  describe("getClientTokenFromRequest", () => {
-    it("gets the token from the request headers", () => {
-      const req = {
-        headers: {
-          authorization: "Bearer token",
-        },
-      } as unknown as Request;
-
-      const result = getClientTokenFromRequest(req);
-      expect(result).toEqual("token");
     });
   });
 });

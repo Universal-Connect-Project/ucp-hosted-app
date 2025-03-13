@@ -15,7 +15,6 @@ describe("connection event endpoints", () => {
       jobTypes: [ComboJobTypes.TRANSACTIONS],
       institutionId: "test",
       aggregatorId: "test",
-      clientId: "test",
     };
 
     const requiredFields = Object.keys(eventRequestBody);
