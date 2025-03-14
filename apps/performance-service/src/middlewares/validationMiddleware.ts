@@ -17,10 +17,6 @@ export async function validateConnectionId(
 ) {
   const { connectionId } = req.params;
 
-  if (!connectionId) {
-    return res.status(400).json({ error: "connectionId is required" });
-  }
-
   const connectionExists = await getEvent(connectionId);
 
   if (!connectionExists) {

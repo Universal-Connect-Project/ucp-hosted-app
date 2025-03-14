@@ -128,9 +128,6 @@
                   },
                   "aggregatorId": {
                     "type": "string"
-                  },
-                  "ClientId": {
-                    "type": "string"
                   }
                 }
               }

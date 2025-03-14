@@ -16,23 +16,15 @@ describe("validateConnectionId Middleware", () => {
     next = jest.fn();
   });
 
-  it("should return 400 if connectionId is missing", async () => {
-    await validateConnectionId(req as Request, res as Response, next);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({
-      error: "connectionId is required",
-    });
-    expect(next).not.toHaveBeenCalled();
-  });
-
   it("should return 400 if connectionId does not exist", async () => {
     req.params = { connectionId: "invalid-id" };
 
     await validateConnectionId(req as Request, res as Response, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: "Connection not found" });
+    expect(res.json).toHaveBeenCalledWith({
+      error: "Connection not found",
+    });
     expect(next).not.toHaveBeenCalled();
   });
 

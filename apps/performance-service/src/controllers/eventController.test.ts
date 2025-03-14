@@ -10,12 +10,16 @@ import {
 
 import { getEvent } from "../services/storageClient/redis";
 import { ComboJobTypes } from "@repo/shared-utils";
+import { createFakeAccessToken } from "../shared/tests/utils";
 
 const connectionId = "MBR-123";
 
 const mockRequest = {
   params: {
     connectionId,
+  },
+  headers: {
+    authorization: createFakeAccessToken(),
   },
   body: {},
 } as unknown as Request;
@@ -36,15 +40,18 @@ const expectRedisEventToEqual = async (
 describe("eventController", () => {
   describe("createStartEvent", () => {
     it("should add the event to redis and return the event response", async () => {
+      const clientId = "testClientId";
       const eventBody = {
         jobTypes: [ComboJobTypes.TRANSACTIONS],
         institutionId: "testInstitutionId",
         aggregatorId: "testAggregatorId",
-        clientId: "testClientId",
       };
       const req = {
         params: {
           connectionId,
+        },
+        headers: {
+          authorization: createFakeAccessToken(clientId),
         },
         body: eventBody,
       } as unknown as Request;
@@ -58,6 +65,7 @@ describe("eventController", () => {
       const expectedUpdatedBody = expect.objectContaining({
         connectionId,
         ...eventBody,
+        clientId,
         startedAt: expect.any(Number),
       });
 
@@ -118,6 +126,32 @@ describe("eventController", () => {
   describe("updateConnectionPause", () => {
     beforeEach(() => {
       jest.useFakeTimers();
+    });
+
+    it("should return 400 without proper client access", async () => {
+      await createStartEvent(mockRequest, preCheckMockResponse);
+
+      const req = {
+        params: {
+          connectionId,
+        },
+        headers: {
+          authorization: createFakeAccessToken("differentClientId"),
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await updateConnectionPause(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Unauthorized attempt to modify a connection event",
+      });
     });
 
     it("should update the redis event with a pausedAt attribute and userInteractionTime of 0", async () => {
@@ -222,6 +256,32 @@ describe("eventController", () => {
   });
 
   describe("updateConnectionResume", () => {
+    it("should return 400 without proper client access", async () => {
+      await createStartEvent(mockRequest, preCheckMockResponse);
+
+      const req = {
+        params: {
+          connectionId,
+        },
+        headers: {
+          authorization: createFakeAccessToken("differentClientId"),
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await updateConnectionResume(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Unauthorized attempt to modify a connection event",
+      });
+    });
+
     it("should add userInteractionTime and nullify pausedAt and update the redis event", async () => {
       const res = {
         json: jest.fn(),
@@ -292,6 +352,9 @@ describe("eventController", () => {
       } as unknown as Response;
 
       const errorMessage = "Test error";
+
+      await createStartEvent(mockRequest, preCheckMockResponse);
+
       jest.spyOn(res, "status").mockImplementationOnce(() => {
         throw new Error(errorMessage);
       });
@@ -301,12 +364,36 @@ describe("eventController", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: new Error(errorMessage) });
-
-      await expectRedisEventToEqual(connectionId, undefined);
     });
   });
 
   describe("updateSuccessEvent", () => {
+    it("should return 400 without proper client access", async () => {
+      await createStartEvent(mockRequest, preCheckMockResponse);
+
+      const req = {
+        params: {
+          connectionId,
+        },
+        headers: {
+          authorization: createFakeAccessToken("differentClientId"),
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await updateSuccessEvent(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Unauthorized attempt to modify a connection event",
+      });
+    });
+
     it("should set successAt and update redis", async () => {
       const res = {
         json: jest.fn(),
