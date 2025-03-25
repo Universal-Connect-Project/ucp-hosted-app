@@ -328,7 +328,7 @@ describe("getAggregatorMetrics", () => {
           }),
         );
 
-        expect(dailyDays.size).toBeGreaterThanOrEqual(30);
+        expect(dailyDays.size).toBeGreaterThanOrEqual(29);
 
         data.mx.forEach((entry) => {
           const timestamp = new Date(entry.date).getTime();

@@ -102,7 +102,7 @@ export const getDurationGraphPerformanceData = ({
   aggregators?: string;
 }) => {
   return cy.request({
-    url: `metrics/aggregatorSuccessGraph?${timeFrame ? `timeFrame=${timeFrame}&` : ""}${jobTypes ? `jobTypes=${jobTypes}&` : ""}${aggregators ? `aggregators=${aggregators}` : ""}`,
+    url: `metrics/aggregatorDurationGraph?${timeFrame ? `timeFrame=${timeFrame}&` : ""}${jobTypes ? `jobTypes=${jobTypes}&` : ""}${aggregators ? `aggregators=${aggregators}` : ""}`,
     method: "GET",
     failOnStatusCode: false,
     headers: {

@@ -31,6 +31,9 @@ jobs:
         env:
           CYPRESS_WIDGET_CLIENT_ID: ${{ vars.WIDGET_CLIENT_ID }}
           CYPRESS_WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}
+          CYPRESS_E2E_INSTITUTION_PASSWORD: ${{ secrets.E2E_INSTITUTION_PASSWORD }}
+          CYPRESS_E2E_INSTITUTION_USERNAME: ${{ vars.E2E_INSTITUTION_USERNAME }}
+          CYPRESS_WEB_UI_CLIENT_ID: ${{ vars.WEB_UI_CLIENT_ID }}
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
