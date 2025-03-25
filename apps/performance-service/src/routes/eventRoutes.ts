@@ -17,7 +17,7 @@ import Joi from "joi";
 
 const router = Router();
 
-export const startEventSchema = Joi.object({
+const startEventSchema = Joi.object({
   jobTypes: Joi.array()
     .items(Joi.string().valid(...Object.values(ComboJobTypes)))
     .required(),

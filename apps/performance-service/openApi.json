@@ -85,6 +85,227 @@
         }
       }
     },
+    "/metrics/aggregatorSuccessGraph": {
+      "get": {
+        "summary": "Fetch aggregator success graph metrics",
+        "description": "Retrieves success graph metrics based on provided time frame, job types, and aggregators.",
+        "parameters": [
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["1d", "1w", "30d", "180d", "1y"]
+            },
+            "description": "Time frame for the metrics (e.g., '30d'). Defaults to 30d."
+          },
+          {
+            "name": "jobTypes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "transactions",
+                "transactions|accountOwner",
+                "accountNumber|transactions"
+              ]
+            },
+            "description": "A comma-separated list of job types. Some job types can be separated by '|'. Defaults to no filtering by jobTypes."
+          },
+          {
+            "name": "aggregators",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": ["sophtron", "mx"]
+            },
+            "description": "A comma-separated list of aggregators. Defaults to all aggregators."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sophtron": [
+                    {
+                      "date": "2024-03-01T00:00:00Z",
+                      "value": 1
+                    },
+                    {
+                      "date": "2024-03-02T00:00:00Z",
+                      "value": 0.95
+                    }
+                  ],
+                  "mx": [
+                    {
+                      "date": "2024-03-01T00:00:00Z",
+                      "value": 0.85
+                    },
+                    {
+                      "date": "2024-03-02T00:00:00Z",
+                      "value": 0.87
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "\"timeFrame\" must be one of [1d, 1w, 30d, 180d, 1y]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/metrics/aggregatorDurationGraph": {
+      "get": {
+        "summary": "Fetch aggregator duration graph metrics",
+        "description": "Retrieves duration graph metrics based on provided time frame, job types, and aggregators.",
+        "parameters": [
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["1d", "1w", "30d", "180d", "1y"]
+            },
+            "description": "Time frame for the metrics (e.g., '30d'). Defaults to 30d."
+          },
+          {
+            "name": "jobTypes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "transactions",
+                "transactions|accountOwner",
+                "accountNumber|transactions"
+              ]
+            },
+            "description": "A comma-separated list of valid job types. Some job types can be separated by '|'. Defaults to no filtering by jobTypes."
+          },
+          {
+            "name": "aggregators",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": ["sophtron", "mx"]
+            },
+            "description": "A comma-separated list of aggregators. Defaults to all aggregators."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2024-03-01T00:00:00Z"
+                        },
+                        "value": {
+                          "type": "integer",
+                          "description": "Time in milliseconds.",
+                          "example": 1000
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "sophtron": [
+                    {
+                      "date": "2024-03-01T00:00:00Z",
+                      "value": 1500
+                    },
+                    {
+                      "date": "2024-03-02T00:00:00Z",
+                      "value": 1000
+                    }
+                  ],
+                  "mx": [
+                    {
+                      "date": "2024-03-01T00:00:00Z",
+                      "value": 1200
+                    },
+                    {
+                      "date": "2024-03-02T00:00:00Z",
+                      "value": 2500
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "\"timeFrame\" must be one of [1d, 1w, 30d, 180d, 1y]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/events/{connectionId}/connectionStart": {
       "post": {
         "security": [

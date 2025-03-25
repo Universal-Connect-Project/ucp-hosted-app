@@ -1,10 +1,20 @@
-import { queryApi } from "../../services/influxDb";
+import { Point } from "@influxdata/influxdb-client";
+import { queryApi, writeApi } from "../../services/influxDb";
 
 export const minutesAgo = (minutes: number): number =>
   Date.now() - minutes * 60 * 1000;
 
 export const wait = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export const shuffleArray = (array: string[]): string[] => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
 
 export const createFakeAccessToken = (clientId: string = "test") => {
   const headers = {
@@ -67,3 +77,49 @@ export async function getLatestDataPoint(
     });
   });
 }
+
+interface SeedInfluxTestDbParams {
+  jobTypes?: string[];
+  institutionId?: string;
+  clientId?: string;
+  aggregatorId?: string;
+  duration?: number | undefined;
+  timestamp?: Date;
+  success?: boolean;
+}
+
+export const seedInfluxTestDb = async ({
+  jobTypes = ["transactions"],
+  institutionId = "testInstitution",
+  clientId = "testClient",
+  aggregatorId = "mx",
+  duration = 10000,
+  timestamp = new Date(),
+  success = true,
+}: SeedInfluxTestDbParams) => {
+  const jobType = jobTypes.sort().join("|");
+
+  if (duration) {
+    const durationPoint = new Point("durationMetrics")
+      .tag("jobTypes", jobType)
+      .tag("institutionId", institutionId)
+      .tag("clientId", clientId)
+      .tag("aggregatorId", aggregatorId)
+      .intField("jobDuration", duration * 1000)
+      .timestamp(timestamp);
+
+    writeApi.writePoint(durationPoint);
+  }
+
+  const successRatePoint = new Point("successRateMetrics")
+    .tag("jobTypes", jobType)
+    .tag("institutionId", institutionId)
+    .tag("clientId", clientId)
+    .tag("aggregatorId", aggregatorId)
+    .intField("isSuccess", success ? 1 : 0)
+    .timestamp(timestamp);
+
+  writeApi.writePoint(successRatePoint);
+
+  await writeApi.flush();
+};
