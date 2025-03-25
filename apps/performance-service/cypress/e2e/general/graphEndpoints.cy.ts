@@ -5,6 +5,19 @@ import {
 } from "../../shared/utils/requests";
 
 describe("Aggregator success rate graph endpoints", () => {
+  it("fails on improper authorization", () => {
+    cy.request({
+      url: "metrics/aggregatorSuccessGraph",
+      method: "GET",
+      failOnStatusCode: false,
+      headers: {
+        Authorization: "Bearer junk",
+      },
+    }).then((response) => {
+      expect(response.status).to.eq(401);
+    });
+  });
+
   it("gets aggregator graph response with valid inputs", () => {
     getSuccessGraphPerformanceData({
       timeFrame: "30d",
@@ -72,6 +85,19 @@ describe("Aggregator success rate graph endpoints", () => {
 });
 
 describe("Aggregator duration graph endpoints", () => {
+  it("fails on improper authorization", () => {
+    cy.request({
+      url: "metrics/aggregatorDurationGraph",
+      method: "GET",
+      failOnStatusCode: false,
+      headers: {
+        Authorization: "Bearer junk",
+      },
+    }).then((response) => {
+      expect(response.status).to.eq(401);
+    });
+  });
+
   it("gets aggregator graph response with valid inputs", () => {
     getDurationGraphPerformanceData({
       timeFrame: "30d",
