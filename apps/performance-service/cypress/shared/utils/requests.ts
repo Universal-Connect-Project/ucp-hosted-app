@@ -1,4 +1,7 @@
-import { WIDGET_ACCESS_TOKEN } from "../constants/accessTokens";
+import {
+  UCP_UI_USER_ACCESS_TOKEN,
+  WIDGET_ACCESS_TOKEN,
+} from "../constants/accessTokens";
 import { createAuthorizationHeader } from "./authorization";
 import { ComboJobTypes } from "@repo/shared-utils";
 
@@ -66,6 +69,54 @@ export const getAllPerformanceData = () => {
     method: "GET",
     headers: {
       Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
+    },
+  });
+};
+
+export const getSuccessGraphPerformanceData = ({
+  timeFrame,
+  jobTypes,
+  aggregators,
+}: {
+  timeFrame?: string;
+  jobTypes?: string;
+  aggregators?: string;
+}) => {
+  return cy.request({
+    url: "metrics/aggregatorSuccessGraph",
+    qs: {
+      timeFrame,
+      jobTypes,
+      aggregators,
+    },
+    method: "GET",
+    failOnStatusCode: false,
+    headers: {
+      Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
+    },
+  });
+};
+
+export const getDurationGraphPerformanceData = ({
+  timeFrame,
+  jobTypes,
+  aggregators,
+}: {
+  timeFrame?: string;
+  jobTypes?: string;
+  aggregators?: string;
+}) => {
+  return cy.request({
+    url: "metrics/aggregatorDurationGraph",
+    qs: {
+      timeFrame,
+      jobTypes,
+      aggregators,
+    },
+    method: "GET",
+    failOnStatusCode: false,
+    headers: {
+      Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
     },
   });
 };

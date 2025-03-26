@@ -181,7 +181,7 @@ export const expectedTransformedInstitutionData = (
   };
 
   obj[institutionId2] = {
-    [`${ComboJobTypes.ACCOUNT_NUMBER},${ComboJobTypes.TRANSACTIONS}`]: {
+    [`${ComboJobTypes.ACCOUNT_NUMBER}|${ComboJobTypes.TRANSACTIONS}`]: {
       successRate: {
         mx: 100,
       },
