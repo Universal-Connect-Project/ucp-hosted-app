@@ -33,8 +33,8 @@ export const getAggregatorSuccessGraphData = async (
   try {
     const successData = await getAggregatorMetrics({
       timeFrame: timeFrame || "30d",
-      aggregators,
-      jobTypes,
+      aggregators: aggregators || undefined,
+      jobTypes: jobTypes || undefined,
       metric: "successRateMetrics",
     });
     res.send(successData);
@@ -53,8 +53,8 @@ export const getAggregatorDurationGraphData = async (
   try {
     const durationData = await getAggregatorMetrics({
       timeFrame: timeFrame || "30d",
-      aggregators,
-      jobTypes,
+      aggregators: aggregators || undefined,
+      jobTypes: jobTypes || undefined,
       metric: "durationMetrics",
     });
     res.send(durationData);

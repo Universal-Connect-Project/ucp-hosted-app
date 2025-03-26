@@ -37,7 +37,7 @@ describe("Aggregator success rate graph endpoints", () => {
     }).then((response) => {
       expect(response.status).to.eq(400);
       expect(response.body).to.deep.eq({
-        error: '"timeFrame" must be one of [1d, 1w, 30d, 180d, 1y]',
+        error: '"timeFrame" must be one of [, 1d, 1w, 30d, 180d, 1y]',
       });
     });
   });
@@ -117,7 +117,7 @@ describe("Aggregator duration graph endpoints", () => {
     }).then((response) => {
       expect(response.status).to.eq(400);
       expect(response.body).to.deep.eq({
-        error: '"timeFrame" must be one of [1d, 1w, 30d, 180d, 1y]',
+        error: '"timeFrame" must be one of [, 1d, 1w, 30d, 180d, 1y]',
       });
     });
   });

@@ -24,7 +24,7 @@ import {
 } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
 import {
-  USER_ACCESS_TOKEN_ENV,
+  UCP_UI_USER_ACCESS_TOKEN,
   WIDGET_ACCESS_TOKEN,
 } from "../shared/constants/accessTokens";
 import "./commands";
@@ -89,8 +89,8 @@ before(() => {
 
   authenticateAndStoreToken({
     audience: AUTH0_CLIENT_AUDIENCE,
-    variableName: USER_ACCESS_TOKEN_ENV,
-    passwordEnvString: "E2E_INSTITUTION_PASSWORD",
-    usernameEnvString: "E2E_INSTITUTION_USERNAME",
+    variableName: UCP_UI_USER_ACCESS_TOKEN,
+    usernameEnvString: "UCP_UI_USERNAME",
+    passwordEnvString: "UCP_UI_PASSWORD",
   });
 });

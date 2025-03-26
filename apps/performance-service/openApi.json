@@ -115,7 +115,7 @@
                 "accountNumber|transactions"
               ]
             },
-            "description": "A comma-separated list of job types. Some job types can be separated by '|'. Defaults to no filtering by jobTypes."
+            "description": "A comma-separated list of job types. A combination of jobs can be achieved by passing a \"|\" separated list of job types. Defaults to no filtering by jobTypes."
           },
           {
             "name": "aggregators",
@@ -215,7 +215,7 @@
                 "accountNumber|transactions"
               ]
             },
-            "description": "A comma-separated list of valid job types. Some job types can be separated by '|'. Defaults to no filtering by jobTypes."
+            "description": "A comma-separated list of job types. A combination of jobs can be achieved by passing a \"|\" separated list of job types. Defaults to no filtering by jobTypes."
           },
           {
             "name": "aggregators",
