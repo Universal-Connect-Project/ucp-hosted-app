@@ -1,4 +1,4 @@
-import { BUCKET, queryApi } from "../influxDb";
+import { BUCKET, queryApi } from "../services/influxDb";
 
 export const TimeFrameAggWindowMap = {
   "1d": "1h",

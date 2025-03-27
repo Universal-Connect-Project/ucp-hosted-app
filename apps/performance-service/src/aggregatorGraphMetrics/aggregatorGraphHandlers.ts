@@ -1,21 +1,8 @@
 import { Request, Response } from "express";
-import { getAndTransformAllInstitutionMetrics } from "../services/influxQueries/allInstitutionMetrics";
 import {
-  getAggregatorGraphMetrics,
   TimeFrame,
-} from "../services/influxQueries/aggregatorGraphMetrics";
-
-export const getPerformanceRoutingJson = async (
-  req: Request,
-  res: Response,
-) => {
-  try {
-    const data = await getAndTransformAllInstitutionMetrics();
-    res.send(data);
-  } catch (error) {
-    res.status(400).json({ error });
-  }
-};
+  getAggregatorGraphMetrics,
+} from "./aggregatorGraphInfluxQueries";
 
 interface AggregatorGraphFilterQueryParams {
   timeFrame?: TimeFrame;

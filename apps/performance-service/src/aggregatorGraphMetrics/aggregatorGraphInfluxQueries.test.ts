@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ComboJobTypes } from "@repo/shared-utils";
-import { seedInfluxTestDb, shuffleArray, wait } from "../../shared/tests/utils";
-import { getAggregatorGraphMetrics } from "./aggregatorGraphMetrics";
+import { seedInfluxTestDb, shuffleArray, wait } from "../shared/tests/utils";
+import { getAggregatorGraphMetrics } from "./aggregatorGraphInfluxQueries";
 
 describe("getAggregatorGraphMetrics", () => {
   const nowWithSomeForgiveness = Date.now() + 10000;

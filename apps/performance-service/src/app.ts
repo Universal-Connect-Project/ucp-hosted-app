@@ -6,7 +6,8 @@ import logger from "morgan";
 import eventRoutes from "./routes/eventRoutes";
 import { PORT } from "./shared/consts/port";
 import { beginPollAndProcessEvents } from "./services/storageClient/redis";
-import metricsRoutes from "./routes/metricsRoutes";
+import performanceRoutingEndpoints from "./performanceRouting/performanceRoutingEndpoints";
+import aggregatorGraphEndpoints from "./aggregatorGraphMetrics/aggregatorGraphEndpoints";
 
 const app = express();
 
@@ -46,13 +47,18 @@ app.get("/ping", (_req: Request, res: Response) => {
 
 // Routes
 app.use("/events", eventRoutes);
-app.use("/metrics", metricsRoutes);
+app.use(aggregatorGraphEndpoints);
+app.use(performanceRoutingEndpoints);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(
     `Performance Service listening on port ${process.env.PORT || PORT}`,
   );
   beginPollAndProcessEvents();
+});
+
+app.use((req: Request, res: Response, _next: NextFunction) => {
+  res.status(404).json({ error: "Not Found" });
 });
 
 app.use(

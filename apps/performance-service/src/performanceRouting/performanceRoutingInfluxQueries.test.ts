@@ -1,9 +1,9 @@
 import {
   createTestScenarioEvents,
   expectedTransformedInstitutionData,
-} from "../../shared/tests/testData/influx";
-import { wait } from "../../shared/tests/utils";
-import { getAndTransformAllInstitutionMetrics } from "./allInstitutionMetrics";
+} from "../shared/tests/testData/influx";
+import { wait } from "../shared/tests/utils";
+import { getAndTransformAllInstitutionMetrics } from "./performanceRoutingInfluxQueries";
 
 describe("getAndTransformAllInstitutionMetrics", () => {
   it("queries influxdb and transforms the data properly", async () => {

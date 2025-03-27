@@ -1,3 +1,6 @@
+import { WIDGET_ACCESS_TOKEN } from "../../shared/constants/accessTokens";
+import { createAuthorizationHeader } from "../../shared/utils/authorization";
+
 describe("error handling", () => {
   it("renders json instead of html from Auth0 error", () => {
     const invalidAccessToken =
@@ -10,6 +13,24 @@ describe("error handling", () => {
         failOnStatusCode: false,
         headers: {
           Authorization: `Bearer ${invalidAccessToken}`,
+        },
+      })
+      .then((response) => {
+        expect(response.status).to.eq(401);
+        expect(response.body).to.deep.eq({
+          error: "signature verification failed",
+        });
+      });
+  });
+
+  it("renders json instead of html from 404 page not found error", () => {
+    return cy
+      .request({
+        url: "notAValidUrl",
+        method: "GET",
+        failOnStatusCode: false,
+        headers: {
+          Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
         },
       })
       .then((response) => {
