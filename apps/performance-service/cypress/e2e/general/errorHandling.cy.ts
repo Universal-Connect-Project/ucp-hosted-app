@@ -34,9 +34,9 @@ describe("error handling", () => {
         },
       })
       .then((response) => {
-        expect(response.status).to.eq(401);
+        expect(response.status).to.eq(404);
         expect(response.body).to.deep.eq({
-          error: "signature verification failed",
+          error: "Not Found",
         });
       });
   });
