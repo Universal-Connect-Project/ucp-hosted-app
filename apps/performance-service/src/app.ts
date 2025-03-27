@@ -1,12 +1,13 @@
 import "./dotEnv";
 import cors from "cors";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { rateLimit } from "express-rate-limit";
 import logger from "morgan";
 import eventRoutes from "./routes/eventRoutes";
 import { PORT } from "./shared/consts/port";
 import { beginPollAndProcessEvents } from "./services/storageClient/redis";
-import metricsRoutes from "./routes/metricsRoutes";
+import performanceRoutingEndpoints from "./performanceRouting/performanceRoutingEndpoints";
+import aggregatorGraphEndpoints from "./aggregatorGraphMetrics/aggregatorGraphEndpoints";
 
 const app = express();
 
@@ -46,7 +47,8 @@ app.get("/ping", (_req: Request, res: Response) => {
 
 // Routes
 app.use("/events", eventRoutes);
-app.use("/metrics", metricsRoutes);
+app.use(aggregatorGraphEndpoints);
+app.use(performanceRoutingEndpoints);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(
@@ -54,3 +56,21 @@ app.listen(process.env.PORT || PORT, () => {
   );
   beginPollAndProcessEvents();
 });
+
+app.use((req: Request, res: Response, _next: NextFunction) => {
+  res.status(404).json({ error: "Not Found" });
+});
+
+app.use(
+  (
+    err: { name: string; status: number; message: string },
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    if (err?.name === "InvalidTokenError") {
+      return res.status(err?.status || 401).json({ error: err?.message });
+    }
+    next(err);
+  },
+);

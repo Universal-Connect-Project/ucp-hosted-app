@@ -1,21 +1,8 @@
 import { Request, Response } from "express";
 import {
-  getAggregatorMetrics,
-  getAndTransformAllInstitutionMetrics,
-  type TimeFrame,
-} from "../services/influxDb";
-
-export const getPerformanceRoutingJson = async (
-  req: Request,
-  res: Response,
-) => {
-  try {
-    const data = await getAndTransformAllInstitutionMetrics();
-    res.send(data);
-  } catch (error) {
-    res.status(400).json({ error });
-  }
-};
+  TimeFrame,
+  getAggregatorGraphMetrics,
+} from "./aggregatorGraphInfluxQueries";
 
 interface AggregatorGraphFilterQueryParams {
   timeFrame?: TimeFrame;
@@ -31,7 +18,7 @@ export const getAggregatorSuccessGraphData = async (
     req.query as unknown as AggregatorGraphFilterQueryParams;
 
   try {
-    const successData = await getAggregatorMetrics({
+    const successData = await getAggregatorGraphMetrics({
       timeFrame: timeFrame || "30d",
       aggregators: aggregators || undefined,
       jobTypes: jobTypes || undefined,
@@ -51,7 +38,7 @@ export const getAggregatorDurationGraphData = async (
     req.query as unknown as AggregatorGraphFilterQueryParams;
 
   try {
-    const durationData = await getAggregatorMetrics({
+    const durationData = await getAggregatorGraphMetrics({
       timeFrame: timeFrame || "30d",
       aggregators: aggregators || undefined,
       jobTypes: jobTypes || undefined,

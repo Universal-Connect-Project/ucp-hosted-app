@@ -1,3 +1,4 @@
+import { ComboJobTypes } from "@repo/shared-utils";
 import {
   NextFunction,
   RequestHandler,
@@ -5,28 +6,16 @@ import {
   Request,
   Response,
 } from "express";
-import {
-  validateUIAudience,
-  validateWidgetAudience,
-} from "../middlewares/validationMiddleware";
-import { requiredScopes } from "express-oauth2-jwt-bearer";
-import { ComboJobTypes, WidgetHostPermissions } from "@repo/shared-utils";
-import {
-  getAggregatorDurationGraphData,
-  getAggregatorSuccessGraphData,
-  getPerformanceRoutingJson,
-} from "../controllers/metricsController";
 import Joi from "joi";
-import { TimeFrameAggWindowMap } from "../services/influxDb";
+
+import { validateUIAudience } from "../middlewares/validationMiddleware";
+import {
+  getAggregatorSuccessGraphData,
+  getAggregatorDurationGraphData,
+} from "./aggregatorGraphHandlers";
+import { TimeFrameAggWindowMap } from "./aggregatorGraphInfluxQueries";
 
 const router = Router();
-
-router.get(
-  "/allPerformanceData",
-  [validateWidgetAudience],
-  requiredScopes(WidgetHostPermissions.READ_WIDGET_ENDPOINTS),
-  getPerformanceRoutingJson as RequestHandler,
-);
 
 const validateAggregatorGraphSchema = (
   req: Request,
@@ -65,13 +54,13 @@ const validateAggregatorGraphSchema = (
 };
 
 router.get(
-  "/aggregatorSuccessGraph",
+  "/metrics/aggregatorSuccessGraph",
   [validateUIAudience, validateAggregatorGraphSchema],
   getAggregatorSuccessGraphData as RequestHandler,
 );
 
 router.get(
-  "/aggregatorDurationGraph",
+  "/metrics/aggregatorDurationGraph",
   [validateUIAudience, validateAggregatorGraphSchema],
   getAggregatorDurationGraphData as RequestHandler,
 );
