@@ -17,7 +17,7 @@ import {
   getPerformanceRoutingJson,
 } from "../controllers/metricsController";
 import Joi from "joi";
-import { TimeFrameAggWindowMap } from "../services/influxDb";
+import { TimeFrameAggWindowMap } from "../services/influxQueries/aggregatorGraphMetrics";
 
 const router = Router();
 

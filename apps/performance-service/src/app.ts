@@ -1,6 +1,6 @@
 import "./dotEnv";
 import cors from "cors";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { rateLimit } from "express-rate-limit";
 import logger from "morgan";
 import eventRoutes from "./routes/eventRoutes";
@@ -54,3 +54,17 @@ app.listen(process.env.PORT || PORT, () => {
   );
   beginPollAndProcessEvents();
 });
+
+app.use(
+  (
+    err: { name: string; status: number; message: string },
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    if (err?.name === "InvalidTokenError") {
+      return res.status(err?.status || 401).json({ error: err?.message });
+    }
+    next(err);
+  },
+);
