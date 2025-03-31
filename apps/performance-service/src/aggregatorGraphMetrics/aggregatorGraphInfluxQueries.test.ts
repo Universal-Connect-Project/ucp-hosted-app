@@ -390,6 +390,8 @@ describe("getAggregatorGraphMetrics", () => {
       await seedInfluxTestDb({
         aggregatorId: aggId2,
       });
+
+      await wait(1500);
     });
 
     it("gets nothing with an non-existant aggregator", async () => {

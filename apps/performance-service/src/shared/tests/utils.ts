@@ -87,6 +87,7 @@ interface SeedInfluxTestDbParams {
   duration?: number | undefined;
   timestamp?: Date;
   success?: boolean;
+  flush?: boolean;
 }
 
 export const seedInfluxTestDb = async ({
@@ -97,6 +98,7 @@ export const seedInfluxTestDb = async ({
   duration = 10000,
   timestamp = new Date(),
   success = true,
+  flush = true,
 }: SeedInfluxTestDbParams) => {
   const jobType = jobTypes.sort().join("|");
 
@@ -122,7 +124,9 @@ export const seedInfluxTestDb = async ({
 
   writeApi.writePoint(successRatePoint);
 
-  await writeApi.flush();
+  if (flush) {
+    await writeApi.flush();
+  }
 };
 
 export const TEST_DURATION_ONE_DAY = 500;
@@ -168,6 +172,7 @@ export const seedInfluxWithAllTimeFrameData = async () => {
       jobTypes: jobTypes.split("|"),
       success,
       duration: getDuration(timestamp),
+      flush: false,
     });
   }
 
@@ -175,7 +180,11 @@ export const seedInfluxWithAllTimeFrameData = async () => {
   for (let i = 1; i <= 8 * 4; i++) {
     const timestamp = new Date(now);
     timestamp.setHours(now.getHours() - i * 6);
-    await seedInfluxTestDb({ timestamp, duration: getDuration(timestamp) });
+    await seedInfluxTestDb({
+      timestamp,
+      duration: getDuration(timestamp),
+      flush: false,
+    });
   }
 
   // Last 31 days - Every 12 hours
@@ -183,7 +192,7 @@ export const seedInfluxWithAllTimeFrameData = async () => {
     const timestamp = new Date(now);
     timestamp.setHours(now.getHours() - i * 12);
     const duration = getDuration(timestamp);
-    await seedInfluxTestDb({ timestamp, duration });
+    await seedInfluxTestDb({ timestamp, duration, flush: false });
   }
 
   // Last 180 days - Every 6 days
@@ -191,7 +200,7 @@ export const seedInfluxWithAllTimeFrameData = async () => {
     const timestamp = new Date(now);
     timestamp.setDate(now.getDate() - i * 6);
     const duration = getDuration(timestamp);
-    await seedInfluxTestDb({ timestamp, duration });
+    await seedInfluxTestDb({ timestamp, duration, flush: false });
   }
 
   // Last 1 year (365 days) - Every 15 days
@@ -199,6 +208,9 @@ export const seedInfluxWithAllTimeFrameData = async () => {
     const timestamp = new Date(now);
     timestamp.setDate(now.getDate() - i * 15);
     const duration = getDuration(timestamp);
-    await seedInfluxTestDb({ timestamp, duration });
+    await seedInfluxTestDb({ timestamp, duration, flush: false });
   }
+
+  await writeApi.flush();
+  await wait(1000);
 };
