@@ -1,4 +1,5 @@
 import {
+  INSTITUTION_SERVICE_ACCESS_TOKEN,
   UCP_UI_USER_ACCESS_TOKEN,
   WIDGET_ACCESS_TOKEN,
 } from "../constants/accessTokens";
@@ -117,6 +118,26 @@ export const getDurationGraphPerformanceData = ({
     failOnStatusCode: false,
     headers: {
       Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
+    },
+  });
+};
+
+export const getAggregatorPerformanceMetrics = ({
+  timeFrame,
+}: {
+  timeFrame?: string;
+}) => {
+  return cy.request({
+    url: "metrics/aggregators",
+    qs: {
+      timeFrame,
+    },
+    method: "GET",
+    failOnStatusCode: false,
+    headers: {
+      Authorization: createAuthorizationHeader(
+        INSTITUTION_SERVICE_ACCESS_TOKEN,
+      ),
     },
   });
 };

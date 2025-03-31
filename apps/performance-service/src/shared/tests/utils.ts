@@ -1,5 +1,6 @@
 import { Point } from "@influxdata/influxdb-client";
 import { queryApi, writeApi } from "../../services/influxDb";
+import { ComboJobTypes } from "@repo/shared-utils";
 
 export const minutesAgo = (minutes: number): number =>
   Date.now() - minutes * 60 * 1000;
@@ -105,7 +106,7 @@ export const seedInfluxTestDb = async ({
       .tag("institutionId", institutionId)
       .tag("clientId", clientId)
       .tag("aggregatorId", aggregatorId)
-      .intField("jobDuration", duration * 1000)
+      .intField("jobDuration", duration)
       .timestamp(timestamp);
 
     writeApi.writePoint(durationPoint);
@@ -122,4 +123,82 @@ export const seedInfluxTestDb = async ({
   writeApi.writePoint(successRatePoint);
 
   await writeApi.flush();
+};
+
+export const TEST_DURATION_ONE_DAY = 500;
+export const TEST_DURATION_ONE_WEEK = 1000;
+export const TEST_DURATION_ONE_MONTH = 2000;
+export const TEST_DURATION_HALF_YEAR = 2500;
+export const TEST_DURATION_ONE_YEAR = 3000;
+
+export const allJobTypeCombinations: string[] = Object.values(ComboJobTypes)
+  .reduce<string[][]>(
+    (subsets, jobType) =>
+      subsets.concat(subsets.map((set) => [...set, jobType])),
+    [[]],
+  )
+  .filter((set) => set.length > 0)
+  .flatMap((jobTypes) => jobTypes.sort().join("|"));
+
+export const seedInfluxWithAllTimeFrameData = async () => {
+  const now = new Date();
+
+  function getDuration(timestamp: Date) {
+    const diffMs = now.getTime() - timestamp.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+    const diffDays = diffHours / 24;
+
+    if (diffHours <= 24) return TEST_DURATION_ONE_DAY;
+    if (diffDays <= 7) return TEST_DURATION_ONE_WEEK;
+    if (diffDays <= 30) return TEST_DURATION_ONE_MONTH;
+    if (diffDays <= 180) return TEST_DURATION_HALF_YEAR;
+
+    return TEST_DURATION_ONE_YEAR; // Default for anything older
+  }
+
+  // Last 25 hours - Every 30 minutes
+  for (let i = 0; i <= 25 * 2; i++) {
+    const timestamp = new Date(now);
+    const jobTypes = allJobTypeCombinations[i % allJobTypeCombinations.length];
+    const success =
+      jobTypes === "accountOwner|transactionHistory" ? false : true;
+    timestamp.setMinutes(now.getMinutes() - i * 30);
+    await seedInfluxTestDb({
+      timestamp,
+      jobTypes: jobTypes.split("|"),
+      success,
+      duration: getDuration(timestamp),
+    });
+  }
+
+  // Last 8 days - Every 6 hours
+  for (let i = 1; i <= 8 * 4; i++) {
+    const timestamp = new Date(now);
+    timestamp.setHours(now.getHours() - i * 6);
+    await seedInfluxTestDb({ timestamp, duration: getDuration(timestamp) });
+  }
+
+  // Last 31 days - Every 12 hours
+  for (let i = 1; i <= 31 * 2; i++) {
+    const timestamp = new Date(now);
+    timestamp.setHours(now.getHours() - i * 12);
+    const duration = getDuration(timestamp);
+    await seedInfluxTestDb({ timestamp, duration });
+  }
+
+  // Last 180 days - Every 6 days
+  for (let i = 1; i <= 180 / 6; i++) {
+    const timestamp = new Date(now);
+    timestamp.setDate(now.getDate() - i * 6);
+    const duration = getDuration(timestamp);
+    await seedInfluxTestDb({ timestamp, duration });
+  }
+
+  // Last 1 year (365 days) - Every 15 days
+  for (let i = 1; i <= 365 / 15; i++) {
+    const timestamp = new Date(now);
+    timestamp.setDate(now.getDate() - i * 15);
+    const duration = getDuration(timestamp);
+    await seedInfluxTestDb({ timestamp, duration });
+  }
 };

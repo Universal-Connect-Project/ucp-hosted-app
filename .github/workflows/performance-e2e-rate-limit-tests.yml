@@ -34,6 +34,8 @@ jobs:
           CYPRESS_UCP_UI_USERNAME: ${{ vars.UCP_UI_USERNAME }}
           CYPRESS_UCP_UI_PASSWORD: ${{ secrets.UCP_UI_PASSWORD }}
           CYPRESS_WEB_UI_CLIENT_ID: ${{ vars.WEB_UI_CLIENT_ID }}
+          CYPRESS_INSTITUTION_SERVICE_CLIENT_SECRET: ${{ secrets.INSTITUTION_SERVICE_CLIENT_SECRET }}
+          CYPRESS_INSTITUTION_SERVICE_CLIENT_ID: ${{ vars.INSTITUTION_SERVICE_CLIENT_ID }}
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
