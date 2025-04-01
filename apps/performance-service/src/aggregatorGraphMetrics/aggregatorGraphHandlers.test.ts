@@ -1,36 +1,45 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Request, Response } from "express";
 
 import { ComboJobTypes } from "@repo/shared-utils";
-import { seedInfluxTestDb } from "../shared/tests/utils";
+import { seedInfluxTestDb, wait } from "../shared/tests/utils";
 import {
   getAggregatorSuccessGraphData,
   getAggregatorDurationGraphData,
 } from "./aggregatorGraphHandlers";
 
-describe("getAggregatorSuccessGraphData", () => {
-  const testAggregatorId = "testAggId";
-  const dataPointFrom28DaysAgoAggregator = "olderPointAggId";
-  const differentJobTypeAggregator = "diffJobAggId";
+const testAggregator = { id: "testAggId", duration: 1234 };
+const dataPointFrom28DaysAgoAggregator = {
+  id: "olderPointAggId",
+  duration: 2222,
+};
+const differentJobTypeAggregator = { id: "diffJobAggId", duration: 3333 };
 
+describe("getAggregatorSuccessGraphData", () => {
   beforeAll(async () => {
     await seedInfluxTestDb({
-      aggregatorId: testAggregatorId,
+      aggregatorId: testAggregator.id,
+      duration: testAggregator.duration,
     });
     await seedInfluxTestDb({
-      aggregatorId: dataPointFrom28DaysAgoAggregator,
+      aggregatorId: dataPointFrom28DaysAgoAggregator.id,
+      duration: dataPointFrom28DaysAgoAggregator.duration,
       timestamp: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000),
     });
     await seedInfluxTestDb({
-      aggregatorId: differentJobTypeAggregator,
+      aggregatorId: differentJobTypeAggregator.id,
+      duration: differentJobTypeAggregator.duration,
       jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
     });
+
+    await wait(1500);
   });
 
   it("takes query params and gets success data", async () => {
     const req = {
       query: {
         timeFrame: "1d",
-        aggregators: testAggregatorId,
+        aggregators: testAggregator.id,
         jobTypes: ComboJobTypes.TRANSACTIONS,
       },
     } as unknown as Request;
@@ -41,14 +50,12 @@ describe("getAggregatorSuccessGraphData", () => {
 
     await getAggregatorSuccessGraphData(req, res);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
     expect(results).toEqual(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [testAggregatorId]: expect.arrayContaining([
+        [testAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
             value: 1,
           }),
@@ -57,9 +64,9 @@ describe("getAggregatorSuccessGraphData", () => {
     );
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(results[dataPointFrom28DaysAgoAggregator]).toBeUndefined();
+    expect(results[dataPointFrom28DaysAgoAggregator.id]).toBeUndefined();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(results[differentJobTypeAggregator]).toBeUndefined();
+    expect(results[differentJobTypeAggregator.id]).toBeUndefined();
   });
 
   it("uses default query params when none passed (30 days, all job types, all aggregators)", async () => {
@@ -73,30 +80,24 @@ describe("getAggregatorSuccessGraphData", () => {
 
     await getAggregatorSuccessGraphData(req, res);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
     expect(results).toEqual(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [testAggregatorId]: expect.arrayContaining([
+        [testAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
             value: 1,
           }),
         ]),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [dataPointFrom28DaysAgoAggregator]: expect.arrayContaining([
+        [dataPointFrom28DaysAgoAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
             value: 1,
           }),
         ]),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [differentJobTypeAggregator]: expect.arrayContaining([
+        [differentJobTypeAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
             value: 1,
           }),
@@ -120,30 +121,24 @@ describe("getAggregatorSuccessGraphData", () => {
 
     await getAggregatorSuccessGraphData(req, res);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
     expect(results).toEqual(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [testAggregatorId]: expect.arrayContaining([
+        [testAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
             value: 1,
           }),
         ]),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [dataPointFrom28DaysAgoAggregator]: expect.arrayContaining([
+        [dataPointFrom28DaysAgoAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
             value: 1,
           }),
         ]),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [differentJobTypeAggregator]: expect.arrayContaining([
+        [differentJobTypeAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
             value: 1,
           }),
@@ -154,29 +149,30 @@ describe("getAggregatorSuccessGraphData", () => {
 });
 
 describe("getAggregatorDurationGraphData", () => {
-  const testAggregatorId = "testAggId";
-  const dataPointFrom28DaysAgoAggregator = "olderPointAggId";
-  const differentJobTypeAggregator = "diffJobAggId";
-
   beforeAll(async () => {
     await seedInfluxTestDb({
-      aggregatorId: testAggregatorId,
+      aggregatorId: testAggregator.id,
+      duration: testAggregator.duration,
     });
     await seedInfluxTestDb({
-      aggregatorId: dataPointFrom28DaysAgoAggregator,
+      aggregatorId: dataPointFrom28DaysAgoAggregator.id,
+      duration: dataPointFrom28DaysAgoAggregator.duration,
       timestamp: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000),
     });
     await seedInfluxTestDb({
-      aggregatorId: differentJobTypeAggregator,
+      aggregatorId: differentJobTypeAggregator.id,
+      duration: differentJobTypeAggregator.duration,
       jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
     });
+
+    await wait(1500);
   });
 
   it("takes query params and gets duration data", async () => {
     const req = {
       query: {
         timeFrame: "1d",
-        aggregators: testAggregatorId,
+        aggregators: testAggregator,
         jobTypes: ComboJobTypes.TRANSACTIONS,
       },
     } as unknown as Request;
@@ -187,25 +183,23 @@ describe("getAggregatorDurationGraphData", () => {
 
     await getAggregatorDurationGraphData(req, res);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
     expect(results).toEqual(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [testAggregatorId]: expect.arrayContaining([
+        [testAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
-            value: 10000000,
+            value: testAggregator.duration,
           }),
         ]),
       }),
     );
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(results[dataPointFrom28DaysAgoAggregator]).toBeUndefined();
+    expect(results[dataPointFrom28DaysAgoAggregator.id]).toBeUndefined();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(results[differentJobTypeAggregator]).toBeUndefined();
+    expect(results[differentJobTypeAggregator.id]).toBeUndefined();
   });
 
   it("uses default query params when none passed (30 days, all job types, all aggregators)", async () => {
@@ -219,32 +213,26 @@ describe("getAggregatorDurationGraphData", () => {
 
     await getAggregatorDurationGraphData(req, res);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
     expect(results).toEqual(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [testAggregatorId]: expect.arrayContaining([
+        [testAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
-            value: 10000000,
+            value: testAggregator.duration,
           }),
         ]),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [dataPointFrom28DaysAgoAggregator]: expect.arrayContaining([
+        [dataPointFrom28DaysAgoAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
-            value: 10000000,
+            value: dataPointFrom28DaysAgoAggregator.duration,
           }),
         ]),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [differentJobTypeAggregator]: expect.arrayContaining([
+        [differentJobTypeAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
-            value: 10000000,
+            value: differentJobTypeAggregator.duration,
           }),
         ]),
       }),
@@ -266,32 +254,26 @@ describe("getAggregatorDurationGraphData", () => {
 
     await getAggregatorDurationGraphData(req, res);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
     expect(results).toEqual(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [testAggregatorId]: expect.arrayContaining([
+        [testAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
-            value: 10000000,
+            value: testAggregator.duration,
           }),
         ]),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [dataPointFrom28DaysAgoAggregator]: expect.arrayContaining([
+        [dataPointFrom28DaysAgoAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
-            value: 10000000,
+            value: dataPointFrom28DaysAgoAggregator.duration,
           }),
         ]),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        [differentJobTypeAggregator]: expect.arrayContaining([
+        [differentJobTypeAggregator.id]: expect.arrayContaining([
           expect.objectContaining({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             date: expect.any(String),
-            value: 10000000,
+            value: differentJobTypeAggregator.duration,
           }),
         ]),
       }),

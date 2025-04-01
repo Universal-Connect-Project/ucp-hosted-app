@@ -1,60 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ComboJobTypes } from "@repo/shared-utils";
-import { seedInfluxTestDb, shuffleArray, wait } from "../shared/tests/utils";
+import {
+  seedInfluxTestDb,
+  seedInfluxWithAllTimeFrameData,
+  shuffleArray,
+  wait,
+} from "../shared/tests/utils";
 import { getAggregatorGraphMetrics } from "./aggregatorGraphInfluxQueries";
 
 describe("getAggregatorGraphMetrics", () => {
   const nowWithSomeForgiveness = Date.now() + 10000;
 
   beforeAll(async () => {
-    const jobTypeCombinations = Object.values(ComboJobTypes)
-      .reduce<string[][]>(
-        (subsets, jobType) =>
-          subsets.concat(subsets.map((set) => [...set, jobType])),
-        [[]],
-      )
-      .filter((set) => set.length > 0);
-    const now = new Date();
-
-    // Last 25 hours - Every 30 minutes
-    for (let i = 0; i <= 25 * 2; i++) {
-      const timestamp = new Date(now);
-      const jobTypes = jobTypeCombinations[i % jobTypeCombinations.length];
-      const success =
-        jobTypes.sort().join("|") === "accountOwner|transactionHistory"
-          ? false
-          : true;
-      timestamp.setMinutes(now.getMinutes() - i * 30);
-      await seedInfluxTestDb({ timestamp, jobTypes, success });
-    }
-
-    // Last 8 days - Every 6 hours
-    for (let i = 1; i <= 8 * 4; i++) {
-      const timestamp = new Date(now);
-      timestamp.setHours(now.getHours() - i * 6);
-      await seedInfluxTestDb({ timestamp });
-    }
-
-    // Last 31 days - Every 12 hours
-    for (let i = 1; i <= 31 * 2; i++) {
-      const timestamp = new Date(now);
-      timestamp.setHours(now.getHours() - i * 12);
-      await seedInfluxTestDb({ timestamp });
-    }
-
-    // Last 180 days - Every 6 days
-    for (let i = 1; i <= 180 / 6; i++) {
-      const timestamp = new Date(now);
-      timestamp.setDate(now.getDate() - i * 6);
-      await seedInfluxTestDb({ timestamp });
-    }
-
-    // Last 1 year (365 days) - Every 15 days
-    for (let i = 1; i <= 365 / 15; i++) {
-      const timestamp = new Date(now);
-      timestamp.setDate(now.getDate() - i * 15);
-      await seedInfluxTestDb({ timestamp });
-    }
+    await seedInfluxWithAllTimeFrameData();
   });
 
   describe("time frame options", () => {
@@ -432,6 +390,8 @@ describe("getAggregatorGraphMetrics", () => {
       await seedInfluxTestDb({
         aggregatorId: aggId2,
       });
+
+      await wait(1500);
     });
 
     it("gets nothing with an non-existant aggregator", async () => {

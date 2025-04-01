@@ -51,6 +51,7 @@ export const UiUserPermissions = {
 
 export const AUTH0_CLIENT_AUDIENCE = "ucp-hosted-apps";
 export const AUTH0_WIDGET_AUDIENCE = "ucp-widget-interactions";
+export const AUTH0_INSTITUTION_SERVICE_AUDIENCE = "institution-service";
 
 export const testRSAToken =
   "-----BEGIN RSA PRIVATE KEY-----\n" +

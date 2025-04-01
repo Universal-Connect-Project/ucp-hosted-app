@@ -8,6 +8,7 @@ import { PORT } from "./shared/consts/port";
 import { beginPollAndProcessEvents } from "./services/storageClient/redis";
 import performanceRoutingEndpoints from "./performanceRouting/performanceRoutingEndpoints";
 import aggregatorGraphEndpoints from "./aggregatorGraphMetrics/aggregatorGraphEndpoints";
+import aggregatorMetricsEndpoints from "./aggregatorMetrics/aggregatorMetricsEndpoints";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.get("/ping", (_req: Request, res: Response) => {
 app.use("/events", eventRoutes);
 app.use(aggregatorGraphEndpoints);
 app.use(performanceRoutingEndpoints);
+app.use(aggregatorMetricsEndpoints);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(
