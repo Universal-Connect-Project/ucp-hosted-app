@@ -1,5 +1,5 @@
+import { TimeFrameAggWindowMap } from "@repo/backend-utils/src/constants";
 import { BUCKET, queryApi } from "../services/influxDb";
-import { TimeFrameAggWindowMap } from "../shared/consts";
 
 export type TimeFrame = keyof typeof TimeFrameAggWindowMap;
 
