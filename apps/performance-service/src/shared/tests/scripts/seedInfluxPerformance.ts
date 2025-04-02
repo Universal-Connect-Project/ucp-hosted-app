@@ -41,9 +41,9 @@ const institutionIds = [
 
 const createPoints = async (): Promise<void> => {
   for (let i = 0; i < institutionIds.length; i++) {
-    const jobType = jobTypes[i % (jobTypes.length - 1)];
-    const aggregator = aggregatorIds[i % (aggregatorIds.length - 1)];
-    const client = clientIds[i % (clientIds.length - 1)];
+    const jobType = jobTypes[i % jobTypes.length];
+    const aggregator = aggregatorIds[i % aggregatorIds.length];
+    const client = clientIds[i % clientIds.length];
     const institutionId = institutionIds[i];
     const duration = getRandomNumber(10, 200);
     const timestamp = getRandomTimestamp();
@@ -68,6 +68,8 @@ const createPoints = async (): Promise<void> => {
       .timestamp(timestamp);
 
     writeApi.writePoint(successRatePoint);
+
+    console.log("points", durationPoint, successRatePoint);
   }
 
   await writeApi.flush();
