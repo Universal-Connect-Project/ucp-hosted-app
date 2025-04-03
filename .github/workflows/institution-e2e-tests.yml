@@ -92,9 +92,8 @@ jobs:
           project: apps/institution-service
           start: |
             npm run dev --workspace apps/authentication-service
-            npm run start --workspace apps/performance-service
             npm run dev:noRateLimiting --workspace apps/institution-service
-          wait-on: "http://localhost:8089/ping, http://localhost:8088/ping, http://localhost:8090/ping"
+          wait-on: "http://localhost:8089/ping, http://localhost:8088/ping"
           spec: apps/institution-service/cypress/e2e/*.cy.ts
         env:
           AUTH0_CLIENT_SECRET: ${{ secrets.INSTITUTION_SERVICE_CLIENT_SECRET }}
