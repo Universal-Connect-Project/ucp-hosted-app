@@ -330,7 +330,7 @@ describe("getAggregatorGraphMetrics", () => {
         success: true,
       });
 
-      await wait(1000); // DB writing needs time to finish before reading
+      await wait(1500); // DB writing needs time to finish before reading
 
       const accountNumberData = await getAggregatorGraphMetrics({
         jobTypes: ComboJobTypes.ACCOUNT_NUMBER,
