@@ -39,7 +39,7 @@ const includeAggregatorPerformance = async (
   aggregators: Aggregator[],
   timeFrame: string | undefined,
 ) => {
-  const performance = await getAggregatorPerformance(timeFrame || "30d"); // TODO: include timeFrame later
+  const performance = await getAggregatorPerformance(timeFrame || "30d");
   return aggregators.map((aggregator) => {
     const aggPerformance = performance[aggregator.name];
     return {
