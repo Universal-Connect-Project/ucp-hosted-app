@@ -24,7 +24,7 @@ export const getAggregators = async (req: Request, res: Response) => {
 
       res.status(200).json({
         aggregators,
-        message: "Performance data failed to fetch",
+        warning: "Performance data failed to fetch",
         error: err.message,
       });
     }

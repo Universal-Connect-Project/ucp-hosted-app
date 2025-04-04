@@ -84,7 +84,7 @@ describe("getAggregators", () => {
             logo: expect.any(String) || null,
           }),
         ]),
-        message: "Performance data failed to fetch",
+        warning: "Performance data failed to fetch",
         error: errorMessage,
       }),
     );
