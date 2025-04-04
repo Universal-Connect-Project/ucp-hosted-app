@@ -32,3 +32,48 @@ export const defaultTestAggregator: AggregatorIntegrationBody = {
   supportsRewards: false,
   supportsBalance: false,
 };
+
+export const exampleAggregatorPerformanceMetrics = {
+  mx: {
+    avgSuccessRate: 0.68,
+    avgDuration: 10032,
+    jobTypes: [
+      {
+        accountNumber: {
+          avgSuccessRate: 0.782608695652174,
+          avgDuration: 103521.73913043478,
+        },
+      },
+      {
+        transactions: {
+          avgSuccessRate: 0.782608695652174,
+          avgDuration: 103521.73913043478,
+        },
+      },
+    ],
+  },
+  sophtron: {
+    avgSuccessRate: 0.5105976372480889,
+    avgDuration: 108804.03057678943,
+    jobTypes: [
+      {
+        "accountNumber|accountOwner": {
+          avgSuccessRate: 0.782608695652174,
+          avgDuration: 103521.73913043478,
+        },
+      },
+    ],
+  },
+  finicity: {
+    avgSuccessRate: 0.5105976372480889,
+    avgDuration: 108804.03057678943,
+    jobTypes: [
+      {
+        accountNumber: {
+          avgSuccessRate: 0.782608695652174,
+          avgDuration: 103521.73913043478,
+        },
+      },
+    ],
+  },
+};

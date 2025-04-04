@@ -13,6 +13,7 @@
     "prettier": "prettier . --check",
     "test": "jest",
     "start:influxDb": "sh ./scripts/start-influx.sh",
+    "test:seedInfluxPerformance": "ts-node ./src/shared/tests/scripts/seedInfluxPerformance.ts",
     "test:watch": "jest --watch"
   },
   "dependencies": {

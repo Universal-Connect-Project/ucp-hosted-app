@@ -1,6 +1,6 @@
 import "./dotEnv";
 import cors from "cors";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import logger from "morgan";
 
 import { rateLimit } from "express-rate-limit";
@@ -93,3 +93,21 @@ app.listen(process.env.PORT || PORT, () => {
 app.get("/ping", (req: Request, res: Response) => {
   res.send("Greetings.");
 });
+
+app.use((req: Request, res: Response, _next: NextFunction) => {
+  res.status(404).json({ error: "Not Found" });
+});
+
+app.use(
+  (
+    err: { name: string; status: number; message: string },
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    if (err?.name === "InvalidTokenError") {
+      return res.status(err?.status || 401).json({ error: err?.message });
+    }
+    next(err);
+  },
+);

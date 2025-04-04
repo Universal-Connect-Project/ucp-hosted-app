@@ -13,7 +13,7 @@ import {
   getAggregatorSuccessGraphData,
   getAggregatorDurationGraphData,
 } from "./aggregatorGraphHandlers";
-import { TimeFrameAggWindowMap } from "../shared/consts";
+import { TimeFrameAggWindowMap } from "@repo/backend-utils/src/constants";
 
 const router = Router();
 
