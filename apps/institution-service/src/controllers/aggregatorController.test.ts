@@ -8,6 +8,7 @@ import {
 import { server } from "../test/testServer";
 import { http, HttpResponse } from "msw";
 import { AGGREGATOR_PERFORMANCE_URL } from "../test/handlers";
+import { Aggregator } from "../models/aggregator";
 
 describe("getAggregators", () => {
   it("gets all the aggregators in the database", async () => {
@@ -38,6 +39,31 @@ describe("getAggregators", () => {
         ]),
       }),
     );
+  });
+
+  it("gets an error response on failure", async () => {
+    jest.spyOn(Aggregator, "findAll").mockRejectedValue(new Error());
+
+    const req = {
+      headers: {
+        authorization: createTestAuthorization({
+          permissions: [],
+        }),
+      },
+      query: {},
+    } as Request;
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await getAggregators(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      error: "An error occurred while fetching aggregators.",
+    });
   });
 });
 
