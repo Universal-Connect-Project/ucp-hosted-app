@@ -82,6 +82,18 @@
           }
         ],
         "description": "Get Aggregators with performance metrics",
+        "parameters": [
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["1d", "1w", "30d", "180d", "1y"]
+            },
+            "description": "Time frame for the metrics (e.g., '30d'). Defaults to 30d."
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
