@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import Joi, { ObjectSchema } from "joi";
-import { TimeFrameAggWindowMap } from "./constants";
+import { TimeFrameToAggregateWindowMap } from "./constants";
 
 export const validateAccessToken = ({
   audience,
@@ -36,7 +36,7 @@ export const validateAggregatorRequestSchema = (
   const { error } = Joi.object({
     timeFrame: Joi.string()
       .allow("")
-      .valid(...Object.keys(TimeFrameAggWindowMap)),
+      .valid(...Object.keys(TimeFrameToAggregateWindowMap)),
   }).validate(req.query);
 
   if (error) {
