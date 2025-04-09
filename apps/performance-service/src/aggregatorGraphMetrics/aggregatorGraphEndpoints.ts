@@ -13,7 +13,7 @@ import {
   getAggregatorSuccessGraphData,
   getAggregatorDurationGraphData,
 } from "./aggregatorGraphHandlers";
-import { TimeFrameAggWindowMap } from "@repo/backend-utils/src/constants";
+import { TimeFrameToAggregateWindowMap } from "@repo/backend-utils/src/constants";
 
 const router = Router();
 
@@ -43,7 +43,7 @@ const validateAggregatorGraphSchema = (
     aggregators: Joi.string().allow(""),
     timeFrame: Joi.string()
       .allow("")
-      .valid(...Object.keys(TimeFrameAggWindowMap)),
+      .valid(...Object.keys(TimeFrameToAggregateWindowMap)),
   }).validate(req.query);
 
   if (error) {

@@ -10,6 +10,28 @@ export const getAggregators = async (req: Request, res: Response) => {
       ],
     });
 
+    res.status(200).json({
+      aggregators,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching aggregators." });
+  }
+};
+
+export const getAggregatorsWithPerformance = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const aggregators = await Aggregator.findAll({
+      order: [
+        ["displayName", "ASC"],
+        ["createdAt", "DESC"],
+      ],
+    });
+
     try {
       const { timeFrame } = req.query as { timeFrame: string | undefined };
       const withPerformanceMetrics = await includeAggregatorPerformance(
@@ -22,9 +44,7 @@ export const getAggregators = async (req: Request, res: Response) => {
     } catch (error) {
       const err = error as Error;
 
-      res.status(200).json({
-        aggregators,
-        warning: "Performance data failed to fetch",
+      res.status(503).json({
         error: err.message,
       });
     }

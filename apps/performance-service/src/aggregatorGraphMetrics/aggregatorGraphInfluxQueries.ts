@@ -1,7 +1,7 @@
-import { TimeFrameAggWindowMap } from "@repo/backend-utils/src/constants";
+import { TimeFrameToAggregateWindowMap } from "@repo/backend-utils/src/constants";
 import { BUCKET, queryApi } from "../services/influxDb";
 
-export type TimeFrame = keyof typeof TimeFrameAggWindowMap;
+export type TimeFrame = keyof typeof TimeFrameToAggregateWindowMap;
 
 interface AggSuccessInfluxObj {
   result: string;
@@ -57,7 +57,7 @@ export async function getAggregatorGraphMetrics({
       ${aggregatorFilter}
       ${jobTypesFilter}
       |> group(columns: ["aggregatorId"])
-      |> aggregateWindow(every: ${TimeFrameAggWindowMap[timeFrame]}, fn: mean, createEmpty: false)
+      |> aggregateWindow(every: ${TimeFrameToAggregateWindowMap[timeFrame]}, fn: mean, createEmpty: false)
   `;
   const results: AggSuccessInfluxObj[] = await queryApi.collectRows(fluxQuery);
 

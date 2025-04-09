@@ -1,6 +1,9 @@
 import { Aggregator } from "models/aggregator";
 import { runTokenInvalidCheck } from "../support/utils";
-import { getAggregators } from "../shared/utils/requests";
+import {
+  getAggregators,
+  getAggregatorsWithPerformance,
+} from "../shared/utils/requests";
 
 interface AggregatorWithPerformance extends Aggregator {
   avgSuccessRate: number | null;
@@ -12,8 +15,37 @@ interface AggregatorWithPerformance extends Aggregator {
 }
 
 describe("/aggregators GET", () => {
+  it("returns a list of aggregators for a valid token", () => {
+    getAggregators().then(
+      (response: Cypress.Response<{ aggregators: Aggregator[] }>) => {
+        expect(response.status).to.eq(200);
+
+        expect(response.body.aggregators.length).to.be.greaterThan(0);
+        response.body.aggregators.forEach((aggregator) => {
+          [
+            "id",
+            "name",
+            "displayName",
+            "logo",
+            "createdAt",
+            "updatedAt",
+          ].forEach((attribute) => {
+            expect(aggregator).to.haveOwnProperty(attribute);
+          });
+        });
+      },
+    );
+  });
+
+  runTokenInvalidCheck({
+    url: "aggregators",
+    method: "GET",
+  });
+});
+
+describe("/aggregators/performance GET", () => {
   it("returns a list of aggregators with performance data included", () => {
-    getAggregators({}).then(
+    getAggregatorsWithPerformance({}).then(
       (
         response: Cypress.Response<{
           aggregators: AggregatorWithPerformance[];
@@ -48,7 +80,7 @@ describe("/aggregators GET", () => {
   });
 
   it("fails when timeFrame param is wrong", () => {
-    getAggregators({
+    getAggregatorsWithPerformance({
       timeFrame: "3d",
     }).then((response) => {
       expect(response.status).to.eq(400);
@@ -60,7 +92,7 @@ describe("/aggregators GET", () => {
 
   ["1d", "1w", "30d", "180d", "1y"].forEach((timeFrame) => {
     it(`allows valid timeFrame: ${timeFrame}`, () => {
-      getAggregators({
+      getAggregatorsWithPerformance({
         timeFrame,
       }).then((response) => {
         expect(response.status).to.eq(200);
@@ -69,7 +101,7 @@ describe("/aggregators GET", () => {
   });
 
   runTokenInvalidCheck({
-    url: "aggregators",
+    url: "aggregators/performance",
     method: "GET",
   });
 });
