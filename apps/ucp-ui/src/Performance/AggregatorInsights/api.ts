@@ -1,7 +1,29 @@
 import { api, TagTypes } from "../../baseApi";
 import { INSTITUTION_SERVICE_BASE_URL } from "../../shared/constants/environment";
 
-interface AggregatorPerformanceByJobTypeResponse {}
+interface JobTypePerformance {
+  avgSuccessRate: number;
+  avgDuration: number;
+}
+
+interface JobType {
+  [key: string]: JobTypePerformance;
+}
+
+interface Aggregator {
+  id: number;
+  name: string;
+  displayName: string;
+  logo: string;
+  avgSuccessRate: number | null;
+  avgDuration: number | null;
+  jobTypes: JobType[];
+}
+
+export interface AggregatorPerformanceByJobTypeResponse {
+  aggregators: Aggregator[];
+}
+
 interface AggregatorPerformanceByJobTypeParans {
   timeFrame: string;
 }

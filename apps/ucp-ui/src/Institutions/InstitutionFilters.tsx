@@ -26,19 +26,19 @@ import LoadingCheckbox from "./LoadingCheckbox";
 
 export const jobTypeCheckboxes = [
   {
-    label: supportsJobTypeMap.aggregation.displayName,
+    label: supportsJobTypeMap.transactions.displayName,
     prop: "supportsAggregation",
   },
   {
-    label: supportsJobTypeMap.identification.displayName,
+    label: supportsJobTypeMap.accountOwner.displayName,
     prop: "supportsIdentification",
   },
   {
-    label: supportsJobTypeMap.verification.displayName,
+    label: supportsJobTypeMap.accountNumber.displayName,
     prop: "supportsVerification",
   },
   {
-    label: supportsJobTypeMap.fullHistory.displayName,
+    label: supportsJobTypeMap.transactionHistory.displayName,
     prop: "supportsHistory",
   },
   {

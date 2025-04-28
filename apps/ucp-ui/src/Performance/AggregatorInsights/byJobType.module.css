@@ -1,3 +1,19 @@
 .timeFrameSelect {
   width: 220px;
 }
+
+.rectangleDivider {
+  background-color: var(--mui-palette-grey-50);
+  height: 20px;
+}
+
+.halfTopAndBottomPadding {
+  &:global(.MuiTableCell-root) {
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+}
+
+.sectionHeaderCaption {
+  color: var(--mui-palette-text-secondary);
+}

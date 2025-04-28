@@ -271,7 +271,7 @@ describe("<Institutions />", () => {
     await findRowById(institutionsBiggerPage.institutions[0].id);
 
     await userEvent.click(
-      screen.getByLabelText(supportsJobTypeMap.aggregation.displayName),
+      screen.getByLabelText(supportsJobTypeMap.transactions.displayName),
     );
 
     await findRowById(

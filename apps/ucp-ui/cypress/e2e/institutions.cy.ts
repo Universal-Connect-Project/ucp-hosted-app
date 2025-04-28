@@ -87,7 +87,7 @@ describe("institutions", () => {
           searchText,
         );
 
-        cy.findByLabelText(supportsJobTypeMap.aggregation.displayName).click();
+        cy.findByLabelText(supportsJobTypeMap.transactions.displayName).click();
 
         cy.waitForLoad();
 
@@ -110,7 +110,7 @@ describe("institutions", () => {
                   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
                 ).should("have.value", searchText);
                 cy.findByLabelText(
-                  supportsJobTypeMap.aggregation.displayName,
+                  supportsJobTypeMap.transactions.displayName,
                 ).should("be.checked");
               });
           });
@@ -222,7 +222,7 @@ describe("institutions", () => {
     cy.findByRole("option", { name: "Test Example A" }).click();
 
     cy.findByRole("checkbox", {
-      name: supportsJobTypeMap.aggregation.displayName,
+      name: supportsJobTypeMap.transactions.displayName,
     }).click();
 
     cy.findByLabelText(
