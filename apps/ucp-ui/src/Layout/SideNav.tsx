@@ -15,11 +15,13 @@ import {
   AccountBalanceOutlined,
   Logout,
   SettingsOutlined,
+  TrendingUpOutlined,
 } from "@mui/icons-material";
 import { matchPath, useLocation } from "react-router-dom";
 import {
   institutionRoute,
   INSTITUTIONS_ROUTE,
+  PERFORMANCE_ROUTE,
   widgetManagementRoute,
 } from "../shared/constants/routes";
 import { Link } from "react-router-dom";
@@ -27,6 +29,7 @@ import {
   SIDE_NAV_CONTACT_US_LINK_TEXT,
   SIDE_NAV_INSTITUTIONS_LINK_TEXT,
   SIDE_NAV_LOG_OUT_BUTTON_TEXT,
+  SIDE_NAV_PERFORMANCE_LINK_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
@@ -37,6 +40,12 @@ const SideNav = () => {
   const { pathname } = useLocation();
 
   const links = [
+    {
+      label: SIDE_NAV_PERFORMANCE_LINK_TEXT,
+      matchPaths: [PERFORMANCE_ROUTE],
+      Icon: TrendingUpOutlined,
+      path: PERFORMANCE_ROUTE,
+    },
     {
       label: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
       matchPaths: [INSTITUTIONS_ROUTE, institutionRoute.fullRoute],

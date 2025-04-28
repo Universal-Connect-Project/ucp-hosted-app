@@ -1,4 +1,5 @@
 export const INSTITUTIONS_ROUTE = "/";
+export const PERFORMANCE_ROUTE = "/performance";
 
 const createRoute = (childRoute: string) => ({
   childRoute,
