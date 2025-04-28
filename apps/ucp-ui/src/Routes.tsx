@@ -8,8 +8,10 @@ import Institutions from "./Institutions/Institutions";
 import Institution from "./Institutions/Institution/Institution";
 import {
   institutionRoute,
+  PERFORMANCE_ROUTE,
   widgetManagementRoute,
 } from "./shared/constants/routes";
+import Performance from "./Performance/Performance";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -26,6 +28,10 @@ const Routes = () => {
         {
           path: widgetManagementRoute.childRoute,
           element: <ApiKeys />,
+        },
+        {
+          path: PERFORMANCE_ROUTE,
+          element: <Performance />,
         },
       ],
       path: "/",
