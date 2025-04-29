@@ -1,12 +1,10 @@
-import React, { ChangeEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import {
   AggregatorPerformanceByJobTypeResponse,
   useGetAggregatorPerformanceByJobTypeQuery,
 } from "./api";
 import TextField from "../../shared/components/Forms/TextField";
 import {
-  Accordion,
-  AccordionSummary,
   MenuItem,
   Paper,
   Stack,
@@ -19,12 +17,9 @@ import {
   Typography,
 } from "@mui/material";
 import styles from "./byJobType.module.css";
-import { ExpandMore } from "@mui/icons-material";
 import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
 
-const numberOfColumns = 3;
-
-const RectangleDivider = () => {
+const RectangleDivider = ({ numberOfColumns }: { numberOfColumns: number }) => {
   return (
     <TableRow className={styles.rectangleDivider}>
       <TableCell colSpan={numberOfColumns} padding="none" />
@@ -49,7 +44,16 @@ const JobTypePerformance = ({
       <TableCell className={styles.halfTopAndBottomPadding}>
         {rowLabel}
       </TableCell>
-      {/* {aggregatorsWithPerformanceByJobType?.aggregators?.map((aggregator) => aggregator.jobTypes.find(()))} */}
+      {aggregatorsWithPerformanceByJobType?.aggregators?.map((aggregator) => {
+        const { avgDuration, avgSuccessRate } =
+          aggregator.jobTypes?.[jobTypes] || {};
+
+        return (
+          <TableCell key={aggregator.id}>
+            {`${avgSuccessRate || 0}% | ${(avgDuration || 0) / 1000}s`}
+          </TableCell>
+        );
+      })}
     </TableRow>
   );
 };
@@ -89,16 +93,9 @@ const ByJobType = () => {
   const { data: aggregatorsWithPerformanceByJobType } =
     useGetAggregatorPerformanceByJobTypeQuery({ timeFrame });
 
-  // const performanceByJobType = useMemo(() => {
-  //   const jobTypes = new Set();
+  const aggregators = aggregatorsWithPerformanceByJobType?.aggregators;
 
-  //   aggregatorsWithPerformanceByJobType?.aggregators?.forEach((aggregator) => {
-  //     aggregator.jobTypes.forEach((jobType) => {
-
-  //     })
-  //   })
-  // }
-  // , [aggregatorsWithPerformanceByJobType])
+  const numberOfColumns = (aggregators?.length || 0) + 1;
 
   return (
     <>
@@ -121,29 +118,32 @@ const ByJobType = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Aggregator Performance</TableCell>
-                <TableCell>MX</TableCell>
-                <TableCell>Sophtron</TableCell>
+                {aggregators?.map(({ displayName, id }) => (
+                  <TableCell key={id}>{displayName}</TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
               <TableRow>
                 <TableCell>Overall Average Success Rate</TableCell>
-                <TableCell>b</TableCell>
-                <TableCell>c</TableCell>
+                {aggregators?.map(({ avgSuccessRate, id }) => (
+                  <TableCell key={id}>{`${avgSuccessRate || 0}%`}</TableCell>
+                ))}
               </TableRow>
               <TableRow>
                 <TableCell>Overall Average Speed</TableCell>
-                <TableCell>b</TableCell>
-                <TableCell>c</TableCell>
+                {aggregators?.map(({ avgDuration, id }) => (
+                  <TableCell
+                    key={id}
+                  >{`${(avgDuration || 0) / 1000}s`}</TableCell>
+                ))}
               </TableRow>
-              <RectangleDivider />
+              <RectangleDivider numberOfColumns={numberOfColumns} />
               <TableRow>
                 <TableCell
                   className={styles.halfTopAndBottomPadding}
                   colSpan={numberOfColumns}
                 >
-                  {/* <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore />}> */}
                   <Stack>
                     <Typography variant="body1">
                       Performance by Single Job Type
@@ -155,34 +155,17 @@ const ByJobType = () => {
                       Success Rate (%), Speed (s)
                     </Typography>
                   </Stack>
-                  {/* </AccordionSummary>
-                  </Accordion> */}
                 </TableCell>
               </TableRow>
-              <JobTypePerformance
-                aggregatorsWithPerformanceByJobType={
-                  aggregatorsWithPerformanceByJobType
-                }
-                jobTypes="accountNumber"
-              />
-              <JobTypePerformance
-                aggregatorsWithPerformanceByJobType={
-                  aggregatorsWithPerformanceByJobType
-                }
-                jobTypes="accountOwner"
-              />
-              <JobTypePerformance
-                aggregatorsWithPerformanceByJobType={
-                  aggregatorsWithPerformanceByJobType
-                }
-                jobTypes="transactions"
-              />
-              <JobTypePerformance
-                aggregatorsWithPerformanceByJobType={
-                  aggregatorsWithPerformanceByJobType
-                }
-                jobTypes="transactionHistory"
-              />
+              {Object.keys(supportsJobTypeMap).map((jobType) => (
+                <JobTypePerformance
+                  aggregatorsWithPerformanceByJobType={
+                    aggregatorsWithPerformanceByJobType
+                  }
+                  jobTypes={jobType}
+                  key={jobType}
+                />
+              ))}
             </TableBody>
           </Table>
         </TableContainer>

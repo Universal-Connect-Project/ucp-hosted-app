@@ -6,10 +6,6 @@ interface JobTypePerformance {
   avgDuration: number;
 }
 
-interface JobType {
-  [key: string]: JobTypePerformance;
-}
-
 interface Aggregator {
   id: number;
   name: string;
@@ -17,7 +13,7 @@ interface Aggregator {
   logo: string;
   avgSuccessRate: number | null;
   avgDuration: number | null;
-  jobTypes: JobType[];
+  jobTypes: Record<string, JobTypePerformance>;
 }
 
 export interface AggregatorPerformanceByJobTypeResponse {

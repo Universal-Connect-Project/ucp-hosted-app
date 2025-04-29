@@ -11,16 +11,6 @@ interface JobType {
 }
 
 export const supportsJobTypeMap: Record<string, JobType> = {
-  transactions: {
-    description: "Accounts and recent transaction data",
-    displayName: "Transactions",
-    prop: "supports_aggregation",
-  },
-  transactionHistory: {
-    description: "A set timeframe of transaction history for an account",
-    displayName: "Transaction History",
-    prop: "supports_history",
-  },
   accountOwner: {
     description: "Customer data available",
     displayName: "Account Owner",
@@ -31,14 +21,24 @@ export const supportsJobTypeMap: Record<string, JobType> = {
     displayName: "Account Number",
     prop: "supports_verification",
   },
+  balance: {
+    description: "Account Balance",
+    displayName: "Balance",
+    prop: "supportsBalance",
+  },
   rewards: {
     description: "Account Rewards",
     displayName: "Rewards",
     prop: "supportsRewards",
   },
-  balance: {
-    description: "Account Balance",
-    displayName: "Balance",
-    prop: "supportsBalance",
+  transactions: {
+    description: "Accounts and recent transaction data",
+    displayName: "Transactions",
+    prop: "supports_aggregation",
+  },
+  transactionHistory: {
+    description: "A set timeframe of transaction history for an account",
+    displayName: "Transaction History",
+    prop: "supports_history",
   },
 };
