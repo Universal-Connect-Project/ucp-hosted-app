@@ -42,3 +42,20 @@ export const supportsJobTypeMap: Record<string, JobType> = {
     prop: "supports_history",
   },
 };
+
+const allJobTypes = Object.keys(supportsJobTypeMap);
+
+const getAllCombinations = () => {
+  const powerSet = [[]] as string[][];
+  for (const element of allJobTypes) {
+    const len = powerSet.length;
+    for (let i = 0; i < len; i++) {
+      powerSet.push([...powerSet[i], element]);
+    }
+  }
+
+  const [, ...rest] = powerSet;
+  return rest;
+};
+
+export const allJobTypeCombinations = getAllCombinations();

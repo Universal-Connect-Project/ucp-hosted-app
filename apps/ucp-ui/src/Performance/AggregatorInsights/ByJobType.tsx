@@ -17,7 +17,14 @@ import {
   Typography,
 } from "@mui/material";
 import styles from "./byJobType.module.css";
-import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
+import {
+  allJobTypeCombinations,
+  supportsJobTypeMap,
+} from "../../shared/constants/jobTypes";
+
+const jobTypesCombinationsWithMoreThanOne = allJobTypeCombinations
+  .filter((jobTypes) => jobTypes.length > 1)
+  .map((jobTypes) => jobTypes.join("|"));
 
 const RectangleDivider = ({ numberOfColumns }: { numberOfColumns: number }) => {
   return (
@@ -49,12 +56,45 @@ const JobTypePerformance = ({
           aggregator.jobTypes?.[jobTypes] || {};
 
         return (
-          <TableCell key={aggregator.id}>
+          <TableCell
+            className={styles.halfTopAndBottomPadding}
+            key={aggregator.id}
+          >
             {`${avgSuccessRate || 0}% | ${(avgDuration || 0) / 1000}s`}
           </TableCell>
         );
       })}
     </TableRow>
+  );
+};
+
+const SectionHeaderRow = ({
+  numberOfColumns,
+  title,
+}: {
+  numberOfColumns: number;
+  title: string;
+}) => {
+  return (
+    <>
+      <RectangleDivider numberOfColumns={numberOfColumns} />
+      <TableRow>
+        <TableCell
+          className={styles.halfTopAndBottomPadding}
+          colSpan={numberOfColumns}
+        >
+          <Stack>
+            <Typography variant="body1">{title}</Typography>
+            <Typography
+              className={styles.sectionHeaderCaption}
+              variant="caption"
+            >
+              Success Rate (%), Speed (s)
+            </Typography>
+          </Stack>
+        </TableCell>
+      </TableRow>
+    </>
   );
 };
 
@@ -138,26 +178,24 @@ const ByJobType = () => {
                   >{`${(avgDuration || 0) / 1000}s`}</TableCell>
                 ))}
               </TableRow>
-              <RectangleDivider numberOfColumns={numberOfColumns} />
-              <TableRow>
-                <TableCell
-                  className={styles.halfTopAndBottomPadding}
-                  colSpan={numberOfColumns}
-                >
-                  <Stack>
-                    <Typography variant="body1">
-                      Performance by Single Job Type
-                    </Typography>
-                    <Typography
-                      className={styles.sectionHeaderCaption}
-                      variant="caption"
-                    >
-                      Success Rate (%), Speed (s)
-                    </Typography>
-                  </Stack>
-                </TableCell>
-              </TableRow>
+              <SectionHeaderRow
+                numberOfColumns={numberOfColumns}
+                title="Performance by Single Job Type"
+              />
               {Object.keys(supportsJobTypeMap).map((jobType) => (
+                <JobTypePerformance
+                  aggregatorsWithPerformanceByJobType={
+                    aggregatorsWithPerformanceByJobType
+                  }
+                  jobTypes={jobType}
+                  key={jobType}
+                />
+              ))}
+              <SectionHeaderRow
+                numberOfColumns={numberOfColumns}
+                title="Performance by Combo Job Types"
+              />
+              {jobTypesCombinationsWithMoreThanOne.map((jobType) => (
                 <JobTypePerformance
                   aggregatorsWithPerformanceByJobType={
                     aggregatorsWithPerformanceByJobType
