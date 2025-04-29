@@ -72,7 +72,9 @@ describe("/aggregators/performance GET", () => {
           if (["mx", "sophtron", "finicity"].includes(aggregator.name)) {
             expect(aggregator.avgSuccessRate).to.be.gte(0);
             expect(aggregator.avgDuration).to.be.greaterThan(0);
-            expect(aggregator.jobTypes.length).to.be.greaterThan(0);
+            expect(Object.keys(aggregator.jobTypes).length).to.be.greaterThan(
+              0,
+            );
           }
         });
       },
