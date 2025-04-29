@@ -22,16 +22,16 @@ describe("getAggregatorMetrics", () => {
         mx: expect.objectContaining({
           avgSuccessRate: expect.any(Number),
           avgDuration: expect.any(Number),
-          jobTypes: expect.arrayContaining(
-            allJobTypeCombinations.map((jobType) => {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-              return expect.objectContaining({
+          jobTypes: expect.objectContaining(
+            allJobTypeCombinations.reduce((acc, jobType) => {
+              return {
+                ...acc,
                 [jobType]: expect.objectContaining({
                   avgSuccessRate: expect.any(Number),
                   avgDuration: expect.any(Number),
                 }),
-              });
-            }),
+              };
+            }, {}),
           ),
         }),
       }),

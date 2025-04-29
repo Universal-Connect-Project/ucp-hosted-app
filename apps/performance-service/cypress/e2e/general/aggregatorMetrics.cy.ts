@@ -56,10 +56,10 @@ describe("Aggreagator Metrics", () => {
       expect(response.body.testAggregatorId).to.have.property("jobTypes");
 
       expect(
-        response.body.testAggregatorId.jobTypes[0].transactions,
+        response.body.testAggregatorId.jobTypes.transactions,
       ).to.have.property("avgSuccessRate");
       expect(
-        response.body.testAggregatorId.jobTypes[0].transactions,
+        response.body.testAggregatorId.jobTypes.transactions,
       ).to.have.property("avgDuration");
     });
   });
@@ -76,10 +76,10 @@ describe("Aggreagator Metrics", () => {
       expect(response.body.testAggregatorId).to.have.property("jobTypes");
 
       expect(
-        response.body.testAggregatorId.jobTypes[0].transactions,
+        response.body.testAggregatorId.jobTypes.transactions,
       ).to.have.property("avgSuccessRate");
       expect(
-        response.body.testAggregatorId.jobTypes[0].transactions,
+        response.body.testAggregatorId.jobTypes.transactions,
       ).to.have.property("avgDuration");
     });
   });

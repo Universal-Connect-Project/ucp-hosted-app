@@ -112,20 +112,16 @@
                         "updatedAt": "2024-10-09T17:01:07.593Z",
                         "avgSuccessRate": 0.5,
                         "avgDuration": 126000,
-                        "jobTypes": [
-                          {
-                            "accountNumber|accountOwner|transactions": {
-                              "avgSuccessRate": 1,
-                              "avgDuration": 87000
-                            }
+                        "jobTypes": {
+                          "accountNumber|accountOwner|transactions": {
+                            "avgSuccessRate": 1,
+                            "avgDuration": 87000
                           },
-                          {
-                            "accountNumber|transactionHistory|transactions": {
-                              "avgSuccessRate": 0,
-                              "avgDuration": 165000
-                            }
+                          "accountNumber|transactionHistory|transactions": {
+                            "avgSuccessRate": 0,
+                            "avgDuration": 165000
                           }
-                        ]
+                        }
                       },
                       {
                         "id": 1,
@@ -136,7 +132,7 @@
                         "updatedAt": "2024-10-09T17:01:07.587Z",
                         "avgSuccessRate": null,
                         "avgDuration": null,
-                        "jobTypes": []
+                        "jobTypes": {}
                       },
                       {
                         "id": 98,
@@ -147,14 +143,12 @@
                         "updatedAt": "2024-10-09T17:01:07.537Z",
                         "avgSuccessRate": 0.5,
                         "avgDuration": 68000,
-                        "jobTypes": [
-                          {
-                            "accountOwner|transactionHistory|transactions": {
-                              "avgSuccessRate": 1,
-                              "avgDuration": 68000
-                            }
+                        "jobTypes": {
+                          "accountOwner|transactionHistory|transactions": {
+                            "avgSuccessRate": 1,
+                            "avgDuration": 68000
                           }
-                        ]
+                        }
                       }
                     ]
                   }
