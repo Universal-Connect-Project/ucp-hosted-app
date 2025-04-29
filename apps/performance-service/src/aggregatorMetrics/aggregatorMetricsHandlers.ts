@@ -86,7 +86,7 @@ interface JobSpecificData {
 interface IndividualAggregatorMetrics {
   avgSuccessRate: number | undefined;
   avgDuration: number | undefined;
-  jobTypes: Record<string, JobSpecificData>[];
+  jobTypes: Record<string, JobSpecificData>;
 }
 
 type AggregatorMetrics = Record<string, IndividualAggregatorMetrics>;
@@ -101,16 +101,14 @@ const transformInfluxAggregatorDataToJson = (data: influxResult[]) => {
       jsonOutput[aggregatorId] = {
         avgSuccessRate: undefined,
         avgDuration: undefined,
-        jobTypes: [],
+        jobTypes: {},
       };
     }
 
-    jsonOutput[aggregatorId].jobTypes.push({
-      [jobTypes]: {
-        avgSuccessRate,
-        avgDuration,
-      },
-    });
+    jsonOutput[aggregatorId].jobTypes[jobTypes] = {
+      avgSuccessRate,
+      avgDuration,
+    };
   });
   return jsonOutput;
 };

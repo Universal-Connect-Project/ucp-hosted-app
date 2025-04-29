@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Aggregator } from "../models/aggregator";
+import { PERFORMANCE_SERVICE_URL } from "../shared/environment";
 
 export const getAggregators = async (req: Request, res: Response) => {
   try {
@@ -66,7 +67,7 @@ const includeAggregatorPerformance = async (
       ...aggregator.dataValues,
       avgSuccessRate: aggPerformance?.avgSuccessRate ?? null,
       avgDuration: aggPerformance?.avgDuration || null,
-      jobTypes: aggPerformance?.jobTypes || [],
+      jobTypes: aggPerformance?.jobTypes || {},
     };
   });
 };
@@ -79,7 +80,7 @@ interface JobSpecificData {
 interface IndividualAggregatorMetrics {
   avgSuccessRate: number | undefined;
   avgDuration: number | undefined;
-  jobTypes: Record<string, JobSpecificData>[];
+  jobTypes: Record<string, JobSpecificData>;
 }
 
 type AggregatorMetrics = Record<string, IndividualAggregatorMetrics>;
@@ -91,7 +92,7 @@ const getAggregatorPerformance = async (
   const params = new URLSearchParams({ timeFrame });
 
   const response = await fetch(
-    `${process.env.PERFORMANCE_SERVICE_URL!}/metrics/aggregators?${params.toString()}`,
+    `${PERFORMANCE_SERVICE_URL}/metrics/aggregators?${params.toString()}`,
     {
       method: "GET",
       headers: {

@@ -96,14 +96,12 @@ describe("getAggregatorsWithPerformance", () => {
             logo: expect.any(String) || null,
             avgSuccessRate: expect.any(Number),
             avgDuration: expect.any(Number),
-            jobTypes: expect.arrayContaining([
-              expect.objectContaining({
-                accountNumber: expect.objectContaining({
-                  avgSuccessRate: expect.any(Number),
-                  avgDuration: expect.any(Number),
-                }),
+            jobTypes: expect.objectContaining({
+              accountNumber: expect.objectContaining({
+                avgSuccessRate: expect.any(Number),
+                avgDuration: expect.any(Number),
               }),
-            ]),
+            }),
           }),
         ]),
       }),
