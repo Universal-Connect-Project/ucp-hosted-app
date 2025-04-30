@@ -19,18 +19,41 @@ import {
 import styles from "./byJobType.module.css";
 import {
   allJobTypeCombinations,
+  allJobTypes,
   supportsJobTypeMap,
 } from "../../shared/constants/jobTypes";
+import classNames from "classnames";
 
 const jobTypesCombinationsWithMoreThanOne = allJobTypeCombinations
   .filter((jobTypes) => jobTypes.length > 1)
-  .map((jobTypes) => jobTypes.join("|"));
+  .map((jobTypes) => jobTypes.join("|"))
+  .sort();
 
 const RectangleDivider = ({ numberOfColumns }: { numberOfColumns: number }) => {
   return (
     <TableRow className={styles.rectangleDivider}>
       <TableCell colSpan={numberOfColumns} padding="none" />
     </TableRow>
+  );
+};
+
+const OverallPerformanceCell = ({
+  appendText,
+  value,
+}: {
+  appendText: string;
+  value: number | null;
+}) => {
+  const noData = value === null;
+
+  return (
+    <TableCell
+      className={classNames({
+        [styles.noData]: noData,
+      })}
+    >
+      {noData ? "No data" : `${value}${appendText}`}
+    </TableCell>
   );
 };
 
@@ -55,12 +78,23 @@ const JobTypePerformance = ({
         const { avgDuration, avgSuccessRate } =
           aggregator.jobTypes?.[jobTypes] || {};
 
+        const noData =
+          avgDuration === undefined && avgSuccessRate === undefined;
+
         return (
           <TableCell
-            className={styles.halfTopAndBottomPadding}
+            className={classNames(
+              styles.halfTopAndBottomPadding,
+              styles.performanceCell,
+              {
+                [styles.noData]: noData,
+              },
+            )}
             key={aggregator.id}
           >
-            {`${avgSuccessRate || 0}% | ${(avgDuration || 0) / 1000}s`}
+            {noData
+              ? "No data"
+              : `${avgSuccessRate || 0}% | ${(avgDuration || 0) / 1000}s`}
           </TableCell>
         );
       })}
@@ -167,22 +201,28 @@ const ByJobType = () => {
               <TableRow>
                 <TableCell>Overall Average Success Rate</TableCell>
                 {aggregators?.map(({ avgSuccessRate, id }) => (
-                  <TableCell key={id}>{`${avgSuccessRate || 0}%`}</TableCell>
+                  <OverallPerformanceCell
+                    appendText="%"
+                    key={id}
+                    value={avgSuccessRate}
+                  />
                 ))}
               </TableRow>
               <TableRow>
                 <TableCell>Overall Average Speed</TableCell>
                 {aggregators?.map(({ avgDuration, id }) => (
-                  <TableCell
+                  <OverallPerformanceCell
+                    appendText="s"
                     key={id}
-                  >{`${(avgDuration || 0) / 1000}s`}</TableCell>
+                    value={avgDuration !== null ? avgDuration / 1000 : null}
+                  />
                 ))}
               </TableRow>
               <SectionHeaderRow
                 numberOfColumns={numberOfColumns}
                 title="Performance by Single Job Type"
               />
-              {Object.keys(supportsJobTypeMap).map((jobType) => (
+              {allJobTypes.map((jobType) => (
                 <JobTypePerformance
                   aggregatorsWithPerformanceByJobType={
                     aggregatorsWithPerformanceByJobType

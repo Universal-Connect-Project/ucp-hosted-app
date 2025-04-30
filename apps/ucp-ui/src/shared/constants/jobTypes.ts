@@ -43,7 +43,9 @@ export const supportsJobTypeMap: Record<string, JobType> = {
   },
 };
 
-const allJobTypes = Object.keys(supportsJobTypeMap);
+export const allJobTypes = Object.keys(supportsJobTypeMap).filter(
+  (jobType) => !["balance", "rewards"].includes(jobType),
+);
 
 const getAllCombinations = () => {
   const powerSet = [[]] as string[][];

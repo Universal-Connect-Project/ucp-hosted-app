@@ -28,3 +28,13 @@
 .sectionHeaderCaption {
   color: var(--mui-palette-text-secondary);
 }
+
+.performanceCell {
+  white-space: nowrap;
+}
+
+.noData {
+  &:global(.MuiTableCell-root) {
+    color: var(--mui-palette-text-disabled);
+  }
+}
