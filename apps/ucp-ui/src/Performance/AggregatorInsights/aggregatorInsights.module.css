@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.tabContent {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: hidden;
+  padding-top: 24px;
+}

@@ -3,4 +3,15 @@
   margin-left: 60px;
   margin-right: 72px;
   margin-top: var(--page-content-margin-top);
+  margin-bottom: var(--page-content-margin-bottom);
+}
+
+.noVerticalOverflow {
+  height: calc(
+    100vh - var(--page-content-margin-top) - var(--page-content-margin-bottom)
+  );
+  max-height: calc(
+    100vh - var(--page-content-margin-top) - var(--page-content-margin-bottom)
+  );
+  overflow-y: hidden;
 }

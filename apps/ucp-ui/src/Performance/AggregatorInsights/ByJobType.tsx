@@ -84,7 +84,7 @@ const SectionHeaderRow = ({
           colSpan={numberOfColumns}
         >
           <Stack>
-            <Typography variant="body1">{title}</Typography>
+            <Typography variant="subtitle1">{title}</Typography>
             <Typography
               className={styles.sectionHeaderCaption}
               variant="caption"
@@ -152,8 +152,8 @@ const ByJobType = () => {
           </MenuItem>
         ))}
       </TextField>
-      <Paper>
-        <TableContainer>
+      <Paper className={styles.tablePaper}>
+        <TableContainer className={styles.tableContainer}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
