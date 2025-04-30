@@ -1,5 +1,7 @@
 export const INSTITUTIONS_ROUTE = "/";
 
+export const TERMS_AND_CONDITIONS_ROUTE = "/termsAndConditions";
+
 const createRoute = (childRoute: string) => ({
   childRoute,
   fullRoute: `/${childRoute}`,

@@ -5,7 +5,6 @@ import Routes from "./Routes";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material";
 import { muiTheme } from "./theme";
 import { store } from "./store";
-import AuthenticationWrapper from "./AuthenticationWrapper";
 import {
   AUTH0_CLIENT_AUDIENCE,
   DefaultPermissions,
@@ -39,9 +38,7 @@ const App: React.FC = () => {
               scope,
             }}
           >
-            <AuthenticationWrapper>
-              <Routes />
-            </AuthenticationWrapper>
+            <Routes />
           </Auth0Provider>
         </ReduxProvider>
       </CssVarsProvider>

@@ -1,5 +1,4 @@
 import React from "react";
-import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import GenericError from "./GenericError/GenericError";
 import ApiKeys from "./ApiKeys/ApiKeys";
@@ -8,8 +7,10 @@ import Institutions from "./Institutions/Institutions";
 import Institution from "./Institutions/Institution/Institution";
 import {
   institutionRoute,
+  TERMS_AND_CONDITIONS_ROUTE,
   widgetManagementRoute,
 } from "./shared/constants/routes";
+import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -32,9 +33,13 @@ const Routes = () => {
       element: <Layout />,
       errorElement: <GenericError />,
     },
+    {
+      path: TERMS_AND_CONDITIONS_ROUTE,
+      element: <TermsAndConditions />,
+    },
   ]);
 
   return <RouterProvider router={router} />;
 };
 
-export default withAuthenticationRequired(Routes);
+export default Routes;

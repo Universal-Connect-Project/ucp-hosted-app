@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
   Drawer,
+  Stack,
 } from "@mui/material";
 import React from "react";
 import styles from "./sideNav.module.css";
@@ -20,6 +21,7 @@ import { matchPath, useLocation } from "react-router-dom";
 import {
   institutionRoute,
   INSTITUTIONS_ROUTE,
+  TERMS_AND_CONDITIONS_ROUTE,
   widgetManagementRoute,
 } from "../shared/constants/routes";
 import { Link } from "react-router-dom";
@@ -27,6 +29,7 @@ import {
   SIDE_NAV_CONTACT_US_LINK_TEXT,
   SIDE_NAV_INSTITUTIONS_LINK_TEXT,
   SIDE_NAV_LOG_OUT_BUTTON_TEXT,
+  SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
@@ -90,13 +93,22 @@ const SideNav = () => {
             {SIDE_NAV_LOG_OUT_BUTTON_TEXT}
           </Button>
         </div>
-        <MuiLink
-          component={Link}
-          to={`mailto:${SUPPORT_EMAIL}`}
-          underline="hover"
-        >
-          {SIDE_NAV_CONTACT_US_LINK_TEXT}
-        </MuiLink>
+        <Stack alignItems="center" spacing={1}>
+          <MuiLink
+            component={Link}
+            to={`mailto:${SUPPORT_EMAIL}`}
+            underline="hover"
+          >
+            {SIDE_NAV_CONTACT_US_LINK_TEXT}
+          </MuiLink>
+          <MuiLink
+            component={Link}
+            to={TERMS_AND_CONDITIONS_ROUTE}
+            underline="hover"
+          >
+            {SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT}
+          </MuiLink>
+        </Stack>
       </div>
     </Drawer>
   );
