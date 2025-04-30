@@ -4,11 +4,26 @@ import PageContent from "../shared/components/PageContent";
 import { Stack, Typography } from "@mui/material";
 import { TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT } from "./constants";
 
-const Paragraph = ({ children }: { children: ReactNode }) => (
-  <Typography variant="body1">{children}</Typography>
+const Paragraph = ({
+  children,
+  title,
+}: {
+  children: ReactNode;
+  title?: string;
+}) => (
+  <Typography variant="body1">
+    {title && (
+      <Typography component="span" variant="subtitle1">
+        {title}{" "}
+      </Typography>
+    )}
+    {children}
+  </Typography>
 );
 
-const SectionTitle = Paragraph;
+const SectionTitle = ({ children }: { children: ReactNode }) => (
+  <Typography variant="h6">{children}</Typography>
+);
 
 const TermsAndConditions = () => {
   return (
@@ -16,7 +31,7 @@ const TermsAndConditions = () => {
       <Stack spacing={3.5}>
         <PageTitle>{TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT}</PageTitle>
         <Stack spacing={2}>
-          <Paragraph>Updated: April, 2025</Paragraph>
+          <Typography variant="subtitle1">Last updated: April, 2025</Typography>
           <Paragraph>
             The Universal Connect Project (“UCP”) accepts, maintains, and makes
             available to you (“you”, “your”) and other UCP users data regarding
@@ -118,12 +133,12 @@ const TermsAndConditions = () => {
             obligations under these Terms.
           </Paragraph>
           <SectionTitle>Indemnity and Limitation of Liability</SectionTitle>
-          <Paragraph>
-            Indemnity. You agree, at your expense, to defend, indemnify, hold
-            harmless, protect, and fully compensate UCP and its affiliates and
-            respective partners and its and their officers, directors,
-            employees, consultants, agents, distributors, partners, licensors,
-            and third-party providers from any and all third-party claims,
+          <Paragraph title="Indemnity.">
+            You agree, at your expense, to defend, indemnify, hold harmless,
+            protect, and fully compensate UCP and its affiliates and respective
+            partners and its and their officers, directors, employees,
+            consultants, agents, distributors, partners, licensors, and
+            third-party providers from any and all third-party claims,
             liability, damages, losses, expenses, and costs (including
             attorneys&apos; fees) caused by or arising from (a) a claim, action,
             or allegation of infringement based on your use of UCP or your
@@ -133,28 +148,28 @@ const TermsAndConditions = () => {
             violation of applicable law; (e) your breach of these Terms; or (f)
             your gross negligence or willful misconduct.
           </Paragraph>
-          <Paragraph>
-            Limitation of liability. To the maximum extent permitted by law,
-            UCP, its affiliates and partners, and its and their officers,
-            directors, employees, consultants, agents, distributors, partners,
-            licensors, and third-party providers shall not be liable to you or
-            any third party for any damages, claims, or losses incurred,
-            including compensatory, incidental, indirect, direct, special,
-            punitive, consequential, or exemplary damages, however caused and
-            whether based in contract, tort (including negligence), product
-            liability or otherwise, including damages for telecommunication
-            failures, loss, corruption, security or theft of data, viruses,
-            spyware, loss of profits, business interruption, loss of business
-            information, loss of privacy, or pecuniary loss arising out of your
-            use or your inability to use the Server or access the Connection
-            Data; arising in connection with your use of the Server or the
-            Connection Data, including any interruption, inaccuracy, error, or
-            omission in your use of the server; or any act or omission by UPC in
-            administering the Server, even if we have been advised of the
-            possibility of such damages, claims, or losses and even if a remedy
-            set forth herein is found to have failed of its essential purpose.
-            UCP assumes no responsibility for any damage caused by your access
-            or inability to access the Server or the Connection Data.
+          <Paragraph title="Limitation of liability.">
+            To the maximum extent permitted by law, UCP, its affiliates and
+            partners, and its and their officers, directors, employees,
+            consultants, agents, distributors, partners, licensors, and
+            third-party providers shall not be liable to you or any third party
+            for any damages, claims, or losses incurred, including compensatory,
+            incidental, indirect, direct, special, punitive, consequential, or
+            exemplary damages, however caused and whether based in contract,
+            tort (including negligence), product liability or otherwise,
+            including damages for telecommunication failures, loss, corruption,
+            security or theft of data, viruses, spyware, loss of profits,
+            business interruption, loss of business information, loss of
+            privacy, or pecuniary loss arising out of your use or your inability
+            to use the Server or access the Connection Data; arising in
+            connection with your use of the Server or the Connection Data,
+            including any interruption, inaccuracy, error, or omission in your
+            use of the server; or any act or omission by UPC in administering
+            the Server, even if we have been advised of the possibility of such
+            damages, claims, or losses and even if a remedy set forth herein is
+            found to have failed of its essential purpose. UCP assumes no
+            responsibility for any damage caused by your access or inability to
+            access the Server or the Connection Data.
           </Paragraph>
           <Paragraph>
             The limitations of damages set forth herein are fundamental elements
@@ -164,50 +179,48 @@ const TermsAndConditions = () => {
             UCP and survives a failure of its essential purpose.
           </Paragraph>
           <SectionTitle>Miscellaneous Provisions</SectionTitle>
-          <Paragraph>
-            Feedback. Your feedback regarding UCP and the Connection Data is
-            welcome. UCP may use any feedback you provide, without restriction,
-            to improve UCP, as well as to create and improve other offerings,
-            whether available at the time of feedback or not.
+          <Paragraph title="Feedback.">
+            Your feedback regarding UCP and the Connection Data is welcome. UCP
+            may use any feedback you provide, without restriction, to improve
+            UCP, as well as to create and improve other offerings, whether
+            available at the time of feedback or not.
           </Paragraph>
-          <Paragraph>
-            UCP Modifications to the Server. UCP’s services may be modified at
-            any time, with or without notice to you or other users. Such
-            modification may result in decreased performance or availability and
-            may even include temporary suspension or indefinite discontinuation
-            of the Server by UCP.
+          <Paragraph title="UCP Modifications to the Server.">
+            UCP’s services may be modified at any time, with or without notice
+            to you or other users. Such modification may result in decreased
+            performance or availability and may even include temporary
+            suspension or indefinite discontinuation of the Server by UCP.
           </Paragraph>
-          <Paragraph>
-            No Endorsements. Any marks, including names, logos, or other
-            trademarks, contained in or associated with the Server or Connection
-            Data that are not UCP marks are the trademarks of their respective
-            owners. References to any names, marks, products, or services of
-            third parties or hypertext links to third-party sites or information
-            do not constitute or imply UCP’s endorsement, sponsorship,
-            guarantee, or recommendation of the third party, information,
-            products, or services.
+          <Paragraph title="No Endorsements.">
+            Any marks, including names, logos, or other trademarks, contained in
+            or associated with the Server or Connection Data that are not UCP
+            marks are the trademarks of their respective owners. References to
+            any names, marks, products, or services of third parties or
+            hypertext links to third-party sites or information do not
+            constitute or imply UCP’s endorsement, sponsorship, guarantee, or
+            recommendation of the third party, information, products, or
+            services.
           </Paragraph>
-          <Paragraph>
-            UCP Marks. You may not use any name, trademark, logo, or other
-            official mark or emblem of UCP without UCP’s prior written consent,
-            nor may you represent or imply an association or affiliation with
-            UCP.
+          <Paragraph title="UCP Marks.">
+            You may not use any name, trademark, logo, or other official mark or
+            emblem of UCP without UCP’s prior written consent, nor may you
+            represent or imply an association or affiliation with UCP.
           </Paragraph>
-          <Paragraph>
-            Governing Law. These Terms and any disputes arising out of or
-            related to these Terms will be governed by and construed in
-            accordance with the laws of the State of Utah, without giving effect
-            to its conflict of law rules, the United Nations Convention on
-            Contracts for the International Sale of Goods, or the Uniform
-            Computer Information Transactions Act.
+          <Paragraph title="Governing Law.">
+            These Terms and any disputes arising out of or related to these
+            Terms will be governed by and construed in accordance with the laws
+            of the State of Utah, without giving effect to its conflict of law
+            rules, the United Nations Convention on Contracts for the
+            International Sale of Goods, or the Uniform Computer Information
+            Transactions Act.
           </Paragraph>
-          <Paragraph>
-            Severability. If any provision of these Terms is held by a court of
-            competent jurisdiction to be contrary to law, the provision will be
-            modified by the court and interpreted so as to best accomplish the
-            objectives of the original provision to the fullest extent permitted
-            by law, and the remaining provisions of these Terms will remain in
-            full force and effect.
+          <Paragraph title="Severability.">
+            If any provision of these Terms is held by a court of competent
+            jurisdiction to be contrary to law, the provision will be modified
+            by the court and interpreted so as to best accomplish the objectives
+            of the original provision to the fullest extent permitted by law,
+            and the remaining provisions of these Terms will remain in full
+            force and effect.
           </Paragraph>
         </Stack>
       </Stack>
