@@ -3,4 +3,5 @@
   margin-left: 60px;
   margin-right: 72px;
   margin-top: var(--page-content-margin-top);
+  margin-bottom: var(--page-content-margin-bottom);
 }

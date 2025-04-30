@@ -1,6 +1,8 @@
 export const INSTITUTIONS_ROUTE = "/";
 
 export const TERMS_AND_CONDITIONS_ROUTE = "/termsAndConditions";
+export const LOGGED_OUT_TERMS_AND_CONDITIONS_ROUTE =
+  "/termsAndConditions/public";
 
 const createRoute = (childRoute: string) => ({
   childRoute,

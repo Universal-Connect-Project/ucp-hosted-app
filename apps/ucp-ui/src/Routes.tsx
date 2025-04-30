@@ -7,6 +7,7 @@ import Institutions from "./Institutions/Institutions";
 import Institution from "./Institutions/Institution/Institution";
 import {
   institutionRoute,
+  LOGGED_OUT_TERMS_AND_CONDITIONS_ROUTE,
   TERMS_AND_CONDITIONS_ROUTE,
   widgetManagementRoute,
 } from "./shared/constants/routes";
@@ -28,13 +29,17 @@ const Routes = () => {
           path: widgetManagementRoute.childRoute,
           element: <ApiKeys />,
         },
+        {
+          path: TERMS_AND_CONDITIONS_ROUTE,
+          element: <TermsAndConditions />,
+        },
       ],
       path: "/",
       element: <Layout />,
       errorElement: <GenericError />,
     },
     {
-      path: TERMS_AND_CONDITIONS_ROUTE,
+      path: LOGGED_OUT_TERMS_AND_CONDITIONS_ROUTE,
       element: <TermsAndConditions />,
     },
   ]);
