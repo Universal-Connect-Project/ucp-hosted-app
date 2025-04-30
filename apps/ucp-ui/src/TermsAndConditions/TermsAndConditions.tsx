@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import PageTitle from "../shared/components/PageTitle";
 import PageContent from "../shared/components/PageContent";
 import { Stack, Typography } from "@mui/material";
+import { TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT } from "./constants";
 
 const Paragraph = ({ children }: { children: ReactNode }) => (
   <Typography variant="body1">{children}</Typography>
@@ -13,7 +14,7 @@ const TermsAndConditions = () => {
   return (
     <PageContent>
       <Stack spacing={3.5}>
-        <PageTitle>UCP Terms of Use</PageTitle>
+        <PageTitle>{TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT}</PageTitle>
         <Stack spacing={2}>
           <Paragraph>
             The Universal Connect Project (“UCP”) accepts, maintains, and makes
