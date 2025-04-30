@@ -94,7 +94,7 @@ const JobTypePerformance = ({
           >
             {noData
               ? "No data"
-              : `${avgSuccessRate || 0}% | ${(avgDuration || 0) / 1000}s`}
+              : `${avgSuccessRate || 0}% | ${avgDuration || 0}s`}
           </TableCell>
         );
       })}
@@ -219,7 +219,7 @@ const ByJobType = () => {
                   <OverallPerformanceCell
                     appendText="s"
                     key={id}
-                    value={avgDuration !== null ? avgDuration / 1000 : null}
+                    value={avgDuration}
                   />
                 ))}
               </TableRow>
