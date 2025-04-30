@@ -38,3 +38,15 @@
     color: var(--mui-palette-text-disabled);
   }
 }
+
+.aggregatorCell {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+
+  img {
+    height: 32px;
+    width: 32px;
+  }
+}

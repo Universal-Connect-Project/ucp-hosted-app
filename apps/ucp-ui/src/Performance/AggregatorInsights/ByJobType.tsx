@@ -192,8 +192,13 @@ const ByJobType = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Aggregator Performance</TableCell>
-                {aggregators?.map(({ displayName, id }) => (
-                  <TableCell key={id}>{displayName}</TableCell>
+                {aggregators?.map(({ displayName, id, logo }) => (
+                  <TableCell key={id}>
+                    <div className={styles.aggregatorCell}>
+                      <img src={logo} />
+                      {displayName}
+                    </div>
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
