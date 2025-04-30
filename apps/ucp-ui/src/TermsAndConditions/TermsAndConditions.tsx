@@ -16,6 +16,7 @@ const TermsAndConditions = () => {
       <Stack spacing={3.5}>
         <PageTitle>{TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT}</PageTitle>
         <Stack spacing={2}>
+          <Paragraph>Updated: April, 2025</Paragraph>
           <Paragraph>
             The Universal Connect Project (“UCP”) accepts, maintains, and makes
             available to you (“you”, “your”) and other UCP users data regarding
