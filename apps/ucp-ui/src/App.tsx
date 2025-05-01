@@ -18,6 +18,7 @@ import {
   AUTH0_DOMAIN,
   LAUNCH_DARKLY_CLIENT_ID,
 } from "./shared/constants/environment";
+import AuthenticationWrapper from "./AuthenticationWrapper";
 
 const App: React.FC = () => {
   const scope = [DefaultPermissions, UiClientPermissions, UiUserPermissions]
@@ -38,7 +39,9 @@ const App: React.FC = () => {
               scope,
             }}
           >
-            <Routes />
+            <AuthenticationWrapper>
+              <Routes />
+            </AuthenticationWrapper>
           </Auth0Provider>
         </ReduxProvider>
       </CssVarsProvider>

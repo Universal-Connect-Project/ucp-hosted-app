@@ -4,7 +4,6 @@ import Snackbars from "./Snackbars";
 import SideNav from "./SideNav";
 import styles from "./layout.module.css";
 import { Outlet } from "react-router-dom";
-import AuthenticationWrapper from "./AuthenticationWrapper";
 
 export const UnauthenticatedLayout = ({
   shouldShowLoggedOutExperience,
@@ -12,7 +11,7 @@ export const UnauthenticatedLayout = ({
   shouldShowLoggedOutExperience?: boolean;
 }) => {
   return (
-    <AuthenticationWrapper>
+    <>
       <Snackbars />
       <div className={styles.container}>
         <SideNav
@@ -22,7 +21,7 @@ export const UnauthenticatedLayout = ({
           <Outlet />
         </div>
       </div>
-    </AuthenticationWrapper>
+    </>
   );
 };
 

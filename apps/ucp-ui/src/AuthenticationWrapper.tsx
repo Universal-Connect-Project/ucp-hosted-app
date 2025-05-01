@@ -2,12 +2,12 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { CircularProgress } from "@mui/material";
 import React, { ReactNode, useEffect } from "react";
 import styles from "./authenticationWrapper.module.css";
-import { useAppDispatch, useAppSelector } from "../shared/utils/redux";
-import { getAccessToken, setAccessToken } from "../shared/reducers/token";
+import { useAppDispatch, useAppSelector } from "./shared/utils/redux";
+import { getAccessToken, setAccessToken } from "./shared/reducers/token";
 import {
   ACCESS_TOKEN_LOCAL_STORAGE_KEY,
   AUTH0_LOADING_TEST_ID,
-} from "../shared/constants/authentication";
+} from "./shared/constants/authentication";
 
 const AuthenticationWrapper = ({ children }: { children: ReactNode }) => {
   const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();

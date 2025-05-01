@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { AUTH0_LOADING_TEST_ID } from "../shared/constants/authentication";
-import { render, screen, wait } from "../shared/test/testUtils";
+import { AUTH0_LOADING_TEST_ID } from "./shared/constants/authentication";
+import { render, screen, wait } from "./shared/test/testUtils";
 import AuthenticationWrapper from "./AuthenticationWrapper";
 
 jest.mock("@auth0/auth0-react");
