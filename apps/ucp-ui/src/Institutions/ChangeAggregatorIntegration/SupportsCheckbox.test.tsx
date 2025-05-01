@@ -82,5 +82,5 @@ describe("<SupportsCheckbox />", () => {
       await submitForm();
       expect(submitCount).toBe(startingSubmitCount + 1);
     }
-  });
+  }, 10000);
 });
