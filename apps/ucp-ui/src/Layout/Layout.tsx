@@ -25,4 +25,6 @@ export const UnauthenticatedLayout = ({
   );
 };
 
-export default withAuthenticationRequired(UnauthenticatedLayout);
+const Layout = withAuthenticationRequired(UnauthenticatedLayout);
+
+export default Layout;
