@@ -1,20 +1,31 @@
 import React from "react";
-import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
+import {
+  expectLocation,
+  render,
+  screen,
+  userEvent,
+  waitFor,
+} from "../shared/test/testUtils";
 import Routes from "../Routes";
 import { API_KEYS_CARD_TITLE_TEXT } from "../ApiKeys/constants";
 import {
   SIDE_NAV_CONTACT_US_LINK_TEXT,
   SIDE_NAV_INSTITUTIONS_LINK_TEXT,
+  SIDE_NAV_LOG_IN_BUTTON_TEXT,
   SIDE_NAV_LOG_OUT_BUTTON_TEXT,
+  SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
 import SideNav from "./SideNav";
 import {
+  BASE_ROUTE,
   institutionRoute,
   INSTITUTIONS_ROUTE,
   widgetManagementRoute,
 } from "../shared/constants/routes";
+import { INSTITUTIONS_PAGE_TITLE } from "../Institutions/constants";
+import { TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT } from "../TermsAndConditions/constants";
 
 const mockLogout = jest.fn();
 
@@ -27,83 +38,133 @@ jest.mock("@auth0/auth0-react", () => ({
 }));
 
 describe("<SideNav />", () => {
-  it("calls logout on click", async () => {
-    render(<Routes />, { shouldRenderRouter: false });
+  describe("logged out experience", () => {
+    it("renders a login button and navigates to the base path on click", async () => {
+      const initialRoute = "/junk";
 
-    await userEvent.click(screen.getByText(SIDE_NAV_LOG_OUT_BUTTON_TEXT));
+      render(<SideNav shouldShowLoggedOutExperience />, { initialRoute });
 
-    await waitFor(() =>
-      expect(mockLogout).toHaveBeenCalledWith({
-        logoutParams: {
-          returnTo: window.location.origin,
-        },
-      }),
-    );
-  });
+      expectLocation(initialRoute);
 
-  it("renders institutions", () => {
-    render(<Routes />, { shouldRenderRouter: false });
+      await userEvent.click(
+        screen.getByRole("link", { name: SIDE_NAV_LOG_IN_BUTTON_TEXT }),
+      );
 
-    expect(
-      screen.getByRole("link", {
-        name: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
-      }),
-    ).toBeInTheDocument();
-  });
-
-  it("navigates to widget management after clicking on the link", async () => {
-    render(<Routes />, { shouldRenderRouter: false });
-
-    await userEvent.click(
-      await screen.findByRole("link", {
-        name: SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
-      }),
-    );
-
-    expect(
-      await screen.findByText(API_KEYS_CARD_TITLE_TEXT),
-    ).toBeInTheDocument();
-  });
-
-  it("renders a contact us button", async () => {
-    render(<Routes />, { shouldRenderRouter: false });
-
-    const contactLink = await screen.findByText(SIDE_NAV_CONTACT_US_LINK_TEXT);
-
-    expect(contactLink).toBeInTheDocument();
-
-    expect(contactLink).toHaveAttribute("href", `mailto:${SUPPORT_EMAIL}`);
-  });
-
-  it("adds a selected status for each routes match paths", () => {
-    const result1 = render(<SideNav />, {
-      initialRoute: institutionRoute.fullRoute,
+      expectLocation(BASE_ROUTE);
     });
 
-    expect(
-      screen.getByTestId(`side-nav-link-${SIDE_NAV_INSTITUTIONS_LINK_TEXT}`),
-    ).toHaveClass("Mui-selected");
+    it("doesn't render terms and conditions or the other navigation links", () => {
+      render(<SideNav shouldShowLoggedOutExperience />);
 
-    result1.unmount();
+      [
+        SIDE_NAV_INSTITUTIONS_LINK_TEXT,
+        SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
+        SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT,
+      ].forEach((name) =>
+        expect(screen.queryByRole("link", { name })).not.toBeInTheDocument(),
+      );
+    });
+  });
 
-    const result2 = render(<SideNav />, { initialRoute: INSTITUTIONS_ROUTE });
+  describe("logged in experience", () => {
+    it("calls logout on click", async () => {
+      render(<Routes />, { shouldRenderRouter: false });
 
-    expect(
-      screen.getByTestId(`side-nav-link-${SIDE_NAV_INSTITUTIONS_LINK_TEXT}`),
-    ).toHaveClass("Mui-selected");
+      await userEvent.click(screen.getByText(SIDE_NAV_LOG_OUT_BUTTON_TEXT));
 
-    result2.unmount();
-
-    const result3 = render(<SideNav />, {
-      initialRoute: widgetManagementRoute.fullRoute,
+      await waitFor(() =>
+        expect(mockLogout).toHaveBeenCalledWith({
+          logoutParams: {
+            returnTo: window.location.origin,
+          },
+        }),
+      );
     });
 
-    expect(
-      screen.getByTestId(
-        `side-nav-link-${SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT}`,
-      ),
-    ).toHaveClass("Mui-selected");
+    it("navigates to terms and conditions", async () => {
+      render(<Routes />, { shouldRenderRouter: false });
 
-    result3.unmount();
+      await userEvent.click(
+        screen.getByRole("link", {
+          name: SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT,
+        }),
+      );
+
+      expect(
+        await screen.findByText(TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT),
+      ).toBeInTheDocument();
+    });
+
+    it("navigates to institutions", async () => {
+      render(<Routes />, { shouldRenderRouter: false });
+
+      await userEvent.click(
+        screen.getByRole("link", {
+          name: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
+        }),
+      );
+
+      expect(
+        await screen.findByRole("heading", { name: INSTITUTIONS_PAGE_TITLE }),
+      ).toBeInTheDocument();
+    });
+
+    it("navigates to widget management", async () => {
+      render(<Routes />, { shouldRenderRouter: false });
+
+      await userEvent.click(
+        await screen.findByRole("link", {
+          name: SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
+        }),
+      );
+
+      expect(
+        await screen.findByText(API_KEYS_CARD_TITLE_TEXT),
+      ).toBeInTheDocument();
+    });
+
+    it("renders a contact us button", async () => {
+      render(<SideNav />);
+
+      const contactLink = await screen.findByText(
+        SIDE_NAV_CONTACT_US_LINK_TEXT,
+      );
+
+      expect(contactLink).toBeInTheDocument();
+
+      expect(contactLink).toHaveAttribute("href", `mailto:${SUPPORT_EMAIL}`);
+    });
+
+    it("adds a selected status for each routes match paths", () => {
+      const result1 = render(<SideNav />, {
+        initialRoute: institutionRoute.fullRoute,
+      });
+
+      expect(
+        screen.getByTestId(`side-nav-link-${SIDE_NAV_INSTITUTIONS_LINK_TEXT}`),
+      ).toHaveClass("Mui-selected");
+
+      result1.unmount();
+
+      const result2 = render(<SideNav />, { initialRoute: INSTITUTIONS_ROUTE });
+
+      expect(
+        screen.getByTestId(`side-nav-link-${SIDE_NAV_INSTITUTIONS_LINK_TEXT}`),
+      ).toHaveClass("Mui-selected");
+
+      result2.unmount();
+
+      const result3 = render(<SideNav />, {
+        initialRoute: widgetManagementRoute.fullRoute,
+      });
+
+      expect(
+        screen.getByTestId(
+          `side-nav-link-${SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT}`,
+        ),
+      ).toHaveClass("Mui-selected");
+
+      result3.unmount();
+    });
   });
 });
