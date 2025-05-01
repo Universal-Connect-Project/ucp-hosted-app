@@ -6,12 +6,18 @@ import styles from "./layout.module.css";
 import { Outlet } from "react-router-dom";
 import AuthenticationWrapper from "./AuthenticationWrapper";
 
-const Layout = () => {
+export const UnauthenticatedLayout = ({
+  shouldShowLoggedOutExperience,
+}: {
+  shouldShowLoggedOutExperience?: boolean;
+}) => {
   return (
     <AuthenticationWrapper>
       <Snackbars />
       <div className={styles.container}>
-        <SideNav />
+        <SideNav
+          shouldShowLoggedOutExperience={shouldShowLoggedOutExperience}
+        />
         <div className={styles.pageContentContainer}>
           <Outlet />
         </div>
@@ -20,4 +26,4 @@ const Layout = () => {
   );
 };
 
-export default withAuthenticationRequired(Layout);
+export default withAuthenticationRequired(UnauthenticatedLayout);

@@ -2,7 +2,7 @@ import { GENERIC_ERROR_TITLE_TEXT } from "../../src/GenericError/constants";
 import { API_KEYS_CARD_TITLE_TEXT } from "../../src/ApiKeys/constants";
 import { SIDE_NAV_LOG_OUT_BUTTON_TEXT } from "../../src/Layout/constants";
 import { TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT } from "../../src/TermsAndConditions/constants";
-import { TERMS_AND_CONDITIONS_ROUTE } from "../../src/shared/constants/routes";
+import { termsAndConditionsPublicRoute } from "../../src/shared/constants/routes";
 import {
   navigateToInstitutions,
   navigateToTermsAndConditions,
@@ -38,7 +38,7 @@ describe("Health", () => {
   });
 
   it("lets you view the terms and conditions when logged out", () => {
-    cy.visit(TERMS_AND_CONDITIONS_ROUTE);
+    cy.visit(termsAndConditionsPublicRoute.fullRoute);
 
     cy.findByText(TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT).should("exist");
   });

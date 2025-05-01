@@ -14,27 +14,34 @@ import { useAuth0 } from "@auth0/auth0-react";
 import UCPLogo from "../shared/components/UCPLogo";
 import {
   AccountBalanceOutlined,
+  AccountCircle,
   Logout,
   SettingsOutlined,
 } from "@mui/icons-material";
 import { matchPath, useLocation } from "react-router-dom";
 import {
+  BASE_ROUTE,
   institutionRoute,
   INSTITUTIONS_ROUTE,
-  TERMS_AND_CONDITIONS_ROUTE,
+  termsAndConditionsRoute,
   widgetManagementRoute,
 } from "../shared/constants/routes";
 import { Link } from "react-router-dom";
 import {
   SIDE_NAV_CONTACT_US_LINK_TEXT,
   SIDE_NAV_INSTITUTIONS_LINK_TEXT,
+  SIDE_NAV_LOG_IN_BUTTON_TEXT,
   SIDE_NAV_LOG_OUT_BUTTON_TEXT,
   SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
 
-const SideNav = () => {
+const SideNav = ({
+  shouldShowLoggedOutExperience,
+}: {
+  shouldShowLoggedOutExperience?: boolean;
+}) => {
   const { logout } = useAuth0();
 
   const { pathname } = useLocation();
@@ -59,39 +66,52 @@ const SideNav = () => {
       <div className={styles.flexContainer}>
         <UCPLogo />
         <List className={styles.list}>
-          {links.map(({ label, matchPaths, Icon, path }) => (
-            <ListItemButton
-              component={Link}
-              color="primary"
-              data-testid={`side-nav-link-${label}`}
-              key={label}
-              selected={matchPaths.some(
-                (currentPath) => !!matchPath(currentPath, pathname),
-              )}
-              to={path}
-            >
-              <ListItemIcon className={styles.listItemIcon}>
-                <Icon />
-              </ListItemIcon>
-              <ListItemText>{label}</ListItemText>
-            </ListItemButton>
-          ))}
+          {!shouldShowLoggedOutExperience &&
+            links.map(({ label, matchPaths, Icon, path }) => (
+              <ListItemButton
+                component={Link}
+                color="primary"
+                data-testid={`side-nav-link-${label}`}
+                key={label}
+                selected={matchPaths.some(
+                  (currentPath) => !!matchPath(currentPath, pathname),
+                )}
+                to={path}
+              >
+                <ListItemIcon className={styles.listItemIcon}>
+                  <Icon />
+                </ListItemIcon>
+                <ListItemText>{label}</ListItemText>
+              </ListItemButton>
+            ))}
         </List>
         <div className={styles.buttonContainer}>
-          <Button
-            onClick={() =>
-              void logout({
-                logoutParams: {
-                  returnTo: window.location.origin,
-                },
-              })
-            }
-            size="medium"
-            startIcon={<Logout />}
-            variant="outlined"
-          >
-            {SIDE_NAV_LOG_OUT_BUTTON_TEXT}
-          </Button>
+          {shouldShowLoggedOutExperience ? (
+            <Button
+              component={Link}
+              to={BASE_ROUTE}
+              size="medium"
+              startIcon={<AccountCircle />}
+              variant="contained"
+            >
+              {SIDE_NAV_LOG_IN_BUTTON_TEXT}
+            </Button>
+          ) : (
+            <Button
+              onClick={() =>
+                void logout({
+                  logoutParams: {
+                    returnTo: window.location.origin,
+                  },
+                })
+              }
+              size="medium"
+              startIcon={<Logout />}
+              variant="outlined"
+            >
+              {SIDE_NAV_LOG_OUT_BUTTON_TEXT}
+            </Button>
+          )}
         </div>
         <Stack alignItems="center" spacing={1}>
           <MuiLink
@@ -101,13 +121,15 @@ const SideNav = () => {
           >
             {SIDE_NAV_CONTACT_US_LINK_TEXT}
           </MuiLink>
-          <MuiLink
-            component={Link}
-            to={TERMS_AND_CONDITIONS_ROUTE}
-            underline="hover"
-          >
-            {SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT}
-          </MuiLink>
+          {!shouldShowLoggedOutExperience && (
+            <MuiLink
+              component={Link}
+              to={termsAndConditionsRoute.fullRoute}
+              underline="hover"
+            >
+              {SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT}
+            </MuiLink>
+          )}
         </Stack>
       </div>
     </Drawer>

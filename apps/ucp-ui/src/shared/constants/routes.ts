@@ -1,8 +1,11 @@
-export const INSTITUTIONS_ROUTE = "/";
+export const BASE_ROUTE = "/";
+export const INSTITUTIONS_ROUTE = BASE_ROUTE;
+export const PUBLIC_BASE_ROUTE = "/public";
 
-export const TERMS_AND_CONDITIONS_ROUTE = "/termsAndConditions";
-export const LOGGED_OUT_TERMS_AND_CONDITIONS_ROUTE =
-  "/termsAndConditions/public";
+const createPublicRoute = (childRoute: string) => ({
+  childRoute,
+  fullRoute: `${PUBLIC_BASE_ROUTE}/${childRoute}`,
+});
 
 const createRoute = (childRoute: string) => ({
   childRoute,
@@ -16,3 +19,8 @@ export const institutionRoute = {
   createPath: ({ institutionId }: { institutionId: string }) =>
     `/institutions/${institutionId}`,
 };
+
+export const termsAndConditionsRoute = createRoute("termsAndConditions");
+
+export const termsAndConditionsPublicRoute =
+  createPublicRoute("termsAndConditions");
