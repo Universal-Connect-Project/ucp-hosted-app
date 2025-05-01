@@ -5,7 +5,6 @@ import Routes from "./Routes";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material";
 import { muiTheme } from "./theme";
 import { store } from "./store";
-import AuthenticationWrapper from "./AuthenticationWrapper";
 import {
   AUTH0_CLIENT_AUDIENCE,
   DefaultPermissions,
@@ -19,6 +18,7 @@ import {
   AUTH0_DOMAIN,
   LAUNCH_DARKLY_CLIENT_ID,
 } from "./shared/constants/environment";
+import AuthenticationWrapper from "./AuthenticationWrapper";
 
 const App: React.FC = () => {
   const scope = [DefaultPermissions, UiClientPermissions, UiUserPermissions]
