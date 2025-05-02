@@ -50,3 +50,25 @@
     width: 32px;
   }
 }
+
+.paddingCell {
+  width: 16px;
+}
+
+.noLeftPaddingCell {
+  &:global(.MuiTableCell-root) {
+    padding-left: 0;
+  }
+}
+
+.noBottomBorderCell {
+  &:global(.MuiTableCell-root) {
+    border-bottom: none;
+  }
+}
+
+.lastPerformanceDataRow {
+  :global(.MuiTableCell-root) {
+    padding-bottom: 24px;
+  }
+}

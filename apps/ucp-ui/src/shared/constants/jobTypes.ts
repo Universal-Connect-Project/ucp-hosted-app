@@ -47,7 +47,7 @@ export const allJobTypes = Object.keys(supportsJobTypeMap).filter(
   (jobType) => !["balance", "rewards"].includes(jobType),
 );
 
-const getAllCombinations = () => {
+const getAllCombinations = (): string[][] => {
   const powerSet = [[]] as string[][];
   for (const element of allJobTypes) {
     const len = powerSet.length;
