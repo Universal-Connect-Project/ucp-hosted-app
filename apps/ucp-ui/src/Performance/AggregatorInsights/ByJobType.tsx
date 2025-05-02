@@ -198,7 +198,7 @@ const ByJobType = () => {
           </MenuItem>
         ))}
       </TextField>
-      <Paper className={styles.tablePaper}>
+      <Paper className={styles.tablePaper} variant="outlined">
         <TableContainer className={styles.tableContainer}>
           <Table stickyHeader>
             <TableHead>

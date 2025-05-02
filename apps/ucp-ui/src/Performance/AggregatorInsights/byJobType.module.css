@@ -8,9 +8,18 @@
 }
 
 .tableContainer {
+  border-radius: inherit;
   position: absolute;
   overflow-y: auto;
   max-height: 100%;
+
+  :global(.MuiTableBody-root) {
+    :last-child {
+      :global(.MuiTableCell-root) {
+        border-bottom: none;
+      }
+    }
+  }
 }
 
 .rectangleDivider {
