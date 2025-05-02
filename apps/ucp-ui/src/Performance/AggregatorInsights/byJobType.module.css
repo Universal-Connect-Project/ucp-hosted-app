@@ -18,13 +18,6 @@
   height: 20px;
 }
 
-.halfTopAndBottomPadding {
-  &:global(.MuiTableCell-root) {
-    padding-bottom: 8px;
-    padding-top: 8px;
-  }
-}
-
 .sectionHeaderCaption {
   color: var(--mui-palette-text-secondary);
 }
@@ -55,20 +48,42 @@
   width: 16px;
 }
 
-.noLeftPaddingCell {
-  &:global(.MuiTableCell-root) {
+.tableRow {
+  :nth-last-child(2) {
+    padding-right: 0;
+  }
+
+  :nth-child(2) {
     padding-left: 0;
   }
 }
 
-.noBottomBorderCell {
-  &:global(.MuiTableCell-root) {
+.performanceByJobTypeRow {
+  :global(.MuiTableCell-root) {
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+}
+
+.performanceByJobTypeRow.lastPerformanceDataRow {
+  :global(.MuiTableCell-root) {
+    padding-bottom: 24px;
+  }
+}
+
+.performanceByJobTypeRow:not(.lastPerformanceDataRow) {
+  .paddingCell {
     border-bottom: none;
   }
 }
 
-.lastPerformanceDataRow {
-  :global(.MuiTableCell-root) {
-    padding-bottom: 24px;
+.sectionHeaderRow {
+  &:global(.MuiTableCell-root) {
+    border-bottom: none;
+  }
+
+  &:global(.MuiTableCell-root) {
+    padding-bottom: 8px;
+    padding-top: 8px;
   }
 }

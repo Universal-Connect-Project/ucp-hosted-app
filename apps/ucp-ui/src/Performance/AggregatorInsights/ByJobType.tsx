@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactNode, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import {
   AggregatorPerformanceByJobTypeResponse,
   useGetAggregatorPerformanceByJobTypeQuery,
@@ -14,6 +14,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableRowProps,
   Typography,
 } from "@mui/material";
 import styles from "./byJobType.module.css";
@@ -29,29 +30,12 @@ const jobTypesCombinationsWithMoreThanOne = allJobTypeCombinations
   .map((jobTypes) => jobTypes.join("|"))
   .sort();
 
-const NoLeftPaddingCell = ({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) => (
-  <TableCell className={classNames(styles.noLeftPaddingCell, className)}>
-    {children}
-  </TableCell>
+const CustomTableRow = ({ className, ...props }: TableRowProps) => (
+  <TableRow {...props} className={classNames(styles.tableRow, className)} />
 );
 
-const PaddingCell = ({
-  shouldHideBottomBorder,
-}: {
-  shouldHideBottomBorder?: boolean;
-}) => (
-  <TableCell
-    className={classNames(styles.paddingCell, {
-      [styles.noBottomBorderCell]: shouldHideBottomBorder,
-    })}
-    padding="none"
-  />
+const PaddingCell = () => (
+  <TableCell className={styles.paddingCell} padding="none" />
 );
 
 const RectangleDivider = ({ numberOfColumns }: { numberOfColumns: number }) => {
@@ -97,15 +81,13 @@ const JobTypePerformance = ({
   const rowLabel = `${numberOfJobTypes > 1 ? `(${numberOfJobTypes}) ` : ""} ${jobTypesArray.map((jobType) => supportsJobTypeMap[jobType].displayName).join(" + ")}`;
 
   return (
-    <TableRow
-      className={classNames({
+    <CustomTableRow
+      className={classNames(styles.performanceByJobTypeRow, {
         [styles.lastPerformanceDataRow]: isLastRow,
       })}
     >
-      <PaddingCell shouldHideBottomBorder={!isLastRow} />
-      <NoLeftPaddingCell className={styles.halfTopAndBottomPadding}>
-        {rowLabel}
-      </NoLeftPaddingCell>
+      <PaddingCell />
+      <TableCell>{rowLabel}</TableCell>
       {aggregatorsWithPerformanceByJobType?.aggregators?.map((aggregator) => {
         const { avgDuration, avgSuccessRate } =
           aggregator.jobTypes?.[jobTypes] || {};
@@ -115,13 +97,9 @@ const JobTypePerformance = ({
 
         return (
           <TableCell
-            className={classNames(
-              styles.halfTopAndBottomPadding,
-              styles.performanceCell,
-              {
-                [styles.noData]: noData,
-              },
-            )}
+            className={classNames(styles.performanceCell, {
+              [styles.noData]: noData,
+            })}
             key={aggregator.id}
           >
             {noData
@@ -130,7 +108,8 @@ const JobTypePerformance = ({
           </TableCell>
         );
       })}
-    </TableRow>
+      <PaddingCell />
+    </CustomTableRow>
   );
 };
 
@@ -144,12 +123,9 @@ const SectionHeaderRow = ({
   return (
     <>
       <RectangleDivider numberOfColumns={numberOfColumns} />
-      <TableRow>
+      <CustomTableRow>
         <TableCell
-          className={classNames(
-            styles.halfTopAndBottomPadding,
-            styles.noBottomBorderCell,
-          )}
+          className={styles.sectionHeaderRow}
           colSpan={numberOfColumns}
         >
           <Stack>
@@ -162,7 +138,7 @@ const SectionHeaderRow = ({
             </Typography>
           </Stack>
         </TableCell>
-      </TableRow>
+      </CustomTableRow>
     </>
   );
 };
@@ -204,7 +180,8 @@ const ByJobType = () => {
 
   const aggregators = aggregatorsWithPerformanceByJobType?.aggregators;
 
-  const numberOfColumns = (aggregators?.length || 0) + 2;
+  const numberOfPaddingCells = 2;
+  const numberOfColumns = (aggregators?.length || 0) + 1 + numberOfPaddingCells;
 
   return (
     <>
@@ -225,9 +202,9 @@ const ByJobType = () => {
         <TableContainer className={styles.tableContainer}>
           <Table stickyHeader>
             <TableHead>
-              <TableRow>
+              <CustomTableRow>
                 <PaddingCell />
-                <NoLeftPaddingCell>Aggregator Performance</NoLeftPaddingCell>
+                <TableCell>Aggregator Performance</TableCell>
                 {aggregators?.map(({ displayName, id, logo }) => (
                   <TableCell key={id}>
                     <div className={styles.aggregatorCell}>
@@ -236,14 +213,13 @@ const ByJobType = () => {
                     </div>
                   </TableCell>
                 ))}
-              </TableRow>
+                <PaddingCell />
+              </CustomTableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
+              <CustomTableRow>
                 <PaddingCell />
-                <NoLeftPaddingCell>
-                  Overall Average Success Rate
-                </NoLeftPaddingCell>
+                <TableCell>Overall Average Success Rate</TableCell>
                 {aggregators?.map(({ avgSuccessRate, id }) => (
                   <OverallPerformanceCell
                     appendText="%"
@@ -251,10 +227,11 @@ const ByJobType = () => {
                     value={avgSuccessRate}
                   />
                 ))}
-              </TableRow>
-              <TableRow>
                 <PaddingCell />
-                <NoLeftPaddingCell>Overall Average Speed</NoLeftPaddingCell>
+              </CustomTableRow>
+              <CustomTableRow>
+                <PaddingCell />
+                <TableCell>Overall Average Speed</TableCell>
                 {aggregators?.map(({ avgDuration, id }) => (
                   <OverallPerformanceCell
                     appendText="s"
@@ -262,7 +239,8 @@ const ByJobType = () => {
                     value={avgDuration}
                   />
                 ))}
-              </TableRow>
+                <PaddingCell />
+              </CustomTableRow>
               <SectionHeaderRow
                 numberOfColumns={numberOfColumns}
                 title="Performance by Single Job Type"
