@@ -1,0 +1,19 @@
+.rectangleDivider {
+  background-color: var(--mui-palette-grey-50);
+  height: 20px;
+}
+
+.sectionHeaderCaption {
+  color: var(--mui-palette-text-secondary);
+}
+
+.sectionHeaderRow {
+  &:global(.MuiTableCell-root) {
+    border-bottom: none;
+  }
+
+  &:global(.MuiTableCell-root) {
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+}

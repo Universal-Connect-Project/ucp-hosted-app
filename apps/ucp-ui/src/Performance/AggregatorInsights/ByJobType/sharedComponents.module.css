@@ -1,0 +1,19 @@
+.tableRow {
+  :nth-last-child(2) {
+    padding-right: 0;
+  }
+
+  :nth-child(2) {
+    padding-left: 0;
+  }
+}
+
+.paddingCell {
+  width: 16px;
+}
+
+.noData {
+  &:global(.MuiTableCell-root) {
+    color: var(--mui-palette-text-disabled);
+  }
+}

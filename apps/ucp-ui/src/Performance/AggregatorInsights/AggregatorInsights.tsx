@@ -1,6 +1,6 @@
 import { Box, Stack, Tab, Tabs, Typography } from "@mui/material";
 import React, { useState } from "react";
-import ByJobType from "./ByJobType";
+import ByJobType from "./ByJobType/ByJobType";
 import styles from "./aggregatorInsights.module.css";
 
 const byJobTypeTabValue = "byJobType";

@@ -1,50 +1,28 @@
 import React, { ChangeEvent, useState } from "react";
-import {
-  AggregatorPerformanceByJobTypeResponse,
-  useGetAggregatorPerformanceByJobTypeQuery,
-} from "./api";
-import TextField from "../../shared/components/Forms/TextField";
+import { useGetAggregatorPerformanceByJobTypeQuery } from "../api";
+import TextField from "../../../shared/components/Forms/TextField";
 import {
   MenuItem,
   Paper,
-  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
-  TableRowProps,
-  Typography,
 } from "@mui/material";
 import styles from "./byJobType.module.css";
 import {
   allJobTypeCombinations,
   allJobTypes,
-  supportsJobTypeMap,
-} from "../../shared/constants/jobTypes";
-import classNames from "classnames";
+} from "../../../shared/constants/jobTypes";
+import { CustomTableRow, NoDataCell, PaddingCell } from "./SharedComponents";
+import JobTypePerformance from "./JobTypePerformance";
+import SectionHeaderRow from "./SectionHeaderRow";
 
 const jobTypesCombinationsWithMoreThanOne = allJobTypeCombinations
   .filter((jobTypes) => jobTypes.length > 1)
   .map((jobTypes) => jobTypes.join("|"))
   .sort();
-
-const CustomTableRow = ({ className, ...props }: TableRowProps) => (
-  <TableRow {...props} className={classNames(styles.tableRow, className)} />
-);
-
-const PaddingCell = () => (
-  <TableCell className={styles.paddingCell} padding="none" />
-);
-
-const RectangleDivider = ({ numberOfColumns }: { numberOfColumns: number }) => {
-  return (
-    <TableRow className={styles.rectangleDivider}>
-      <TableCell colSpan={numberOfColumns} padding="none" />
-    </TableRow>
-  );
-};
 
 const OverallPerformanceCell = ({
   appendText,
@@ -55,92 +33,7 @@ const OverallPerformanceCell = ({
 }) => {
   const noData = value === null;
 
-  return (
-    <TableCell
-      className={classNames({
-        [styles.noData]: noData,
-      })}
-    >
-      {noData ? "No data" : `${value}${appendText}`}
-    </TableCell>
-  );
-};
-
-const JobTypePerformance = ({
-  aggregatorsWithPerformanceByJobType,
-  isLastRow,
-  jobTypes,
-}: {
-  aggregatorsWithPerformanceByJobType?: AggregatorPerformanceByJobTypeResponse;
-  isLastRow?: boolean;
-  jobTypes: string;
-}) => {
-  const jobTypesArray = jobTypes.split("|");
-  const numberOfJobTypes = jobTypesArray.length;
-
-  const rowLabel = `${numberOfJobTypes > 1 ? `(${numberOfJobTypes}) ` : ""} ${jobTypesArray.map((jobType) => supportsJobTypeMap[jobType].displayName).join(" + ")}`;
-
-  return (
-    <CustomTableRow
-      className={classNames(styles.performanceByJobTypeRow, {
-        [styles.lastPerformanceDataRow]: isLastRow,
-      })}
-    >
-      <PaddingCell />
-      <TableCell>{rowLabel}</TableCell>
-      {aggregatorsWithPerformanceByJobType?.aggregators?.map((aggregator) => {
-        const { avgDuration, avgSuccessRate } =
-          aggregator.jobTypes?.[jobTypes] || {};
-
-        const noData =
-          avgDuration === undefined && avgSuccessRate === undefined;
-
-        return (
-          <TableCell
-            className={classNames(styles.performanceCell, {
-              [styles.noData]: noData,
-            })}
-            key={aggregator.id}
-          >
-            {noData
-              ? "No data"
-              : `${avgSuccessRate || 0}% | ${avgDuration || 0}s`}
-          </TableCell>
-        );
-      })}
-      <PaddingCell />
-    </CustomTableRow>
-  );
-};
-
-const SectionHeaderRow = ({
-  numberOfColumns,
-  title,
-}: {
-  numberOfColumns: number;
-  title: string;
-}) => {
-  return (
-    <>
-      <RectangleDivider numberOfColumns={numberOfColumns} />
-      <CustomTableRow>
-        <TableCell
-          className={styles.sectionHeaderRow}
-          colSpan={numberOfColumns}
-        >
-          <Stack>
-            <Typography variant="subtitle1">{title}</Typography>
-            <Typography
-              className={styles.sectionHeaderCaption}
-              variant="caption"
-            >
-              Success Rate (%), Speed (s)
-            </Typography>
-          </Stack>
-        </TableCell>
-      </CustomTableRow>
-    </>
-  );
+  return <NoDataCell hasData={!noData}>{`${value}${appendText}`}</NoDataCell>;
 };
 
 const ByJobType = () => {

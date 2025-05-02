@@ -1,0 +1,26 @@
+.performanceCell {
+  white-space: nowrap;
+}
+
+.performanceByJobTypeRow {
+  :global(.MuiTableCell-root) {
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+}
+
+.performanceByJobTypeRow.lastPerformanceDataRow {
+  :global(.MuiTableCell-root) {
+    padding-bottom: 24px;
+  }
+}
+
+.performanceByJobTypeRow:not(.lastPerformanceDataRow) {
+  :first-child {
+    border-bottom: none;
+  }
+
+  :last-child {
+    border-bottom: none;
+  }
+}
