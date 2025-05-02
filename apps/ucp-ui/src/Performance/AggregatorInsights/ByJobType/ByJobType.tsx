@@ -15,7 +15,7 @@ import {
   allJobTypeCombinations,
   allJobTypes,
 } from "../../../shared/constants/jobTypes";
-import { CustomTableRow, NoDataCell, PaddingCell } from "./SharedComponents";
+import { TableRowWithPaddingCells, NoDataCell } from "./SharedComponents";
 import JobTypePerformance from "./JobTypePerformance";
 import SectionHeaderRow from "./SectionHeaderRow";
 
@@ -95,8 +95,7 @@ const ByJobType = () => {
         <TableContainer className={styles.tableContainer}>
           <Table stickyHeader>
             <TableHead>
-              <CustomTableRow>
-                <PaddingCell />
+              <TableRowWithPaddingCells>
                 <TableCell>Aggregator Performance</TableCell>
                 {aggregators?.map(({ displayName, id, logo }) => (
                   <TableCell key={id}>
@@ -106,12 +105,10 @@ const ByJobType = () => {
                     </div>
                   </TableCell>
                 ))}
-                <PaddingCell />
-              </CustomTableRow>
+              </TableRowWithPaddingCells>
             </TableHead>
             <TableBody>
-              <CustomTableRow>
-                <PaddingCell />
+              <TableRowWithPaddingCells>
                 <TableCell>Overall Average Success Rate</TableCell>
                 {aggregators?.map(({ avgSuccessRate, id }) => (
                   <OverallPerformanceCell
@@ -120,10 +117,8 @@ const ByJobType = () => {
                     value={avgSuccessRate}
                   />
                 ))}
-                <PaddingCell />
-              </CustomTableRow>
-              <CustomTableRow>
-                <PaddingCell />
+              </TableRowWithPaddingCells>
+              <TableRowWithPaddingCells>
                 <TableCell>Overall Average Speed</TableCell>
                 {aggregators?.map(({ avgDuration, id }) => (
                   <OverallPerformanceCell
@@ -132,8 +127,7 @@ const ByJobType = () => {
                     value={avgDuration}
                   />
                 ))}
-                <PaddingCell />
-              </CustomTableRow>
+              </TableRowWithPaddingCells>
               <SectionHeaderRow
                 numberOfColumns={numberOfColumns}
                 title="Performance by Single Job Type"

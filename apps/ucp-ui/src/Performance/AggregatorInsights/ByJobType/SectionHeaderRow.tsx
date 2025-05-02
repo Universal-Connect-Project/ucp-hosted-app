@@ -1,6 +1,5 @@
 import { Stack, TableCell, TableRow, Typography } from "@mui/material";
 import React from "react";
-import { CustomTableRow } from "./SharedComponents";
 import styles from "./sectionHeaderRow.module.css";
 
 const RectangleDivider = ({ numberOfColumns }: { numberOfColumns: number }) => {
@@ -21,7 +20,7 @@ const SectionHeaderRow = ({
   return (
     <>
       <RectangleDivider numberOfColumns={numberOfColumns} />
-      <CustomTableRow>
+      <TableRow>
         <TableCell
           className={styles.sectionHeaderRow}
           colSpan={numberOfColumns}
@@ -36,7 +35,7 @@ const SectionHeaderRow = ({
             </Typography>
           </Stack>
         </TableCell>
-      </CustomTableRow>
+      </TableRow>
     </>
   );
 };

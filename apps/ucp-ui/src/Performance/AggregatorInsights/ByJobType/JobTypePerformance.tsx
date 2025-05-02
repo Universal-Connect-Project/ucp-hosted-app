@@ -1,6 +1,6 @@
 import React from "react";
 import { AggregatorPerformanceByJobTypeResponse } from "../api";
-import { CustomTableRow, NoDataCell, PaddingCell } from "./SharedComponents";
+import { TableRowWithPaddingCells, NoDataCell } from "./SharedComponents";
 import classNames from "classnames";
 import styles from "./jobTypePerformance.module.css";
 import { supportsJobTypeMap } from "../../../shared/constants/jobTypes";
@@ -21,12 +21,11 @@ const JobTypePerformance = ({
   const rowLabel = `${numberOfJobTypes > 1 ? `(${numberOfJobTypes}) ` : ""} ${jobTypesArray.map((jobType) => supportsJobTypeMap[jobType].displayName).join(" + ")}`;
 
   return (
-    <CustomTableRow
+    <TableRowWithPaddingCells
       className={classNames(styles.performanceByJobTypeRow, {
         [styles.lastPerformanceDataRow]: isLastRow,
       })}
     >
-      <PaddingCell />
       <TableCell>{rowLabel}</TableCell>
       {aggregatorsWithPerformanceByJobType?.aggregators?.map((aggregator) => {
         const { avgDuration, avgSuccessRate } =
@@ -43,8 +42,7 @@ const JobTypePerformance = ({
           </NoDataCell>
         );
       })}
-      <PaddingCell />
-    </CustomTableRow>
+    </TableRowWithPaddingCells>
   );
 };
 
