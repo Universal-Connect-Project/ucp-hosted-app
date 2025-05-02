@@ -1,15 +1,22 @@
 import React from "react";
+import { withAuthenticationRequired } from "@auth0/auth0-react";
 import Snackbars from "./Snackbars";
 import SideNav from "./SideNav";
 import styles from "./layout.module.css";
 import { Outlet } from "react-router-dom";
 
-const Layout = () => {
+export const UnauthenticatedLayout = ({
+  shouldShowLoggedOutExperience,
+}: {
+  shouldShowLoggedOutExperience?: boolean;
+}) => {
   return (
     <>
       <Snackbars />
       <div className={styles.container}>
-        <SideNav />
+        <SideNav
+          shouldShowLoggedOutExperience={shouldShowLoggedOutExperience}
+        />
         <div className={styles.pageContentContainer}>
           <Outlet />
         </div>
@@ -17,5 +24,7 @@ const Layout = () => {
     </>
   );
 };
+
+const Layout = withAuthenticationRequired(UnauthenticatedLayout);
 
 export default Layout;

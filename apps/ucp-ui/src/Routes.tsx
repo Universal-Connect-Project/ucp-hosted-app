@@ -1,16 +1,20 @@
 import React from "react";
-import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import GenericError from "./GenericError/GenericError";
 import ApiKeys from "./ApiKeys/ApiKeys";
-import Layout from "./Layout/Layout";
+import Layout, { UnauthenticatedLayout } from "./Layout/Layout";
 import Institutions from "./Institutions/Institutions";
 import Institution from "./Institutions/Institution/Institution";
 import {
   institutionRoute,
+  termsAndConditionsRoute,
+  PUBLIC_BASE_ROUTE,
   PERFORMANCE_ROUTE,
   widgetManagementRoute,
+  BASE_ROUTE,
+  termsAndConditionsPublicRoute,
 } from "./shared/constants/routes";
+import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Performance from "./Performance/Performance";
 
 const Routes = () => {
@@ -30,12 +34,27 @@ const Routes = () => {
           element: <ApiKeys />,
         },
         {
+          path: termsAndConditionsRoute.childRoute,
+          element: <TermsAndConditions />,
+        },
+        {
           path: PERFORMANCE_ROUTE,
           element: <Performance />,
         },
       ],
-      path: "/",
+      path: BASE_ROUTE,
       element: <Layout />,
+      errorElement: <GenericError />,
+    },
+    {
+      children: [
+        {
+          path: termsAndConditionsPublicRoute.childRoute,
+          element: <TermsAndConditions />,
+        },
+      ],
+      path: PUBLIC_BASE_ROUTE,
+      element: <UnauthenticatedLayout shouldShowLoggedOutExperience />,
       errorElement: <GenericError />,
     },
   ]);
@@ -43,4 +62,4 @@ const Routes = () => {
   return <RouterProvider router={router} />;
 };
 
-export default withAuthenticationRequired(Routes);
+export default Routes;

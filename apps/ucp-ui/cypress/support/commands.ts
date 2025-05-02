@@ -2,6 +2,7 @@
 import "@testing-library/cypress/add-commands";
 import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "../../src/shared/constants/authentication";
 import { SKELETON_LOADER_TEST_ID } from "../../src/shared/components/constants";
+import { AUTH0_ORIGIN } from "../shared/constants";
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -46,7 +47,7 @@ const login = (usernameEnvKey: string, passwordEnvKey: string) => {
   cy.visit("/");
 
   cy.origin(
-    "dev-d23wau8o0uc5hw8n.us.auth0.com",
+    AUTH0_ORIGIN,
     { args: { username, password } },
     ({ username, password }) => {
       cy.get("input#username").type(username);
