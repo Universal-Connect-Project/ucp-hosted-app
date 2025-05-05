@@ -16,6 +16,7 @@ import { TableRowWithPaddingCells, NoDataCell } from "./SharedComponents";
 import JobTypePerformance from "./JobTypePerformance";
 import SectionHeaderRow from "./SectionHeaderRow";
 import JobTypeFilter, { useJobTypeFilter } from "./JobTypeFilter";
+import { formatMaxTwoDecimals } from "../../../shared/utils/format";
 
 const OverallPerformanceCell = ({
   appendText,
@@ -26,7 +27,11 @@ const OverallPerformanceCell = ({
 }) => {
   const noData = value === null;
 
-  return <NoDataCell hasData={!noData}>{`${value}${appendText}`}</NoDataCell>;
+  return (
+    <NoDataCell
+      hasData={!noData}
+    >{`${formatMaxTwoDecimals(value || 0)}${appendText}`}</NoDataCell>
+  );
 };
 
 const ByJobType = () => {

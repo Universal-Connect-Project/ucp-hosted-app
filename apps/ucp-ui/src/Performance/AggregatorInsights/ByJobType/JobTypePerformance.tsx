@@ -5,6 +5,7 @@ import classNames from "classnames";
 import styles from "./jobTypePerformance.module.css";
 import { supportsJobTypeMap } from "../../../shared/constants/jobTypes";
 import { TableCell } from "@mui/material";
+import { formatMaxTwoDecimals } from "../../../shared/utils/format";
 
 const JobTypePerformance = ({
   aggregatorsWithPerformanceByJobType,
@@ -38,7 +39,7 @@ const JobTypePerformance = ({
             hasData={!noData}
             key={aggregator.id}
           >
-            {`${avgSuccessRate || 0}% | ${avgDuration || 0}s`}
+            {`${formatMaxTwoDecimals(avgSuccessRate) || 0}% | ${formatMaxTwoDecimals(avgDuration) || 0}s`}
           </NoDataCell>
         );
       })}
