@@ -1,9 +1,9 @@
 import React from "react";
+import styles from "./ucpLogo.module.css";
 
 const UCPLogo = () => (
   <svg
-    width="76"
-    height="90"
+    className={styles.ucpLogo}
     viewBox="0 0 76 90"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
