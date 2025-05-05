@@ -9,6 +9,7 @@
 }
 
 .paddingCell {
+  min-width: 16px;
   width: 16px;
 }
 
