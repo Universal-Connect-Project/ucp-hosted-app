@@ -1,5 +1,4 @@
-import React, { ChangeEvent, useMemo, useState } from "react";
-import intersection from "lodash.intersection";
+import React, { ChangeEvent, useState } from "react";
 import { useGetAggregatorPerformanceByJobTypeQuery } from "../api";
 import TextField from "../../../shared/components/Forms/TextField";
 import {
@@ -12,18 +11,11 @@ import {
   TableHead,
 } from "@mui/material";
 import styles from "./byJobType.module.css";
-import {
-  allJobTypeCombinations,
-  allJobTypes,
-} from "../../../shared/constants/jobTypes";
+import { allJobTypes } from "../../../shared/constants/jobTypes";
 import { TableRowWithPaddingCells, NoDataCell } from "./SharedComponents";
 import JobTypePerformance from "./JobTypePerformance";
 import SectionHeaderRow from "./SectionHeaderRow";
-import JobTypeFilter from "./JobTypeFilter";
-
-const jobTypesCombinationsWithMoreThanOne = allJobTypeCombinations.filter(
-  (jobTypes) => jobTypes.length > 1,
-);
+import JobTypeFilter, { useJobTypeFilter } from "./JobTypeFilter";
 
 const OverallPerformanceCell = ({
   appendText,
@@ -77,21 +69,8 @@ const ByJobType = () => {
   const numberOfPaddingCells = 2;
   const numberOfColumns = (aggregators?.length || 0) + 1 + numberOfPaddingCells;
 
-  const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
-
-  const filteredJobTypeCombinations = useMemo(() => {
-    let jobTypesToRender = jobTypesCombinationsWithMoreThanOne;
-
-    if (selectedJobTypes.length) {
-      jobTypesToRender = jobTypesCombinationsWithMoreThanOne.filter(
-        (jobTypes) =>
-          intersection(selectedJobTypes, jobTypes).length ===
-          selectedJobTypes.length,
-      );
-    }
-
-    return jobTypesToRender.map((jobTypes) => jobTypes.join("|")).sort();
-  }, [selectedJobTypes]);
+  const { filteredJobTypeCombinations, selectedJobTypes, setSelectedJobTypes } =
+    useJobTypeFilter();
 
   return (
     <>

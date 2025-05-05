@@ -1,10 +1,40 @@
 import { Chip, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
+  allJobTypeCombinations,
   allJobTypes,
   supportsJobTypeMap,
 } from "../../../shared/constants/jobTypes";
 import { Add } from "@mui/icons-material";
+import intersection from "lodash.intersection";
+
+const jobTypesCombinationsWithMoreThanOne = allJobTypeCombinations.filter(
+  (jobTypes) => jobTypes.length > 1,
+);
+
+export const useJobTypeFilter = () => {
+  const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
+
+  const filteredJobTypeCombinations = useMemo(() => {
+    let jobTypesToRender = jobTypesCombinationsWithMoreThanOne;
+
+    if (selectedJobTypes.length) {
+      jobTypesToRender = jobTypesCombinationsWithMoreThanOne.filter(
+        (jobTypes) =>
+          intersection(selectedJobTypes, jobTypes).length ===
+          selectedJobTypes.length,
+      );
+    }
+
+    return jobTypesToRender.map((jobTypes) => jobTypes.join("|")).sort();
+  }, [selectedJobTypes]);
+
+  return {
+    filteredJobTypeCombinations,
+    selectedJobTypes,
+    setSelectedJobTypes,
+  };
+};
 
 const JobTypeFilter = ({
   selectedJobTypes,
