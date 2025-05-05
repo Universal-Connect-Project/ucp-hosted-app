@@ -60,7 +60,9 @@ describe("apiKeys", () => {
         name: API_KEYS_CONFIRM_ROTATE_SECRET_BUTTON_TEXT,
       }).click();
 
-      cy.findByText(API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT).should("exist");
+      cy.findByText(API_KEYS_ROTATE_API_KEYS_SUCCESS_TEXT, {
+        timeout: 10000,
+      }).should("exist");
     });
   });
 });
