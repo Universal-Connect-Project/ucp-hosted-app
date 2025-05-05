@@ -1,5 +1,5 @@
 import { Chip, Stack, Typography } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 import {
   allJobTypeCombinations,
   allJobTypes,
@@ -59,18 +59,17 @@ const JobTypeFilter = ({
       <Stack alignItems="center" direction="row" spacing={1}>
         {allJobTypes.map((jobType, index) => {
           return (
-            <>
+            <Fragment key={jobType}>
               {index > 0 && <Add color="action" />}
               <Chip
                 color="primary"
-                key={jobType}
                 label={supportsJobTypeMap[jobType].displayName}
                 onClick={createClickHandler(jobType)}
                 variant={
                   selectedJobTypes.includes(jobType) ? "filled" : "outlined"
                 }
               />
-            </>
+            </Fragment>
           );
         })}
       </Stack>

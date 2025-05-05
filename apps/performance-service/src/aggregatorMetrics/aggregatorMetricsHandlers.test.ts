@@ -54,8 +54,8 @@ describe("getAggregatorMetrics", () => {
     const results = (res.send as jest.Mock).mock.calls[0][0];
     const mxJobDuration = results.mx.avgDuration;
 
-    expect(mxJobDuration).toBeGreaterThan(TEST_DURATION_ONE_WEEK);
-    expect(mxJobDuration).toBeLessThanOrEqual(TEST_DURATION_ONE_MONTH);
+    expect(mxJobDuration).toBeGreaterThan(TEST_DURATION_ONE_WEEK / 1000);
+    expect(mxJobDuration).toBeLessThanOrEqual(TEST_DURATION_ONE_MONTH / 1000);
 
     expectedAggregatorMetricsResultsFormat(results);
   });
@@ -74,8 +74,8 @@ describe("getAggregatorMetrics", () => {
     const results = (res.send as jest.Mock).mock.calls[0][0];
     const mxJobDuration = results.mx.avgDuration;
 
-    expect(mxJobDuration).toBeGreaterThan(TEST_DURATION_ONE_WEEK);
-    expect(mxJobDuration).toBeLessThanOrEqual(TEST_DURATION_ONE_MONTH);
+    expect(mxJobDuration).toBeGreaterThan(TEST_DURATION_ONE_WEEK / 1000);
+    expect(mxJobDuration).toBeLessThanOrEqual(TEST_DURATION_ONE_MONTH / 1000);
 
     expectedAggregatorMetricsResultsFormat(results);
   });
