@@ -4,12 +4,13 @@ import PageTitle from "../shared/components/PageTitle";
 import AggregatorInsights from "./AggregatorInsights/AggregatorInsights";
 import { Stack } from "@mui/material";
 import styles from "./performance.module.css";
+import { PERFORMANCE_PAGE_TITLE } from "./constants";
 
 const Performance = () => {
   return (
     <PageContent shouldDisableVerticalOverflow>
       <Stack className={styles.stack} spacing={4}>
-        <PageTitle>Performance</PageTitle>
+        <PageTitle>{PERFORMANCE_PAGE_TITLE}</PageTitle>
         <AggregatorInsights />
       </Stack>
     </PageContent>
