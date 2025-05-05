@@ -1,5 +1,5 @@
 import React from "react";
-import { AggregatorPerformanceByJobTypeResponse } from "../api";
+import { Aggregator } from "../api";
 import { TableRowWithPaddingCells, NoDataCell } from "./SharedComponents";
 import classNames from "classnames";
 import styles from "./jobTypePerformance.module.css";
@@ -8,12 +8,14 @@ import { TableCell } from "@mui/material";
 import { formatMaxTwoDecimals } from "../../../shared/utils/format";
 
 const JobTypePerformance = ({
-  aggregatorsWithPerformanceByJobType,
+  aggregators,
   isLastRow,
+  isLoading,
   jobTypes,
 }: {
-  aggregatorsWithPerformanceByJobType?: AggregatorPerformanceByJobTypeResponse;
+  aggregators?: Aggregator[];
   isLastRow?: boolean;
+  isLoading: boolean;
   jobTypes: string;
 }) => {
   const jobTypesArray = jobTypes.split("|");
@@ -28,7 +30,7 @@ const JobTypePerformance = ({
       })}
     >
       <TableCell>{rowLabel}</TableCell>
-      {aggregatorsWithPerformanceByJobType?.aggregators?.map((aggregator) => {
+      {aggregators?.map((aggregator) => {
         const { avgDuration, avgSuccessRate } =
           aggregator.jobTypes?.[jobTypes] || {};
         const noData =
@@ -37,6 +39,7 @@ const JobTypePerformance = ({
           <NoDataCell
             className={styles.performanceCell}
             hasData={!noData}
+            isLoading={isLoading}
             key={aggregator.id}
           >
             {`${formatMaxTwoDecimals(avgSuccessRate) || 0}% | ${formatMaxTwoDecimals(avgDuration) || 0}s`}

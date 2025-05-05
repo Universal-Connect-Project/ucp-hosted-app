@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from "react";
-import { useGetAggregatorPerformanceByJobTypeQuery } from "../api";
+import { Aggregator, useGetAggregatorPerformanceByJobTypeQuery } from "../api";
 import TextField from "../../../shared/components/Forms/TextField";
 import {
   MenuItem,
@@ -17,12 +17,30 @@ import JobTypePerformance from "./JobTypePerformance";
 import SectionHeaderRow from "./SectionHeaderRow";
 import JobTypeFilter, { useJobTypeFilter } from "./JobTypeFilter";
 import { formatMaxTwoDecimals } from "../../../shared/utils/format";
+import {
+  SkeletonIfLoading,
+  TextSkeletonIfLoading,
+} from "../../../shared/components/Skeleton";
+
+const loadingAggregator = {
+  displayName: "Test name",
+  logo: "",
+  avgSuccessRate: 50,
+  avgDuration: 100,
+};
+
+const loadingAggregators = new Array(4).fill(0).map((current, index) => ({
+  ...loadingAggregator,
+  id: index,
+})) as Aggregator[];
 
 const OverallPerformanceCell = ({
   appendText,
+  isLoading,
   value,
 }: {
   appendText: string;
+  isLoading: boolean;
   value: number | null;
 }) => {
   const noData = value === null;
@@ -30,6 +48,7 @@ const OverallPerformanceCell = ({
   return (
     <NoDataCell
       hasData={!noData}
+      isLoading={isLoading}
     >{`${formatMaxTwoDecimals(value || 0)}${appendText}`}</NoDataCell>
   );
 };
@@ -66,10 +85,13 @@ const ByJobType = () => {
     setTimeFrame(event.target.value);
   };
 
-  const { data: aggregatorsWithPerformanceByJobType } =
+  const { data: aggregatorsWithPerformanceByJobType, isFetching } =
     useGetAggregatorPerformanceByJobTypeQuery({ timeFrame });
 
-  const aggregators = aggregatorsWithPerformanceByJobType?.aggregators;
+  const aggregators =
+    isFetching && !aggregatorsWithPerformanceByJobType
+      ? loadingAggregators
+      : aggregatorsWithPerformanceByJobType?.aggregators;
 
   const numberOfPaddingCells = 2;
   const numberOfColumns = (aggregators?.length || 0) + 1 + numberOfPaddingCells;
@@ -101,8 +123,14 @@ const ByJobType = () => {
                 {aggregators?.map(({ displayName, id, logo }) => (
                   <TableCell key={id}>
                     <div className={styles.aggregatorCell}>
-                      <img src={logo} />
-                      {displayName}
+                      <SkeletonIfLoading isLoading={isFetching}>
+                        <div className={styles.aggregatorLogoContainer}>
+                          <img src={logo} />
+                        </div>
+                      </SkeletonIfLoading>
+                      <TextSkeletonIfLoading isLoading={isFetching}>
+                        <div>{displayName}</div>
+                      </TextSkeletonIfLoading>
                     </div>
                   </TableCell>
                 ))}
@@ -115,6 +143,7 @@ const ByJobType = () => {
                   <OverallPerformanceCell
                     appendText="%"
                     key={id}
+                    isLoading={isFetching}
                     value={avgSuccessRate}
                   />
                 ))}
@@ -125,6 +154,7 @@ const ByJobType = () => {
                   <OverallPerformanceCell
                     appendText="s"
                     key={id}
+                    isLoading={isFetching}
                     value={avgDuration}
                   />
                 ))}
@@ -135,10 +165,9 @@ const ByJobType = () => {
               />
               {allJobTypes.map((jobType, index) => (
                 <JobTypePerformance
-                  aggregatorsWithPerformanceByJobType={
-                    aggregatorsWithPerformanceByJobType
-                  }
+                  aggregators={aggregators}
                   isLastRow={index === allJobTypes.length - 1}
+                  isLoading={isFetching}
                   jobTypes={jobType}
                   key={jobType}
                 />
@@ -154,10 +183,9 @@ const ByJobType = () => {
               </SectionHeaderRow>
               {filteredJobTypeCombinations.map((jobType, index) => (
                 <JobTypePerformance
-                  aggregatorsWithPerformanceByJobType={
-                    aggregatorsWithPerformanceByJobType
-                  }
+                  aggregators={aggregators}
                   isLastRow={index === filteredJobTypeCombinations.length - 1}
+                  isLoading={isFetching}
                   jobTypes={jobType}
                   key={jobType}
                 />
