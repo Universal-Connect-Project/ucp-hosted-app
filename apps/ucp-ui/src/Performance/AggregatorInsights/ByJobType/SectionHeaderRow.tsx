@@ -1,5 +1,5 @@
 import { Stack, TableCell, TableRow, Typography } from "@mui/material";
-import React from "react";
+import React, { ReactNode } from "react";
 import styles from "./sectionHeaderRow.module.css";
 
 const RectangleDivider = ({ numberOfColumns }: { numberOfColumns: number }) => {
@@ -11,9 +11,11 @@ const RectangleDivider = ({ numberOfColumns }: { numberOfColumns: number }) => {
 };
 
 const SectionHeaderRow = ({
+  children,
   numberOfColumns,
   title,
 }: {
+  children?: ReactNode;
   numberOfColumns: number;
   title: string;
 }) => {
@@ -25,14 +27,17 @@ const SectionHeaderRow = ({
           className={styles.sectionHeaderRow}
           colSpan={numberOfColumns}
         >
-          <Stack>
-            <Typography variant="subtitle1">{title}</Typography>
-            <Typography
-              className={styles.sectionHeaderCaption}
-              variant="caption"
-            >
-              Success Rate (%), Speed (s)
-            </Typography>
+          <Stack spacing={1.5}>
+            <Stack>
+              <Typography variant="subtitle1">{title}</Typography>
+              <Typography
+                className={styles.sectionHeaderCaption}
+                variant="caption"
+              >
+                Success Rate (%), Speed (s)
+              </Typography>
+            </Stack>
+            {children}
           </Stack>
         </TableCell>
       </TableRow>

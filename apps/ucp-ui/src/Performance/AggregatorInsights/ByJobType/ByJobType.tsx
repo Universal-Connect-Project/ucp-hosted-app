@@ -18,6 +18,7 @@ import {
 import { TableRowWithPaddingCells, NoDataCell } from "./SharedComponents";
 import JobTypePerformance from "./JobTypePerformance";
 import SectionHeaderRow from "./SectionHeaderRow";
+import JobTypeFilter from "./JobTypeFilter";
 
 const jobTypesCombinationsWithMoreThanOne = allJobTypeCombinations
   .filter((jobTypes) => jobTypes.length > 1)
@@ -37,6 +38,8 @@ const OverallPerformanceCell = ({
 };
 
 const ByJobType = () => {
+  const [selectedJobTypes, setSelectedJobTypes] = useState([]);
+
   const thirtyDays = "30d";
 
   const timeFrameOptions = [
@@ -145,7 +148,12 @@ const ByJobType = () => {
               <SectionHeaderRow
                 numberOfColumns={numberOfColumns}
                 title="Performance by Combo Job Types"
-              />
+              >
+                <JobTypeFilter
+                  selectedJobTypes={selectedJobTypes}
+                  setSelectedJobTypes={setSelectedJobTypes}
+                />
+              </SectionHeaderRow>
               {jobTypesCombinationsWithMoreThanOne.map((jobType, index) => (
                 <JobTypePerformance
                   aggregatorsWithPerformanceByJobType={
