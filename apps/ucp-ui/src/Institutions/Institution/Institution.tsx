@@ -50,7 +50,6 @@ const Institution = () => {
         <FetchError
           description={INSTITUTION_ERROR_TEXT}
           refetch={() => void refetch()}
-          title="Something went wrong"
         />
       ) : (
         <div className={styles.container}>

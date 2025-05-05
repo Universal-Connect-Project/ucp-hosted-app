@@ -3,13 +3,15 @@ import React from "react";
 import { TRY_AGAIN_BUTTON_TEXT } from "./constants";
 import styles from "./errorAlert.module.css";
 
-interface Props {
+const FetchError = ({
+  description,
+  refetch,
+  title = "Something went wrong",
+}: {
   description: string;
   refetch: VoidFunction;
-  title: string;
-}
-
-const FetchError = ({ description, refetch, title }: Props) => {
+  title?: string;
+}) => {
   return (
     <Alert
       action={

@@ -246,7 +246,6 @@ const ChangeAggregatorIntegrationDrawer = ({
                   <FormSubmissionError
                     description={INSTITUTION_CHANGE_AGGREGATOR_ERROR_TEXT}
                     formId={formId}
-                    title="Something went wrong"
                   />
                 )}
                 <DrawerTitle>{drawerTitle}</DrawerTitle>

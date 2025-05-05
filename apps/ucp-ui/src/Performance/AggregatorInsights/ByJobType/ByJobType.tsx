@@ -21,6 +21,7 @@ import {
   SkeletonIfLoading,
   TextSkeletonIfLoading,
 } from "../../../shared/components/Skeleton";
+import FetchError from "../../../shared/components/FetchError";
 
 const loadingAggregator = {
   displayName: "Test name",
@@ -85,8 +86,12 @@ const ByJobType = () => {
     setTimeFrame(event.target.value);
   };
 
-  const { data: aggregatorsWithPerformanceByJobType, isFetching } =
-    useGetAggregatorPerformanceByJobTypeQuery({ timeFrame });
+  const {
+    data: aggregatorsWithPerformanceByJobType,
+    isError,
+    isFetching,
+    refetch,
+  } = useGetAggregatorPerformanceByJobTypeQuery({ timeFrame });
 
   const aggregators =
     isFetching && !aggregatorsWithPerformanceByJobType
@@ -115,84 +120,91 @@ const ByJobType = () => {
         ))}
       </TextField>
       <Paper className={styles.tablePaper} variant="outlined">
-        <TableContainer className={styles.tableContainer}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRowWithPaddingCells>
-                <TableCell>Aggregator Performance</TableCell>
-                {aggregators?.map(({ displayName, id, logo }) => (
-                  <TableCell key={id}>
-                    <div className={styles.aggregatorCell}>
-                      <SkeletonIfLoading isLoading={isFetching}>
-                        <div className={styles.aggregatorLogoContainer}>
-                          <img src={logo} />
-                        </div>
-                      </SkeletonIfLoading>
-                      <TextSkeletonIfLoading isLoading={isFetching}>
-                        <div>{displayName}</div>
-                      </TextSkeletonIfLoading>
-                    </div>
-                  </TableCell>
-                ))}
-              </TableRowWithPaddingCells>
-            </TableHead>
-            <TableBody>
-              <TableRowWithPaddingCells>
-                <TableCell>Overall Average Success Rate</TableCell>
-                {aggregators?.map(({ avgSuccessRate, id }) => (
-                  <OverallPerformanceCell
-                    appendText="%"
-                    key={id}
+        {isError ? (
+          <FetchError
+            description="We cannot load performance by job type right now."
+            refetch={() => void refetch()}
+          />
+        ) : (
+          <TableContainer className={styles.tableContainer}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRowWithPaddingCells>
+                  <TableCell>Aggregator Performance</TableCell>
+                  {aggregators?.map(({ displayName, id, logo }) => (
+                    <TableCell key={id}>
+                      <div className={styles.aggregatorCell}>
+                        <SkeletonIfLoading isLoading={isFetching}>
+                          <div className={styles.aggregatorLogoContainer}>
+                            <img src={logo} />
+                          </div>
+                        </SkeletonIfLoading>
+                        <TextSkeletonIfLoading isLoading={isFetching}>
+                          <div>{displayName}</div>
+                        </TextSkeletonIfLoading>
+                      </div>
+                    </TableCell>
+                  ))}
+                </TableRowWithPaddingCells>
+              </TableHead>
+              <TableBody>
+                <TableRowWithPaddingCells>
+                  <TableCell>Overall Average Success Rate</TableCell>
+                  {aggregators?.map(({ avgSuccessRate, id }) => (
+                    <OverallPerformanceCell
+                      appendText="%"
+                      key={id}
+                      isLoading={isFetching}
+                      value={avgSuccessRate}
+                    />
+                  ))}
+                </TableRowWithPaddingCells>
+                <TableRowWithPaddingCells>
+                  <TableCell>Overall Average Speed</TableCell>
+                  {aggregators?.map(({ avgDuration, id }) => (
+                    <OverallPerformanceCell
+                      appendText="s"
+                      key={id}
+                      isLoading={isFetching}
+                      value={avgDuration}
+                    />
+                  ))}
+                </TableRowWithPaddingCells>
+                <SectionHeaderRow
+                  numberOfColumns={numberOfColumns}
+                  title="Performance by Single Job Type"
+                />
+                {allJobTypes.map((jobType, index) => (
+                  <JobTypePerformance
+                    aggregators={aggregators}
+                    isLastRow={index === allJobTypes.length - 1}
                     isLoading={isFetching}
-                    value={avgSuccessRate}
+                    jobTypes={jobType}
+                    key={jobType}
                   />
                 ))}
-              </TableRowWithPaddingCells>
-              <TableRowWithPaddingCells>
-                <TableCell>Overall Average Speed</TableCell>
-                {aggregators?.map(({ avgDuration, id }) => (
-                  <OverallPerformanceCell
-                    appendText="s"
-                    key={id}
+                <SectionHeaderRow
+                  numberOfColumns={numberOfColumns}
+                  title="Performance by Combo Job Types"
+                >
+                  <JobTypeFilter
+                    selectedJobTypes={selectedJobTypes}
+                    setSelectedJobTypes={setSelectedJobTypes}
+                  />
+                </SectionHeaderRow>
+                {filteredJobTypeCombinations.map((jobType, index) => (
+                  <JobTypePerformance
+                    aggregators={aggregators}
+                    isLastRow={index === filteredJobTypeCombinations.length - 1}
                     isLoading={isFetching}
-                    value={avgDuration}
+                    jobTypes={jobType}
+                    key={jobType}
                   />
                 ))}
-              </TableRowWithPaddingCells>
-              <SectionHeaderRow
-                numberOfColumns={numberOfColumns}
-                title="Performance by Single Job Type"
-              />
-              {allJobTypes.map((jobType, index) => (
-                <JobTypePerformance
-                  aggregators={aggregators}
-                  isLastRow={index === allJobTypes.length - 1}
-                  isLoading={isFetching}
-                  jobTypes={jobType}
-                  key={jobType}
-                />
-              ))}
-              <SectionHeaderRow
-                numberOfColumns={numberOfColumns}
-                title="Performance by Combo Job Types"
-              >
-                <JobTypeFilter
-                  selectedJobTypes={selectedJobTypes}
-                  setSelectedJobTypes={setSelectedJobTypes}
-                />
-              </SectionHeaderRow>
-              {filteredJobTypeCombinations.map((jobType, index) => (
-                <JobTypePerformance
-                  aggregators={aggregators}
-                  isLastRow={index === filteredJobTypeCombinations.length - 1}
-                  isLoading={isFetching}
-                  jobTypes={jobType}
-                  key={jobType}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Paper>
     </>
   );

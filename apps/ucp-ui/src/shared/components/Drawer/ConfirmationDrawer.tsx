@@ -108,11 +108,7 @@ const ConfirmationDrawer = ({
       >
         <DrawerContent>
           {isError && (
-            <FormSubmissionError
-              description={errorText}
-              formId={formId}
-              title="Something went wrong"
-            />
+            <FormSubmissionError description={errorText} formId={formId} />
           )}
           <DrawerTitle>{title}</DrawerTitle>
           <Typography variant="body1">{description}</Typography>

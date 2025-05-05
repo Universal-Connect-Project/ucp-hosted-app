@@ -76,7 +76,6 @@ const ApiKeys = () => {
         <FetchError
           description={API_KEYS_GET_KEYS_FAILURE_TEXT}
           refetch={() => void refetchApiKeys()}
-          title="Something went wrong"
         />
       </CardContent>
     );

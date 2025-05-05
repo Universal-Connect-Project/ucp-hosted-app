@@ -47,7 +47,6 @@ const GenerateKeys = () => {
             <FormSubmissionError
               description={API_KEYS_GENERATE_API_KEYS_FAILURE_TEXT}
               formId={generateKeysFormId}
-              title="Something went wrong"
             />
           )}
         </Stack>
