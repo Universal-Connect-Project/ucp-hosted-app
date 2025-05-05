@@ -3,9 +3,10 @@ import { render, screen, userEvent } from "../test/testUtils";
 import FetchError from "./FetchError";
 import { TRY_AGAIN_BUTTON_TEXT } from "./constants";
 
+const description = "testDescription";
+
 describe("<FetchError />", () => {
   it("shows the description, title, and refetches on click", async () => {
-    const description = "testDescription";
     const title = "testTitle";
     const refetch = jest.fn();
 
@@ -19,6 +20,15 @@ describe("<FetchError />", () => {
       }),
     );
 
+    expect(screen.getByText(description)).toBeInTheDocument();
+    expect(screen.getByText(title)).toBeInTheDocument();
+
     expect(refetch).toHaveBeenCalled();
+  });
+
+  it("shows the default title", () => {
+    render(<FetchError description={description} refetch={() => {}} />);
+
+    expect(screen.getByText("Something went wrong")).toBeInTheDocument();
   });
 });
