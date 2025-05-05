@@ -1,4 +1,5 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
+import intersection from "lodash.intersection";
 import { useGetAggregatorPerformanceByJobTypeQuery } from "../api";
 import TextField from "../../../shared/components/Forms/TextField";
 import {
@@ -20,10 +21,9 @@ import JobTypePerformance from "./JobTypePerformance";
 import SectionHeaderRow from "./SectionHeaderRow";
 import JobTypeFilter from "./JobTypeFilter";
 
-const jobTypesCombinationsWithMoreThanOne = allJobTypeCombinations
-  .filter((jobTypes) => jobTypes.length > 1)
-  .map((jobTypes) => jobTypes.join("|"))
-  .sort();
+const jobTypesCombinationsWithMoreThanOne = allJobTypeCombinations.filter(
+  (jobTypes) => jobTypes.length > 1,
+);
 
 const OverallPerformanceCell = ({
   appendText,
@@ -38,8 +38,6 @@ const OverallPerformanceCell = ({
 };
 
 const ByJobType = () => {
-  const [selectedJobTypes, setSelectedJobTypes] = useState([]);
-
   const thirtyDays = "30d";
 
   const timeFrameOptions = [
@@ -78,6 +76,22 @@ const ByJobType = () => {
 
   const numberOfPaddingCells = 2;
   const numberOfColumns = (aggregators?.length || 0) + 1 + numberOfPaddingCells;
+
+  const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
+
+  const filteredJobTypeCombinations = useMemo(() => {
+    let jobTypesToRender = jobTypesCombinationsWithMoreThanOne;
+
+    if (selectedJobTypes.length) {
+      jobTypesToRender = jobTypesCombinationsWithMoreThanOne.filter(
+        (jobTypes) =>
+          intersection(selectedJobTypes, jobTypes).length ===
+          selectedJobTypes.length,
+      );
+    }
+
+    return jobTypesToRender.map((jobTypes) => jobTypes.join("|")).sort();
+  }, [selectedJobTypes]);
 
   return (
     <>
@@ -154,14 +168,12 @@ const ByJobType = () => {
                   setSelectedJobTypes={setSelectedJobTypes}
                 />
               </SectionHeaderRow>
-              {jobTypesCombinationsWithMoreThanOne.map((jobType, index) => (
+              {filteredJobTypeCombinations.map((jobType, index) => (
                 <JobTypePerformance
                   aggregatorsWithPerformanceByJobType={
                     aggregatorsWithPerformanceByJobType
                   }
-                  isLastRow={
-                    index === jobTypesCombinationsWithMoreThanOne.length - 1
-                  }
+                  isLastRow={index === filteredJobTypeCombinations.length - 1}
                   jobTypes={jobType}
                   key={jobType}
                 />

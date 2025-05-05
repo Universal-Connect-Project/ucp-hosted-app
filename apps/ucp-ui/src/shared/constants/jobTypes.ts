@@ -11,15 +11,15 @@ interface JobType {
 }
 
 export const supportsJobTypeMap: Record<string, JobType> = {
-  accountOwner: {
-    description: "Customer data available",
-    displayName: "Account Owner",
-    prop: "supports_identification",
-  },
   accountNumber: {
     description: "Account and routing/transit number information",
     displayName: "Account Number",
     prop: "supports_verification",
+  },
+  accountOwner: {
+    description: "Customer data available",
+    displayName: "Account Owner",
+    prop: "supports_identification",
   },
   balance: {
     description: "Account Balance",
