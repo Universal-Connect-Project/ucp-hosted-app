@@ -20,6 +20,33 @@ jobs:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
 
+      redis:
+        image: redis:7.2-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 20s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+      influxdb:
+        image: influxdb:2.7
+        env:
+          INFLUXDB_ADMIN_USER: admin
+          INFLUXDB_ADMIN_PASSWORD: password
+          INFLUXDB_HTTP_AUTH_ENABLED: "false"
+          INFLUXDB_ORG: ucp-org
+          INFLUXDB_BUCKET: performance
+          INFLUXDB_TOKEN: my-secret-token
+        options: >-
+          --health-cmd "curl --silent --fail http://localhost:8086/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 8086:8086
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,6 +61,18 @@ jobs:
         run: |
           npm run db:setup --workspace apps/institution-service
 
+      - name: Setup InfluxDB Bucket & Org
+        run: |
+          curl -X POST http://localhost:8086/api/v2/setup \
+            --header "Content-Type: application/json" \
+            --data '{
+              "username": "admin",
+              "password": "password",
+              "org": "ucp-org",
+              "bucket": "performance",
+              "token": "my-secret-token"
+            }'
+
       - name: "Create authentication env file"
         run: |
           ENV_FILE_PATH=./apps/authentication-service/env/secretStaging.env
@@ -42,9 +81,14 @@ jobs:
           # Secrets (can't load these from another job, due to GH security features)
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}   
 
+      - name: Seed Influx with Performance Data
+        run: npm run test:seedInfluxPerformance --workspace apps/performance-service
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
+          AUTH0_INSTITUTION_CLIENT_SECRET: ${{ secrets.INSTITUTION_SERVICE_CLIENT_SECRET }}
+          REDIS_SERVER: redis://localhost:6379
           CYPRESS_auth_username_with_widget_role: ${{ secrets.AUTH_USERNAME_WITH_WIDGET_ROLE }}
           CYPRESS_auth_password_with_widget_role: ${{ secrets.AUTH_PASSWORD_WITH_WIDGET_ROLE }}
           CYPRESS_auth_username_without_widget_role: ${{ secrets.AUTH_USERNAME_WITHOUT_WIDGET_ROLE }}
@@ -54,8 +98,12 @@ jobs:
 
         with:
           project: apps/ucp-ui
-          start: npm run dev
-          wait-on: 'http://localhost:3000, http://localhost:8089/ping, http://localhost:8088/ping'
+          start: |
+            npm run dev --workspace apps/authentication-service & sleep 10
+            npm run start --workspace apps/performance-service & sleep 10
+            npm run dev:noRateLimiting --workspace apps/institution-service
+            npm run dev --workspace apps/ucp-ui
+          wait-on: 'http://localhost:3000, http://localhost:8089/ping, http://localhost:8088/ping, http://localhost:8090/ping'
           wait-on-timeout: 120
 
       - name: Upload screenshots

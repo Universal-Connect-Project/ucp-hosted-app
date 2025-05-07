@@ -230,7 +230,6 @@ const ChangeInstitutionDrawer = ({
                   <FormSubmissionError
                     description={INSTITUTION_CHANGE_ERROR_TEXT}
                     formId={formId}
-                    title="Something went wrong"
                   />
                 )}
                 <DrawerTitle>{drawerTitle}</DrawerTitle>

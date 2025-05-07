@@ -94,7 +94,6 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
                   <FormSubmissionError
                     description={API_KEYS_ROTATE_API_KEYS_ERROR_TEXT}
                     formId={rotateFormId}
-                    title="Something went wrong"
                   />
                 )}
                 <DrawerTitle>

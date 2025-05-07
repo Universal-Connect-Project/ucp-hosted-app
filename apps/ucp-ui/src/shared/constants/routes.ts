@@ -6,6 +6,7 @@ const createPublicRoute = (childRoute: string) => ({
   childRoute,
   fullRoute: `${PUBLIC_BASE_ROUTE}/${childRoute}`,
 });
+export const PERFORMANCE_ROUTE = "/performance";
 
 const createRoute = (childRoute: string) => ({
   childRoute,

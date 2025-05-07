@@ -1,0 +1,42 @@
+.timeFrameSelect {
+  width: 220px;
+}
+
+.tablePaper {
+  flex: 1;
+  position: relative;
+}
+
+.tableContainer {
+  border-radius: inherit;
+  position: absolute;
+  overflow-y: auto;
+  max-height: 100%;
+
+  :global(.MuiTableBody-root) {
+    :last-child {
+      :global(.MuiTableCell-root) {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.aggregatorLogoContainer {
+  align-items: center;
+  display: flex;
+  height: 32px;
+  width: 32px;
+}
+
+.aggregatorCell {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+
+  img {
+    max-height: 32px;
+    max-width: 32px;
+  }
+}

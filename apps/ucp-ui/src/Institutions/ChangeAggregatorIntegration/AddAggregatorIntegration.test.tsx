@@ -104,7 +104,7 @@ describe("<AddAggregatorIntegration />", () => {
     );
 
     await userEvent.click(
-      screen.getByText(supportsJobTypeMap.aggregation.displayName),
+      screen.getByText(supportsJobTypeMap.transactions.displayName),
     );
 
     await submitForm();

@@ -3,11 +3,12 @@ import { render, screen, userEvent } from "../test/testUtils";
 import FormSubmissionError from "./FormSubmissionError";
 import { TRY_AGAIN_BUTTON_TEXT } from "./constants";
 
+const formId = "testFormId";
+const description = "testDescription";
+
 describe("<FormSubmissionError />", () => {
   it("shows the description, title, and submits the form on click", async () => {
-    const description = "testDescription";
     const title = "testTitle";
-    const formId = "testFormId";
 
     interface Event {
       preventDefault: VoidFunction;
@@ -31,6 +32,15 @@ describe("<FormSubmissionError />", () => {
       }),
     );
 
+    expect(screen.getByText(title)).toBeInTheDocument();
+    expect(screen.getByText(description)).toBeInTheDocument();
+
     expect(onSubmit).toHaveBeenCalled();
+  });
+
+  it("uses the default title", () => {
+    render(<FormSubmissionError description={description} formId={formId} />);
+
+    expect(screen.getByText("Something went wrong")).toBeInTheDocument();
   });
 });

@@ -127,24 +127,24 @@ const ChangeAggregatorIntegrationDrawer = ({
 
   const checkboxes: Checkbox[] = [
     {
-      description: supportsJobTypeMap.aggregation.description,
+      description: supportsJobTypeMap.transactions.description,
       name: "supportsAggregation",
-      displayName: supportsJobTypeMap.aggregation.displayName,
+      displayName: supportsJobTypeMap.transactions.displayName,
     },
     {
-      description: supportsJobTypeMap.identification.description,
+      description: supportsJobTypeMap.accountOwner.description,
       name: "supportsIdentification",
-      displayName: supportsJobTypeMap.identification.displayName,
+      displayName: supportsJobTypeMap.accountOwner.displayName,
     },
     {
-      description: supportsJobTypeMap.fullHistory.description,
+      description: supportsJobTypeMap.transactionHistory.description,
       name: "supportsFullHistory",
-      displayName: supportsJobTypeMap.fullHistory.displayName,
+      displayName: supportsJobTypeMap.transactionHistory.displayName,
     },
     {
-      description: supportsJobTypeMap.verification.description,
+      description: supportsJobTypeMap.accountNumber.description,
       name: "supportsVerification",
-      displayName: supportsJobTypeMap.verification.displayName,
+      displayName: supportsJobTypeMap.accountNumber.displayName,
     },
     {
       description: supportsJobTypeMap.rewards.description,
@@ -246,7 +246,6 @@ const ChangeAggregatorIntegrationDrawer = ({
                   <FormSubmissionError
                     description={INSTITUTION_CHANGE_AGGREGATOR_ERROR_TEXT}
                     formId={formId}
-                    title="Something went wrong"
                   />
                 )}
                 <DrawerTitle>{drawerTitle}</DrawerTitle>

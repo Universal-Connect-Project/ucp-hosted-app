@@ -6,10 +6,14 @@ import styles from "./errorAlert.module.css";
 interface Props {
   description: string;
   formId: string;
-  title: string;
+  title?: string;
 }
 
-const FormSubmissionError = ({ description, formId, title }: Props) => {
+const FormSubmissionError = ({
+  description,
+  formId,
+  title = "Something went wrong",
+}: Props) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

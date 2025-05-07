@@ -485,7 +485,6 @@ const Institutions = () => {
                   <FetchError
                     description={INSTITUTIONS_ERROR_TEXT}
                     refetch={() => void refetchInstitutions()}
-                    title="Something went wrong"
                   />
                 )}
                 {isInstitutionListEmpty && (

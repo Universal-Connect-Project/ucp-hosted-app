@@ -106,8 +106,8 @@ const transformInfluxAggregatorDataToJson = (data: influxResult[]) => {
     }
 
     jsonOutput[aggregatorId].jobTypes[jobTypes] = {
-      avgSuccessRate,
-      avgDuration,
+      avgDuration: avgDuration / 1000,
+      avgSuccessRate: avgSuccessRate * 100,
     };
   });
   return jsonOutput;
@@ -120,8 +120,8 @@ const addAggregatorAveragesToJson = (
   data.forEach((row) => {
     const { aggregatorId, avgDuration, avgSuccessRate } = row;
 
-    jsonObject[aggregatorId]["avgDuration"] = avgDuration;
-    jsonObject[aggregatorId]["avgSuccessRate"] = avgSuccessRate;
+    jsonObject[aggregatorId]["avgDuration"] = avgDuration / 1000;
+    jsonObject[aggregatorId]["avgSuccessRate"] = avgSuccessRate * 100;
   });
 
   return jsonObject;

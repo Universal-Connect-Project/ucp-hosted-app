@@ -9,11 +9,13 @@ import {
   institutionRoute,
   termsAndConditionsRoute,
   PUBLIC_BASE_ROUTE,
+  PERFORMANCE_ROUTE,
   widgetManagementRoute,
   BASE_ROUTE,
   termsAndConditionsPublicRoute,
 } from "./shared/constants/routes";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
+import Performance from "./Performance/Performance";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -34,6 +36,10 @@ const Routes = () => {
         {
           path: termsAndConditionsRoute.childRoute,
           element: <TermsAndConditions />,
+        },
+        {
+          path: PERFORMANCE_ROUTE,
+          element: <Performance />,
         },
       ],
       path: BASE_ROUTE,
