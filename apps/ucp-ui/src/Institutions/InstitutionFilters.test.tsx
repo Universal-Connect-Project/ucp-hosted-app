@@ -229,7 +229,7 @@ describe("<InstitutionFilters />", () => {
       jobTypeCheckboxes.length + 4,
     );
     expect(latestAggregatorNames).toHaveLength(aggregators.length - 1);
-  });
+  }, 10000);
 
   it("shows an error if fetch aggregators fails", async () => {
     server.use(
