@@ -20,7 +20,6 @@
     "heroku:staging:setupEnv": "echo AUTHENTICATION_SERVICE_BASE_URL=$AUTHENTICATION_SERVICE_BASE_URL >> apps/ucp-ui/env/staging.env && echo INSTITUTION_SERVICE_BASE_URL=$INSTITUTION_SERVICE_BASE_URL >> apps/ucp-ui/env/staging.env",
     "heroku:production:setupEnv": "echo AUTHENTICATION_SERVICE_BASE_URL=$AUTHENTICATION_SERVICE_BASE_URL >> apps/ucp-ui/env/production.env && echo INSTITUTION_SERVICE_BASE_URL=$INSTITUTION_SERVICE_BASE_URL >> apps/ucp-ui/env/production.env",
     "dev": "turbo dev",
-    "dev:e2e": "turbo dev:e2e",
     "lint": "turbo lint",
     "prettier": "turbo run prettier",
     "prod": "turbo run prod",

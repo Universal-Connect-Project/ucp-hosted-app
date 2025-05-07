@@ -4,7 +4,6 @@
   "description": "UCP Authentication Service",
   "scripts": {
     "dev": "npx -y nodemon ./src/index.ts",
-    "dev:e2e": "npm run dev",
     "dev:rate-limit": "RATE_LIMIT_TEST=true npm run dev",
     "cypress:open": "cypress open --config specPattern='cypress/e2e/**/!(rateLimiting.cy.ts)'",
     "cypress:run": "cypress run --config specPattern='cypress/e2e/**/!(rateLimiting.cy.ts)'",

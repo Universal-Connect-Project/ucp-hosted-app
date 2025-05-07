@@ -12,7 +12,6 @@
     "prettier": "prettier . --check",
     "start": "node server.js",
     "dev": "webpack serve --open --mode=development",
-    "dev:e2e": "npm run dev",
     "prod": "webpack serve --open --mode=development --env production",
     "test": "DEBUG_PRINT_LIMIT=100000 jest",
     "test:watch": "DEBUG_PRINT_LIMIT=100000 jest --watch"
