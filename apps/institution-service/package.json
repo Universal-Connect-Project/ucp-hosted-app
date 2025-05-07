@@ -20,6 +20,7 @@
     "test:db:seed": "npx sequelize-cli db:seed:all --env test",
     "test:db:reset": "npx sequelize-cli db:drop --env test && npm run test:db:setup",
     "dev": "nodemon ./src/app.ts",
+    "dev:e2e": "npm run dev",
     "dev:noRateLimiting": "DISABLE_RATE_LIMITING=true npm run dev",
     "prod": "PRODUCTION=true npm run dev",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
