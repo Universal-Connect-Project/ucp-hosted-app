@@ -5,11 +5,13 @@ import {
   screen,
   userEvent,
 } from "../../../shared/test/testUtils";
-import ByJobType, { thirtyDaysOption, timeFrameOptions } from "./ByJobType";
+import ByJobType from "./ByJobType";
 import {
   AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT,
   JOB_TYPE_PERFORMANCE_TEST_ID,
+  thirtyDaysOption,
   TIME_FRAME_LABEL_TEXT,
+  timeFrameOptions,
 } from "./constants";
 import { server } from "../../../shared/test/testServer";
 import { http, HttpResponse } from "msw";

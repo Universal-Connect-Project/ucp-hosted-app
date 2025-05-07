@@ -5,11 +5,13 @@ import { TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT } from "../../src/TermsAndConditio
 import { termsAndConditionsPublicRoute } from "../../src/shared/constants/routes";
 import {
   navigateToInstitutions,
+  navigateToPerformance,
   navigateToTermsAndConditions,
   navigateToWidgetManagement,
 } from "../shared/navigation";
 import { INSTITUTIONS_PAGE_TITLE } from "../../src/Institutions/constants";
 import { AUTH0_ORIGIN } from "../shared/constants";
+import { PERFORMANCE_PAGE_TITLE } from "../../src/Performance/constants";
 
 describe("Health", () => {
   it("renders a generic error page", () => {
@@ -35,6 +37,10 @@ describe("Health", () => {
     navigateToTermsAndConditions();
 
     cy.findByText(TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT).should("exist");
+
+    navigateToPerformance();
+
+    cy.findByRole("heading", { name: PERFORMANCE_PAGE_TITLE }).should("exist");
   });
 
   it("lets you view the terms and conditions when logged out", () => {

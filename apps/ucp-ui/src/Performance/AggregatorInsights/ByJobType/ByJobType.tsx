@@ -25,7 +25,9 @@ import FetchError from "../../../shared/components/FetchError";
 import {
   AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT,
   BY_JOB_TYPE_TABLE_TITLE,
+  thirtyDaysOption,
   TIME_FRAME_LABEL_TEXT,
+  timeFrameOptions,
 } from "./constants";
 
 const loadingAggregator = {
@@ -58,31 +60,6 @@ const OverallPerformanceCell = ({
     >{`${formatMaxTwoDecimals(value || 0)}${appendText}`}</NoDataCell>
   );
 };
-
-export const thirtyDaysOption = {
-  label: "Last 30 Days",
-  value: "30d",
-};
-
-export const timeFrameOptions = [
-  {
-    label: "Last 1 Day",
-    value: "1d",
-  },
-  {
-    label: "Last 7 Days",
-    value: "1w",
-  },
-  thirtyDaysOption,
-  {
-    label: "Last 180 Days",
-    value: "180d",
-  },
-  {
-    label: "Last 365 Days",
-    value: "1y",
-  },
-];
 
 const ByJobType = () => {
   const [timeFrame, setTimeFrame] = useState(thirtyDaysOption.value);
