@@ -96,7 +96,11 @@ jobs:
 
         with:
           project: apps/ucp-ui
-          start: npm run dev:e2e
+          start: |
+            npm run dev --workspace apps/authentication-service & sleep 10
+            npm run start --workspace apps/performance-service & sleep 10
+            npm run dev:noRateLimiting --workspace apps/institution-service
+            npm run dev --workspace apps/ucp-ui
           wait-on: 'http://localhost:3000, http://localhost:8089/ping, http://localhost:8088/ping, http://localhost:8090/ping'
           wait-on-timeout: 120
 
