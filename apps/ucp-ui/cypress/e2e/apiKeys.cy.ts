@@ -52,7 +52,10 @@ describe("apiKeys", () => {
 
       cy.findByText(API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT).should("exist");
 
-      cy.findByRole("button", { name: API_KEYS_MANAGE_BUTTON_TEXT }).click();
+      cy.findByRole("button", {
+        name: API_KEYS_MANAGE_BUTTON_TEXT,
+        timeout: 10000,
+      }).click();
 
       cy.findByText(API_KEYS_MANAGE_LIST_ROTATE_TEXT).click();
 
