@@ -22,6 +22,7 @@ import {
   TextSkeletonIfLoading,
 } from "../../../shared/components/Skeleton";
 import FetchError from "../../../shared/components/FetchError";
+import { BY_JOB_TYPE_TABLE_TITLE } from "./constants";
 
 const loadingAggregator = {
   displayName: "Test name",
@@ -130,7 +131,7 @@ const ByJobType = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRowWithPaddingCells>
-                  <TableCell>Aggregator Performance</TableCell>
+                  <TableCell>{BY_JOB_TYPE_TABLE_TITLE}</TableCell>
                   {aggregators?.map(({ displayName, id, logo }) => (
                     <TableCell key={id}>
                       <div className={styles.aggregatorCell}>

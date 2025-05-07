@@ -5,6 +5,8 @@ import styles from "./aggregatorInsights.module.css";
 
 const byJobTypeTabValue = "byJobType";
 
+export const BY_JOB_TYPE_TAB_TEXT = "BY JOB TYPE";
+
 const AggregatorInsights = () => {
   const [tab] = useState(byJobTypeTabValue);
 
@@ -14,7 +16,7 @@ const AggregatorInsights = () => {
         <Typography variant="h5">Aggregator Insights</Typography>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs value={tab}>
-            <Tab label="BY JOB TYPE" value={byJobTypeTabValue} />
+            <Tab label={BY_JOB_TYPE_TAB_TEXT} value={byJobTypeTabValue} />
           </Tabs>
         </Box>
       </Stack>
