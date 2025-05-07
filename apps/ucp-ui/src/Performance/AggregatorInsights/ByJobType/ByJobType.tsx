@@ -22,7 +22,11 @@ import {
   TextSkeletonIfLoading,
 } from "../../../shared/components/Skeleton";
 import FetchError from "../../../shared/components/FetchError";
-import { BY_JOB_TYPE_TABLE_TITLE } from "./constants";
+import {
+  AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT,
+  BY_JOB_TYPE_TABLE_TITLE,
+  TIME_FRAME_LABEL_TEXT,
+} from "./constants";
 
 const loadingAggregator = {
   displayName: "Test name",
@@ -55,33 +59,33 @@ const OverallPerformanceCell = ({
   );
 };
 
+export const thirtyDaysOption = {
+  label: "Last 30 Days",
+  value: "30d",
+};
+
+export const timeFrameOptions = [
+  {
+    label: "Last 1 Day",
+    value: "1d",
+  },
+  {
+    label: "Last 7 Days",
+    value: "1w",
+  },
+  thirtyDaysOption,
+  {
+    label: "Last 180 Days",
+    value: "180d",
+  },
+  {
+    label: "Last 365 Days",
+    value: "1y",
+  },
+];
+
 const ByJobType = () => {
-  const thirtyDays = "30d";
-
-  const timeFrameOptions = [
-    {
-      label: "Last 1 Day",
-      value: "1d",
-    },
-    {
-      label: "Last 7 Days",
-      value: "1w",
-    },
-    {
-      label: "Last 30 Days",
-      value: thirtyDays,
-    },
-    {
-      label: "Last 180 Days",
-      value: "180d",
-    },
-    {
-      label: "Last 365 Days",
-      value: "1y",
-    },
-  ];
-
-  const [timeFrame, setTimeFrame] = useState(thirtyDays);
+  const [timeFrame, setTimeFrame] = useState(thirtyDaysOption.value);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTimeFrame(event.target.value);
@@ -109,7 +113,7 @@ const ByJobType = () => {
     <>
       <TextField
         className={styles.timeFrameSelect}
-        label="Time Frame"
+        label={TIME_FRAME_LABEL_TEXT}
         onChange={handleChange}
         select
         value={timeFrame}
@@ -123,7 +127,7 @@ const ByJobType = () => {
       <Paper className={styles.tablePaper} variant="outlined">
         {isError ? (
           <FetchError
-            description="We cannot load performance by job type right now."
+            description={AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT}
             refetch={() => void refetch()}
           />
         ) : (

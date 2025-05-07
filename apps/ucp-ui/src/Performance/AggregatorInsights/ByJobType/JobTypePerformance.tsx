@@ -6,6 +6,7 @@ import styles from "./jobTypePerformance.module.css";
 import { supportsJobTypeMap } from "../../../shared/constants/jobTypes";
 import { TableCell } from "@mui/material";
 import { formatMaxTwoDecimals } from "../../../shared/utils/format";
+import { JOB_TYPE_PERFORMANCE_TEST_ID } from "./constants";
 
 const JobTypePerformance = ({
   aggregators,
@@ -28,6 +29,7 @@ const JobTypePerformance = ({
       className={classNames(styles.performanceByJobTypeRow, {
         [styles.lastPerformanceDataRow]: isLastRow,
       })}
+      data-testid={JOB_TYPE_PERFORMANCE_TEST_ID}
     >
       <TableCell>{rowLabel}</TableCell>
       {aggregators?.map((aggregator) => {
