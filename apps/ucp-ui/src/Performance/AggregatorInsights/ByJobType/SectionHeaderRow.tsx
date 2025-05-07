@@ -2,9 +2,14 @@ import { Stack, TableCell, TableRow, Typography } from "@mui/material";
 import React, { ReactNode } from "react";
 import styles from "./sectionHeaderRow.module.css";
 
+export const RECTANGLE_DIVIDER_TEST_ID = "rectangleDivider";
+
 const RectangleDivider = ({ numberOfColumns }: { numberOfColumns: number }) => {
   return (
-    <TableRow className={styles.rectangleDivider}>
+    <TableRow
+      className={styles.rectangleDivider}
+      data-testid={RECTANGLE_DIVIDER_TEST_ID}
+    >
       <TableCell colSpan={numberOfColumns} padding="none" />
     </TableRow>
   );

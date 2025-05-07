@@ -1,5 +1,5 @@
 import React from "react";
-import { TableCell } from "@mui/material";
+import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 import {
   expectSkeletonLoader,
   render,
@@ -11,9 +11,13 @@ describe("Shared components", () => {
   describe("<TableRowWithPaddingCells />", () => {
     it("renders 2 padding cells around the children", () => {
       const { container } = render(
-        <TableRowWithPaddingCells>
-          <TableCell />
-        </TableRowWithPaddingCells>,
+        <Table>
+          <TableBody>
+            <TableRowWithPaddingCells>
+              <TableCell />
+            </TableRowWithPaddingCells>
+          </TableBody>
+        </Table>,
       );
 
       expect(container.querySelectorAll("td")).toHaveLength(3);
@@ -25,9 +29,15 @@ describe("Shared components", () => {
       const children = "testChildren";
 
       render(
-        <NoDataCell hasData isLoading={false}>
-          {children}
-        </NoDataCell>,
+        <Table>
+          <TableBody>
+            <TableRow>
+              <NoDataCell hasData isLoading={false}>
+                {children}
+              </NoDataCell>
+            </TableRow>
+          </TableBody>
+        </Table>,
       );
 
       expect(screen.getByText(children)).toBeInTheDocument();
@@ -37,9 +47,15 @@ describe("Shared components", () => {
       const children = "testChildren";
 
       render(
-        <NoDataCell hasData={false} isLoading={false}>
-          {children}
-        </NoDataCell>,
+        <Table>
+          <TableBody>
+            <TableRow>
+              <NoDataCell hasData={false} isLoading={false}>
+                {children}
+              </NoDataCell>
+            </TableRow>
+          </TableBody>
+        </Table>,
       );
 
       expect(screen.queryByText(children)).not.toBeInTheDocument();
@@ -50,9 +66,15 @@ describe("Shared components", () => {
       const children = "testChildren";
 
       render(
-        <NoDataCell hasData isLoading={true}>
-          {children}
-        </NoDataCell>,
+        <Table>
+          <TableBody>
+            <TableRow>
+              <NoDataCell hasData isLoading={true}>
+                {children}
+              </NoDataCell>
+            </TableRow>
+          </TableBody>
+        </Table>,
       );
 
       await expectSkeletonLoader();
