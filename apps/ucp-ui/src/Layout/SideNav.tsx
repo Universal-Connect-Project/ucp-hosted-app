@@ -39,6 +39,7 @@ import {
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
+import { useFlags } from "launchdarkly-react-client-sdk";
 
 const SideNav = ({
   shouldShowLoggedOutExperience,
@@ -49,13 +50,19 @@ const SideNav = ({
 
   const { pathname } = useLocation();
 
+  const { performancePage } = useFlags();
+
   const links = [
-    {
-      label: SIDE_NAV_PERFORMANCE_LINK_TEXT,
-      matchPaths: [PERFORMANCE_ROUTE],
-      Icon: TrendingUpOutlined,
-      path: PERFORMANCE_ROUTE,
-    },
+    ...(performancePage
+      ? [
+          {
+            label: SIDE_NAV_PERFORMANCE_LINK_TEXT,
+            matchPaths: [PERFORMANCE_ROUTE],
+            Icon: TrendingUpOutlined,
+            path: PERFORMANCE_ROUTE,
+          },
+        ]
+      : []),
     {
       label: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
       matchPaths: [INSTITUTIONS_ROUTE, institutionRoute.fullRoute],
