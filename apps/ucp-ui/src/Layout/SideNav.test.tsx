@@ -13,6 +13,7 @@ import {
   SIDE_NAV_INSTITUTIONS_LINK_TEXT,
   SIDE_NAV_LOG_IN_BUTTON_TEXT,
   SIDE_NAV_LOG_OUT_BUTTON_TEXT,
+  SIDE_NAV_PERFORMANCE_LINK_TEXT,
   SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./constants";
@@ -26,6 +27,11 @@ import {
 } from "../shared/constants/routes";
 import { INSTITUTIONS_PAGE_TITLE } from "../Institutions/constants";
 import { TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT } from "../TermsAndConditions/constants";
+import { PERFORMANCE_PAGE_TITLE } from "../Performance/constants";
+
+import * as launchDarkly from "launchdarkly-react-client-sdk";
+
+jest.mock("launchdarkly-react-client-sdk");
 
 const mockLogout = jest.fn();
 
@@ -38,6 +44,10 @@ jest.mock("@auth0/auth0-react", () => ({
 }));
 
 describe("<SideNav />", () => {
+  beforeEach(() => {
+    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({});
+  });
+
   describe("logged out experience", () => {
     it("renders a login button and navigates to the base path on click", async () => {
       const initialRoute = "/junk";
@@ -92,6 +102,32 @@ describe("<SideNav />", () => {
 
       expect(
         await screen.findByText(TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT),
+      ).toBeInTheDocument();
+    });
+
+    it("doesnt render performance if the flag is off", () => {
+      render(<Routes />, { shouldRenderRouter: false });
+
+      expect(
+        screen.queryByRole("link", { name: SIDE_NAV_PERFORMANCE_LINK_TEXT }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("navigates to performance", async () => {
+      jest.spyOn(launchDarkly, "useFlags").mockReturnValue({
+        performancePage: true,
+      });
+
+      render(<Routes />, { shouldRenderRouter: false });
+
+      await userEvent.click(
+        screen.getByRole("link", {
+          name: SIDE_NAV_PERFORMANCE_LINK_TEXT,
+        }),
+      );
+
+      expect(
+        await screen.findByRole("heading", { name: PERFORMANCE_PAGE_TITLE }),
       ).toBeInTheDocument();
     });
 
