@@ -647,7 +647,7 @@
                       "canEditInstitution": false,
                       "aggregatorsThatCanBeAdded": [
                         {
-                          "displayName": "testExampleA",
+                          "displayName": "MX",
                           "id": 10
                         }
                       ],
@@ -1228,7 +1228,7 @@
                     "aggregatorIntegration": {
                       "id": 29478,
                       "isActive": false,
-                      "aggregator_institution_id": "testExampleA",
+                      "aggregator_institution_id": "mx",
                       "aggregatorId": 4,
                       "supports_oauth": true,
                       "supports_identification": false,
@@ -1350,7 +1350,7 @@
                     "aggregatorIntegration": {
                       "id": 29478,
                       "isActive": false,
-                      "aggregator_institution_id": "testExampleA",
+                      "aggregator_institution_id": "mx",
                       "aggregatorId": 4,
                       "supports_oauth": true,
                       "supports_identification": false,

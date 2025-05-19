@@ -81,7 +81,7 @@ describe("institutions", () => {
           .invoke("attr", "data-testid")
           .should("not.eq", firstPageTestId);
 
-        const searchText = "TestExample";
+        const searchText = "Chase";
 
         cy.findByLabelText(INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT).type(
           searchText,
@@ -219,7 +219,7 @@ describe("institutions", () => {
       .eq(0)
       .click();
 
-    cy.findByRole("option", { name: "Test Example A" }).click();
+    cy.findByRole("option", { name: "MX" }).click();
 
     cy.findByRole("checkbox", {
       name: supportsJobTypeMap.transactions.displayName,
@@ -269,7 +269,7 @@ describe("institutions", () => {
       name: INSTITUTION_REMOVE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT,
     }).click();
 
-    cy.findByText("Test Example A has been removed");
+    cy.findByText("MX has been removed");
 
     cy.findByRole("button", {
       name: INSTITUTION_EDIT_DETAILS_BUTTON_TEXT,

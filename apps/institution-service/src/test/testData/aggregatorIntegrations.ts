@@ -1,6 +1,6 @@
 export const createTestAggregatorIntegrationBody = {
   isActive: true,
-  aggregator_institution_id: "testExampleA",
+  aggregator_institution_id: "mx",
   supports_oauth: true,
   supports_identification: true,
   supports_verification: true,

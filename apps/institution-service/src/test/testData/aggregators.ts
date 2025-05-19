@@ -2,8 +2,6 @@ import { UUID } from "crypto";
 import { seedInstitutionId } from "./institutions";
 
 export const mxAggregatorId = 98;
-export const testExampleBAggregatorId = 99;
-export const testExampleAAggregatorId = 100;
 
 interface AggregatorIntegrationBody {
   institution_id: UUID;
