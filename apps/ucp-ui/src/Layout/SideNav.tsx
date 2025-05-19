@@ -40,6 +40,7 @@ import {
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
 import { useFlags } from "launchdarkly-react-client-sdk";
+import { IS_STAGING } from "../shared/constants/environment";
 
 const SideNav = ({
   shouldShowLoggedOutExperience,
@@ -52,8 +53,12 @@ const SideNav = ({
 
   const { performancePage } = useFlags();
 
+  const shouldShowPerformanceLink: boolean = !!(performancePage !== undefined
+    ? performancePage
+    : IS_STAGING);
+
   const links = [
-    ...(performancePage
+    ...(shouldShowPerformanceLink
       ? [
           {
             label: SIDE_NAV_PERFORMANCE_LINK_TEXT,
