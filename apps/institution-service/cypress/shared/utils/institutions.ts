@@ -4,6 +4,7 @@ import { createAuthorizationHeader } from "./authorization";
 import { getAggregators } from "./aggregator";
 import { testInstitution } from "test/testData/institutions";
 import { Aggregator } from "models/aggregator";
+import { createTestAggregatorIntegration } from "./aggregatorIntegration";
 
 export const getInstitutionsWithFiltersRequest = ({
   integrationFieldFilter,
@@ -101,26 +102,6 @@ export const createTestInstitutionWithAllAggregators = () => {
       );
     },
   );
-};
-
-export const createTestAggregatorIntegration = (
-  institutionId: string,
-  { aggregatorId, ...aggregatorIntegrationProps }: { aggregatorId: number },
-) => {
-  return cy.request({
-    url: `http://localhost:${PORT}/aggregatorIntegrations`,
-    method: "POST",
-    headers: {
-      Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-    },
-    body: {
-      institution_id: institutionId,
-      aggregatorId,
-      aggregator_institution_id: "test_cypress",
-      supports_oauth: true,
-      ...aggregatorIntegrationProps,
-    },
-  });
 };
 
 export const createTestInstitutionAndAddIntegration = (
