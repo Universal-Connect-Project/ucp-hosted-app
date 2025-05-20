@@ -5,7 +5,6 @@ import {
 } from "../../src/test/testData/institutions";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { SUPER_USER_ACCESS_TOKEN_ENV } from "../shared/constants/accessTokens";
-import { mxAggregatorId } from "test/testData/aggregators";
 import { getAggregators } from "../shared/utils/requests";
 import { Aggregator } from "models/aggregator";
 

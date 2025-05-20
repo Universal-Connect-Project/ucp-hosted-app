@@ -2,8 +2,8 @@ import { UUID } from "crypto";
 import { Institution } from "models/institution";
 import { PORT } from "shared/const";
 import {
-  testExampleAAggregatorId,
-  testExampleBAggregatorId,
+  mxAggregatorId,
+  sophtronAggregatorId,
 } from "test/testData/aggregators";
 import { InstitutionAttrs, testInstitution } from "test/testData/institutions";
 import {
@@ -13,6 +13,7 @@ import {
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import {
   createTestInstitution,
+  createTestInstitutionWithAllAggregators,
   deleteAggregatorIntegration,
   deleteInstitution,
   runInvalidPermissionCheck,
@@ -20,6 +21,9 @@ import {
 } from "../support/utils";
 
 interface AggregatorIntegration {
+  aggregator: {
+    name: string;
+  };
   id: number;
   aggregator_institution_id: string;
   supports_oauth: boolean;
@@ -32,36 +36,45 @@ interface AggregatorIntegration {
   isActive: boolean;
 }
 
-const testExampleBankToHideId = "7a909e62-98b6-4a34-8725-b2a6a63e830a";
 describe("PUT /aggregatorIntegrations/:id (AggregatorIntegration update)", () => {
-  let testExampleBInstitutionAggregator: AggregatorIntegration;
-  let testExampleAInstitutionAggregator: AggregatorIntegration;
+  let sophtronInstitutionAggregator: AggregatorIntegration;
+  let mxInstitutionAggregator: AggregatorIntegration;
+
+  let institutionIdToDelete: string;
 
   before(() => {
-    cy.request({
-      url: `http://localhost:${PORT}/institutions/${testExampleBankToHideId}`,
-      method: "GET",
-      headers: {
-        Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-      },
-    }).then(
-      (
-        response: Cypress.Response<{
-          institution: {
-            aggregatorIntegrations: AggregatorIntegration[];
-          };
-        }>,
-      ) => {
-        testExampleBInstitutionAggregator =
-          response.body.institution.aggregatorIntegrations.find((aggInt) =>
-            aggInt.aggregator_institution_id.includes("testExampleB"),
-          );
-        testExampleAInstitutionAggregator =
-          response.body.institution.aggregatorIntegrations.find((aggInt) =>
-            aggInt.aggregator_institution_id.includes("testExampleA"),
-          );
-      },
-    );
+    createTestInstitutionWithAllAggregators().then((institutionId) => {
+      institutionIdToDelete = institutionId;
+
+      cy.request({
+        url: `http://localhost:${PORT}/institutions/${institutionId}`,
+        method: "GET",
+        headers: {
+          Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+        },
+      }).then(
+        (
+          response: Cypress.Response<{
+            institution: {
+              aggregatorIntegrations: AggregatorIntegration[];
+            };
+          }>,
+        ) => {
+          sophtronInstitutionAggregator =
+            response.body.institution.aggregatorIntegrations.find(
+              (aggInt) => aggInt.aggregator.name === "sophtron",
+            );
+          mxInstitutionAggregator =
+            response.body.institution.aggregatorIntegrations.find(
+              (aggInt) => aggInt.aggregator.name === "mx",
+            );
+        },
+      );
+    });
+  });
+
+  after(() => {
+    deleteInstitution({ institutionId: institutionIdToDelete });
   });
 
   it("updates an institution aggregator with updateable attributes", () => {
@@ -151,7 +164,7 @@ describe("PUT /aggregatorIntegrations/:id (AggregatorIntegration update)", () =>
       testBody[testCase.attribute] = testCase.value;
 
       cy.request({
-        url: `http://localhost:${PORT}/aggregatorIntegrations/${testExampleBInstitutionAggregator.id}`,
+        url: `http://localhost:${PORT}/aggregatorIntegrations/${sophtronInstitutionAggregator.id}`,
         method: "PUT",
         headers: {
           Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
@@ -180,7 +193,7 @@ describe("PUT /aggregatorIntegrations/:id (AggregatorIntegration update)", () =>
 
   it("should prevent an aggregator from updating an aggregatorIntegration from a different aggregator", () => {
     cy.request({
-      url: `http://localhost:${PORT}/aggregatorIntegrations/${testExampleBInstitutionAggregator.id}`,
+      url: `http://localhost:${PORT}/aggregatorIntegrations/${sophtronInstitutionAggregator.id}`,
       method: "PUT",
       headers: {
         Authorization: createAuthorizationHeader(
@@ -209,7 +222,7 @@ describe("PUT /aggregatorIntegrations/:id (AggregatorIntegration update)", () =>
 
   it("should allow an aggregator to update an aggregatorIntegration from a their aggregator", () => {
     cy.request({
-      url: `http://localhost:${PORT}/aggregatorIntegrations/${testExampleAInstitutionAggregator.id}`,
+      url: `http://localhost:${PORT}/aggregatorIntegrations/${mxInstitutionAggregator.id}`,
       method: "PUT",
       headers: {
         Authorization: createAuthorizationHeader(
@@ -237,12 +250,12 @@ describe("PUT /aggregatorIntegrations/:id (AggregatorIntegration update)", () =>
   });
 
   runTokenInvalidCheck({
-    url: `http://localhost:${PORT}/aggregatorIntegrations/${testExampleBInstitutionAggregator?.id}`,
+    url: `http://localhost:${PORT}/aggregatorIntegrations/${sophtronInstitutionAggregator?.id}`,
     method: "PUT",
   });
 
   runInvalidPermissionCheck({
-    url: `http://localhost:${PORT}/aggregatorIntegrations/${testExampleBInstitutionAggregator?.id}`,
+    url: `http://localhost:${PORT}/aggregatorIntegrations/${sophtronInstitutionAggregator?.id}`,
     token_env_var: "USER_ACCESS_TOKEN",
     method: "PUT",
   });
@@ -277,7 +290,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
       },
       body: {
         institution_id: testCaseInstitution.id,
-        aggregatorId: testExampleBAggregatorId,
+        aggregatorId: sophtronAggregatorId,
         aggregator_institution_id: "test_cypress",
         supports_oauth: true,
       },
@@ -316,7 +329,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
       },
       body: {
         institution_id: testCaseInstitution.id,
-        aggregatorId: testExampleBAggregatorId,
+        aggregatorId: sophtronAggregatorId,
         aggregator_institution_id: "test_cypress",
         supports_oauth: true,
       },
@@ -349,7 +362,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
       },
       body: {
         institution_id: testCaseInstitution.id,
-        aggregatorId: testExampleAAggregatorId,
+        aggregatorId: mxAggregatorId,
         aggregator_institution_id: "test_cypress",
         supports_oauth: true,
       },
@@ -379,7 +392,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
           },
           body: {
             institution_id: testCaseInstitution.id,
-            aggregatorId: testExampleAAggregatorId,
+            aggregatorId: mxAggregatorId,
             aggregator_institution_id: "test_cypress",
             supports_oauth: true,
           },
@@ -419,7 +432,7 @@ describe("POST /aggregatorIntegrations (Create)", () => {
       },
       body: {
         institution_id: institutionIdNotInList,
-        aggregatorId: testExampleAAggregatorId,
+        aggregatorId: mxAggregatorId,
         aggregator_institution_id: "test_cypress",
         supports_oauth: true,
       },
@@ -460,7 +473,7 @@ describe("DELETE /aggregatorIntegrations/:id", () => {
           },
           body: {
             institution_id: testInstitutionId,
-            aggregatorId: testExampleBAggregatorId,
+            aggregatorId: sophtronAggregatorId,
             aggregator_institution_id: "test_cypress_delete",
             supports_oauth: true,
           },
