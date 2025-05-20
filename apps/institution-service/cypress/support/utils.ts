@@ -5,6 +5,9 @@ import {
 } from "../../src/test/testData/institutions";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { SUPER_USER_ACCESS_TOKEN_ENV } from "../shared/constants/accessTokens";
+import { mxAggregatorId } from "test/testData/aggregators";
+import { getAggregators } from "../shared/utils/requests";
+import { Aggregator } from "models/aggregator";
 
 interface runTokenInvalidCheckArgs {
   url: string;
@@ -84,6 +87,73 @@ export const createTestInstitution = (token: string) => {
     },
     failOnStatusCode: false,
   });
+};
+
+export const createTestInstitutionWithAllAggregators = () => {
+  return createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
+    (response: Cypress.Response<{ institution: { id: string } }>) => {
+      const institutionId = response.body.institution.id;
+
+      return getAggregators().then(
+        (response: Cypress.Response<{ aggregators: Aggregator[] }>) => {
+          const aggregatorIds = response.body.aggregators.map(({ id }) => id);
+
+          return cy
+            .wrap(
+              Promise.all(
+                aggregatorIds.map(
+                  (aggregatorId) =>
+                    new Promise((resolve) => {
+                      createTestAggregatorIntegration(institutionId, {
+                        aggregatorId,
+                      }).then(resolve);
+                    }),
+                ),
+              ),
+            )
+            .then(() => {
+              return institutionId;
+            });
+        },
+      );
+    },
+  );
+};
+
+export const createTestAggregatorIntegration = (
+  institutionId: string,
+  { aggregatorId, ...aggregatorIntegrationProps }: { aggregatorId: number },
+) => {
+  return cy.request({
+    url: `http://localhost:${PORT}/aggregatorIntegrations`,
+    method: "POST",
+    headers: {
+      Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+    },
+    body: {
+      institution_id: institutionId,
+      aggregatorId,
+      aggregator_institution_id: "test_cypress",
+      supports_oauth: true,
+      ...aggregatorIntegrationProps,
+    },
+  });
+};
+
+export const createTestInstitutionAndAddIntegration = (
+  aggregatorId: number,
+) => {
+  return createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
+    (response: Cypress.Response<{ institution: { id: string } }>) => {
+      const institutionId = response.body.institution.id;
+
+      return createTestAggregatorIntegration(institutionId, {
+        aggregatorId,
+      }).then(() => {
+        return institutionId;
+      });
+    },
+  );
 };
 
 export const deleteInstitution = ({

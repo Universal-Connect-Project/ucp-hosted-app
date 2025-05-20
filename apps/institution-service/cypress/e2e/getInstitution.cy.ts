@@ -11,7 +11,16 @@ import {
   USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
-import { runTokenInvalidCheck } from "../support/utils";
+import {
+  createTestInstitutionAndAddIntegration,
+  createTestInstitutionWithAllAggregators,
+  deleteInstitution,
+  runTokenInvalidCheck,
+} from "../support/utils";
+import {
+  mxAggregatorId,
+  sophtronAggregatorId,
+} from "test/testData/aggregators";
 
 const checkEditAndDeleteInstitutionPermissions = ({
   accessTokenEnv,
@@ -86,15 +95,39 @@ const checkCreateAggregatorIntegrationPermissions = ({
   );
 };
 
-const institutionIdWithOnlyTestExampleBAggregator =
-  "aeab64a9-7a78-4c5f-bd27-687f3c8b8492";
-
-const allAggregatorsInstitutionId = "3b561893-e969-4a2c-9e58-3b81b203cdc1";
-
-const institutionIdWithOnlyTestExampleAAggregator =
-  "5e498f60-3496-4299-96ed-f8eb328ae8af";
-
 describe("GET /institutions/:id (Institution Details)", () => {
+  let institutionIdWithOnlyMXAggregator: string;
+  let institutionIdWithOnlySophtronAggregator: string;
+  let institutionIdWithAllAggregators: string;
+
+  before(() => {
+    createTestInstitutionAndAddIntegration(mxAggregatorId).then(
+      (institutionId) => {
+        institutionIdWithOnlyMXAggregator = institutionId;
+
+        createTestInstitutionAndAddIntegration(sophtronAggregatorId).then(
+          (sophtronInstitutionId) => {
+            institutionIdWithOnlySophtronAggregator = sophtronInstitutionId;
+
+            createTestInstitutionWithAllAggregators().then(
+              (allAggregatorsId) => {
+                institutionIdWithAllAggregators = allAggregatorsId;
+              },
+            );
+          },
+        );
+      },
+    );
+  });
+
+  after(() => {
+    deleteInstitution({ institutionId: institutionIdWithOnlyMXAggregator });
+    deleteInstitution({
+      institutionId: institutionIdWithOnlySophtronAggregator,
+    });
+    deleteInstitution({ institutionId: institutionIdWithAllAggregators });
+  });
+
   it("gets Alabama Credit Union in the response on success", () => {
     cy.request({
       url: `http://localhost:${PORT}/institutions/ee6d71dc-e693-4fc3-a775-53c378bc5066`,
@@ -187,7 +220,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkEditAndDeleteInstitutionPermissions({
         accessTokenEnv: USER_ACCESS_TOKEN_ENV,
         canActOnInstitution: false,
-        institutionId: institutionIdWithOnlyTestExampleAAggregator,
+        institutionId: institutionIdWithOnlyMXAggregator,
       });
     });
 
@@ -195,7 +228,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkEditAndDeleteInstitutionPermissions({
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         canActOnInstitution: true,
-        institutionId: institutionIdWithOnlyTestExampleAAggregator,
+        institutionId: institutionIdWithOnlyMXAggregator,
       });
     });
 
@@ -203,7 +236,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkEditAndDeleteInstitutionPermissions({
         accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
         canActOnInstitution: true,
-        institutionId: institutionIdWithOnlyTestExampleAAggregator,
+        institutionId: institutionIdWithOnlyMXAggregator,
       });
     });
 
@@ -211,18 +244,15 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkEditAndDeleteInstitutionPermissions({
         accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
         canActOnInstitution: false,
-        institutionId: institutionIdWithOnlyTestExampleBAggregator,
+        institutionId: institutionIdWithOnlySophtronAggregator,
       });
     });
   });
 
   describe("edit/delete aggregatorIntegration permissions", () => {
-    const institutionIdWithTestExampleAAndB =
-      "7a909e62-98b6-4a34-8725-b2a6a63e830a";
-
     it("returns that a super admin can edit or delete an aggregator integration", () => {
       cy.request({
-        url: `http://localhost:${PORT}/institutions/${institutionIdWithTestExampleAAndB}`,
+        url: `http://localhost:${PORT}/institutions/${institutionIdWithAllAggregators}`,
         method: "GET",
         headers: {
           Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
@@ -249,7 +279,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
 
     it("returns that an aggregator can edit/delete an aggregator integration that is their own, but not for those that aren't their own", () => {
       cy.request({
-        url: `http://localhost:${PORT}/institutions/${institutionIdWithTestExampleAAndB}`,
+        url: `http://localhost:${PORT}/institutions/${institutionIdWithAllAggregators}`,
         method: "GET",
         headers: {
           Authorization: createAuthorizationHeader(
@@ -272,26 +302,22 @@ describe("GET /institutions/:id (Institution Details)", () => {
           const aggregatorIntegrationPermissionsMap =
             response.body.permissions.aggregatorIntegrationPermissionsMap;
 
-          const testExampleAIntegration =
-            findAggregatorIntegrationByName("testExampleA");
+          const mxIntegration = findAggregatorIntegrationByName("mx");
 
-          const testExampleBIntegration =
-            findAggregatorIntegrationByName("testExampleB");
+          const sophtronIntegration =
+            findAggregatorIntegrationByName("sophtron");
 
           expect(
-            aggregatorIntegrationPermissionsMap[testExampleAIntegration.id]
-              .canEdit,
+            aggregatorIntegrationPermissionsMap[mxIntegration.id].canEdit,
           ).to.eq(true);
           expect(
-            aggregatorIntegrationPermissionsMap[testExampleAIntegration.id]
-              .canDelete,
+            aggregatorIntegrationPermissionsMap[mxIntegration.id].canDelete,
           ).to.eq(true);
           expect(
-            aggregatorIntegrationPermissionsMap[testExampleBIntegration.id]
-              .canEdit,
+            aggregatorIntegrationPermissionsMap[sophtronIntegration.id].canEdit,
           ).to.eq(false);
           expect(
-            aggregatorIntegrationPermissionsMap[testExampleBIntegration.id]
+            aggregatorIntegrationPermissionsMap[sophtronIntegration.id]
               .canDelete,
           ).to.eq(false);
         },
@@ -300,7 +326,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
 
     it("returns that a regular user can't edit/delete an aggregator integration", () => {
       cy.request({
-        url: `http://localhost:${PORT}/institutions/${institutionIdWithTestExampleAAndB}`,
+        url: `http://localhost:${PORT}/institutions/${institutionIdWithAllAggregators}`,
         method: "GET",
         headers: {
           Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
@@ -334,7 +360,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: true,
         hasAccessToAllAggregators: true,
-        institutionId: institutionIdWithOnlyTestExampleAAggregator,
+        institutionId: institutionIdWithOnlyMXAggregator,
       });
     });
 
@@ -343,7 +369,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: false,
         hasAccessToAllAggregators: true,
-        institutionId: allAggregatorsInstitutionId,
+        institutionId: institutionIdWithAllAggregators,
       });
     });
 
@@ -351,7 +377,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkCreateAggregatorIntegrationPermissions({
         accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: true,
-        institutionId: institutionIdWithOnlyTestExampleBAggregator,
+        institutionId: institutionIdWithOnlySophtronAggregator,
       });
     });
 
@@ -359,7 +385,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkCreateAggregatorIntegrationPermissions({
         accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: false,
-        institutionId: institutionIdWithOnlyTestExampleAAggregator,
+        institutionId: institutionIdWithOnlyMXAggregator,
       });
     });
 
@@ -367,7 +393,7 @@ describe("GET /institutions/:id (Institution Details)", () => {
       checkCreateAggregatorIntegrationPermissions({
         accessTokenEnv: USER_ACCESS_TOKEN_ENV,
         canCreateAggregatorIntegration: false,
-        institutionId: institutionIdWithOnlyTestExampleAAggregator,
+        institutionId: institutionIdWithOnlyMXAggregator,
       });
     });
   });

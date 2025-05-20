@@ -31,12 +31,7 @@ const checkCacheListResponse = (
 ) => {
   const institution = response.body[0];
   const aggregator =
-    institution.mx ??
-    institution.sophtron ??
-    institution.finicity ??
-    institution.testExampleA ??
-    institution.testExampleB ??
-    {};
+    institution.mx ?? institution.sophtron ?? institution.finicity ?? {};
 
   expect(response.status).to.eq(200);
 

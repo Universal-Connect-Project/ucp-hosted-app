@@ -14,6 +14,7 @@ import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { getInstitutionsWithFiltersRequest } from "../shared/utils/institutions";
 import {
   createTestInstitution,
+  createTestInstitutionAndAddIntegration,
   deleteInstitution,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
@@ -271,10 +272,34 @@ describe("PUT /institutions/:id (Institution update)", () => {
     });
   });
 
+  it("should allow an aggregator to update institutions with no other aggregator implementations", () => {
+    cy.request({
+      url: `http://localhost:${PORT}/institutions/${newInstitutionData.id}`,
+      method: "PUT",
+      body: { ...validUpdateParams, name: "testNoAggregators" },
+      headers: {
+        Authorization: createAuthorizationHeader(
+          AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+        ),
+      },
+      failOnStatusCode: false,
+    }).then((response: Cypress.Response<{ error: string }>) => {
+      expect(response.status).to.eq(200);
+    });
+  });
+
   describe("tests that need institution cleanup", () => {
     let institutionId: string;
 
-    afterEach(() => {
+    before(() => {
+      createTestInstitutionAndAddIntegration(mxAggregatorId).then(
+        (createdInstitutionId) => {
+          institutionId = createdInstitutionId;
+        },
+      );
+    });
+
+    after(() => {
       if (institutionId) {
         deleteInstitution({ institutionId }).then(() => {
           institutionId = undefined;
@@ -282,64 +307,20 @@ describe("PUT /institutions/:id (Institution update)", () => {
       }
     });
 
-    it("should allow an aggregator to update institutions with no other aggregator implementations", () => {
-      createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
-        (response: Cypress.Response<{ institution: { id: string } }>) => {
-          institutionId = response.body.institution.id;
-
-          cy.request({
-            url: `http://localhost:${PORT}/institutions/${institutionId}`,
-            method: "PUT",
-            body: { ...validUpdateParams, name: "testNoAggregators" },
-            headers: {
-              Authorization: createAuthorizationHeader(
-                AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-              ),
-            },
-            failOnStatusCode: false,
-          }).then((response: Cypress.Response<{ error: string }>) => {
-            expect(response.status).to.eq(200);
-          });
-        },
-      );
-    });
-
     it("should allow an aggregator to update when it is the only implementation on the institution", () => {
-      createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
-        (response: Cypress.Response<{ institution: { id: string } }>) => {
-          institutionId = response.body.institution.id;
-
-          cy.request({
-            url: `http://localhost:${PORT}/aggregatorIntegrations`,
-            method: "POST",
-            headers: {
-              Authorization: createAuthorizationHeader(
-                SUPER_USER_ACCESS_TOKEN_ENV,
-              ),
-            },
-            body: {
-              institution_id: institutionId,
-              aggregatorId: mxAggregatorId,
-              aggregator_institution_id: "test_cypress",
-              supports_oauth: true,
-            },
-          }).then(() => {
-            cy.request({
-              url: `http://localhost:${PORT}/institutions/${institutionId}`,
-              method: "PUT",
-              body: { ...validUpdateParams, name: "testExampleA" },
-              headers: {
-                Authorization: createAuthorizationHeader(
-                  AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-                ),
-              },
-              failOnStatusCode: false,
-            }).then((response: Cypress.Response<{ error: string }>) => {
-              expect(response.status).to.eq(200);
-            });
-          });
+      cy.request({
+        url: `http://localhost:${PORT}/institutions/${institutionId}`,
+        method: "PUT",
+        body: { ...validUpdateParams, name: "Updated name" },
+        headers: {
+          Authorization: createAuthorizationHeader(
+            AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+          ),
         },
-      );
+        failOnStatusCode: false,
+      }).then((response: Cypress.Response<{ error: string }>) => {
+        expect(response.status).to.eq(200);
+      });
     });
   });
 });
