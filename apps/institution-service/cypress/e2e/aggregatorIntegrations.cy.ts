@@ -12,13 +12,15 @@ import {
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import {
-  createTestInstitution,
-  createTestInstitutionWithAllAggregators,
-  deleteAggregatorIntegration,
-  deleteInstitution,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
+import { deleteAggregatorIntegration } from "../shared/utils/aggregatorIntegration";
+import {
+  createTestInstitution,
+  createTestInstitutionWithAllAggregators,
+  deleteInstitution,
+} from "../shared/utils/institutions";
 
 interface AggregatorIntegration {
   aggregator: {

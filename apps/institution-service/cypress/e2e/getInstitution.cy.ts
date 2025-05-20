@@ -11,16 +11,16 @@ import {
   USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
-import {
-  createTestInstitutionAndAddIntegration,
-  createTestInstitutionWithAllAggregators,
-  deleteInstitution,
-  runTokenInvalidCheck,
-} from "../support/utils";
+import { runTokenInvalidCheck } from "../support/utils";
 import {
   mxAggregatorId,
   sophtronAggregatorId,
 } from "test/testData/aggregators";
+import {
+  createTestInstitutionAndAddIntegration,
+  createTestInstitutionWithAllAggregators,
+  deleteInstitution,
+} from "../shared/utils/institutions";
 
 const checkEditAndDeleteInstitutionPermissions = ({
   accessTokenEnv,

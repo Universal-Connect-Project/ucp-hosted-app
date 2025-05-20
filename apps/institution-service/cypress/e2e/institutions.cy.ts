@@ -11,11 +11,13 @@ import {
   SUPER_USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
-import { getInstitutionsWithFiltersRequest } from "../shared/utils/institutions";
 import {
   createTestInstitution,
   createTestInstitutionAndAddIntegration,
   deleteInstitution,
+  getInstitutionsWithFiltersRequest,
+} from "../shared/utils/institutions";
+import {
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";

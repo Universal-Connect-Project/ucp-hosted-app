@@ -3,7 +3,7 @@ import { runTokenInvalidCheck } from "../support/utils";
 import {
   getAggregators,
   getAggregatorsWithPerformance,
-} from "../shared/utils/requests";
+} from "../shared/utils/aggregator";
 
 interface AggregatorWithPerformance extends Aggregator {
   avgSuccessRate: number | null;
