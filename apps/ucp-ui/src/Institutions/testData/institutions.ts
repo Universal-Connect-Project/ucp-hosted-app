@@ -56,7 +56,7 @@ export const testInstitutionPermissions = {
   aggregatorsThatCanBeAdded: [
     {
       id: 50,
-      displayName: "TestExampleA",
+      displayName: "MX",
     },
   ],
   canDeleteInstitution: true,

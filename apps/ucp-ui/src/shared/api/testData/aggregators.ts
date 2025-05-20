@@ -24,21 +24,5 @@ export const aggregatorsResponse = {
       createdAt: "2024-10-23T13:33:43.872Z",
       updatedAt: "2024-10-23T13:33:43.872Z",
     },
-    {
-      id: 100,
-      name: "testExampleA",
-      displayName: "Test Example A",
-      logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-      createdAt: "2024-10-23T13:33:43.877Z",
-      updatedAt: "2024-10-23T13:33:43.877Z",
-    },
-    {
-      id: 99,
-      name: "testExampleB",
-      displayName: "Test Example B",
-      logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-      createdAt: "2024-10-23T13:33:43.879Z",
-      updatedAt: "2024-10-23T13:33:43.879Z",
-    },
   ],
 };

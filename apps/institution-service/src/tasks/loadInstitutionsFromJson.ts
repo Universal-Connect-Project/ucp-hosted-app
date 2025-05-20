@@ -5,11 +5,7 @@ import { Aggregator } from "../models/aggregator";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { defineAssociations } from "../models/associations";
 import { Institution } from "../models/institution";
-import {
-  mxAggregatorId,
-  testExampleAAggregatorId,
-  testExampleBAggregatorId,
-} from "../test/testData/aggregators";
+import { mxAggregatorId } from "../test/testData/aggregators";
 
 export interface CachedInstitution {
   name: string;
@@ -22,8 +18,6 @@ export interface CachedInstitution {
   mx?: InstitutionAggregator;
   sophtron?: InstitutionAggregator;
   finicity?: InstitutionAggregator;
-  testExampleA?: InstitutionAggregator;
-  testExampleB?: InstitutionAggregator;
   akoya?: InstitutionAggregator;
 }
 
@@ -75,24 +69,6 @@ async function loadInstitutionData() {
       logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
     },
   });
-  const [testExampleAAggregator, _testExampleACreated] =
-    await Aggregator.findOrCreate({
-      where: {
-        name: "testExampleA",
-        displayName: "Test Example A",
-        id: testExampleAAggregatorId,
-        logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-      },
-    });
-  const [testExampleBAggregator, _testExampleBCreated] =
-    await Aggregator.findOrCreate({
-      where: {
-        name: "testExampleB",
-        displayName: "Test Example B",
-        id: testExampleBAggregatorId,
-        logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
-      },
-    });
 
   institutions.forEach((institution: CachedInstitution) => {
     institutionsList.push({
@@ -155,39 +131,6 @@ async function loadInstitutionData() {
         supportsRewards: finicity.supportsRewards,
         supportsBalance: finicity.supportsBalance,
         supports_aggregation: finicity.supports_aggregation,
-      } as AggregatorIntegration);
-    }
-
-    if (institution?.testExampleA?.id) {
-      const testExampleA = institution.testExampleA;
-      aggregatorList.push({
-        isActive: testExampleA.isActive ?? true,
-        aggregatorId: testExampleAAggregator?.id,
-        aggregator_institution_id: testExampleA.id,
-        institution_id: institution.id,
-        supports_oauth: testExampleA.supports_oauth,
-        supports_identification: testExampleA.supports_identification,
-        supports_verification: testExampleA.supports_verification,
-        supports_history: testExampleA.supports_history,
-        supportsRewards: testExampleA.supportsRewards,
-        supportsBalance: testExampleA.supportsBalance,
-        supports_aggregation: testExampleA.supports_aggregation,
-      } as AggregatorIntegration);
-    }
-    if (institution?.testExampleB?.id) {
-      const testExampleB = institution.testExampleB;
-      aggregatorList.push({
-        isActive: testExampleB.isActive ?? true,
-        aggregatorId: testExampleBAggregator?.id,
-        aggregator_institution_id: testExampleB.id,
-        institution_id: institution.id,
-        supports_oauth: testExampleB.supports_oauth,
-        supports_identification: testExampleB.supports_identification,
-        supports_verification: testExampleB.supports_verification,
-        supports_history: testExampleB.supports_history,
-        supportsRewards: testExampleB.supportsRewards,
-        supportsBalance: testExampleB.supportsBalance,
-        supports_aggregation: testExampleB.supports_aggregation,
       } as AggregatorIntegration);
     }
   });

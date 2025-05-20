@@ -11,13 +11,17 @@ import {
   SUPER_USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
-import { getInstitutionsWithFiltersRequest } from "../shared/utils/institutions";
 import {
   createTestInstitution,
+  createTestInstitutionAndAddIntegration,
   deleteInstitution,
+  getInstitutionsWithFiltersRequest,
+} from "../shared/utils/institutions";
+import {
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
+import { mxAggregatorId } from "test/testData/aggregators";
 
 const institutionAttributes = [
   "id",
@@ -271,9 +275,8 @@ describe("PUT /institutions/:id (Institution update)", () => {
   });
 
   it("should allow an aggregator to update institutions with no other aggregator implementations", () => {
-    const institutionWithNoAggregators = "12d9889b-d74e-4e67-8161-96aa2b8c52da"; // testNoAggregators
     cy.request({
-      url: `http://localhost:${PORT}/institutions/${institutionWithNoAggregators}`,
+      url: `http://localhost:${PORT}/institutions/${newInstitutionData.id}`,
       method: "PUT",
       body: { ...validUpdateParams, name: "testNoAggregators" },
       headers: {
@@ -287,20 +290,39 @@ describe("PUT /institutions/:id (Institution update)", () => {
     });
   });
 
-  it("should allow an aggregator to update when it is the only implementation on the institution", () => {
-    const testExampleInstitutionId = "5e498f60-3496-4299-96ed-f8eb328ae8af"; // testExampleA
-    cy.request({
-      url: `http://localhost:${PORT}/institutions/${testExampleInstitutionId}`,
-      method: "PUT",
-      body: { ...validUpdateParams, name: "testExampleA" },
-      headers: {
-        Authorization: createAuthorizationHeader(
-          AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-        ),
-      },
-      failOnStatusCode: false,
-    }).then((response: Cypress.Response<{ error: string }>) => {
-      expect(response.status).to.eq(200);
+  describe("tests that need institution cleanup", () => {
+    let institutionId: string;
+
+    before(() => {
+      createTestInstitutionAndAddIntegration(mxAggregatorId).then(
+        (createdInstitutionId) => {
+          institutionId = createdInstitutionId;
+        },
+      );
+    });
+
+    after(() => {
+      if (institutionId) {
+        deleteInstitution({ institutionId }).then(() => {
+          institutionId = undefined;
+        });
+      }
+    });
+
+    it("should allow an aggregator to update when it is the only implementation on the institution", () => {
+      cy.request({
+        url: `http://localhost:${PORT}/institutions/${institutionId}`,
+        method: "PUT",
+        body: { ...validUpdateParams, name: "Updated name" },
+        headers: {
+          Authorization: createAuthorizationHeader(
+            AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+          ),
+        },
+        failOnStatusCode: false,
+      }).then((response: Cypress.Response<{ error: string }>) => {
+        expect(response.status).to.eq(200);
+      });
     });
   });
 });

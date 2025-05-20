@@ -1,10 +1,5 @@
-import { PORT } from "../../src/shared/const";
-import {
-  InstitutionAttrs,
-  testInstitution,
-} from "../../src/test/testData/institutions";
+import { InstitutionAttrs } from "../../src/test/testData/institutions";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
-import { SUPER_USER_ACCESS_TOKEN_ENV } from "../shared/constants/accessTokens";
 
 interface runTokenInvalidCheckArgs {
   url: string;
@@ -52,51 +47,5 @@ export const runInvalidPermissionCheck = (
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(403);
     });
-  });
-};
-
-export const deleteAggregatorIntegration = ({
-  aggregatorIntegrationId,
-  token,
-}: {
-  aggregatorIntegrationId: number;
-  token: string;
-}) => {
-  return cy.request({
-    url: `http://localhost:${PORT}/aggregatorIntegrations/${aggregatorIntegrationId}`,
-    method: "DELETE",
-    headers: {
-      Authorization: createAuthorizationHeader(token),
-    },
-    failOnStatusCode: false,
-  });
-};
-
-export const createTestInstitution = (token: string) => {
-  return cy.request({
-    url: `http://localhost:${PORT}/institutions`,
-    method: "POST",
-    body: {
-      ...testInstitution,
-    },
-    headers: {
-      Authorization: createAuthorizationHeader(token),
-    },
-    failOnStatusCode: false,
-  });
-};
-
-export const deleteInstitution = ({
-  institutionId,
-}: {
-  institutionId: string;
-}) => {
-  return cy.request({
-    url: `http://localhost:${PORT}/institutions/${institutionId}`,
-    method: "DELETE",
-    headers: {
-      Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-    },
-    failOnStatusCode: false,
   });
 };

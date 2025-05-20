@@ -111,8 +111,8 @@ before(() => {
 
   authenticateAndStoreToken({
     audience: AUTH0_CLIENT_AUDIENCE,
-    passwordEnvString: "AGGREGATOR_ADMIN_PASSWORD",
-    usernameEnvString: "AGGREGATOR_ADMIN_USERNAME",
+    passwordEnvString: "MX_AGGREGATOR_ADMIN_PASSWORD",
+    usernameEnvString: "MX_AGGREGATOR_ADMIN_USERNAME",
     variableName: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   });
 

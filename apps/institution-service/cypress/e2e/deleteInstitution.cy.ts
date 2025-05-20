@@ -1,7 +1,5 @@
 import { Institution } from "models/institution";
 import {
-  createTestInstitution,
-  deleteInstitution,
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
@@ -12,7 +10,11 @@ import {
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { PORT } from "shared/const";
-import { testExampleAAggregatorId } from "test/testData/aggregators";
+import { mxAggregatorId } from "test/testData/aggregators";
+import {
+  createTestInstitution,
+  deleteInstitution,
+} from "../shared/utils/institutions";
 
 describe("DELETE /institutions/:id (Institution delete)", () => {
   it("gets 204 when a super admin deletes", () => {
@@ -70,7 +72,7 @@ describe("DELETE /institutions/:id (Institution delete)", () => {
           },
           body: {
             institution_id: newInstitution.id,
-            aggregatorId: testExampleAAggregatorId,
+            aggregatorId: mxAggregatorId,
             aggregator_institution_id: "test_cypress",
             supports_oauth: true,
           },
