@@ -4,11 +4,14 @@ import TimeFrameSelect, {
   useTimeFrameSelect,
 } from "../../shared/components/Forms/TimeFrameSelect";
 import { useGetAggregatorSuccessGraphDataQuery } from "./api";
+// import { LineChart } from "@mui/x-charts";
 
 const Trends = () => {
   const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
 
-  useGetAggregatorSuccessGraphDataQuery({ timeFrame });
+  const { data } = useGetAggregatorSuccessGraphDataQuery({ timeFrame });
+
+  console.log(data);
 
   return (
     <Stack spacing={3}>
@@ -16,6 +19,13 @@ const Trends = () => {
       <Stack direction="column" spacing={2}>
         <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
       </Stack>
+      {/* {data && (
+        <LineChart
+          dataset={Object.values(data)}
+          xAxis={[{ dataKey: "date" }]}
+          xAxis={[{ dataKey: "value" }]}
+        />
+      )} */}
     </Stack>
   );
 };

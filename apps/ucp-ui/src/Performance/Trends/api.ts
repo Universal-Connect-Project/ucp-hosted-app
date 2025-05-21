@@ -2,6 +2,7 @@ import { api, TagTypes } from "../../baseApi";
 import { PERFORMANCE_SERVICE_BASE_URL } from "../../shared/constants/environment";
 
 export const AGGREGATOR_SUCCESS_GRAPH_URL = `${PERFORMANCE_SERVICE_BASE_URL}/metrics/aggregatorSuccessGraph`;
+export const AGGREGATOR_DURATION_GRAPH_URL = `${PERFORMANCE_SERVICE_BASE_URL}/metrics/aggregatorDurationGraph`;
 
 interface AggregatorGraphParams {
   timeFrame: string;
