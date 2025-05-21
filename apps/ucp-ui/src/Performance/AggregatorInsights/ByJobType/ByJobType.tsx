@@ -1,8 +1,6 @@
 import React, { ChangeEvent, useState } from "react";
 import { Aggregator, useGetAggregatorPerformanceByJobTypeQuery } from "../api";
-import TextField from "../../../shared/components/Forms/TextField";
 import {
-  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -25,10 +23,9 @@ import FetchError from "../../../shared/components/FetchError";
 import {
   AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT,
   BY_JOB_TYPE_TABLE_TITLE,
-  thirtyDaysOption,
-  TIME_FRAME_LABEL_TEXT,
-  timeFrameOptions,
 } from "./constants";
+import TimeFrameSelect from "../../../shared/components/Forms/TimeFrameSelect";
+import { thirtyDaysOption } from "../../../shared/components/Forms/constants";
 
 const loadingAggregator = {
   displayName: "Test name",
@@ -88,19 +85,7 @@ const ByJobType = () => {
 
   return (
     <>
-      <TextField
-        className={styles.timeFrameSelect}
-        label={TIME_FRAME_LABEL_TEXT}
-        onChange={handleChange}
-        select
-        value={timeFrame}
-      >
-        {timeFrameOptions.map(({ label, value }) => (
-          <MenuItem key={value} value={value}>
-            {label}
-          </MenuItem>
-        ))}
-      </TextField>
+      <TimeFrameSelect onChange={handleChange} value={timeFrame} />
       <Paper className={styles.tablePaper} variant="outlined">
         {isError ? (
           <FetchError

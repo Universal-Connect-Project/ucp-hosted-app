@@ -9,9 +9,6 @@ import ByJobType from "./ByJobType";
 import {
   AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT,
   JOB_TYPE_PERFORMANCE_TEST_ID,
-  thirtyDaysOption,
-  TIME_FRAME_LABEL_TEXT,
-  timeFrameOptions,
 } from "./constants";
 import { server } from "../../../shared/test/testServer";
 import { http, HttpResponse } from "msw";
@@ -23,6 +20,11 @@ import {
   supportsJobTypeMap,
 } from "../../../shared/constants/jobTypes";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../../shared/components/constants";
+import {
+  thirtyDaysOption,
+  TIME_FRAME_LABEL_TEXT,
+  timeFrameOptions,
+} from "../../../shared/components/Forms/constants";
 
 describe("<ByJobType />", () => {
   it("renders an error state and allow retry", async () => {
