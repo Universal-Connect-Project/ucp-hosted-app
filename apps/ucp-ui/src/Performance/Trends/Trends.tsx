@@ -11,8 +11,6 @@ const Trends = () => {
 
   const { data } = useGetAggregatorSuccessGraphDataQuery({ timeFrame });
 
-  console.log(data);
-
   return (
     <Stack spacing={3}>
       <Typography variant="h5">Trends</Typography>
