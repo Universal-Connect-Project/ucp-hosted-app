@@ -23,6 +23,8 @@ import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../api/aggregators";
 import { aggregatorsResponse } from "../api/testData/aggregators";
 import { AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_URL } from "../../Performance/AggregatorInsights/api";
 import { aggregatorPerformanceByJobType } from "../../Performance/AggregatorInsights/testData/aggregatorPerformanceByJobType";
+import { AGGREGATOR_SUCCESS_GRAPH_URL } from "../../Performance/Trends/api";
+import { aggregatorSuccessGraph } from "./testData/trendGraphs";
 
 export const handlers = [
   http.post(INSTITUTION_SERVICE_CREATE_INSTITUTION_URL, () =>
@@ -71,5 +73,8 @@ export const handlers = [
   ),
   http.get(AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_URL, () =>
     HttpResponse.json(aggregatorPerformanceByJobType),
+  ),
+  http.get(AGGREGATOR_SUCCESS_GRAPH_URL, () =>
+    HttpResponse.json(aggregatorSuccessGraph),
   ),
 ];

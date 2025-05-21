@@ -13,3 +13,7 @@ export const INSTITUTION_SERVICE_BASE_URL: string = process.env.REVIEW_APP
 export const AUTHENTICATION_SERVICE_BASE_URL: string = process.env.REVIEW_APP
   ? `https://${process.env.HEROKU_APP_NAME}.herokuapp.com/authentication-service`
   : process.env.AUTHENTICATION_SERVICE_BASE_URL || "http://localhost:8089";
+
+export const PERFORMANCE_SERVICE_BASE_URL: string = process.env.REVIEW_APP
+  ? `https://${process.env.HEROKU_APP_NAME}.herokuapp.com/performance-service`
+  : process.env.PERFORMANCE_SERVICE_BASE_URL || "http://localhost:8090";

@@ -3,9 +3,12 @@ import { Stack, Typography } from "@mui/material";
 import TimeFrameSelect, {
   useTimeFrameSelect,
 } from "../../shared/components/Forms/TimeFrameSelect";
+import { useGetAggregatorSuccessGraphDataQuery } from "./api";
 
 const Trends = () => {
   const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
+
+  useGetAggregatorSuccessGraphDataQuery({ timeFrame });
 
   return (
     <Stack spacing={3}>

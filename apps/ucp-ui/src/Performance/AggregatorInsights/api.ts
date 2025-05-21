@@ -37,8 +37,6 @@ export const aggregatorInsightsApi = api.injectEndpoints({
         url: AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_URL,
       }),
       providesTags: [TagTypes.AGGREGATORS],
-      transformErrorResponse: (response: { status: string | number }) =>
-        response.status,
     }),
   }),
   overrideExisting: false,
