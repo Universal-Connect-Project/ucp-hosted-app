@@ -1,4 +1,10 @@
-import { CardActions, CardContent, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  CardActions,
+  CardContent,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import styles from "./apiKeys.module.css";
 import FormSubmissionError from "../shared/components/FormSubmissionError";
@@ -7,7 +13,6 @@ import {
   API_KEYS_GENERATE_API_KEYS_FAILURE_TEXT,
   API_KEYS_GENERATE_API_KEYS_SUCCESS_TEXT,
 } from "./constants";
-import { LoadingButton } from "@mui/lab";
 import { useCreateApiKeysMutation } from "./api";
 import { useAppDispatch } from "../shared/utils/redux";
 import { displaySnackbar } from "../shared/reducers/snackbar";
@@ -59,14 +64,14 @@ const GenerateKeys = () => {
             void createApiKeys();
           }}
         >
-          <LoadingButton
+          <Button
             loading={isCreateApiKeysLoading}
             size="large"
             type="submit"
             variant="contained"
           >
             {API_KEYS_GENERATE_API_KEYS_BUTTON_TEXT}
-          </LoadingButton>
+          </Button>
         </form>
       </CardActions>
     </>

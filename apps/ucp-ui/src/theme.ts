@@ -1,4 +1,4 @@
-import { experimental_extendTheme as extendTheme } from "@mui/material";
+import { extendTheme } from "@mui/material/styles";
 
 export const muiTheme = extendTheme({
   typography: {

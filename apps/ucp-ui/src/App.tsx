@@ -2,7 +2,7 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import { Provider as ReduxProvider } from "react-redux";
 import React from "react";
 import Routes from "./Routes";
-import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material";
+import { CssVarsProvider } from "@mui/material/styles";
 import { muiTheme } from "./theme";
 import { store } from "./store";
 import {

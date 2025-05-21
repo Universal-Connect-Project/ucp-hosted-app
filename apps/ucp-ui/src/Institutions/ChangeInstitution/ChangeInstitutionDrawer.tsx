@@ -45,7 +45,6 @@ import {
   useCreateInstitutionMutation,
   useEditInstitutionMutation,
 } from "./api";
-import { LoadingButton } from "@mui/lab";
 import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
@@ -214,14 +213,14 @@ const ChangeInstitutionDrawer = ({
               }
               footer={
                 <DrawerStickyFooter>
-                  <LoadingButton
+                  <Button
                     loading={isChangeInstitutionLoading}
                     form={formId}
                     type="submit"
                     variant="contained"
                   >
                     {INSTITUTION_FORM_SUBMIT_BUTTON_TEXT}
-                  </LoadingButton>
+                  </Button>
                 </DrawerStickyFooter>
               }
             >
