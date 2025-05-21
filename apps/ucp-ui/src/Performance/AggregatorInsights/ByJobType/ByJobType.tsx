@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React from "react";
 import { Aggregator, useGetAggregatorPerformanceByJobTypeQuery } from "../api";
 import {
   Paper,
@@ -24,8 +24,9 @@ import {
   AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT,
   BY_JOB_TYPE_TABLE_TITLE,
 } from "./constants";
-import TimeFrameSelect from "../../../shared/components/Forms/TimeFrameSelect";
-import { thirtyDaysOption } from "../../../shared/components/Forms/constants";
+import TimeFrameSelect, {
+  useTimeFrameSelect,
+} from "../../../shared/components/Forms/TimeFrameSelect";
 
 const loadingAggregator = {
   displayName: "Test name",
@@ -59,11 +60,7 @@ const OverallPerformanceCell = ({
 };
 
 const ByJobType = () => {
-  const [timeFrame, setTimeFrame] = useState(thirtyDaysOption.value);
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTimeFrame(event.target.value);
-  };
+  const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
 
   const {
     data: aggregatorsWithPerformanceByJobType,
@@ -85,7 +82,7 @@ const ByJobType = () => {
 
   return (
     <>
-      <TimeFrameSelect onChange={handleChange} value={timeFrame} />
+      <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
       <Paper className={styles.tablePaper} variant="outlined">
         {isError ? (
           <FetchError

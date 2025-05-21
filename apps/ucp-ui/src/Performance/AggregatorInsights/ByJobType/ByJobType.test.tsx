@@ -21,7 +21,6 @@ import {
 } from "../../../shared/constants/jobTypes";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../../shared/components/constants";
 import {
-  thirtyDaysOption,
   TIME_FRAME_LABEL_TEXT,
   timeFrameOptions,
 } from "../../../shared/components/Forms/constants";
@@ -56,12 +55,6 @@ describe("<ByJobType />", () => {
         aggregatorPerformanceByJobType.aggregators[0].displayName,
       ),
     ).toBeInTheDocument();
-  });
-
-  it("uses 30 days as the default time frame", async () => {
-    render(<ByJobType />);
-
-    expect(await screen.findByText(thirtyDaysOption.label)).toBeInTheDocument();
   });
 
   it("renders a loading state on initial load and after the time frame changes and filters by the time frame", async () => {
