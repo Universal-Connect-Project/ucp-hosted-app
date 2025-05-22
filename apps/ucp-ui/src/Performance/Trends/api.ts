@@ -8,9 +8,22 @@ interface AggregatorGraphParams {
   timeFrame: string;
 }
 
+interface AggregatorSuccessDataPoint {
+  date: string;
+  value: number;
+}
+
+export type AggregatorSuccessGraphResponse = Record<
+  string,
+  AggregatorSuccessDataPoint[]
+>;
+
 export const trendsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAggregatorSuccessGraphData: builder.query<void, AggregatorGraphParams>({
+    getAggregatorSuccessGraphData: builder.query<
+      AggregatorSuccessGraphResponse,
+      AggregatorGraphParams
+    >({
       query: ({ timeFrame }) => ({
         params: { timeFrame },
         url: AGGREGATOR_SUCCESS_GRAPH_URL,

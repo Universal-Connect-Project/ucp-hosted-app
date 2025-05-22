@@ -26,6 +26,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@repo/shared-utils": "*",
     "classnames": "^2.5.1",
+    "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
     "launchdarkly-react-client-sdk": "^3.4.0",
     "lodash.debounce": "^4.0.8",
