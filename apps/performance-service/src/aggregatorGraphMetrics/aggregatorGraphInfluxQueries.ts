@@ -20,7 +20,7 @@ const transformInfluxGraphMetrics = (dataPoints: AggSuccessInfluxObj[]) => {
 
     aggregatorsPoints[dataPoint.aggregatorId].push({
       date: dataPoint._time,
-      value: dataPoint._value * 100,
+      value: dataPoint._value,
     });
   });
 

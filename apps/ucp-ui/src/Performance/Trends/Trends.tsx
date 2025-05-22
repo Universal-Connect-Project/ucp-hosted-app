@@ -51,7 +51,7 @@ const getSeries = ({
       [aggregator]: data[aggregator].reduce(
         (acc, { date, value }) => ({
           ...acc,
-          [date]: value,
+          [date]: value * 100,
         }),
         {},
       ),
