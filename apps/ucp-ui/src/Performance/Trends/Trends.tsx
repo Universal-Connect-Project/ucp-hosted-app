@@ -63,7 +63,9 @@ const getSeries = ({
     data: dates.map(
       (date) => aggregatorDateValueMap[aggregator]?.[date] || null,
     ),
-    valueFormatter: (value: number) => `${formatMaxTwoDecimals(value)}%`,
+    label: aggregator,
+    valueFormatter: (value: number) =>
+      (value ?? null) !== null ? `${formatMaxTwoDecimals(value)}%` : null,
   }));
 };
 
