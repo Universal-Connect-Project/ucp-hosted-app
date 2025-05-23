@@ -9,7 +9,8 @@ interface AggregatorGraphParams {
 }
 
 interface AggregatorSuccessDataPoint {
-  date: string;
+  start: string;
+  stop: string;
   value: number;
 }
 

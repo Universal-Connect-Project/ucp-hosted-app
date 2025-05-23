@@ -5,13 +5,17 @@ export type TimeFrame = keyof typeof TimeFrameToAggregateWindowMap;
 
 interface AggSuccessInfluxObj {
   result: string;
-  _time: Date;
   aggregatorId: string;
+  _start: Date;
+  _stop: Date;
   _value: number;
 }
 
 const transformInfluxGraphMetrics = (dataPoints: AggSuccessInfluxObj[]) => {
-  const aggregatorsPoints: Record<string, { date: Date; value: number }[]> = {};
+  const aggregatorsPoints: Record<
+    string,
+    { start: Date; stop: Date; value: number }[]
+  > = {};
 
   dataPoints.forEach((dataPoint) => {
     if (!aggregatorsPoints[dataPoint.aggregatorId]) {
@@ -19,7 +23,8 @@ const transformInfluxGraphMetrics = (dataPoints: AggSuccessInfluxObj[]) => {
     }
 
     aggregatorsPoints[dataPoint.aggregatorId].push({
-      date: dataPoint._time,
+      start: dataPoint._start,
+      stop: dataPoint._stop,
       value: dataPoint._value,
     });
   });
@@ -57,7 +62,8 @@ export async function getAggregatorGraphMetrics({
       ${aggregatorFilter}
       ${jobTypesFilter}
       |> group(columns: ["aggregatorId"])
-      |> aggregateWindow(every: ${TimeFrameToAggregateWindowMap[timeFrame]}, fn: mean, createEmpty: false)
+      |> window(every: ${TimeFrameToAggregateWindowMap[timeFrame]}, createEmpty: true)
+      |> mean()
   `;
   const results: AggSuccessInfluxObj[] = await queryApi.collectRows(fluxQuery);
 

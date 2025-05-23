@@ -18,7 +18,7 @@ const getUniqueDates = (data?: AggregatorSuccessGraphResponse): string[] => {
 
   const allDates = Object.values(data)
     .flat()
-    .map(({ date }) => date);
+    .map(({ start }) => start);
 
   const uniqueDates = new Set();
 
@@ -49,9 +49,9 @@ const getSeries = ({
     (acc, aggregator) => ({
       ...acc,
       [aggregator]: data[aggregator].reduce(
-        (acc, { date, value }) => ({
+        (acc, { start, value }) => ({
           ...acc,
-          [date]: value * 100,
+          [start]: value * 100,
         }),
         {},
       ),
