@@ -1,15 +1,24 @@
 import { TimeFrameToAggregateWindowMap } from "@repo/backend-utils/src/constants";
 import { BUCKET, queryApi } from "../services/influxDb";
+import groupBy from "lodash.groupby";
 
 export type TimeFrame = keyof typeof TimeFrameToAggregateWindowMap;
 
 interface AggSuccessInfluxObj {
   result: string;
   aggregatorId: string;
-  _start: Date;
-  _stop: Date;
+  _start: string;
+  _stop: string;
   _value: number;
 }
+
+const getMidpoint = (start: string, end: string) => {
+  const startDate = new Date(start);
+
+  const difference = (new Date(end).getTime() - startDate.getTime()) / 2;
+
+  return new Date(startDate.getTime() + difference).toISOString();
+};
 
 const transformInfluxGraphMetrics = (dataPoints: AggSuccessInfluxObj[]) => {
   const aggregatorsPoints: Record<
@@ -17,19 +26,31 @@ const transformInfluxGraphMetrics = (dataPoints: AggSuccessInfluxObj[]) => {
     { start: Date; stop: Date; value: number }[]
   > = {};
 
-  dataPoints.forEach((dataPoint) => {
-    if (!aggregatorsPoints[dataPoint.aggregatorId]) {
-      aggregatorsPoints[dataPoint.aggregatorId] = [];
-    }
+  // const aggregatorPerformance: {
+  //   start: Date;
+  //   stop: Date;
+  //   [key: string]: unknown;
+  // } = [];
 
-    aggregatorsPoints[dataPoint.aggregatorId].push({
-      start: dataPoint._start,
-      stop: dataPoint._stop,
-      value: dataPoint._value,
-    });
-  });
+  const groupedByAggregatorId = groupBy(dataPoints, "aggregatorId");
 
-  return aggregatorsPoints;
+  const aggregatorIds = Object.keys(groupedByAggregatorId);
+
+  const firstAggregatorId = aggregatorIds[0];
+  const firstAggregatorDataPoints = groupedByAggregatorId[firstAggregatorId];
+
+  const performance =
+    firstAggregatorDataPoints?.map(({ _start, _stop }, index) =>
+      aggregatorIds.reduce(
+        (acc, aggregatorId) => ({
+          ...acc,
+          [aggregatorId]: groupedByAggregatorId[aggregatorId][index]._value,
+        }),
+        { start: _start, midpoint: getMidpoint(_start, _stop), stop: _stop },
+      ),
+    ) || [];
+
+  return { aggregatorIds, performance };
 };
 
 export async function getAggregatorGraphMetrics({

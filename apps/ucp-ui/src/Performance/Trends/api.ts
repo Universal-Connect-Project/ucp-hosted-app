@@ -10,14 +10,15 @@ interface AggregatorGraphParams {
 
 interface AggregatorSuccessDataPoint {
   start: string;
+  midpoint: string;
   stop: string;
-  value: number;
+  [key: string]: unknown;
 }
 
-export type AggregatorSuccessGraphResponse = Record<
-  string,
-  AggregatorSuccessDataPoint[]
->;
+export type AggregatorSuccessGraphResponse = {
+  aggregatorIds: string[];
+  performance: AggregatorSuccessDataPoint[];
+};
 
 export const trendsApi = api.injectEndpoints({
   endpoints: (builder) => ({
