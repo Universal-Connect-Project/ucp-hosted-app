@@ -77,13 +77,17 @@ export async function getAggregatorGraphMetrics({
         .join(" or ")})`
     : "";
   const fluxQuery = `
+    import "timezone" // Import the timezone package
+
+    option location = timezone.location(name: "America/New_York")
+
     from(bucket: "${BUCKET}")
       |> range(start: -${timeFrame})
       |> filter(fn: (r) => r._measurement == "${metric}")
       ${aggregatorFilter}
       ${jobTypesFilter}
       |> group(columns: ["aggregatorId"])
-      |> window(every: ${TimeFrameToAggregateWindowMap[timeFrame]}, createEmpty: true)
+      |> window(every: ${TimeFrameToAggregateWindowMap[timeFrame]}, createEmpty: true, location: location)
       |> mean()
   `;
   const results: AggSuccessInfluxObj[] = await queryApi.collectRows(fluxQuery);

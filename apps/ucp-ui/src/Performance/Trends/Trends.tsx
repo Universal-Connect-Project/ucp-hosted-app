@@ -10,51 +10,34 @@ import {
 import { LineChart } from "@mui/x-charts";
 import { formatMaxTwoDecimals } from "../../shared/utils/format";
 import { format } from "date-fns";
+import { TZDate } from "@date-fns/tz";
 
-// const getSeries = ({
-//   data,
-//   dates,
-// }: {
-//   data?: AggregatorSuccessGraphResponse;
-//   dates: string[];
-// }) => {
-//   if (!data) {
-//     return [];
-//   }
+const EDTTimeZone = "America/New_York";
 
-//   const aggregators = Object.keys(data);
-
-//   const aggregatorDateValueMap: Record<
-//     string,
-//     Record<string, string>
-//   > = aggregators.reduce(
-//     (acc, aggregator) => ({
-//       ...acc,
-//       [aggregator]: data[aggregator].reduce(
-//         (acc, { start, value }) => ({
-//           ...acc,
-//           [start]: value * 100,
-//         }),
-//         {},
-//       ),
-//     }),
-//     {},
-//   );
-
-//   return aggregators.map((aggregator) => ({
-//     data: dates.map(
-//       (date) => aggregatorDateValueMap[aggregator]?.[date] || null,
-//     ),
-//     label: aggregator,
-//     valueFormatter: (value: number) =>
-//       (value ?? null) !== null ? `${formatMaxTwoDecimals(value)}%` : null,
-//   }));
-// };
+const formatTooltip = (date: Date) => format(date, "MM/dd @ H:mm");
 
 const Trends = () => {
   const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
 
   const { data } = useGetAggregatorSuccessGraphDataQuery({ timeFrame });
+  const performanceData = data?.performance?.map(
+    ({ midpoint, start, stop, ...rest }) => ({
+      ...rest,
+      midpoint: new TZDate(midpoint, EDTTimeZone),
+      start: new TZDate(start, EDTTimeZone),
+      stop: new TZDate(stop, EDTTimeZone),
+    }),
+  );
+  const midpointToStartAndEndMap = performanceData?.reduce(
+    (acc, { midpoint, start, stop }) => ({
+      ...acc,
+      [midpoint.getTime()]: {
+        start,
+        stop,
+      },
+    }),
+    {},
+  );
 
   const xAxis = [
     {
@@ -64,8 +47,14 @@ const Trends = () => {
         if (context.location === "tick") {
           return format(value, "MM/dd");
         } else if (context.location === "tooltip") {
-          // return "in tooltip bro";
-          return format(value, "MM/dd");
+          const { start, stop } = midpointToStartAndEndMap?.[
+            value.getTime()
+          ] as {
+            start: Date;
+            stop: Date;
+          };
+
+          return `${formatTooltip(start)} - ${formatTooltip(stop)}`;
         }
       },
     },
@@ -94,14 +83,7 @@ const Trends = () => {
       </Stack>
       {data && (
         <LineChart
-          dataset={data.performance.map(
-            ({ midpoint, start, stop, ...rest }) => ({
-              ...rest,
-              midpoint: new Date(midpoint),
-              start: new Date(start),
-              stop: new Date(stop),
-            }),
-          )}
+          dataset={performanceData}
           height={400}
           series={series}
           xAxis={xAxis}
