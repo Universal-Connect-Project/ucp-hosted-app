@@ -21,17 +21,6 @@ const getMidpoint = (start: string, end: string) => {
 };
 
 const transformInfluxGraphMetrics = (dataPoints: AggSuccessInfluxObj[]) => {
-  const aggregatorsPoints: Record<
-    string,
-    { start: Date; stop: Date; value: number }[]
-  > = {};
-
-  // const aggregatorPerformance: {
-  //   start: Date;
-  //   stop: Date;
-  //   [key: string]: unknown;
-  // } = [];
-
   const groupedByAggregatorId = groupBy(dataPoints, "aggregatorId");
 
   const aggregatorIds = Object.keys(groupedByAggregatorId);
@@ -77,7 +66,7 @@ export async function getAggregatorGraphMetrics({
         .join(" or ")})`
     : "";
   const fluxQuery = `
-    import "timezone" // Import the timezone package
+    import "timezone"
 
     option location = timezone.location(name: "America/New_York")
 

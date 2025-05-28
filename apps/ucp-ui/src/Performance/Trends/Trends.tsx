@@ -3,10 +3,7 @@ import { Stack, Typography } from "@mui/material";
 import TimeFrameSelect, {
   useTimeFrameSelect,
 } from "../../shared/components/Forms/TimeFrameSelect";
-import {
-  AggregatorSuccessGraphResponse,
-  useGetAggregatorSuccessGraphDataQuery,
-} from "./api";
+import { useGetAggregatorSuccessGraphDataQuery } from "./api";
 import { LineChart } from "@mui/x-charts";
 import { formatMaxTwoDecimals } from "../../shared/utils/format";
 import { format } from "date-fns";
