@@ -20,7 +20,21 @@ const getMidpoint = (start: string, end: string) => {
   return new Date(startDate.getTime() + difference).toISOString();
 };
 
-const transformInfluxGraphMetrics = (dataPoints: AggSuccessInfluxObj[]) => {
+interface PerformanceDataPoint {
+  midpoint: string;
+  start: string;
+  stop: string;
+  [key: string]: string;
+}
+
+export interface GraphMetricsResponse {
+  aggregatorIds: string[];
+  performance: PerformanceDataPoint[];
+}
+
+const transformInfluxGraphMetrics = (
+  dataPoints: AggSuccessInfluxObj[],
+): GraphMetricsResponse => {
   const groupedByAggregatorId = groupBy(dataPoints, "aggregatorId");
 
   const aggregatorIds = Object.keys(groupedByAggregatorId);
