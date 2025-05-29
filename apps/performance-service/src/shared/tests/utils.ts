@@ -24,7 +24,7 @@ export const createFakeAccessToken = (clientId: string = "test") => {
     kid: "l0NUw2KQif_eSkGv73Qk3",
   };
   const payload = {
-    iss: "https://dev-d23wau8o0uc5hw8n.us.auth0.com/",
+    iss: "https://auth-staging.universalconnectproject.org/",
     sub: "U1S5r5EQ9bPqXD5ai6769u9oi63BD1S2@clients",
     aud: "ucp-widget-interactions",
     iat: 1741816827,
