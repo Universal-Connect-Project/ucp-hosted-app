@@ -1,0 +1,27 @@
+<script>
+  function validateTermsOfUse(element, formSubmitted) {
+    if (!formSubmitted) {
+      return true;
+    }
+    return element.checked === true;
+  }
+</script>
+
+<div class="ulp-field">
+  <input type="checkbox" name="ulp-terms-of-use" id="terms-of-service" />
+  <label for="terms-of-service"
+    >I agree with the
+    <a
+      href="https://app.universalconnectproject.org/public/termsAndConditions"
+      target="_blank"
+      >Terms of Use</a
+    ></label
+  >
+  <div
+    class="ulp-error-info"
+    data-ulp-validation-function="validateTermsOfUse"
+    data-ulp-validation-event-listeners="blur,change,input,focus"
+  >
+    Please agree to the Terms of Use.
+  </div>
+</div>
