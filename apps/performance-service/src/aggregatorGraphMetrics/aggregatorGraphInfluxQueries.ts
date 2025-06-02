@@ -28,7 +28,6 @@ interface PerformanceDataPoint {
 }
 
 export interface GraphMetricsResponse {
-  aggregatorIds: string[];
   performance: PerformanceDataPoint[];
 }
 
@@ -53,7 +52,7 @@ const transformInfluxGraphMetrics = (
       ),
     ) || [];
 
-  return { aggregatorIds, performance };
+  return { performance };
 };
 
 export async function getAggregatorGraphMetrics({

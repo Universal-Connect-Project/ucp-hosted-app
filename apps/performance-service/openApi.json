@@ -310,24 +310,24 @@
             "content": {
               "application/json": {
                 "example": {
-                  "sophtron": [
+                  "performance": [
                     {
-                      "date": "2024-03-01T00:00:00Z",
-                      "value": 1
+                      "start": "2025-05-08T04:00:00Z",
+                      "midpoint": "2025-05-08T16:00:00.000Z",
+                      "stop": "2025-05-09T04:00:00Z",
+                      "finicity": 1,
+                      "mx": null,
+                      "sophtron": 1,
+                      "testAggregatorId": null
                     },
                     {
-                      "date": "2024-03-02T00:00:00Z",
-                      "value": 0.95
-                    }
-                  ],
-                  "mx": [
-                    {
-                      "date": "2024-03-01T00:00:00Z",
-                      "value": 0.85
-                    },
-                    {
-                      "date": "2024-03-02T00:00:00Z",
-                      "value": 0.87
+                      "start": "2025-05-09T04:00:00Z",
+                      "midpoint": "2025-05-09T16:00:00.000Z",
+                      "stop": "2025-05-10T04:00:00Z",
+                      "finicity": null,
+                      "mx": 1,
+                      "sophtron": null,
+                      "testAggregatorId": null
                     }
                   ]
                 }
@@ -409,46 +409,25 @@
             "description": "Successful response",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "date": {
-                          "type": "string",
-                          "format": "date-time",
-                          "example": "2024-03-01T00:00:00Z"
-                        },
-                        "value": {
-                          "type": "integer",
-                          "description": "Time in milliseconds.",
-                          "example": 1000
-                        }
-                      }
-                    }
-                  }
-                },
                 "example": {
-                  "sophtron": [
+                  "performance": [
                     {
-                      "date": "2024-03-01T00:00:00Z",
-                      "value": 1500
+                      "start": "2025-05-08T04:00:00Z",
+                      "midpoint": "2025-05-08T16:00:00.000Z",
+                      "stop": "2025-05-09T04:00:00Z",
+                      "finicity": 15003,
+                      "mx": null,
+                      "sophtron": 14000,
+                      "testAggregatorId": null
                     },
                     {
-                      "date": "2024-03-02T00:00:00Z",
-                      "value": 1000
-                    }
-                  ],
-                  "mx": [
-                    {
-                      "date": "2024-03-01T00:00:00Z",
-                      "value": 1200
-                    },
-                    {
-                      "date": "2024-03-02T00:00:00Z",
-                      "value": 2500
+                      "start": "2025-05-09T04:00:00Z",
+                      "midpoint": "2025-05-09T16:00:00.000Z",
+                      "stop": "2025-05-10T04:00:00Z",
+                      "finicity": null,
+                      "mx": 32000,
+                      "sophtron": null,
+                      "testAggregatorId": null
                     }
                   ]
                 }
