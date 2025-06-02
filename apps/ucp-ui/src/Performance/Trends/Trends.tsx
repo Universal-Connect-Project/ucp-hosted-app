@@ -66,6 +66,7 @@ const Trends = () => {
   ];
 
   const series = data?.aggregatorIds?.map((aggregatorId) => ({
+    curve: "linear",
     dataKey: aggregatorId,
     label: aggregatorId,
     valueFormatter: (value: number) =>
