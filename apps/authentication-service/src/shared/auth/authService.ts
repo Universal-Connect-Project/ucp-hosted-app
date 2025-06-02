@@ -10,8 +10,8 @@ import {
   setLocalToken,
 } from "../../shared/tokenUtils";
 
-const domain: string = envs.AUTH0_DOMAIN;
-const audience: string = `https://${domain}/api/v2/`;
+const tokenDomain: string = envs.AUTH0_TOKEN_DOMAIN;
+const audience: string = `https://${tokenDomain}/api/v2/`;
 const clientId: string = envs.AUTH0_CLIENT_ID;
 const clientSecret: string = envs.AUTH0_CLIENT_SECRET;
 
@@ -23,7 +23,7 @@ const fetchAccessToken = async (): Promise<string> => {
     audience: audience,
   };
 
-  const response: Response = await fetch(`https://${domain}/oauth/token`, {
+  const response: Response = await fetch(`https://${tokenDomain}/oauth/token`, {
     method: "post",
     body: JSON.stringify(body),
     headers: { "Content-Type": "application/json" },
