@@ -25,16 +25,23 @@ const Trends = () => {
       stop: new TZDate(stop, EDTTimeZone),
     }),
   );
-  const midpointToStartAndEndMap = performanceData?.reduce(
-    (acc, { midpoint, start, stop }) => ({
-      ...acc,
-      [midpoint.getTime()]: {
-        start,
-        stop,
-      },
-    }),
-    {},
-  );
+  const midpointToStartAndEndMap: Record<
+    string,
+    {
+      start: Date;
+      stop: Date;
+    }
+  > =
+    performanceData?.reduce(
+      (acc, { midpoint, start, stop }) => ({
+        ...acc,
+        [midpoint.getTime()]: {
+          start,
+          stop,
+        },
+      }),
+      {},
+    ) || {};
 
   const xAxis = [
     {
@@ -69,6 +76,7 @@ const Trends = () => {
     curve: "linear",
     dataKey: aggregatorId,
     label: aggregatorId,
+    labelMarkType: "square",
     valueFormatter: (value: number) =>
       (value ?? null) !== null ? `${formatMaxTwoDecimals(value * 100)}%` : null,
   }));
@@ -84,6 +92,15 @@ const Trends = () => {
           dataset={performanceData}
           height={400}
           series={series}
+          slotProps={{
+            legend: {
+              direction: "horizontal",
+              position: {
+                horizontal: "start",
+                vertical: "top",
+              },
+            },
+          }}
           xAxis={xAxis}
           yAxis={yAxis}
         />
