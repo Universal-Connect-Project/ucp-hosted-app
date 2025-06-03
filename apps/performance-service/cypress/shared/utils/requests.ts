@@ -93,7 +93,9 @@ export const getSuccessGraphPerformanceData = ({
     method: "GET",
     failOnStatusCode: false,
     headers: {
-      Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
+      Authorization: createAuthorizationHeader(
+        INSTITUTION_SERVICE_ACCESS_TOKEN,
+      ),
     },
   });
 };
@@ -117,7 +119,9 @@ export const getDurationGraphPerformanceData = ({
     method: "GET",
     failOnStatusCode: false,
     headers: {
-      Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
+      Authorization: createAuthorizationHeader(
+        INSTITUTION_SERVICE_ACCESS_TOKEN,
+      ),
     },
   });
 };
