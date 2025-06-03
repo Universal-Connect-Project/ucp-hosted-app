@@ -34,7 +34,7 @@ jobs:
           CYPRESS_E2E_CLIENT_ID: ${{ vars.E2E_CLIENT_ID }}
         with:
           project: apps/authentication-service
-          start: npm run dev --workspace apps/authentication-service
+          start: npm run dev:noRateLimit --workspace apps/authentication-service
           wait-on: "http://localhost:8089/ping"
           spec: apps/authentication-service/cypress/e2e/general/*.cy.ts
 
