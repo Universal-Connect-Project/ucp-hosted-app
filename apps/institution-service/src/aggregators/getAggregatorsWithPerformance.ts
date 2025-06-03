@@ -1,25 +1,7 @@
 import { Request, Response } from "express";
 import { Aggregator } from "../models/aggregator";
 import { PERFORMANCE_SERVICE_URL } from "../shared/environment";
-
-export const getAggregators = async (req: Request, res: Response) => {
-  try {
-    const aggregators = await Aggregator.findAll({
-      order: [
-        ["displayName", "ASC"],
-        ["createdAt", "DESC"],
-      ],
-    });
-
-    res.status(200).json({
-      aggregators,
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching aggregators." });
-  }
-};
+import { getPerformanceServiceAccessToken } from "./getPerformanceServiceAccessToken";
 
 export const getAggregatorsWithPerformance = async (
   req: Request,
@@ -88,7 +70,7 @@ type AggregatorMetrics = Record<string, IndividualAggregatorMetrics>;
 const getAggregatorPerformance = async (
   timeFrame: string,
 ): Promise<AggregatorMetrics> => {
-  const token = await getAccessToken();
+  const token = await getPerformanceServiceAccessToken();
   const params = new URLSearchParams({ timeFrame });
 
   const response = await fetch(
@@ -110,48 +92,4 @@ const getAggregatorPerformance = async (
   }
 
   return (await response.json()) as AggregatorMetrics;
-};
-
-let tokenCache: { token: string; expiresAt: number } | null = null;
-
-const getAccessToken = async (): Promise<string> => {
-  const now = Date.now();
-
-  if (tokenCache && tokenCache.expiresAt > now) {
-    return tokenCache.token;
-  }
-
-  const response = await fetch(
-    `https://${process.env.AUTH0_DOMAIN!}/oauth/token`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        client_id: process.env.AUTH0_INSTITUTION_CLIENT_ID!,
-        client_secret: process.env.AUTH0_INSTITUTION_CLIENT_SECRET!,
-        audience: "institution-service",
-        grant_type: "client_credentials",
-      }),
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error(`Auth0 token request failed: ${response.statusText}`);
-  }
-
-  const data = (await response.json()) as {
-    access_token: string;
-    expires_in: number;
-    token_type: string;
-  };
-  const expiresInMs = data.expires_in * 1000;
-
-  tokenCache = {
-    token: data.access_token,
-    expiresAt: now + expiresInMs - 5000, // Refresh 5s before expiry
-  };
-
-  return data.access_token;
 };
