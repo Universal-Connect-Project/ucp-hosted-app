@@ -7,7 +7,7 @@ import { rateLimit } from "express-rate-limit";
 import sequelize from "./database";
 import { defineAssociations } from "./models/associations";
 import aggregatorIntegrationRoutes from "./routes/aggregatorIntegrationRoutes";
-import aggregatorRoutes from "./routes/aggregatorRoutes";
+import aggregatorRoutes from "./aggregators/aggregatorRoutes";
 import institutionRoutes from "./routes/institutionRoutes";
 import permissionsRoutes from "./routes/permissionRoutes";
 import { PORT } from "./shared/const";

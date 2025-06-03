@@ -2,25 +2,6 @@ import { Request, Response } from "express";
 import { Aggregator } from "../models/aggregator";
 import { PERFORMANCE_SERVICE_URL } from "../shared/environment";
 
-export const getAggregators = async (req: Request, res: Response) => {
-  try {
-    const aggregators = await Aggregator.findAll({
-      order: [
-        ["displayName", "ASC"],
-        ["createdAt", "DESC"],
-      ],
-    });
-
-    res.status(200).json({
-      aggregators,
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching aggregators." });
-  }
-};
-
 export const getAggregatorsWithPerformance = async (
   req: Request,
   res: Response,
