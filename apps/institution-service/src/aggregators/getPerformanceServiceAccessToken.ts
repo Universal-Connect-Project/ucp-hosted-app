@@ -1,5 +1,9 @@
 let tokenCache: { token: string; expiresAt: number } | null = null;
 
+export const clearTokenCache = () => {
+  tokenCache = null;
+};
+
 export const getPerformanceServiceAccessToken = async (): Promise<string> => {
   const now = Date.now();
 
