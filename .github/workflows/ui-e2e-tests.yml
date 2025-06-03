@@ -99,7 +99,7 @@ jobs:
         with:
           project: apps/ucp-ui
           start: |
-            npm run dev --workspace apps/authentication-service & sleep 10
+            npm run dev:noRateLimit --workspace apps/authentication-service & sleep 10
             npm run start --workspace apps/performance-service & sleep 10
             npm run dev:noRateLimiting --workspace apps/institution-service
             npm run dev --workspace apps/ucp-ui

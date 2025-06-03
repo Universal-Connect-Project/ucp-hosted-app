@@ -32,7 +32,10 @@ export const initExpress = (app: Application): void => {
         .status(options.statusCode)
         .json({ message: options.message as string }),
   });
-  app.use(limiter);
+
+  if (process.env.DISABLE_RATE_LIMITING !== "true") {
+    app.use(limiter);
+  }
 
   app.use(
     helmet({
