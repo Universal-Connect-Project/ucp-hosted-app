@@ -183,137 +183,136 @@ describe("getAggregatorGraphMetrics", () => {
     });
   });
 
-  // describe("jobType options", () => {
-  //   it("gets nothing when jobType is invalid", async () => {
-  //     const successData = await getAggregatorGraphMetrics({
-  //       jobTypes: "invalidJobType",
-  //       timeFrame: "1d",
-  //       metric: "successRateMetrics",
-  //     });
-  //     const durationData = await getAggregatorGraphMetrics({
-  //       jobTypes: "invalidJobType",
-  //       timeFrame: "1d",
-  //       metric: "durationMetrics",
-  //     });
+  describe("jobType options", () => {
+    it("gets nothing when jobType is invalid", async () => {
+      const successData = await getAggregatorGraphMetrics({
+        jobTypes: "invalidJobType",
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getAggregatorGraphMetrics({
+        jobTypes: "invalidJobType",
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
 
-  //     expect(successData).toEqual({});
-  //     expect(durationData).toEqual({});
-  //   });
+      expect(successData).toEqual({ performance: [] });
+      expect(durationData).toEqual({ performance: [] });
+    });
 
-  //   const shuffledJobTypeCombinations = Object.values(ComboJobTypes)
-  //     .reduce<string[][]>(
-  //       (subsets, jobType) =>
-  //         subsets.concat(subsets.map((set) => [...set, jobType])),
-  //       [[]],
-  //     )
-  //     .filter((set) => set.length > 0)
-  //     .map(shuffleArray)
-  //     .map((items) => items.join("|"));
+    const shuffledJobTypeCombinations = Object.values(ComboJobTypes)
+      .reduce<string[][]>(
+        (subsets, jobType) =>
+          subsets.concat(subsets.map((set) => [...set, jobType])),
+        [[]],
+      )
+      .filter((set) => set.length > 0)
+      .map(shuffleArray)
+      .map((items) => items.join("|"));
 
-  //   shuffledJobTypeCombinations.forEach((jobTypes) => {
-  //     it(`gets data from valid jobTypes: ${jobTypes}`, async () => {
-  //       const successData = await getAggregatorGraphMetrics({
-  //         jobTypes,
-  //         timeFrame: "1d",
-  //         metric: "successRateMetrics",
-  //       });
-  //       const durationData = await getAggregatorGraphMetrics({
-  //         jobTypes,
-  //         timeFrame: "1d",
-  //         metric: "durationMetrics",
-  //       });
+    shuffledJobTypeCombinations.forEach((jobTypes) => {
+      it(`gets data from valid jobTypes: ${jobTypes}`, async () => {
+        const successData = await getAggregatorGraphMetrics({
+          jobTypes,
+          timeFrame: "1d",
+          metric: "successRateMetrics",
+        });
+        const durationData = await getAggregatorGraphMetrics({
+          jobTypes,
+          timeFrame: "1d",
+          metric: "durationMetrics",
+        });
 
-  //       expect(successData.mx.length).toBeGreaterThan(0);
-  //       expect(durationData.mx.length).toBeGreaterThan(0);
-  //     });
-  //   });
+        expect(successData.performance.length).toBeGreaterThan(0);
+        expect(durationData.performance.length).toBeGreaterThan(0);
+      });
+    });
 
-  //   it("gets data when no job types in params", async () => {
-  //     const successData = await getAggregatorGraphMetrics({
-  //       timeFrame: "1d",
-  //       metric: "successRateMetrics",
-  //     });
-  //     const durationData = await getAggregatorGraphMetrics({
-  //       timeFrame: "1d",
-  //       metric: "durationMetrics",
-  //     });
+    it("gets data when no job types in params", async () => {
+      const successData = await getAggregatorGraphMetrics({
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getAggregatorGraphMetrics({
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
 
-  //     expect(successData.mx.length).toBeGreaterThan(0);
-  //     expect(durationData.mx.length).toBeGreaterThan(0);
-  //   });
+      expect(successData.performance.length).toBeGreaterThan(0);
+      expect(durationData.performance.length).toBeGreaterThan(0);
+    });
 
-  //   it("gets expected values from specific job types", async () => {
-  //     const uniqueAggregatorId = `agg-${crypto.randomUUID()}`;
+    it("gets expected values from specific job types", async () => {
+      const uniqueAggregatorId = `agg-${crypto.randomUUID()}`;
 
-  //     await seedInfluxTestDb({
-  //       jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
-  //       aggregatorId: uniqueAggregatorId,
-  //       success: true,
-  //     });
-  //     await seedInfluxTestDb({
-  //       jobTypes: [ComboJobTypes.ACCOUNT_NUMBER, ComboJobTypes.TRANSACTIONS],
-  //       aggregatorId: uniqueAggregatorId,
-  //       success: false,
-  //     });
-  //     await seedInfluxTestDb({
-  //       jobTypes: [ComboJobTypes.TRANSACTIONS],
-  //       aggregatorId: uniqueAggregatorId,
-  //       success: false,
-  //     });
-  //     await seedInfluxTestDb({
-  //       jobTypes: [ComboJobTypes.TRANSACTIONS],
-  //       aggregatorId: uniqueAggregatorId,
-  //       success: true,
-  //     });
+      await seedInfluxTestDb({
+        jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
+        aggregatorId: uniqueAggregatorId,
+        success: true,
+      });
+      await seedInfluxTestDb({
+        jobTypes: [ComboJobTypes.ACCOUNT_NUMBER, ComboJobTypes.TRANSACTIONS],
+        aggregatorId: uniqueAggregatorId,
+        success: false,
+      });
+      await seedInfluxTestDb({
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
+        aggregatorId: uniqueAggregatorId,
+        success: false,
+      });
+      await seedInfluxTestDb({
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
+        aggregatorId: uniqueAggregatorId,
+        success: true,
+      });
 
-  //     await wait(1500); // DB writing needs time to finish before reading
+      await wait(1500); // DB writing needs time to finish before reading
 
-  //     const accountNumberData = await getAggregatorGraphMetrics({
-  //       jobTypes: ComboJobTypes.ACCOUNT_NUMBER,
-  //       timeFrame: "1d",
-  //       aggregators: uniqueAggregatorId,
-  //       metric: "successRateMetrics",
-  //     });
+      const expectValue = ({
+        data,
+        value,
+      }: {
+        data: GraphMetricsResponse;
+        value: number;
+      }) => {
+        expect(data.performance).toContainEqual(
+          expect.objectContaining({
+            [uniqueAggregatorId]: value,
+          }),
+        );
+      };
 
-  //     expect(accountNumberData[uniqueAggregatorId]).toEqual([
-  //       expect.objectContaining({
-  //         date: expect.any(String),
-  //         value: 1,
-  //       }),
-  //     ]);
+      const accountNumberData = await getAggregatorGraphMetrics({
+        jobTypes: ComboJobTypes.ACCOUNT_NUMBER,
+        timeFrame: "1d",
+        aggregators: uniqueAggregatorId,
+        metric: "successRateMetrics",
+      });
 
-  //     const comboJobData = await getAggregatorGraphMetrics({
-  //       jobTypes: [
-  //         ComboJobTypes.TRANSACTIONS,
-  //         ComboJobTypes.ACCOUNT_NUMBER,
-  //       ].join("|"),
-  //       aggregators: uniqueAggregatorId,
-  //       timeFrame: "1d",
-  //       metric: "successRateMetrics",
-  //     });
+      expectValue({ data: accountNumberData, value: 1 });
 
-  //     expect(comboJobData[uniqueAggregatorId]).toEqual([
-  //       expect.objectContaining({
-  //         date: expect.any(String),
-  //         value: 0,
-  //       }),
-  //     ]);
+      const comboJobData = await getAggregatorGraphMetrics({
+        jobTypes: [
+          ComboJobTypes.TRANSACTIONS,
+          ComboJobTypes.ACCOUNT_NUMBER,
+        ].join("|"),
+        aggregators: uniqueAggregatorId,
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
 
-  //     const transactionsData = await getAggregatorGraphMetrics({
-  //       jobTypes: ComboJobTypes.TRANSACTIONS,
-  //       aggregators: uniqueAggregatorId,
-  //       timeFrame: "1d",
-  //       metric: "successRateMetrics",
-  //     });
+      expectValue({ data: comboJobData, value: 0 });
 
-  //     expect(transactionsData[uniqueAggregatorId]).toEqual([
-  //       expect.objectContaining({
-  //         date: expect.any(String),
-  //         value: 0.5,
-  //       }),
-  //     ]);
-  //   });
-  // });
+      const transactionsData = await getAggregatorGraphMetrics({
+        jobTypes: ComboJobTypes.TRANSACTIONS,
+        aggregators: uniqueAggregatorId,
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+
+      expectValue({ data: transactionsData, value: 0.5 });
+    });
+  });
 
   // describe("aggregator options", () => {
   //   const aggId1 = "testAgg1";
