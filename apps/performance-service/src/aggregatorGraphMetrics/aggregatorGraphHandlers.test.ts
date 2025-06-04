@@ -15,6 +15,68 @@ const dataPointFrom28DaysAgoAggregator = {
 };
 const differentJobTypeAggregator = { id: "diffJobAggId", duration: 3333 };
 
+const expectDurationFromAggregator = ({
+  aggregatorId,
+  duration,
+  results,
+}: {
+  aggregatorId: string;
+  duration: number;
+  results: {
+    performance: [];
+  };
+}) => {
+  expect(results).toEqual(
+    expect.objectContaining({
+      performance: expect.arrayContaining([
+        expect.objectContaining({
+          midpoint: expect.any(String),
+          start: expect.any(String),
+          stop: expect.any(String),
+          [aggregatorId]: duration,
+        }),
+      ]),
+    }),
+  );
+};
+
+const expectResultFromAggregator = ({
+  aggregatorId,
+  results,
+}: {
+  aggregatorId: string;
+  results: {
+    performance: [];
+  };
+}) => {
+  expect(results).toEqual(
+    expect.objectContaining({
+      performance: expect.arrayContaining([
+        expect.objectContaining({
+          midpoint: expect.any(String),
+          start: expect.any(String),
+          stop: expect.any(String),
+          [aggregatorId]: 1,
+        }),
+      ]),
+    }),
+  );
+};
+
+const expectNoResultsFromAggregator = ({
+  aggregatorId,
+  results,
+}: {
+  aggregatorId: string;
+  results: {
+    performance: Record<string, unknown>[];
+  };
+}) => {
+  const [firstPerformance] = results?.performance || [];
+
+  expect(firstPerformance?.[aggregatorId]).toBeUndefined();
+};
+
 describe("getAggregatorSuccessGraphData", () => {
   beforeAll(async () => {
     await seedInfluxTestDb({
@@ -52,21 +114,19 @@ describe("getAggregatorSuccessGraphData", () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
-    expect(results).toEqual(
-      expect.objectContaining({
-        [testAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: 1,
-          }),
-        ]),
-      }),
-    );
+    expectResultFromAggregator({
+      aggregatorId: testAggregator.id,
+      results,
+    });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(results[dataPointFrom28DaysAgoAggregator.id]).toBeUndefined();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(results[differentJobTypeAggregator.id]).toBeUndefined();
+    expectNoResultsFromAggregator({
+      aggregatorId: dataPointFrom28DaysAgoAggregator.id,
+      results,
+    });
+    expectNoResultsFromAggregator({
+      aggregatorId: differentJobTypeAggregator.id,
+      results,
+    });
   });
 
   it("uses default query params when none passed (30 days, all job types, all aggregators)", async () => {
@@ -82,28 +142,19 @@ describe("getAggregatorSuccessGraphData", () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
-    expect(results).toEqual(
-      expect.objectContaining({
-        [testAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: 1,
-          }),
-        ]),
-        [dataPointFrom28DaysAgoAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: 1,
-          }),
-        ]),
-        [differentJobTypeAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: 1,
-          }),
-        ]),
-      }),
-    );
+
+    expectResultFromAggregator({
+      aggregatorId: testAggregator.id,
+      results,
+    });
+    expectResultFromAggregator({
+      aggregatorId: dataPointFrom28DaysAgoAggregator.id,
+      results,
+    });
+    expectResultFromAggregator({
+      aggregatorId: differentJobTypeAggregator.id,
+      results,
+    });
   });
 
   it('uses default query params when blank ("") is passed (30 days, all job types, all aggregators)', async () => {
@@ -123,28 +174,19 @@ describe("getAggregatorSuccessGraphData", () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
-    expect(results).toEqual(
-      expect.objectContaining({
-        [testAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: 1,
-          }),
-        ]),
-        [dataPointFrom28DaysAgoAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: 1,
-          }),
-        ]),
-        [differentJobTypeAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: 1,
-          }),
-        ]),
-      }),
-    );
+
+    expectResultFromAggregator({
+      aggregatorId: testAggregator.id,
+      results,
+    });
+    expectResultFromAggregator({
+      aggregatorId: dataPointFrom28DaysAgoAggregator.id,
+      results,
+    });
+    expectResultFromAggregator({
+      aggregatorId: differentJobTypeAggregator.id,
+      results,
+    });
   });
 });
 
@@ -185,21 +227,21 @@ describe("getAggregatorDurationGraphData", () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
-    expect(results).toEqual(
-      expect.objectContaining({
-        [testAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: testAggregator.duration,
-          }),
-        ]),
-      }),
-    );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(results[dataPointFrom28DaysAgoAggregator.id]).toBeUndefined();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(results[differentJobTypeAggregator.id]).toBeUndefined();
+    expectDurationFromAggregator({
+      aggregatorId: testAggregator.id,
+      duration: testAggregator.duration,
+      results,
+    });
+
+    expectNoResultsFromAggregator({
+      aggregatorId: dataPointFrom28DaysAgoAggregator.id,
+      results,
+    });
+    expectNoResultsFromAggregator({
+      aggregatorId: differentJobTypeAggregator.id,
+      results,
+    });
   });
 
   it("uses default query params when none passed (30 days, all job types, all aggregators)", async () => {
@@ -215,28 +257,22 @@ describe("getAggregatorDurationGraphData", () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
-    expect(results).toEqual(
-      expect.objectContaining({
-        [testAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: testAggregator.duration,
-          }),
-        ]),
-        [dataPointFrom28DaysAgoAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: dataPointFrom28DaysAgoAggregator.duration,
-          }),
-        ]),
-        [differentJobTypeAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: differentJobTypeAggregator.duration,
-          }),
-        ]),
-      }),
-    );
+
+    expectDurationFromAggregator({
+      aggregatorId: testAggregator.id,
+      duration: testAggregator.duration,
+      results,
+    });
+    expectDurationFromAggregator({
+      aggregatorId: dataPointFrom28DaysAgoAggregator.id,
+      duration: dataPointFrom28DaysAgoAggregator.duration,
+      results,
+    });
+    expectDurationFromAggregator({
+      aggregatorId: differentJobTypeAggregator.id,
+      duration: differentJobTypeAggregator.duration,
+      results,
+    });
   });
 
   it('uses default query params when blank ("") is passed (30 days, all job types, all aggregators)', async () => {
@@ -256,27 +292,20 @@ describe("getAggregatorDurationGraphData", () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const results = (res.send as jest.Mock).mock.calls[0][0];
-    expect(results).toEqual(
-      expect.objectContaining({
-        [testAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: testAggregator.duration,
-          }),
-        ]),
-        [dataPointFrom28DaysAgoAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: dataPointFrom28DaysAgoAggregator.duration,
-          }),
-        ]),
-        [differentJobTypeAggregator.id]: expect.arrayContaining([
-          expect.objectContaining({
-            date: expect.any(String),
-            value: differentJobTypeAggregator.duration,
-          }),
-        ]),
-      }),
-    );
+    expectDurationFromAggregator({
+      aggregatorId: testAggregator.id,
+      duration: testAggregator.duration,
+      results,
+    });
+    expectDurationFromAggregator({
+      aggregatorId: dataPointFrom28DaysAgoAggregator.id,
+      duration: dataPointFrom28DaysAgoAggregator.duration,
+      results,
+    });
+    expectDurationFromAggregator({
+      aggregatorId: differentJobTypeAggregator.id,
+      duration: differentJobTypeAggregator.duration,
+      results,
+    });
   });
 });
