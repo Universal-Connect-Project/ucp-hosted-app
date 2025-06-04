@@ -6,6 +6,20 @@ import {
   startConnectionEventRequest,
 } from "../../shared/utils/requests";
 
+const expectLooksLikePerformanceData = (item) => {
+  expect(item).to.have.property("mx");
+
+  const expectDateString = (prop: string) => {
+    expect(item)
+      .to.have.property(prop)
+      .that.is.a("string")
+      .and.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/);
+  };
+
+  expectDateString("midpoint");
+  expectDateString("start");
+  expectDateString("stop");
+};
 describe("Graph endpoints", () => {
   before(() => {
     const connectionId = crypto.randomUUID();
@@ -43,14 +57,8 @@ describe("Graph endpoints", () => {
       }).then((response) => {
         expect(response.status).to.eq(200);
         cy.wrap(response.body)
-          .its("testAggregatorId")
-          .each((item) => {
-            expect(item).to.have.property("value").that.is.a("number");
-            expect(item)
-              .to.have.property("date")
-              .that.is.a("string")
-              .and.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/);
-          });
+          .its("performance")
+          .each(expectLooksLikePerformanceData);
       });
     });
 
@@ -81,12 +89,12 @@ describe("Graph endpoints", () => {
       });
     });
 
-    it("allows any aggregator but returns an empty object when aggregator is invalid", () => {
+    it("allows any aggregator but returns an empty array when aggregator is invalid", () => {
       getSuccessGraphPerformanceData({
         aggregators: "nonexistant",
       }).then((response) => {
         expect(response.status).to.eq(200);
-        expect(response.body).to.deep.eq({});
+        expect(response.body).to.deep.eq({ performance: [] });
       });
     });
 
@@ -98,14 +106,8 @@ describe("Graph endpoints", () => {
       }).then((response) => {
         expect(response.status).to.eq(200);
         cy.wrap(response.body)
-          .its("testAggregatorId")
-          .each((item) => {
-            expect(item).to.have.property("value").that.is.a("number");
-            expect(item)
-              .to.have.property("date")
-              .that.is.a("string")
-              .and.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/);
-          });
+          .its("performance")
+          .each(expectLooksLikePerformanceData);
       });
     });
 
@@ -113,14 +115,8 @@ describe("Graph endpoints", () => {
       getSuccessGraphPerformanceData({}).then((response) => {
         expect(response.status).to.eq(200);
         cy.wrap(response.body)
-          .its("testAggregatorId")
-          .each((item) => {
-            expect(item).to.have.property("value").that.is.a("number");
-            expect(item)
-              .to.have.property("date")
-              .that.is.a("string")
-              .and.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/);
-          });
+          .its("performance")
+          .each(expectLooksLikePerformanceData);
       });
     });
   });
@@ -147,14 +143,8 @@ describe("Graph endpoints", () => {
       }).then((response) => {
         expect(response.status).to.eq(200);
         cy.wrap(response.body)
-          .its("testAggregatorId")
-          .each((item) => {
-            expect(item).to.have.property("value").that.is.a("number");
-            expect(item)
-              .to.have.property("date")
-              .that.is.a("string")
-              .and.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/);
-          });
+          .its("performance")
+          .each(expectLooksLikePerformanceData);
       });
     });
 
@@ -185,12 +175,12 @@ describe("Graph endpoints", () => {
       });
     });
 
-    it("allows any aggregator but returns an empty object when aggregator is invalid", () => {
+    it("allows any aggregator but returns an empty array when aggregator is invalid", () => {
       getDurationGraphPerformanceData({
         aggregators: "nonexistant",
       }).then((response) => {
         expect(response.status).to.eq(200);
-        expect(response.body).to.deep.eq({});
+        expect(response.body).to.deep.eq({ performance: [] });
       });
     });
 
@@ -202,14 +192,8 @@ describe("Graph endpoints", () => {
       }).then((response) => {
         expect(response.status).to.eq(200);
         cy.wrap(response.body)
-          .its("testAggregatorId")
-          .each((item) => {
-            expect(item).to.have.property("value").that.is.a("number");
-            expect(item)
-              .to.have.property("date")
-              .that.is.a("string")
-              .and.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/);
-          });
+          .its("performance")
+          .each(expectLooksLikePerformanceData);
       });
     });
 
@@ -217,14 +201,8 @@ describe("Graph endpoints", () => {
       getDurationGraphPerformanceData({}).then((response) => {
         expect(response.status).to.eq(200);
         cy.wrap(response.body)
-          .its("testAggregatorId")
-          .each((item) => {
-            expect(item).to.have.property("value").that.is.a("number");
-            expect(item)
-              .to.have.property("date")
-              .that.is.a("string")
-              .and.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/);
-          });
+          .its("performance")
+          .each(expectLooksLikePerformanceData);
       });
     });
   });
