@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ComboJobTypes } from "@repo/shared-utils";
 import {
   seedInfluxTestDb,
@@ -314,93 +313,97 @@ describe("getAggregatorGraphMetrics", () => {
     });
   });
 
-  // describe("aggregator options", () => {
-  //   const aggId1 = "testAgg1";
-  //   const aggId2 = "testAgg2";
+  describe("aggregator options", () => {
+    const aggId1 = "testAgg1";
+    const aggId2 = "testAgg2";
 
-  //   beforeAll(async () => {
-  //     await seedInfluxTestDb({
-  //       aggregatorId: aggId1,
-  //     });
-  //     await seedInfluxTestDb({
-  //       aggregatorId: aggId2,
-  //     });
+    beforeAll(async () => {
+      await seedInfluxTestDb({
+        aggregatorId: aggId1,
+      });
+      await seedInfluxTestDb({
+        aggregatorId: aggId2,
+      });
 
-  //     await wait(1500);
-  //   });
+      await wait(1500);
+    });
 
-  //   it("gets nothing with an non-existant aggregator", async () => {
-  //     const successData = await getAggregatorGraphMetrics({
-  //       aggregators: "noAggregator",
-  //       timeFrame: "1d",
-  //       metric: "successRateMetrics",
-  //     });
-  //     const durationData = await getAggregatorGraphMetrics({
-  //       jobTypes: "noAggregator",
-  //       timeFrame: "1d",
-  //       metric: "durationMetrics",
-  //     });
+    it("gets nothing with an non-existant aggregator", async () => {
+      const successData = await getAggregatorGraphMetrics({
+        aggregators: "noAggregator",
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getAggregatorGraphMetrics({
+        jobTypes: "noAggregator",
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
 
-  //     expect(successData).toEqual({});
-  //     expect(durationData).toEqual({});
-  //   });
+      expect(successData).toEqual({ performance: [] });
+      expect(durationData).toEqual({ performance: [] });
+    });
 
-  //   it("gets single aggregator data", async () => {
-  //     const successData = await getAggregatorGraphMetrics({
-  //       aggregators: aggId1,
-  //       timeFrame: "1d",
-  //       metric: "successRateMetrics",
-  //     });
-  //     const durationData = await getAggregatorGraphMetrics({
-  //       aggregators: aggId1,
-  //       timeFrame: "1d",
-  //       metric: "durationMetrics",
-  //     });
+    it("gets single aggregator data", async () => {
+      const successData = await getAggregatorGraphMetrics({
+        aggregators: aggId1,
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getAggregatorGraphMetrics({
+        aggregators: aggId1,
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
 
-  //     expect(successData[aggId1].length).toBeGreaterThan(0);
-  //     expect(durationData[aggId1].length).toBeGreaterThan(0);
-  //     expect(successData[aggId2]).toBeUndefined();
-  //     expect(durationData[aggId2]).toBeUndefined();
-  //     expect(successData.mx).toBeUndefined();
-  //     expect(durationData.mx).toBeUndefined();
-  //   });
+      const expectDataOnlyFromFirstAggregator = (
+        data: GraphMetricsResponse,
+      ) => {
+        data.performance.forEach((point) => {
+          expect(point).toHaveProperty(aggId1);
+          expect(point).not.toHaveProperty(aggId2);
+        });
+      };
 
-  //   it("gets combined aggregator data", async () => {
-  //     const successData = await getAggregatorGraphMetrics({
-  //       aggregators: `${aggId1},${aggId2}`,
-  //       timeFrame: "1d",
-  //       metric: "successRateMetrics",
-  //     });
-  //     const durationData = await getAggregatorGraphMetrics({
-  //       aggregators: `${aggId1},${aggId2}`,
-  //       timeFrame: "1d",
-  //       metric: "durationMetrics",
-  //     });
+      expectDataOnlyFromFirstAggregator(successData);
+      expectDataOnlyFromFirstAggregator(durationData);
+    });
 
-  //     expect(successData[aggId1].length).toBeGreaterThan(0);
-  //     expect(durationData[aggId1].length).toBeGreaterThan(0);
-  //     expect(successData[aggId2].length).toBeGreaterThan(0);
-  //     expect(durationData[aggId2].length).toBeGreaterThan(0);
-  //     expect(successData.mx).toBeUndefined();
-  //     expect(durationData.mx).toBeUndefined();
-  //   });
+    const expectDataFromBothAggregators = (data: GraphMetricsResponse) => {
+      data.performance.forEach((point) => {
+        expect(point).toHaveProperty(aggId1);
+        expect(point).toHaveProperty(aggId2);
+      });
+    };
 
-  //   it("gets all aggregator data when none passed in", async () => {
-  //     const successData = await getAggregatorGraphMetrics({
-  //       timeFrame: "1d",
-  //       metric: "successRateMetrics",
-  //     });
-  //     const durationData = await getAggregatorGraphMetrics({
-  //       timeFrame: "1d",
-  //       metric: "durationMetrics",
-  //     });
+    it("gets combined aggregator data", async () => {
+      const successData = await getAggregatorGraphMetrics({
+        aggregators: `${aggId1},${aggId2}`,
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getAggregatorGraphMetrics({
+        aggregators: `${aggId1},${aggId2}`,
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
 
-  //     expect(successData[aggId1].length).toBeGreaterThan(0);
-  //     expect(durationData[aggId1].length).toBeGreaterThan(0);
-  //     expect(successData[aggId2].length).toBeGreaterThan(0);
-  //     expect(durationData[aggId2].length).toBeGreaterThan(0);
-  //     expect(successData.mx.length).toBeGreaterThan(0);
-  //     expect(durationData.mx.length).toBeGreaterThan(0);
-  //   });
-  // });
+      expectDataFromBothAggregators(successData);
+      expectDataFromBothAggregators(durationData);
+    });
+
+    it("gets all aggregator data when none passed in", async () => {
+      const successData = await getAggregatorGraphMetrics({
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getAggregatorGraphMetrics({
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
+
+      expectDataFromBothAggregators(successData);
+      expectDataFromBothAggregators(durationData);
+    });
+  });
 });
