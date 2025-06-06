@@ -60,6 +60,9 @@ jobs:
               "token": "my-secret-token"
             }'
 
+      - name: Seed Influx with Performance Data
+        run: npm run test:seedInfluxPerformance --workspace apps/performance-service
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:

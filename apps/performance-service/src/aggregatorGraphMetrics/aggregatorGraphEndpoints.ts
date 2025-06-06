@@ -8,7 +8,7 @@ import {
 } from "express";
 import Joi from "joi";
 
-import { validateUIAudience } from "../middlewares/validationMiddleware";
+import { validateInstitutionServiceAudience } from "../middlewares/validationMiddleware";
 import {
   getAggregatorSuccessGraphData,
   getAggregatorDurationGraphData,
@@ -55,13 +55,13 @@ const validateAggregatorGraphSchema = (
 
 router.get(
   "/metrics/aggregatorSuccessGraph",
-  [validateUIAudience, validateAggregatorGraphSchema],
+  [validateInstitutionServiceAudience, validateAggregatorGraphSchema],
   getAggregatorSuccessGraphData as RequestHandler,
 );
 
 router.get(
   "/metrics/aggregatorDurationGraph",
-  [validateUIAudience, validateAggregatorGraphSchema],
+  [validateInstitutionServiceAudience, validateAggregatorGraphSchema],
   getAggregatorDurationGraphData as RequestHandler,
 );
 

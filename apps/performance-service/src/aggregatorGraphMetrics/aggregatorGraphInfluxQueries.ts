@@ -1,30 +1,58 @@
 import { TimeFrameToAggregateWindowMap } from "@repo/backend-utils/src/constants";
 import { BUCKET, queryApi } from "../services/influxDb";
+import groupBy from "lodash.groupby";
 
 export type TimeFrame = keyof typeof TimeFrameToAggregateWindowMap;
 
 interface AggSuccessInfluxObj {
   result: string;
-  _time: Date;
   aggregatorId: string;
+  _start: string;
+  _stop: string;
   _value: number;
 }
 
-const transformInfluxGraphMetrics = (dataPoints: AggSuccessInfluxObj[]) => {
-  const aggregatorsPoints: Record<string, { date: Date; value: number }[]> = {};
+const getMidpoint = (start: string, end: string) => {
+  const startDate = new Date(start);
 
-  dataPoints.forEach((dataPoint) => {
-    if (!aggregatorsPoints[dataPoint.aggregatorId]) {
-      aggregatorsPoints[dataPoint.aggregatorId] = [];
-    }
+  const difference = (new Date(end).getTime() - startDate.getTime()) / 2;
 
-    aggregatorsPoints[dataPoint.aggregatorId].push({
-      date: dataPoint._time,
-      value: dataPoint._value,
-    });
-  });
+  return new Date(startDate.getTime() + difference).toISOString();
+};
 
-  return aggregatorsPoints;
+interface PerformanceDataPoint {
+  midpoint: string;
+  start: string;
+  stop: string;
+  [key: string]: string;
+}
+
+export interface GraphMetricsResponse {
+  performance: PerformanceDataPoint[];
+}
+
+const transformInfluxGraphMetrics = (
+  dataPoints: AggSuccessInfluxObj[],
+): GraphMetricsResponse => {
+  const groupedByAggregatorId = groupBy(dataPoints, "aggregatorId");
+
+  const aggregatorIds = Object.keys(groupedByAggregatorId);
+
+  const firstAggregatorId = aggregatorIds[0];
+  const firstAggregatorDataPoints = groupedByAggregatorId[firstAggregatorId];
+
+  const performance =
+    firstAggregatorDataPoints?.map(({ _start, _stop }, index) =>
+      aggregatorIds.reduce(
+        (acc, aggregatorId) => ({
+          ...acc,
+          [aggregatorId]: groupedByAggregatorId[aggregatorId][index]._value,
+        }),
+        { start: _start, midpoint: getMidpoint(_start, _stop), stop: _stop },
+      ),
+    ) || [];
+
+  return { performance };
 };
 
 export async function getAggregatorGraphMetrics({
@@ -51,13 +79,18 @@ export async function getAggregatorGraphMetrics({
         .join(" or ")})`
     : "";
   const fluxQuery = `
+    import "timezone"
+
+    option location = timezone.location(name: "America/New_York")
+
     from(bucket: "${BUCKET}")
       |> range(start: -${timeFrame})
       |> filter(fn: (r) => r._measurement == "${metric}")
       ${aggregatorFilter}
       ${jobTypesFilter}
       |> group(columns: ["aggregatorId"])
-      |> aggregateWindow(every: ${TimeFrameToAggregateWindowMap[timeFrame]}, fn: mean, createEmpty: false)
+      |> window(every: ${TimeFrameToAggregateWindowMap[timeFrame]}, createEmpty: true, location: location)
+      |> mean()
   `;
   const results: AggSuccessInfluxObj[] = await queryApi.collectRows(fluxQuery);
 

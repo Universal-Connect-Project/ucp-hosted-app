@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ComboJobTypes } from "@repo/shared-utils";
 import {
   seedInfluxTestDb,
@@ -6,11 +5,57 @@ import {
   shuffleArray,
   wait,
 } from "../shared/tests/utils";
-import { getAggregatorGraphMetrics } from "./aggregatorGraphInfluxQueries";
+import {
+  getAggregatorGraphMetrics,
+  GraphMetricsResponse,
+} from "./aggregatorGraphInfluxQueries";
+
+const getNowWithSomeForgiveness = () => Date.now() + 5000;
+
+const testDataPoints = ({
+  data,
+  expectedBucketDuration,
+  expectedNumberOfBuckets,
+  shouldAllowOneHourDiscrepancy,
+}: {
+  data: GraphMetricsResponse;
+  expectedBucketDuration: number;
+  expectedNumberOfBuckets: number;
+  shouldAllowOneHourDiscrepancy?: boolean;
+}) => {
+  const { performance } = data;
+
+  const expectedBucketDurations = shouldAllowOneHourDiscrepancy
+    ? [
+        expectedBucketDuration,
+        expectedBucketDuration - 60 * 60 * 1000,
+        expectedBucketDuration + 60 * 60 * 1000,
+      ]
+    : [expectedBucketDuration];
+
+  const nowWithSomeForgiveness = getNowWithSomeForgiveness();
+
+  expect(performance.length).toEqual(expectedNumberOfBuckets);
+
+  performance.slice(1, performance.length - 2).forEach(({ start, stop }) => {
+    const bucketDuration = new Date(stop).getTime() - new Date(start).getTime();
+
+    expect(expectedBucketDurations).toContain(bucketDuration);
+  });
+
+  const lastPerformance = performance[performance.length - 1];
+
+  const start = new Date(lastPerformance.start).getTime();
+  const stop = new Date(lastPerformance.stop).getTime();
+  const midpoint = new Date(lastPerformance.midpoint).getTime();
+
+  expect(start).toBeLessThan(nowWithSomeForgiveness);
+  expect(stop).toBeLessThan(nowWithSomeForgiveness);
+  expect(midpoint).toBeLessThan(stop);
+  expect(midpoint).toBeGreaterThan(start);
+};
 
 describe("getAggregatorGraphMetrics", () => {
-  const nowWithSomeForgiveness = Date.now() + 10000;
-
   beforeAll(async () => {
     await seedInfluxWithAllTimeFrameData();
   });
@@ -27,28 +72,16 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      const expectHourlyDataPoints = (
-        data: Record<
-          string,
-          {
-            date: Date;
-            value: number;
-          }[]
-        >,
-      ) => {
-        const dates = data.mx.map((entry) => new Date(entry.date).getHours());
-        expect(new Set(dates).size).toBeGreaterThanOrEqual(23);
-
-        data.mx.forEach((entry) => {
-          const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
-          const timestamp = new Date(entry.date).getTime();
-          expect(timestamp).toBeGreaterThanOrEqual(twentyFourHoursAgo);
-          expect(timestamp).toBeLessThanOrEqual(nowWithSomeForgiveness);
-        });
-      };
-
-      expectHourlyDataPoints(successData);
-      expectHourlyDataPoints(durationData);
+      testDataPoints({
+        data: successData,
+        expectedBucketDuration: 60 * 60 * 1000,
+        expectedNumberOfBuckets: 25,
+      });
+      testDataPoints({
+        data: durationData,
+        expectedBucketDuration: 60 * 60 * 1000,
+        expectedNumberOfBuckets: 25,
+      });
     });
 
     it("gets half day averages when getting 1 week of performance metrics", async () => {
@@ -62,41 +95,16 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      const expectBiDailyDataPoints = (
-        data: Record<
-          string,
-          {
-            date: Date;
-            value: number;
-          }[]
-        >,
-      ) => {
-        const now = Date.now();
-        const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000;
-
-        const timestamps = data.mx.map((entry) =>
-          new Date(entry.date).getTime(),
-        );
-
-        timestamps.forEach((timestamp) => {
-          expect(timestamp).toBeGreaterThanOrEqual(oneWeekAgo);
-          expect(timestamp).toBeLessThanOrEqual(nowWithSomeForgiveness);
-        });
-
-        const biDailyPeriods = new Set(
-          data.mx.map((entry) => {
-            const dateObj = new Date(entry.date);
-            const day = dateObj.toISOString().split("T")[0];
-            const period = Math.floor(dateObj.getHours() / 12);
-            return `${day}-${period}`;
-          }),
-        );
-
-        expect(biDailyPeriods.size).toBeGreaterThanOrEqual(13);
-      };
-
-      expectBiDailyDataPoints(successData);
-      expectBiDailyDataPoints(durationData);
+      testDataPoints({
+        data: successData,
+        expectedBucketDuration: 12 * 60 * 60 * 1000,
+        expectedNumberOfBuckets: 15,
+      });
+      testDataPoints({
+        data: durationData,
+        expectedBucketDuration: 12 * 60 * 60 * 1000,
+        expectedNumberOfBuckets: 15,
+      });
     });
 
     it("gets daily averages over 30 days of performance metrics", async () => {
@@ -110,36 +118,17 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      const expectDailyDataPoints = (
-        data: Record<
-          string,
-          {
-            date: Date;
-            value: number;
-          }[]
-        >,
-      ) => {
-        const now = Date.now();
-        const oneMonthAgo = now - 30 * 24 * 60 * 60 * 1000;
+      testDataPoints({
+        data: successData,
+        expectedBucketDuration: 24 * 60 * 60 * 1000,
+        expectedNumberOfBuckets: 31,
+      });
 
-        const dailyDays = new Set(
-          data.mx.map((entry) => {
-            const dateObj = new Date(entry.date);
-            return dateObj.toISOString().split("T")[0];
-          }),
-        );
-
-        expect(dailyDays.size).toBeGreaterThanOrEqual(29);
-
-        data.mx.forEach((entry) => {
-          const timestamp = new Date(entry.date).getTime();
-          expect(timestamp).toBeGreaterThanOrEqual(oneMonthAgo);
-          expect(timestamp).toBeLessThanOrEqual(nowWithSomeForgiveness);
-        });
-      };
-
-      expectDailyDataPoints(successData);
-      expectDailyDataPoints(durationData);
+      testDataPoints({
+        data: durationData,
+        expectedBucketDuration: 24 * 60 * 60 * 1000,
+        expectedNumberOfBuckets: 31,
+      });
     });
 
     it("gets 12 day averages over 180 days of performance metrics", async () => {
@@ -153,45 +142,18 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      const expectTwelveDayDataPoints = (
-        data: Record<
-          string,
-          {
-            date: Date;
-            value: number;
-          }[]
-        >,
-      ) => {
-        const now = Date.now();
-        const oneHundredEightyDaysAgo = now - 180 * 24 * 60 * 60 * 1000;
-
-        const twelveDayIntervals = data.mx.map((entry) => {
-          const dateObj = new Date(entry.date);
-          return dateObj.toISOString().split("T")[0];
-        });
-
-        const sortedDates = twelveDayIntervals.sort();
-
-        for (let i = 1; i < sortedDates.length - 1; i++) {
-          const previousDate = new Date(sortedDates[i - 1]);
-          const currentDate = new Date(sortedDates[i]);
-          const dayDifference =
-            (currentDate.getTime() - previousDate.getTime()) /
-            (24 * 60 * 60 * 1000);
-          expect(dayDifference).toBe(12);
-        }
-
-        data.mx.forEach((entry) => {
-          const timestamp = new Date(entry.date).getTime();
-          expect(timestamp).toBeGreaterThanOrEqual(oneHundredEightyDaysAgo);
-          expect(timestamp).toBeLessThanOrEqual(nowWithSomeForgiveness);
-        });
-
-        expect(sortedDates.length).toBeGreaterThanOrEqual(Math.floor(180 / 12));
-      };
-
-      expectTwelveDayDataPoints(successData);
-      expectTwelveDayDataPoints(durationData);
+      testDataPoints({
+        data: successData,
+        expectedBucketDuration: 12 * 24 * 60 * 60 * 1000,
+        expectedNumberOfBuckets: 16,
+        shouldAllowOneHourDiscrepancy: true,
+      });
+      testDataPoints({
+        data: durationData,
+        expectedBucketDuration: 12 * 24 * 60 * 60 * 1000,
+        expectedNumberOfBuckets: 16,
+        shouldAllowOneHourDiscrepancy: true,
+      });
     });
 
     it("gets 30 day averages over 1 year of performance metrics", async () => {
@@ -205,45 +167,18 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      const expect30DayDataPoints = (
-        data: Record<
-          string,
-          {
-            date: Date;
-            value: number;
-          }[]
-        >,
-      ) => {
-        const now = Date.now();
-        const oneYearAgo = now - 365 * 24 * 60 * 60 * 1000;
-
-        const thirtyDayIntervals = data.mx.map((entry) => {
-          const dateObj = new Date(entry.date);
-          return dateObj.toISOString().split("T")[0];
-        });
-
-        const sortedDates = thirtyDayIntervals.sort();
-
-        for (let i = 1; i < sortedDates.length - 1; i++) {
-          const previousDate = new Date(sortedDates[i - 1]);
-          const currentDate = new Date(sortedDates[i]);
-          const dayDifference =
-            (currentDate.getTime() - previousDate.getTime()) /
-            (24 * 60 * 60 * 1000);
-          expect(dayDifference).toBe(30);
-        }
-
-        data.mx.forEach((entry) => {
-          const timestamp = new Date(entry.date).getTime();
-          expect(timestamp).toBeGreaterThanOrEqual(oneYearAgo);
-          expect(timestamp).toBeLessThanOrEqual(nowWithSomeForgiveness);
-        });
-
-        expect(sortedDates.length).toBeGreaterThanOrEqual(Math.floor(365 / 30));
-      };
-
-      expect30DayDataPoints(successData);
-      expect30DayDataPoints(durationData);
+      testDataPoints({
+        data: successData,
+        expectedBucketDuration: 30 * 24 * 60 * 60 * 1000,
+        expectedNumberOfBuckets: 13,
+        shouldAllowOneHourDiscrepancy: true,
+      });
+      testDataPoints({
+        data: durationData,
+        expectedBucketDuration: 30 * 24 * 60 * 60 * 1000,
+        expectedNumberOfBuckets: 13,
+        shouldAllowOneHourDiscrepancy: true,
+      });
     });
   });
 
@@ -260,8 +195,8 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData).toEqual({});
-      expect(durationData).toEqual({});
+      expect(successData).toEqual({ performance: [] });
+      expect(durationData).toEqual({ performance: [] });
     });
 
     const shuffledJobTypeCombinations = Object.values(ComboJobTypes)
@@ -287,8 +222,8 @@ describe("getAggregatorGraphMetrics", () => {
           metric: "durationMetrics",
         });
 
-        expect(successData.mx.length).toBeGreaterThan(0);
-        expect(durationData.mx.length).toBeGreaterThan(0);
+        expect(successData.performance.length).toBeGreaterThan(0);
+        expect(durationData.performance.length).toBeGreaterThan(0);
       });
     });
 
@@ -302,8 +237,8 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData.mx.length).toBeGreaterThan(0);
-      expect(durationData.mx.length).toBeGreaterThan(0);
+      expect(successData.performance.length).toBeGreaterThan(0);
+      expect(durationData.performance.length).toBeGreaterThan(0);
     });
 
     it("gets expected values from specific job types", async () => {
@@ -332,6 +267,20 @@ describe("getAggregatorGraphMetrics", () => {
 
       await wait(1500); // DB writing needs time to finish before reading
 
+      const expectValue = ({
+        data,
+        value,
+      }: {
+        data: GraphMetricsResponse;
+        value: number;
+      }) => {
+        expect(data.performance).toContainEqual(
+          expect.objectContaining({
+            [uniqueAggregatorId]: value,
+          }),
+        );
+      };
+
       const accountNumberData = await getAggregatorGraphMetrics({
         jobTypes: ComboJobTypes.ACCOUNT_NUMBER,
         timeFrame: "1d",
@@ -339,12 +288,7 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "successRateMetrics",
       });
 
-      expect(accountNumberData[uniqueAggregatorId]).toEqual([
-        expect.objectContaining({
-          date: expect.any(String),
-          value: 1,
-        }),
-      ]);
+      expectValue({ data: accountNumberData, value: 1 });
 
       const comboJobData = await getAggregatorGraphMetrics({
         jobTypes: [
@@ -356,12 +300,7 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "successRateMetrics",
       });
 
-      expect(comboJobData[uniqueAggregatorId]).toEqual([
-        expect.objectContaining({
-          date: expect.any(String),
-          value: 0,
-        }),
-      ]);
+      expectValue({ data: comboJobData, value: 0 });
 
       const transactionsData = await getAggregatorGraphMetrics({
         jobTypes: ComboJobTypes.TRANSACTIONS,
@@ -370,12 +309,7 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "successRateMetrics",
       });
 
-      expect(transactionsData[uniqueAggregatorId]).toEqual([
-        expect.objectContaining({
-          date: expect.any(String),
-          value: 0.5,
-        }),
-      ]);
+      expectValue({ data: transactionsData, value: 0.5 });
     });
   });
 
@@ -406,8 +340,8 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData).toEqual({});
-      expect(durationData).toEqual({});
+      expect(successData).toEqual({ performance: [] });
+      expect(durationData).toEqual({ performance: [] });
     });
 
     it("gets single aggregator data", async () => {
@@ -422,13 +356,25 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData[aggId1].length).toBeGreaterThan(0);
-      expect(durationData[aggId1].length).toBeGreaterThan(0);
-      expect(successData[aggId2]).toBeUndefined();
-      expect(durationData[aggId2]).toBeUndefined();
-      expect(successData.mx).toBeUndefined();
-      expect(durationData.mx).toBeUndefined();
+      const expectDataOnlyFromFirstAggregator = (
+        data: GraphMetricsResponse,
+      ) => {
+        data.performance.forEach((point) => {
+          expect(point).toHaveProperty(aggId1);
+          expect(point).not.toHaveProperty(aggId2);
+        });
+      };
+
+      expectDataOnlyFromFirstAggregator(successData);
+      expectDataOnlyFromFirstAggregator(durationData);
     });
+
+    const expectDataFromBothAggregators = (data: GraphMetricsResponse) => {
+      data.performance.forEach((point) => {
+        expect(point).toHaveProperty(aggId1);
+        expect(point).toHaveProperty(aggId2);
+      });
+    };
 
     it("gets combined aggregator data", async () => {
       const successData = await getAggregatorGraphMetrics({
@@ -442,12 +388,8 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData[aggId1].length).toBeGreaterThan(0);
-      expect(durationData[aggId1].length).toBeGreaterThan(0);
-      expect(successData[aggId2].length).toBeGreaterThan(0);
-      expect(durationData[aggId2].length).toBeGreaterThan(0);
-      expect(successData.mx).toBeUndefined();
-      expect(durationData.mx).toBeUndefined();
+      expectDataFromBothAggregators(successData);
+      expectDataFromBothAggregators(durationData);
     });
 
     it("gets all aggregator data when none passed in", async () => {
@@ -460,12 +402,8 @@ describe("getAggregatorGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData[aggId1].length).toBeGreaterThan(0);
-      expect(durationData[aggId1].length).toBeGreaterThan(0);
-      expect(successData[aggId2].length).toBeGreaterThan(0);
-      expect(durationData[aggId2].length).toBeGreaterThan(0);
-      expect(successData.mx.length).toBeGreaterThan(0);
-      expect(durationData.mx.length).toBeGreaterThan(0);
+      expectDataFromBothAggregators(successData);
+      expectDataFromBothAggregators(durationData);
     });
   });
 });
