@@ -522,6 +522,10 @@
                   },
                   "aggregatorId": {
                     "type": "string"
+                  },
+                  "recordDuration": {
+                    "type": "boolean",
+                    "default": true
                   }
                 }
               }
@@ -541,6 +545,7 @@
                       "connectionId": "MBR-123-455-123",
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
+                      "recordDuration": true,
                       "clientId": "54321",
                       "jobTypes": ["transactions"],
                       "startedAt": "2024-09-10T16:07:46.038Z"
@@ -601,6 +606,7 @@
                       "connectionId": "MBR-123-455-123",
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
+                      "recordDuration": true,
                       "clientId": "54321",
                       "jobTypes": ["transactions"],
                       "userInteractionTime": 0,
@@ -664,6 +670,7 @@
                       "connectionId": "MBR-123-455-123",
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
+                      "recordDuration": true,
                       "clientId": "54321",
                       "jobTypes": ["transactions"],
                       "userInteractionTime": 140,
@@ -727,6 +734,7 @@
                       "connectionId": "MBR-123-455-123",
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
+                      "recordDuration": true,
                       "clientId": "54321",
                       "jobTypes": ["transactions"],
                       "userInteractionTime": 140,
