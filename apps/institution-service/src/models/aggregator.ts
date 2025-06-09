@@ -15,7 +15,7 @@ export class Aggregator extends Model<
   InferAttributes<Aggregator, { omit: "aggregatorIntegrations" }>,
   InferCreationAttributes<Aggregator, { omit: "aggregatorIntegrations" }>
 > {
-  declare id?: number;
+  declare id: CreationOptional<number>;
   declare name: string;
   declare displayName: string;
   declare logo: string;
@@ -34,6 +34,11 @@ export class Aggregator extends Model<
 
 Aggregator.init(
   {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     name: {
       type: DataTypes.TEXT,
     },

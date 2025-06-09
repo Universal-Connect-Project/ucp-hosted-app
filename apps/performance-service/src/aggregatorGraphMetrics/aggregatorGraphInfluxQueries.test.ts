@@ -5,10 +5,8 @@ import {
   shuffleArray,
   wait,
 } from "../shared/tests/utils";
-import {
-  getAggregatorGraphMetrics,
-  GraphMetricsResponse,
-} from "./aggregatorGraphInfluxQueries";
+import { getAggregatorGraphMetrics } from "./aggregatorGraphInfluxQueries";
+import { GraphMetricsResponse } from "@repo/backend-utils";
 
 const getNowWithSomeForgiveness = () => Date.now() + 5000;
 
