@@ -7,6 +7,7 @@ interface CreateStartRequest {
   jobTypes: string[];
   institutionId: string;
   aggregatorId: string;
+  recordDuration?: boolean;
 }
 
 export interface EventObject {
@@ -19,6 +20,7 @@ export interface EventObject {
   userInteractionTime: number;
   pausedAt: number | null | undefined;
   successAt?: number;
+  recordDuration: boolean;
 }
 
 export interface DecodedToken {
@@ -55,8 +57,12 @@ export const createStartEvent = async (req: Request, res: Response) => {
   try {
     const clientId = getClientIdFromRequest(req);
     const { connectionId } = req.params;
-    const { jobTypes, institutionId, aggregatorId } =
-      req.body as CreateStartRequest;
+    const {
+      jobTypes,
+      institutionId,
+      aggregatorId,
+      recordDuration = true,
+    } = req.body as CreateStartRequest;
     const eventBody = {
       connectionId,
       institutionId,
@@ -64,6 +70,7 @@ export const createStartEvent = async (req: Request, res: Response) => {
       clientId,
       jobTypes,
       startedAt: Date.now(),
+      recordDuration,
     };
     const eventObj = (await getEvent(connectionId)) as EventObject;
     if (eventObj) {
