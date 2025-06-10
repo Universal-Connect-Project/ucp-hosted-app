@@ -77,25 +77,17 @@ export const getAggregatorSuccessGraph = async (
         )
       : aggregatorsData;
 
-    try {
-      const successGraphResults =
-        await getAggregatorSuccessGraphFromPerformanceService({
-          aggregators: aggregators,
-          jobTypes,
-          timeFrame,
-        });
-
-      res.status(200).json({
-        aggregators: filteredAggregators,
-        performance: successGraphResults.performance,
+    const successGraphResults =
+      await getAggregatorSuccessGraphFromPerformanceService({
+        aggregators: aggregators,
+        jobTypes,
+        timeFrame,
       });
-    } catch (error) {
-      const err = error as Error;
 
-      res.status(503).json({
-        error: err.message,
-      });
-    }
+    res.status(200).json({
+      aggregators: filteredAggregators,
+      performance: successGraphResults.performance,
+    });
   } catch (error) {
     res
       .status(500)
