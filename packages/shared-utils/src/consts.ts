@@ -49,7 +49,8 @@ export const UiUserPermissions = {
     "delete:aggregatorIntegration:aggregator",
 };
 
-export const TIME_FRAME_ERROR_TEXT = '"timeFrame" must be one of [, 1d, 1w, 30d, 180d, 1y]'
+export const TIME_FRAME_ERROR_TEXT =
+  '"timeFrame" must be one of [, 1d, 1w, 30d, 180d, 1y]';
 
 export const AUTH0_CLIENT_AUDIENCE = "ucp-hosted-apps";
 export const AUTH0_WIDGET_AUDIENCE = "ucp-widget-interactions";

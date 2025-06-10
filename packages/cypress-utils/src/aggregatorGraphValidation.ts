@@ -16,66 +16,71 @@ const expectLooksLikePerformanceData = (item) => {
 };
 
 interface FetchFunctionParams {
-    timeFrame?: string;
-    jobTypes?: string;
-    aggregators?: string;
+  timeFrame?: string;
+  jobTypes?: string;
+  aggregators?: string;
 }
 
 interface FetchFunctionResponse {
-    status: number;
-    body: any;
+  status: number;
+  body: any;
 }
 
-type FetchFunction = (params: FetchFunctionParams) => Cypress.Chainable<FetchFunctionResponse>;
+type FetchFunction = (
+  params: FetchFunctionParams,
+) => Cypress.Chainable<FetchFunctionResponse>;
 
-export const createAggregatorGraphValidationTests = (fetchFunction: FetchFunction) => describe("aggregator graph validation tests", () => {
+export const createAggregatorGraphValidationTests = (
+  fetchFunction: FetchFunction,
+) =>
+  describe("aggregator graph validation tests", () => {
     it("fails when timeFrame param is wrong", () => {
-        fetchFunction({
-            timeFrame: "3d",
-            jobTypes: ComboJobTypes.TRANSACTIONS,
-            aggregators: "mx,sophtron",
-        }).then((response: FetchFunctionResponse) => {
-            expect(response.status).to.eq(400);
-            expect(response.body).to.deep.eq({
-                error: TIME_FRAME_ERROR_TEXT,
-            });
+      fetchFunction({
+        timeFrame: "3d",
+        jobTypes: ComboJobTypes.TRANSACTIONS,
+        aggregators: "mx,sophtron",
+      }).then((response: FetchFunctionResponse) => {
+        expect(response.status).to.eq(400);
+        expect(response.body).to.deep.eq({
+          error: TIME_FRAME_ERROR_TEXT,
         });
+      });
     });
 
     it("fails when jobType param is wrong", () => {
-        fetchFunction({
-            timeFrame: "30d",
-            jobTypes: "invalidJobType",
-            aggregators: "mx,sophtron",
-        }).then((response: FetchFunctionResponse) => {
-            expect(response.status).to.eq(400);
-            expect(response.body).to.deep.eq({
-                error:
-                    '"jobTypes" contains invalid values. Valid values include: [accountNumber, accountOwner, transactions, transactionHistory] or any combination of these joined by |',
-            });
+      fetchFunction({
+        timeFrame: "30d",
+        jobTypes: "invalidJobType",
+        aggregators: "mx,sophtron",
+      }).then((response: FetchFunctionResponse) => {
+        expect(response.status).to.eq(400);
+        expect(response.body).to.deep.eq({
+          error:
+            '"jobTypes" contains invalid values. Valid values include: [accountNumber, accountOwner, transactions, transactionHistory] or any combination of these joined by |',
         });
+      });
     });
 
     it("allows any aggregator but returns an empty array when aggregator is invalid", () => {
-        fetchFunction({
-            aggregators: "nonexistant",
-        }).then((response: FetchFunctionResponse) => {
-            expect(response.status).to.eq(200);
-            expect(response.body.performance).to.deep.eq([]);
-        });
+      fetchFunction({
+        aggregators: "nonexistant",
+      }).then((response: FetchFunctionResponse) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.performance).to.deep.eq([]);
+      });
     });
 
     it("allows combined JobTypes in any order", () => {
-        fetchFunction({
-            timeFrame: "30d",
-            jobTypes: `${ComboJobTypes.TRANSACTIONS}|${ComboJobTypes.ACCOUNT_NUMBER},${ComboJobTypes.TRANSACTIONS}`,
-            aggregators: "mx,sophtron,testAggregatorId",
-        }).then((response: FetchFunctionResponse) => {
-            expect(response.status).to.eq(200);
-            cy.wrap(response.body)
-                .its("performance")
-                .each(expectLooksLikePerformanceData);
-        });
+      fetchFunction({
+        timeFrame: "30d",
+        jobTypes: `${ComboJobTypes.TRANSACTIONS}|${ComboJobTypes.ACCOUNT_NUMBER},${ComboJobTypes.TRANSACTIONS}`,
+        aggregators: "mx,sophtron,testAggregatorId",
+      }).then((response: FetchFunctionResponse) => {
+        expect(response.status).to.eq(200);
+        cy.wrap(response.body)
+          .its("performance")
+          .each(expectLooksLikePerformanceData);
+      });
     });
 
     it("works without any filter params", () => {
@@ -86,4 +91,4 @@ export const createAggregatorGraphValidationTests = (fetchFunction: FetchFunctio
           .each(expectLooksLikePerformanceData);
       });
     });
-});
+  });
