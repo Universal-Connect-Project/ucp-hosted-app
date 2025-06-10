@@ -1,1 +1,1 @@
-export * from "./aggragatorGraphValidation";
+export * from "./aggregatorGraphValidation";
