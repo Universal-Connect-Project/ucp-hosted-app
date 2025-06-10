@@ -1,7 +1,12 @@
-import { TIME_FRAME_ERROR_TEXT } from "@repo/shared-utils";
+import {
+  ComboJobTypes,
+  JOB_TYPES_ERROR_TEXT,
+  TIME_FRAME_ERROR_TEXT,
+} from "@repo/shared-utils";
 import {
   createRequestBodySchemaValidator,
   createRequestQueryParamSchemaValidator,
+  validateAggregatorGraphRequestSchema,
   validateAggregatorRequestSchema,
 } from "./validation";
 import { NextFunction, request, Request, Response } from "express";
@@ -123,6 +128,72 @@ describe("validation", () => {
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: TIME_FRAME_ERROR_TEXT,
+      });
+    });
+  });
+
+  describe("validateAggregatorGraphRequestSchema", () => {
+    it("should allow a valid timeFrame query parameter", () => {
+      const next = jest.fn();
+
+      validateAggregatorGraphRequestSchema(
+        {
+          query: {
+            aggregators: "mx, sophtron",
+            jobTypes: `${ComboJobTypes.TRANSACTIONS}|${ComboJobTypes.ACCOUNT_NUMBER}`,
+            timeFrame: "30d",
+          },
+        } as unknown as Request,
+        {
+          status: jest.fn().mockReturnThis(),
+          json: jest.fn(),
+        } as unknown as Response,
+        next,
+      );
+      expect(next).toHaveBeenCalled();
+    });
+
+    it("should return 400 for an invalid timeFrame query parameter", () => {
+      const next = jest.fn();
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      validateAggregatorGraphRequestSchema(
+        {
+          query: { timeFrame: "invalid" },
+        } as unknown as Request,
+        res,
+        next,
+      );
+      expect(next).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: TIME_FRAME_ERROR_TEXT,
+      });
+    });
+
+    it("should return 400 for an invalid jobTypes query parameter", () => {
+      const next = jest.fn();
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      validateAggregatorGraphRequestSchema(
+        {
+          query: {
+            jobTypes: "invalidJobType",
+          },
+        } as unknown as Request,
+        res,
+        next,
+      );
+      expect(next).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: JOB_TYPES_ERROR_TEXT,
       });
     });
   });

@@ -1,4 +1,8 @@
-import { ComboJobTypes, TIME_FRAME_ERROR_TEXT } from "@repo/shared-utils";
+import {
+  ComboJobTypes,
+  JOB_TYPES_ERROR_TEXT,
+  TIME_FRAME_ERROR_TEXT,
+} from "@repo/shared-utils";
 
 const expectLooksLikePerformanceData = (item) => {
   expect(item).to.have.property("mx");
@@ -55,8 +59,7 @@ export const createAggregatorGraphValidationTests = (
       }).then((response: FetchFunctionResponse) => {
         expect(response.status).to.eq(400);
         expect(response.body).to.deep.eq({
-          error:
-            '"jobTypes" contains invalid values. Valid values include: [accountNumber, accountOwner, transactions, transactionHistory] or any combination of these joined by |',
+          error: JOB_TYPES_ERROR_TEXT,
         });
       });
     });

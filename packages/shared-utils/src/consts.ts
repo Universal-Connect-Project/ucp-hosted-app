@@ -1,3 +1,9 @@
+export const TIME_FRAME_ERROR_TEXT =
+  '"timeFrame" must be one of [, 1d, 1w, 30d, 180d, 1y]';
+
+export const JOB_TYPES_ERROR_TEXT =
+  '"jobTypes" contains invalid values. Valid values include: [accountNumber, accountOwner, transactions, transactionHistory] or any combination of these joined by |';
+
 export const DefaultPermissions = {
   OPENID: "openid",
   USERINFO: "userinfo",
@@ -48,9 +54,6 @@ export const UiUserPermissions = {
   DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR:
     "delete:aggregatorIntegration:aggregator",
 };
-
-export const TIME_FRAME_ERROR_TEXT =
-  '"timeFrame" must be one of [, 1d, 1w, 30d, 180d, 1y]';
 
 export const AUTH0_CLIENT_AUDIENCE = "ucp-hosted-apps";
 export const AUTH0_WIDGET_AUDIENCE = "ucp-widget-interactions";
