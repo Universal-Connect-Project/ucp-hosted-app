@@ -1,6 +1,8 @@
+import { TIME_FRAME_ERROR_TEXT } from "@repo/shared-utils";
 import {
   createRequestBodySchemaValidator,
   createRequestQueryParamSchemaValidator,
+  validateAggregatorRequestSchema,
 } from "./validation";
 import { NextFunction, request, Request, Response } from "express";
 import Joi from "joi";
@@ -84,5 +86,44 @@ describe("validation", () => {
     createValidator: createRequestQueryParamSchemaValidator,
     requestValidationLocation: "query",
     title: "createRequestQueryParamSchemaValidator",
+  });
+
+  describe("validateAggregatorRequestSchema", () => {
+    it("should allow a valid timeFrame query parameter", () => {
+      const next = jest.fn();
+
+      validateAggregatorRequestSchema(
+        {
+          query: { timeFrame: "30d" },
+        } as unknown as Request,
+        {
+          status: jest.fn().mockReturnThis(),
+          json: jest.fn(),
+        } as unknown as Response,
+        next,
+      );
+      expect(next).toHaveBeenCalled();
+    });
+
+    it("should return 400 for an invalid timeFrame query parameter", () => {
+      const next = jest.fn();
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      validateAggregatorRequestSchema(
+        {
+          query: { timeFrame: "invalid" },
+        } as unknown as Request,
+        res,
+        next,
+      );
+      expect(next).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: TIME_FRAME_ERROR_TEXT,
+      });
+    });
   });
 });
