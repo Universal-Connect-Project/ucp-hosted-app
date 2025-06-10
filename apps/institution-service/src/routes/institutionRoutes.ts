@@ -1,4 +1,4 @@
-import { validateRequestBody } from "@repo/backend-utils";
+import { createRequestBodySchemaValidator } from "@repo/backend-utils";
 import { UiUserPermissions, WidgetHostPermissions } from "@repo/shared-utils";
 import { RequestHandler, Router } from "express";
 import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
@@ -43,7 +43,7 @@ router.get(
 
 router.post(
   "/",
-  [validateUIAudience, validateRequestBody(institutionSchema)],
+  [validateUIAudience, createRequestBodySchemaValidator(institutionSchema)],
   scopeIncludesAny(
     `${UiUserPermissions.CREATE_INSTITUTION} ${UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR}`,
   ),
@@ -57,7 +57,7 @@ router.put(
   [
     validateUIAudience,
     validateUserCanEditInstitution,
-    validateRequestBody(institutionSchema),
+    createRequestBodySchemaValidator(institutionSchema),
   ],
   scopeIncludesAny(
     `${UiUserPermissions.UPDATE_INSTITUTION} ${UiUserPermissions.UPDATE_INSTITUTION_AGGREGATOR}`,

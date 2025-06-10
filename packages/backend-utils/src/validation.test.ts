@@ -1,9 +1,22 @@
-import { validateRequestBody } from "./validation";
-import { NextFunction, Request, Response } from "express";
+import {
+  createRequestBodySchemaValidator,
+  createRequestQueryParamSchemaValidator,
+} from "./validation";
+import { NextFunction, request, Request, Response } from "express";
 import Joi from "joi";
 
-describe("validation", () => {
-  describe("validateRequestBody", () => {
+const createValidatorTests = ({
+  createValidator,
+  requestValidationLocation,
+  title,
+}: {
+  createValidator: (
+    schema: Joi.ObjectSchema,
+  ) => (req: Request, res: Response, next: NextFunction) => void;
+  requestValidationLocation: "body" | "query";
+  title: string;
+}) =>
+  describe(title, () => {
     let req: Partial<Request>;
     let res: Partial<Response>;
     let next: NextFunction;
@@ -23,9 +36,9 @@ describe("validation", () => {
     });
 
     it("should call next() when request body is valid", () => {
-      req.body = { name: "John Doe", age: 25 };
+      req[requestValidationLocation] = { name: "John Doe", age: 25 };
 
-      validateRequestBody(schema)(req as Request, res as Response, next);
+      createValidator(schema)(req as Request, res as Response, next);
 
       expect(next).toHaveBeenCalled();
       expect(res.status).not.toHaveBeenCalled();
@@ -33,9 +46,9 @@ describe("validation", () => {
     });
 
     it("should return 400 status and error message when request body is invalid", () => {
-      req.body = { name: "John Doe" }; // Missing 'age' field
+      req[requestValidationLocation] = { name: "John Doe" }; // Missing 'age' field
 
-      validateRequestBody(schema)(req as Request, res as Response, next);
+      createValidator(schema)(req as Request, res as Response, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
@@ -45,9 +58,12 @@ describe("validation", () => {
     });
 
     it("should return 400 status and correct error message for invalid type", () => {
-      req.body = { name: "John Doe", age: "not-a-number" }; // Invalid type for age
+      req[requestValidationLocation] = {
+        name: "John Doe",
+        age: "not-a-number",
+      }; // Invalid type for age
 
-      validateRequestBody(schema)(req as Request, res as Response, next);
+      createValidator(schema)(req as Request, res as Response, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
@@ -55,5 +71,18 @@ describe("validation", () => {
       });
       expect(next).not.toHaveBeenCalled();
     });
+  });
+
+describe("validation", () => {
+  createValidatorTests({
+    createValidator: createRequestBodySchemaValidator,
+    requestValidationLocation: "body",
+    title: "createRequestBodySchemaValidator",
+  });
+
+  createValidatorTests({
+    createValidator: createRequestQueryParamSchemaValidator,
+    requestValidationLocation: "query",
+    title: "createRequestQueryParamSchemaValidator",
   });
 });

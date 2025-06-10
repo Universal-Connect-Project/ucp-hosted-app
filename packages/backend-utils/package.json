@@ -4,7 +4,8 @@
   "description": "Shared utils for backend specific services",
   "main": "./src/index.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "typescript": "^5.5.4",
