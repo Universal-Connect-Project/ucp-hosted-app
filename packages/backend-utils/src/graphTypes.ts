@@ -1,4 +1,4 @@
-interface PerformanceDataPoint {
+export interface PerformanceDataPoint {
   midpoint: string;
   start: string;
   stop: string;

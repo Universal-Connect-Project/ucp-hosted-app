@@ -9,16 +9,26 @@ const getAggregatorSuccessGraphFromPerformanceService = async ({
   jobTypes,
   timeFrame,
 }: {
-  aggregators: string[] | undefined;
+  aggregators: string | undefined;
   jobTypes: string | undefined;
   timeFrame: string | undefined;
 }): Promise<GraphMetricsResponse> => {
   const token = await getPerformanceServiceAccessToken();
-  const params = new URLSearchParams({
-    aggregators: aggregators?.join(",") || "",
-    jobTypes: jobTypes || "",
-    timeFrame: timeFrame || "",
-  });
+  const queryParams = Object.entries({
+    aggregators,
+    jobTypes,
+    timeFrame,
+  }).reduce(
+    (acc, [key, value]) => {
+      if (value) {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  const params = new URLSearchParams(queryParams);
 
   const response = await fetch(
     `${PERFORMANCE_SERVICE_URL}/metrics/aggregatorSuccessGraph?${params.toString()}`,
@@ -59,7 +69,7 @@ export const getAggregatorSuccessGraph = async (
       timeFrame: string | undefined;
     };
 
-    const aggregatorsFromQueryParam = aggregators?.split(",");
+    const aggregatorsFromQueryParam = aggregators && aggregators?.split(",");
 
     const filteredAggregators = aggregatorsFromQueryParam?.length
       ? aggregatorsData.filter((aggregator) =>
@@ -70,7 +80,7 @@ export const getAggregatorSuccessGraph = async (
     try {
       const successGraphResults =
         await getAggregatorSuccessGraphFromPerformanceService({
-          aggregators: filteredAggregators?.map((a) => a.name),
+          aggregators: aggregators,
           jobTypes,
           timeFrame,
         });

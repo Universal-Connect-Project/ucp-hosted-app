@@ -1,0 +1,14 @@
+{
+  "name": "@repo/cypress-utils",
+  "version": "0.0.1",
+  "description": "Shared cypress utils",
+  "main": "./src/index.ts",
+  "scripts": {},
+  "dependencies": {
+    "@repo/shared-utils": "*",
+    "cypress": "^12.16.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

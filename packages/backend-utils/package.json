@@ -11,6 +11,7 @@
     "@types/express": "^4.17.21"
   },
   "dependencies": {
+    "@repo/shared-utils": "*",
     "express": "^4.21.2",
     "express-oauth2-jwt-bearer": "^1.6.0",
     "joi": "^17.13.3"
