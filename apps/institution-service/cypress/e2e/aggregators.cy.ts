@@ -1,6 +1,7 @@
 import { Aggregator } from "models/aggregator";
 import { runTokenInvalidCheck } from "../support/utils";
 import {
+  getAggregatorDurationGraph,
   getAggregators,
   getAggregatorSuccessGraph,
   getAggregatorsWithPerformance,
@@ -113,13 +114,8 @@ describe("aggregators", () => {
     });
   });
 
-  describe("/aggregators/successGraph GET", () => {
-    runTokenInvalidCheck({
-      url: "aggregators/performance",
-      method: "GET",
-    });
-
-    const validateSuccessGraphResponse = (
+  describe("graphEndpoints", () => {
+    const validateGraphResponse = (
       response: Cypress.Response<{
         aggregators: Aggregator[];
         performance: PerformanceDataPoint[];
@@ -133,35 +129,51 @@ describe("aggregators", () => {
       });
     };
 
-    it("returns a success graph with no parameters", () => {
-      getAggregatorSuccessGraph({}).then(validateSuccessGraphResponse);
-    });
+    const createGraphTests = (
+      url: string,
+      getGraphFunction: (
+        params: Record<string, string>,
+      ) => Cypress.Chainable<Cypress.Response<unknown>>,
+    ) =>
+      describe(`${url} GET`, () => {
+        runTokenInvalidCheck({
+          url,
+          method: "GET",
+        });
 
-    it("returns a success graph with a valid timeFrame, aggregators, and jobTypes. Filters by aggregators", () => {
-      getAggregatorSuccessGraph({
-        aggregators: "mx,sophtron",
-        jobTypes: "accountNumber,transactions",
-        timeFrame: "180d",
-      }).then(
-        (
-          response: Cypress.Response<{
-            aggregators: Aggregator[];
-            performance: PerformanceDataPoint[];
-          }>,
-        ) => {
-          validateSuccessGraphResponse(response);
+        it("returns a success graph with no parameters", () => {
+          getGraphFunction({}).then(validateGraphResponse);
+        });
 
-          expect(response.body.aggregators.length).to.eq(2);
+        it("returns a success graph with a valid timeFrame, aggregators, and jobTypes. Filters by aggregators", () => {
+          getGraphFunction({
+            aggregators: "mx,sophtron",
+            jobTypes: "accountNumber,transactions",
+            timeFrame: "180d",
+          }).then(
+            (
+              response: Cypress.Response<{
+                aggregators: Aggregator[];
+                performance: PerformanceDataPoint[];
+              }>,
+            ) => {
+              validateGraphResponse(response);
 
-          cy.wrap(response.body.aggregators).each(
-            (aggregator: { name: string }) => {
-              expect(["mx", "sophtron"]).to.include(aggregator.name);
+              expect(response.body.aggregators.length).to.eq(2);
+
+              cy.wrap(response.body.aggregators).each(
+                (aggregator: { name: string }) => {
+                  expect(["mx", "sophtron"]).to.include(aggregator.name);
+                },
+              );
             },
           );
-        },
-      );
-    });
+        });
 
-    createAggregatorGraphValidationTests(getAggregatorSuccessGraph);
+        createAggregatorGraphValidationTests(getGraphFunction);
+      });
+
+    createGraphTests("aggregators/successGraph", getAggregatorSuccessGraph);
+    createGraphTests("aggregators/durationGraph", getAggregatorDurationGraph);
   });
 });

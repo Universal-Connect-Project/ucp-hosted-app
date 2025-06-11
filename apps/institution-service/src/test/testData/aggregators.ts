@@ -81,3 +81,16 @@ export const aggregatorSuccessGraphData = {
     },
   ],
 };
+
+export const aggregatorDurationGraphData = {
+  performance: [
+    {
+      mx: 0.7,
+      sophtron: 1,
+      finicity: 0.8,
+      midpoint: "2023-10-01T00:00:00Z",
+      start: "2023-10-01T00:00:00Z",
+      stop: "2023-10-01T00:00:00Z",
+    },
+  ],
+};

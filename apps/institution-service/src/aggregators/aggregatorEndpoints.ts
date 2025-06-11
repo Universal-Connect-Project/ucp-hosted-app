@@ -7,6 +7,7 @@ import {
 import { getAggregators } from "./getAggregators";
 import { getAggregatorsWithPerformance } from "./getAggregatorsWithPerformance";
 import { getAggregatorSuccessGraph } from "./getAggregatorSuccessGraph";
+import { getAggregatorDurationGraph } from "./getAggregatorDurationGraph";
 
 const router = Router();
 
@@ -22,6 +23,12 @@ router.get(
   "/successGraph",
   [validateUIAudience, validateAggregatorGraphRequestSchema],
   getAggregatorSuccessGraph as RequestHandler,
+);
+
+router.get(
+  "/durationGraph",
+  [validateUIAudience, validateAggregatorGraphRequestSchema],
+  getAggregatorDurationGraph as RequestHandler,
 );
 
 export default router;

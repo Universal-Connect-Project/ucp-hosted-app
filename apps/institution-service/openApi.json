@@ -165,6 +165,110 @@
         }
       }
     },
+    "/aggregators/durationGraph": {
+      "get": {
+        "summary": "Fetch aggregators with their duration graph metrics",
+        "description": "Retrieves aggregators and their duration graph metrics based on provided time frame, job types, and aggregators.",
+        "parameters": [
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["1d", "1w", "30d", "180d", "1y"]
+            },
+            "description": "Time frame for the metrics (e.g., '30d'). Defaults to 30d."
+          },
+          {
+            "name": "jobTypes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "transactions",
+                "transactions|accountOwner",
+                "accountNumber|transactions"
+              ]
+            },
+            "description": "A comma-separated list of job types. A combination of jobs can be achieved by passing a \"|\" separated list of job types. Defaults to no filtering by jobTypes."
+          },
+          {
+            "name": "aggregators",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": ["sophtron", "mx"]
+            },
+            "description": "A comma-separated list of aggregators. Defaults to all aggregators."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "aggregators": [
+                    {
+                      "id": 98,
+                      "name": "mx",
+                      "displayName": "MX",
+                      "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
+                      "createdAt": "2025-05-21T14:44:43.426Z",
+                      "updatedAt": "2025-05-21T14:44:43.426Z"
+                    }
+                  ],
+                  "performance": [
+                    {
+                      "start": "2025-05-14T04:00:00Z",
+                      "midpoint": "2025-05-14T16:00:00.000Z",
+                      "stop": "2025-05-15T04:00:00Z",
+                      "mx": 135000
+                    },
+                    {
+                      "start": "2025-05-15T04:00:00Z",
+                      "midpoint": "2025-05-15T16:00:00.000Z",
+                      "stop": "2025-05-16T04:00:00Z",
+                      "mx": null
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "\"timeFrame\" must be one of [1d, 1w, 30d, 180d, 1y]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/aggregators/successGraph": {
       "get": {
         "summary": "Fetch aggregators with their success graph metrics",

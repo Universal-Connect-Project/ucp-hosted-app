@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { getAggregatorSuccessGraph } from "./getAggregatorSuccessGraph";
-import { aggregatorSuccessGraphData } from "../test/testData/aggregators";
+import { getAggregatorDurationGraph } from "./getAggregatorDurationGraph";
+import { aggregatorDurationGraphData } from "../test/testData/aggregators";
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 
-describe("getAggregatorSuccessGraph", () => {
+describe("getAggregatorDurationGraph", () => {
   it("returns a list of aggregators and their performance data", async () => {
     const req = {
       query: {},
@@ -13,7 +13,7 @@ describe("getAggregatorSuccessGraph", () => {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     } as unknown as Response;
-    await getAggregatorSuccessGraph(req, res);
+    await getAggregatorDurationGraph(req, res);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(200);
@@ -27,7 +27,7 @@ describe("getAggregatorSuccessGraph", () => {
             logo: expect.any(String) || null,
           }),
         ]),
-        performance: aggregatorSuccessGraphData.performance,
+        performance: aggregatorDurationGraphData.performance,
       }),
     );
 
