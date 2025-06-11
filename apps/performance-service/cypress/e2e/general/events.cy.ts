@@ -16,16 +16,15 @@ describe("connection event endpoints", () => {
       institutionId: "test",
       aggregatorId: "test",
     };
-
-    const requiredFields = Object.keys(eventRequestRequiredParams);
     const optionalParams = {
       recordDuration: true,
     };
-
     const eventRequestBody = {
       ...eventRequestRequiredParams,
       ...optionalParams,
     };
+
+    const requiredFields = Object.keys(eventRequestRequiredParams);
 
     it("gets success status when requested with the proper permission", () => {
       startConnectionEventRequest({
