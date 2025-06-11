@@ -56,7 +56,7 @@ jobs:
           project: apps/authentication-service
           start: |
             npm run dev --workspace apps/institution-service
-            npm run dev --workspace apps/authentication-service
+            npm run dev:noRateLimit --workspace apps/authentication-service
           wait-on: "http://localhost:8089/ping, http://localhost:8088/ping"
           spec: apps/authentication-service/cypress/e2e/widgetAuth.cy.ts
 

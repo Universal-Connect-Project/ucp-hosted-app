@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FileDownload, InfoOutlined } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
 import {
   Alert,
   AlertTitle,
   Avatar,
+  Button,
   Chip,
   Pagination,
   Paper,
@@ -277,7 +277,7 @@ const Institutions = () => {
           <div className={styles.header}>
             <PageTitle>{INSTITUTIONS_PAGE_TITLE}</PageTitle>
             <div className={styles.headerButtonContainer}>
-              <LoadingButton
+              <Button
                 loading={isInstitutionJsonLoading}
                 onClick={handleDownloadFile}
                 size="medium"
@@ -285,7 +285,7 @@ const Institutions = () => {
                 variant="text"
               >
                 {INSTITUTIONS_JSON_BUTTON_TEXT}
-              </LoadingButton>
+              </Button>
               <AddInstitution />
             </div>
           </div>

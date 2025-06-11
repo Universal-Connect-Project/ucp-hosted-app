@@ -28,7 +28,6 @@ import { SkeletonIfLoading } from "../shared/components/Skeleton";
 import { useAppDispatch } from "../shared/utils/redux";
 import { useRotateApiKeysMutation } from "./api";
 import { displaySnackbar } from "../shared/reducers/snackbar";
-import { LoadingButton } from "@mui/lab";
 import FormSubmissionError from "../shared/components/FormSubmissionError";
 import DrawerCloseButton from "../shared/components/Drawer/DrawerCloseButton";
 import DrawerContainer from "../shared/components/Drawer/DrawerContainer";
@@ -114,14 +113,14 @@ const ManageApiKeys = ({ isLoading }: { isLoading: boolean }) => {
                       rotateApiKeys();
                     }}
                   >
-                    <LoadingButton
+                    <Button
                       color="error"
                       loading={isRotateApiKeysLoading}
                       type="submit"
                       variant="contained"
                     >
                       {API_KEYS_CONFIRM_ROTATE_SECRET_BUTTON_TEXT}
-                    </LoadingButton>
+                    </Button>
                   </form>
                   <Button
                     color="inherit"

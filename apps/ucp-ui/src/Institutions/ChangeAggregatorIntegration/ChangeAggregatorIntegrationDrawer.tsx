@@ -22,7 +22,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { REQUIRED_ERROR_TEXT } from "../../shared/constants/validation";
 import TextField from "../../shared/components/Forms/TextField";
 import DrawerStickyFooter from "../../shared/components/Drawer/DrawerStickyFooter";
-import { LoadingButton } from "@mui/lab";
 import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
 import SectionHeaderSwitch from "../../shared/components/Forms/SectionHeaderSwitch";
 import {
@@ -228,7 +227,7 @@ const ChangeAggregatorIntegrationDrawer = ({
               }
               footer={
                 <DrawerStickyFooter>
-                  <LoadingButton
+                  <Button
                     loading={isLoading}
                     form={formId}
                     type="submit"
@@ -237,7 +236,7 @@ const ChangeAggregatorIntegrationDrawer = ({
                     {
                       INSTITUTION_CHANGE_AGGREGATOR_INTEGRATION_SUBMIT_BUTTON_TEXT
                     }
-                  </LoadingButton>
+                  </Button>
                 </DrawerStickyFooter>
               }
             >
