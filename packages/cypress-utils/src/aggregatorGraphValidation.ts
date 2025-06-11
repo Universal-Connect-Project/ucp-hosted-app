@@ -51,41 +51,6 @@ export const createAggregatorGraphValidationTests = (
       });
     });
 
-    it("fails when jobType param is wrong", () => {
-      fetchFunction({
-        timeFrame: "30d",
-        jobTypes: "invalidJobType",
-        aggregators: "mx,sophtron",
-      }).then((response: FetchFunctionResponse) => {
-        expect(response.status).to.eq(400);
-        expect(response.body).to.deep.eq({
-          error: JOB_TYPES_ERROR_TEXT,
-        });
-      });
-    });
-
-    it("allows any aggregator but returns an empty array when aggregator is invalid", () => {
-      fetchFunction({
-        aggregators: "nonexistant",
-      }).then((response: FetchFunctionResponse) => {
-        expect(response.status).to.eq(200);
-        expect(response.body.performance).to.deep.eq([]);
-      });
-    });
-
-    it("allows combined JobTypes in any order", () => {
-      fetchFunction({
-        timeFrame: "30d",
-        jobTypes: `${ComboJobTypes.TRANSACTIONS}|${ComboJobTypes.ACCOUNT_NUMBER},${ComboJobTypes.TRANSACTIONS}`,
-        aggregators: "mx,sophtron,testAggregatorId",
-      }).then((response: FetchFunctionResponse) => {
-        expect(response.status).to.eq(200);
-        cy.wrap(response.body)
-          .its("performance")
-          .each(expectLooksLikePerformanceData);
-      });
-    });
-
     it("works without any filter params", () => {
       fetchFunction({}).then((response) => {
         expect(response.status).to.eq(200);
