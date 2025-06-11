@@ -5,17 +5,26 @@ import {
 import { createAuthorizationHeader } from "./authorization";
 import { ComboJobTypes } from "@repo/shared-utils";
 
+type ComboJobType = (typeof ComboJobTypes)[keyof typeof ComboJobTypes];
+interface ConnectionStartRequestBody {
+  jobTypes: ComboJobType[];
+  institutionId: string;
+  aggregatorId: string;
+  recordDuration?: boolean;
+}
+
 export const startConnectionEventRequest = ({
   connectionId,
   body = {
     jobTypes: [ComboJobTypes.TRANSACTIONS],
     institutionId: "testInstitutionId",
     aggregatorId: "testAggregatorId",
+    recordDuration: true,
   },
   failOnStatusCode = true,
 }: {
   connectionId: string;
-  body?: object;
+  body?: ConnectionStartRequestBody;
   failOnStatusCode?: boolean;
 }) => {
   return cy.request({

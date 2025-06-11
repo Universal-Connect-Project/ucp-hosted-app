@@ -23,6 +23,7 @@ const startEventSchema = Joi.object({
     .required(),
   institutionId: Joi.string().required(),
   aggregatorId: Joi.string().required(),
+  recordDuration: Joi.boolean().optional(),
 });
 
 router.post(
