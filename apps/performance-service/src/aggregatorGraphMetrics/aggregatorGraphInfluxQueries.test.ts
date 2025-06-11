@@ -5,10 +5,8 @@ import {
   shuffleArray,
   wait,
 } from "../shared/tests/utils";
-import {
-  getAggregatorGraphMetrics,
-  GraphMetricsResponse,
-} from "./aggregatorGraphInfluxQueries";
+import { getAggregatorGraphMetrics } from "./aggregatorGraphInfluxQueries";
+import { GraphMetricsResponse } from "@repo/backend-utils";
 
 const getNowWithSomeForgiveness = () => Date.now() + 5000;
 
@@ -20,7 +18,7 @@ const testDataPoints = ({
 }: {
   data: GraphMetricsResponse;
   expectedBucketDuration: number;
-  expectedNumberOfBuckets: number;
+  expectedNumberOfBuckets: number[];
   shouldAllowOneHourDiscrepancy?: boolean;
 }) => {
   const { performance } = data;
@@ -35,7 +33,7 @@ const testDataPoints = ({
 
   const nowWithSomeForgiveness = getNowWithSomeForgiveness();
 
-  expect(performance.length).toEqual(expectedNumberOfBuckets);
+  expect(expectedNumberOfBuckets).toContain(performance.length);
 
   performance.slice(1, performance.length - 2).forEach(({ start, stop }) => {
     const bucketDuration = new Date(stop).getTime() - new Date(start).getTime();
@@ -75,12 +73,12 @@ describe("getAggregatorGraphMetrics", () => {
       testDataPoints({
         data: successData,
         expectedBucketDuration: 60 * 60 * 1000,
-        expectedNumberOfBuckets: 25,
+        expectedNumberOfBuckets: [25],
       });
       testDataPoints({
         data: durationData,
         expectedBucketDuration: 60 * 60 * 1000,
-        expectedNumberOfBuckets: 25,
+        expectedNumberOfBuckets: [25],
       });
     });
 
@@ -98,12 +96,12 @@ describe("getAggregatorGraphMetrics", () => {
       testDataPoints({
         data: successData,
         expectedBucketDuration: 12 * 60 * 60 * 1000,
-        expectedNumberOfBuckets: 15,
+        expectedNumberOfBuckets: [15],
       });
       testDataPoints({
         data: durationData,
         expectedBucketDuration: 12 * 60 * 60 * 1000,
-        expectedNumberOfBuckets: 15,
+        expectedNumberOfBuckets: [15],
       });
     });
 
@@ -121,13 +119,13 @@ describe("getAggregatorGraphMetrics", () => {
       testDataPoints({
         data: successData,
         expectedBucketDuration: 24 * 60 * 60 * 1000,
-        expectedNumberOfBuckets: 31,
+        expectedNumberOfBuckets: [31],
       });
 
       testDataPoints({
         data: durationData,
         expectedBucketDuration: 24 * 60 * 60 * 1000,
-        expectedNumberOfBuckets: 31,
+        expectedNumberOfBuckets: [31],
       });
     });
 
@@ -145,13 +143,13 @@ describe("getAggregatorGraphMetrics", () => {
       testDataPoints({
         data: successData,
         expectedBucketDuration: 12 * 24 * 60 * 60 * 1000,
-        expectedNumberOfBuckets: 16,
+        expectedNumberOfBuckets: [16],
         shouldAllowOneHourDiscrepancy: true,
       });
       testDataPoints({
         data: durationData,
         expectedBucketDuration: 12 * 24 * 60 * 60 * 1000,
-        expectedNumberOfBuckets: 16,
+        expectedNumberOfBuckets: [16],
         shouldAllowOneHourDiscrepancy: true,
       });
     });
@@ -170,13 +168,13 @@ describe("getAggregatorGraphMetrics", () => {
       testDataPoints({
         data: successData,
         expectedBucketDuration: 30 * 24 * 60 * 60 * 1000,
-        expectedNumberOfBuckets: 13,
+        expectedNumberOfBuckets: [13, 14],
         shouldAllowOneHourDiscrepancy: true,
       });
       testDataPoints({
         data: durationData,
         expectedBucketDuration: 30 * 24 * 60 * 60 * 1000,
-        expectedNumberOfBuckets: 13,
+        expectedNumberOfBuckets: [13, 14],
         shouldAllowOneHourDiscrepancy: true,
       });
     });

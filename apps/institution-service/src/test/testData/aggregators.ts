@@ -68,3 +68,16 @@ export const exampleAggregatorPerformanceMetrics = {
     },
   },
 };
+
+export const aggregatorSuccessGraphData = {
+  performance: [
+    {
+      mx: 1,
+      sophtron: 0.5,
+      finicity: 0.5,
+      midpoint: "2023-10-01T00:00:00Z",
+      start: "2023-10-01T00:00:00Z",
+      stop: "2023-10-01T00:00:00Z",
+    },
+  ],
+};

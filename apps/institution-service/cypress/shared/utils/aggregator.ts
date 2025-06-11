@@ -29,3 +29,27 @@ export const getAggregatorsWithPerformance = ({
     },
   });
 };
+
+export const getAggregatorSuccessGraph = ({
+  aggregators,
+  jobTypes,
+  timeFrame,
+}: {
+  aggregators?: string;
+  jobTypes?: string;
+  timeFrame?: string;
+}) => {
+  return cy.request({
+    url: "aggregators/successGraph",
+    method: "GET",
+    failOnStatusCode: false,
+    qs: {
+      aggregators,
+      jobTypes,
+      timeFrame,
+    },
+    headers: {
+      Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
+    },
+  });
+};

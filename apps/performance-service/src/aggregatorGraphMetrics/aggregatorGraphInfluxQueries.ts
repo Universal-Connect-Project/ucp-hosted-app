@@ -1,6 +1,7 @@
 import { TimeFrameToAggregateWindowMap } from "@repo/backend-utils/src/constants";
 import { BUCKET, queryApi } from "../services/influxDb";
 import groupBy from "lodash.groupby";
+import { GraphMetricsResponse } from "@repo/backend-utils";
 
 export type TimeFrame = keyof typeof TimeFrameToAggregateWindowMap;
 
@@ -19,17 +20,6 @@ const getMidpoint = (start: string, end: string) => {
 
   return new Date(startDate.getTime() + difference).toISOString();
 };
-
-interface PerformanceDataPoint {
-  midpoint: string;
-  start: string;
-  stop: string;
-  [key: string]: string;
-}
-
-export interface GraphMetricsResponse {
-  performance: PerformanceDataPoint[];
-}
 
 const transformInfluxGraphMetrics = (
   dataPoints: AggSuccessInfluxObj[],
@@ -65,7 +55,7 @@ export async function getAggregatorGraphMetrics({
   aggregators?: string | undefined;
   jobTypes?: string | undefined;
   metric: "successRateMetrics" | "durationMetrics";
-}) {
+}): Promise<GraphMetricsResponse> {
   const formattedJobTypes = jobTypes
     ?.split(",")
     .map((jobType) => jobType.split("|").sort().join("|"));
@@ -92,6 +82,7 @@ export async function getAggregatorGraphMetrics({
       |> window(every: ${TimeFrameToAggregateWindowMap[timeFrame]}, createEmpty: true, location: location)
       |> mean()
   `;
+
   const results: AggSuccessInfluxObj[] = await queryApi.collectRows(fluxQuery);
 
   return transformInfluxGraphMetrics(results);
