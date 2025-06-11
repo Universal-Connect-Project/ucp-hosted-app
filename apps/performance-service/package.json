@@ -7,7 +7,7 @@
     "cypress:run": "cypress run",
     "dev": "concurrently --kill-others-on-fail \"nodemon ./src/app.ts\" \"npm run redisserver\" \"npm run start:influxDb\"",
     "start": "nodemon ./src/app.ts",
-    "prod": "PRODUCTION=true npm run dev",
+    "prod": "NODE_ENV=production npm run dev",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "redisserver": "sh ./scripts/start-redis.sh",
     "prettier": "prettier . --check",
