@@ -15,6 +15,7 @@ import UCPLogo from "../shared/components/UCPLogo";
 import {
   AccountBalanceOutlined,
   AccountCircle,
+  LightbulbOutlined,
   Logout,
   SettingsOutlined,
   TrendingUpOutlined,
@@ -37,10 +38,13 @@ import {
   SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT,
   SIDE_NAV_PERFORMANCE_LINK_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
+  SIDE_NAV_DEMO_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { IS_STAGING } from "../shared/constants/environment";
+import { userPermissions } from "../shared/reducers/token";
+import { useSelector } from "react-redux";
 
 const SideNav = ({
   shouldShowLoggedOutExperience,
@@ -52,10 +56,13 @@ const SideNav = ({
   const { pathname } = useLocation();
 
   const { performancePage } = useFlags();
+  const userPermissionsArray = useSelector(userPermissions);
 
   const shouldShowPerformanceLink: boolean = !!(performancePage !== undefined
     ? performancePage
     : IS_STAGING);
+
+  const shouldShowDemoLink = userPermissionsArray?.includes("widget:demo");
 
   const links = [
     ...(shouldShowPerformanceLink
@@ -74,6 +81,16 @@ const SideNav = ({
       Icon: AccountBalanceOutlined,
       path: INSTITUTIONS_ROUTE,
     },
+    ...(shouldShowDemoLink
+      ? [
+          {
+            label: SIDE_NAV_DEMO_LINK_TEXT,
+            matchPaths: [widgetManagementRoute.fullRoute],
+            Icon: LightbulbOutlined,
+            path: "",
+          },
+        ]
+      : []),
     {
       label: SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
       matchPaths: [widgetManagementRoute.fullRoute],

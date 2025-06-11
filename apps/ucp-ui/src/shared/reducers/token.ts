@@ -1,8 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAppSelector } from "../utils/redux";
+import { jwtDecode } from "jwt-decode";
 
 interface TokenState {
   token: string | undefined;
+}
+
+export interface DecodedToken {
+  permissions: string[];
 }
 
 const initialState: TokenState = {
@@ -25,3 +30,11 @@ export const getAccessToken = createAppSelector(
   (state) => state.token,
   (tokenState: TokenState) => tokenState.token,
 );
+
+export const userPermissions = createAppSelector(getAccessToken, (token) => {
+  if (!token) {
+    return [];
+  }
+  const DecodedToken: DecodedToken = jwtDecode(token);
+  return DecodedToken.permissions;
+});
