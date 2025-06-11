@@ -79,7 +79,7 @@ export const getAggregatorSuccessGraph = async (
 
     const successGraphResults =
       await getAggregatorSuccessGraphFromPerformanceService({
-        aggregators: aggregators,
+        aggregators: filteredAggregators?.map((a) => a.name).join(","),
         jobTypes,
         timeFrame,
       });
