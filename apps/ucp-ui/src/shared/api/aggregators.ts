@@ -13,8 +13,6 @@ export const aggregatorsApi = api.injectEndpoints({
     getAggregators: builder.query<AggregatorsResponse, void>({
       query: () => INSTITUTION_SERVICE_AGGREGATORS_URL,
       providesTags: [TagTypes.AGGREGATORS],
-      transformErrorResponse: (response: { status: string | number }) =>
-        response.status,
     }),
   }),
   overrideExisting: false,

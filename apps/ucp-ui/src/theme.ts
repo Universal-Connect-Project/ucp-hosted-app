@@ -1,6 +1,7 @@
-import { experimental_extendTheme as extendTheme } from "@mui/material";
+import { createTheme } from "@mui/material";
 
-export const muiTheme = extendTheme({
+export const muiTheme = createTheme({
+  cssVariables: true,
   typography: {
     fontFamily: "Work Sans",
     h1: {

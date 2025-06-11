@@ -5,7 +5,6 @@ import DrawerContainer from "./DrawerContainer";
 import DrawerCloseButton from "./DrawerCloseButton";
 import DrawerContent from "./DrawerContent";
 import DrawerStickyFooter from "./DrawerStickyFooter";
-import { LoadingButton } from "@mui/lab";
 import styles from "./confirmationDrawer.module.css";
 import { useAppDispatch } from "../../utils/redux";
 import { displaySnackbar } from "../../reducers/snackbar";
@@ -91,7 +90,7 @@ const ConfirmationDrawer = ({
         }
         footer={
           <DrawerStickyFooter>
-            <LoadingButton
+            <Button
               color="error"
               loading={isLoading}
               form={formId}
@@ -99,7 +98,7 @@ const ConfirmationDrawer = ({
               variant="contained"
             >
               {submitButtonText}
-            </LoadingButton>
+            </Button>
             <Button color="inherit" onClick={handleCloseDrawer}>
               {CONFIRMATION_DRAWER_CLOSE_BUTTON_TEXT}
             </Button>
