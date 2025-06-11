@@ -30,26 +30,35 @@ export const getAggregatorsWithPerformance = ({
   });
 };
 
-export const getAggregatorSuccessGraph = ({
-  aggregators,
-  jobTypes,
-  timeFrame,
-}: {
-  aggregators?: string;
-  jobTypes?: string;
-  timeFrame?: string;
-}) => {
-  return cy.request({
-    url: "aggregators/successGraph",
-    method: "GET",
-    failOnStatusCode: false,
-    qs: {
-      aggregators,
-      jobTypes,
-      timeFrame,
-    },
-    headers: {
-      Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
-    },
-  });
-};
+const createGetAggregatorGraph =
+  (url: string) =>
+  ({
+    aggregators,
+    jobTypes,
+    timeFrame,
+  }: {
+    aggregators?: string;
+    jobTypes?: string;
+    timeFrame?: string;
+  }) => {
+    return cy.request({
+      url,
+      method: "GET",
+      failOnStatusCode: false,
+      qs: {
+        aggregators,
+        jobTypes,
+        timeFrame,
+      },
+      headers: {
+        Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
+      },
+    });
+  };
+
+export const getAggregatorSuccessGraph = createGetAggregatorGraph(
+  "aggregators/successGraph",
+);
+export const getAggregatorDurationGraph = createGetAggregatorGraph(
+  "aggregators/durationGraph",
+);
