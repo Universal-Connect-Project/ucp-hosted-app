@@ -11,13 +11,20 @@ describe("connection event endpoints", () => {
   const connectionId = crypto.randomUUID();
 
   describe("/events/:connectionId/connectionStart", () => {
-    const eventRequestBody = {
+    const eventRequestRequiredParams = {
       jobTypes: [ComboJobTypes.TRANSACTIONS],
       institutionId: "test",
       aggregatorId: "test",
     };
+    const eventRequestOptionalParams = {
+      recordDuration: true,
+    };
+    const eventRequestBody = {
+      ...eventRequestRequiredParams,
+      ...eventRequestOptionalParams,
+    };
 
-    const requiredFields = Object.keys(eventRequestBody);
+    const requiredFields = Object.keys(eventRequestRequiredParams);
 
     it("gets success status when requested with the proper permission", () => {
       startConnectionEventRequest({
