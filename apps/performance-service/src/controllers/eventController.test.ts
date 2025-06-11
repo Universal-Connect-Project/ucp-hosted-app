@@ -39,7 +39,7 @@ const expectRedisEventToEqual = async (
 
 describe("eventController", () => {
   describe("createStartEvent", () => {
-    it("should add the event to redis and return the event response", async () => {
+    it("should add the event to redis and return the event response with recordDuration defaulting to true", async () => {
       const clientId = "testClientId";
       const eventBody = {
         jobTypes: [ComboJobTypes.TRANSACTIONS],
@@ -67,6 +67,49 @@ describe("eventController", () => {
         ...eventBody,
         clientId,
         startedAt: expect.any(Number),
+        recordDuration: true,
+      });
+
+      await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Started tracking connection: MBR-123",
+        event: expectedUpdatedBody,
+      });
+    });
+
+    it("should add the event to redis and return the event response with recordDuration set to false", async () => {
+      const clientId = "testClientId";
+      const eventBody = {
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
+        institutionId: "testInstitutionId",
+        aggregatorId: "testAggregatorId",
+        recordDuration: false,
+      };
+      const req = {
+        params: {
+          connectionId,
+        },
+        headers: {
+          authorization: createFakeAccessToken(clientId),
+        },
+        body: eventBody,
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await createStartEvent(req, res);
+
+      const expectedUpdatedBody = expect.objectContaining({
+        connectionId,
+        ...eventBody,
+        clientId,
+        startedAt: expect.any(Number),
+        recordDuration: false,
       });
 
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);

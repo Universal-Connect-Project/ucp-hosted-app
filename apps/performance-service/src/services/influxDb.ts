@@ -25,9 +25,10 @@ async function writeData(data: {
   aggregatorId: string;
   isSuccess: boolean;
   jobDuration: number;
+  recordDuration: boolean;
 }): Promise<boolean> {
   try {
-    if (data.isSuccess) {
+    if (data.isSuccess && data.recordDuration) {
       const durationPoint = new Point("durationMetrics")
         .tag("jobTypes", data.jobTypes)
         .tag("institutionId", data.institutionId)
@@ -72,5 +73,6 @@ export const recordPerformanceMetric = async (
     aggregatorId: event.aggregatorId,
     isSuccess: !!event.successAt,
     jobDuration: totalDuration,
+    recordDuration: event.recordDuration,
   });
 };

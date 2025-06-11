@@ -17,6 +17,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       successAt: 1700000010000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -27,6 +28,7 @@ export const createTestScenarioEvents = async (
       aggregatorId: "mx",
       startedAt: 1700000000000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -38,6 +40,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       successAt: 1700000030000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -49,6 +52,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       successAt: 1700000020000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -60,6 +64,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       successAt: 1700000010000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -70,6 +75,7 @@ export const createTestScenarioEvents = async (
       aggregatorId: "sophtron",
       startedAt: 1700000000000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -80,6 +86,7 @@ export const createTestScenarioEvents = async (
       aggregatorId: "finicity",
       startedAt: 1700000000000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -90,6 +97,7 @@ export const createTestScenarioEvents = async (
       aggregatorId: "finicity",
       startedAt: 1700000000000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -100,6 +108,7 @@ export const createTestScenarioEvents = async (
       aggregatorId: "finicity",
       startedAt: 1700000000000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -111,6 +120,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       successAt: 1700000030000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -122,6 +132,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       successAt: 1700000010000,
       userInteractionTime: 5000,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -133,6 +144,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       successAt: 1700000010000,
       userInteractionTime: 5000,
+      recordDuration: true,
     },
     {
       connectionId: "MBR-123",
@@ -143,6 +155,7 @@ export const createTestScenarioEvents = async (
       aggregatorId: "finicity",
       startedAt: 1700000000000,
       userInteractionTime: 0,
+      recordDuration: true,
     },
   ];
 
