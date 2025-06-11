@@ -16,12 +16,12 @@ describe("connection event endpoints", () => {
       institutionId: "test",
       aggregatorId: "test",
     };
-    const optionalParams = {
+    const eventRequestOptionalParams = {
       recordDuration: true,
     };
     const eventRequestBody = {
       ...eventRequestRequiredParams,
-      ...optionalParams,
+      ...eventRequestOptionalParams,
     };
 
     const requiredFields = Object.keys(eventRequestRequiredParams);
