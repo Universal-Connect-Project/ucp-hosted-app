@@ -30,7 +30,7 @@ export const createGetAggregatorGraph =
         createGetAggregatorGraphFromPerformanceService(url);
 
       const successGraphResults = await getGraphFromPerformanceService({
-        aggregators: aggregators,
+        aggregators: filteredAggregators.map((agg) => agg.name).join(","),
         jobTypes,
         timeFrame,
       });
