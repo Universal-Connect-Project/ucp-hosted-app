@@ -37,9 +37,6 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.9",
-    "@babel/preset-env": "^7.24.8",
-    "@babel/preset-typescript": "^7.24.7",
     "@testing-library/cypress": "^10.0.2",
     "@types/jest": "^29.5.12",
     "babel-loader": "^9.1.3",

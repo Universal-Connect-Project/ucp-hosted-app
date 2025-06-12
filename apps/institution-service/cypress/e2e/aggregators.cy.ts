@@ -6,8 +6,10 @@ import {
   getAggregatorSuccessGraph,
   getAggregatorsWithPerformance,
 } from "../shared/utils/aggregator";
-import { PerformanceDataPoint } from "@repo/backend-utils";
-import { TIME_FRAME_ERROR_TEXT } from "@repo/shared-utils";
+import {
+  TIME_FRAME_ERROR_TEXT,
+  PerformanceDataPoint,
+} from "@repo/shared-utils";
 import { createAggregatorGraphValidationTests } from "@repo/cypress-utils";
 
 interface AggregatorWithPerformance extends Aggregator {

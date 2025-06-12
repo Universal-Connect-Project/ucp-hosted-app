@@ -1,4 +1,4 @@
-import { GraphMetricsResponse } from "@repo/backend-utils";
+import { GraphMetricsResponse } from "@repo/shared-utils";
 import { getPerformanceServiceAccessToken } from "./getPerformanceServiceAccessToken";
 import { PERFORMANCE_SERVICE_URL } from "../shared/environment";
 

@@ -25,8 +25,17 @@ export default ({ production }) => {
       rules: [
         {
           test: /\.(ts|tsx)$/,
-          exclude: /node_modules/,
-          use: "babel-loader",
+          exclude: /node_modules\/(?!@repo\/)/,
+          use: {
+            loader: "babel-loader",
+            options: {
+              presets: [
+                "@babel/preset-env",
+                "@babel/preset-react",
+                "@babel/preset-typescript",
+              ],
+            },
+          },
         },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/,
