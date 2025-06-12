@@ -1,8 +1,6 @@
-import React, { ChangeEvent, useState } from "react";
+import React from "react";
 import { Aggregator, useGetAggregatorPerformanceByJobTypeQuery } from "../api";
-import TextField from "../../../shared/components/Forms/TextField";
 import {
-  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -17,6 +15,9 @@ import JobTypePerformance from "./JobTypePerformance";
 import SectionHeaderRow from "./SectionHeaderRow";
 import JobTypeFilter, { useJobTypeFilter } from "./JobTypeFilter";
 import { formatMaxTwoDecimals } from "../../../shared/utils/format";
+import TimeFrameSelect, {
+  useTimeFrameSelect,
+} from "../../../shared/components/Forms/TimeFrameSelect";
 import {
   SkeletonIfLoading,
   TextSkeletonIfLoading,
@@ -25,9 +26,6 @@ import FetchError from "../../../shared/components/FetchError";
 import {
   AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT,
   BY_JOB_TYPE_TABLE_TITLE,
-  thirtyDaysOption,
-  TIME_FRAME_LABEL_TEXT,
-  timeFrameOptions,
 } from "./constants";
 
 const loadingAggregator = {
@@ -62,11 +60,7 @@ const OverallPerformanceCell = ({
 };
 
 const ByJobType = () => {
-  const [timeFrame, setTimeFrame] = useState(thirtyDaysOption.value);
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTimeFrame(event.target.value);
-  };
+  const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
 
   const {
     data: aggregatorsWithPerformanceByJobType,
@@ -88,19 +82,7 @@ const ByJobType = () => {
 
   return (
     <>
-      <TextField
-        className={styles.timeFrameSelect}
-        label={TIME_FRAME_LABEL_TEXT}
-        onChange={handleChange}
-        select
-        value={timeFrame}
-      >
-        {timeFrameOptions.map(({ label, value }) => (
-          <MenuItem key={value} value={value}>
-            {label}
-          </MenuItem>
-        ))}
-      </TextField>
+      <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
       <Paper className={styles.tablePaper} variant="outlined">
         {isError ? (
           <FetchError
