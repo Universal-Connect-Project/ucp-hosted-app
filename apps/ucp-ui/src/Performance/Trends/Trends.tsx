@@ -46,7 +46,6 @@ const Trends = () => {
   const xAxis = [
     {
       dataKey: "midpoint",
-      // data: uniqueDates.map((date) => new Date(date)),
       valueFormatter: (value: Date, context: { location: string }) => {
         if (context.location === "tick") {
           return format(value, "MM/dd");
@@ -60,6 +59,8 @@ const Trends = () => {
 
           return `${formatTooltip(start)} - ${formatTooltip(stop)}`;
         }
+
+        return "";
       },
     },
   ];
@@ -68,14 +69,14 @@ const Trends = () => {
     {
       max: 1,
       min: 0,
-      valueFormatter: (value: number) => value * 100,
+      valueFormatter: (value: number) => `${value * 100}`,
     },
   ];
 
-  const series = data?.aggregatorIds?.map((aggregatorId) => ({
+  const series = data?.aggregators?.map(({ displayName, name }) => ({
     curve: "linear",
-    dataKey: aggregatorId,
-    label: aggregatorId,
+    dataKey: name,
+    label: displayName,
     labelMarkType: "square",
     valueFormatter: (value: number) =>
       (value ?? null) !== null ? `${formatMaxTwoDecimals(value * 100)}%` : null,
