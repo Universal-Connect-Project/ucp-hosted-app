@@ -26,9 +26,12 @@ const startEventSchema = Joi.object({
   recordDuration: Joi.boolean().optional(),
 });
 
+export const validateStartEventRequest =
+  createRequestBodySchemaValidator(startEventSchema);
+
 router.post(
   "/:connectionId/connectionStart",
-  [validateWidgetAudience, createRequestBodySchemaValidator(startEventSchema)],
+  [validateWidgetAudience, validateStartEventRequest],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
   createStartEvent as RequestHandler,
 );
