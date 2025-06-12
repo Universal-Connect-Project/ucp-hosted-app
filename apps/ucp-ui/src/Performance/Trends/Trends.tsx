@@ -4,7 +4,7 @@ import TimeFrameSelect, {
   useTimeFrameSelect,
 } from "../../shared/components/Forms/TimeFrameSelect";
 import { useGetAggregatorSuccessGraphDataQuery } from "./api";
-import { LineChart } from "@mui/x-charts";
+import { LineChart, LineSeriesType } from "@mui/x-charts";
 import { formatMaxTwoDecimals } from "../../shared/utils/format";
 import { format } from "date-fns";
 import { TZDate } from "@date-fns/tz";
@@ -73,14 +73,16 @@ const Trends = () => {
     },
   ];
 
-  const series = data?.aggregators?.map(({ displayName, name }) => ({
-    curve: "linear",
-    dataKey: name,
-    label: displayName,
-    labelMarkType: "square",
-    valueFormatter: (value: number) =>
-      (value ?? null) !== null ? `${formatMaxTwoDecimals(value * 100)}%` : null,
-  }));
+  const series: LineSeriesType[] =
+    data?.aggregators?.map(({ displayName, name }) => ({
+      curve: "linear",
+      dataKey: name,
+      label: displayName,
+      labelMarkType: "square",
+      type: "line",
+      valueFormatter: (value: number | null) =>
+        value !== null ? `${formatMaxTwoDecimals(value * 100)}%` : null,
+    })) || [];
 
   return (
     <Stack spacing={3}>
