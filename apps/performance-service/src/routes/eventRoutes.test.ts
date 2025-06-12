@@ -1,8 +1,8 @@
 import { ComboJobTypes } from "@repo/shared-utils";
-import { validateStartEvent } from "./eventRoutes";
+import { validateStartEventRequest } from "./eventRoutes";
 import { Request, Response, NextFunction } from "express";
 
-describe("validateStartEvent middleware", () => {
+describe("validateStartEventRequest middleware", () => {
   const mockReq = (body: unknown): Partial<Request> => ({ body });
   const mockRes = () => {
     const res: Partial<Response> = {};
@@ -24,7 +24,7 @@ describe("validateStartEvent middleware", () => {
     }) as Request;
     const res = mockRes();
 
-    validateStartEvent(req, res, next);
+    validateStartEventRequest(req, res, next);
 
     expect(next).toHaveBeenCalled();
     expect((res.status as jest.Mock).mock.calls.length).toBe(0);
@@ -39,7 +39,7 @@ describe("validateStartEvent middleware", () => {
     }) as Request;
     const res = mockRes();
 
-    validateStartEvent(req, res, next);
+    validateStartEventRequest(req, res, next);
 
     expect(next).toHaveBeenCalled();
     expect((res.status as jest.Mock).mock.calls.length).toBe(0);
@@ -54,7 +54,7 @@ describe("validateStartEvent middleware", () => {
     }) as Request;
     const res = mockRes();
 
-    validateStartEvent(req, res, next);
+    validateStartEventRequest(req, res, next);
 
     expect(next).toHaveBeenCalled();
     expect((res.status as jest.Mock).mock.calls.length).toBe(0);
@@ -67,7 +67,7 @@ describe("validateStartEvent middleware", () => {
     }) as Request;
     const res = mockRes();
 
-    validateStartEvent(req, res, next);
+    validateStartEventRequest(req, res, next);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(400);
@@ -88,7 +88,7 @@ describe("validateStartEvent middleware", () => {
     }) as Request;
     const res = mockRes();
 
-    validateStartEvent(req, res, next);
+    validateStartEventRequest(req, res, next);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(400);
@@ -108,7 +108,7 @@ describe("validateStartEvent middleware", () => {
     }) as Request;
     const res = mockRes();
 
-    validateStartEvent(req, res, next);
+    validateStartEventRequest(req, res, next);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(400);
@@ -128,7 +128,7 @@ describe("validateStartEvent middleware", () => {
     }) as Request;
     const res = mockRes();
 
-    validateStartEvent(req, res, next);
+    validateStartEventRequest(req, res, next);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(400);
