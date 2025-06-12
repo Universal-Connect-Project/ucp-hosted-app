@@ -16,6 +16,7 @@ import {
   SIDE_NAV_PERFORMANCE_LINK_TEXT,
   SIDE_NAV_TERMS_AND_CONDITIONS_LINK_TEXT,
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
+  SIDE_NAV_DEMO_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
 import SideNav from "./SideNav";
@@ -30,6 +31,11 @@ import { TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT } from "../TermsAndConditions/cons
 import { PERFORMANCE_PAGE_TITLE } from "../Performance/constants";
 
 import * as launchDarkly from "launchdarkly-react-client-sdk";
+import { setAccessToken } from "../shared/reducers/token";
+import { createFakeAccessToken } from "../shared/test/utils";
+import { createStore } from "../store";
+
+// Define a const for the mocked useSelector
 
 jest.mock("launchdarkly-react-client-sdk");
 
@@ -201,6 +207,31 @@ describe("<SideNav />", () => {
       ).toHaveClass("Mui-selected");
 
       result3.unmount();
+    });
+
+    it("renders the demo link when token from createFakeAccessToken in mock store state has widget:demo permission", async () => {
+      const accessTokenWithDemoPermission = createFakeAccessToken("test", [
+        "widget:demo",
+      ]);
+      const store = createStore();
+      store.dispatch(setAccessToken(accessTokenWithDemoPermission));
+
+      render(<SideNav />, { store });
+      const demoLink = await screen.findByText(SIDE_NAV_DEMO_LINK_TEXT);
+      expect(demoLink).toBeInTheDocument();
+    });
+
+    it("does not render the demo link when user does not have widget:demo permission", () => {
+      const accessTokenWithoutDemoPermission = createFakeAccessToken("test", [
+        "widget:other-permission",
+      ]);
+      const store = createStore();
+      store.dispatch(setAccessToken(accessTokenWithoutDemoPermission));
+      render(<SideNav />, { store });
+
+      expect(
+        screen.queryByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }),
+      ).not.toBeInTheDocument();
     });
   });
 });
