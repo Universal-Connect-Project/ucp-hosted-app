@@ -1,6 +1,6 @@
 import { api, TagTypes } from "../../baseApi";
 import { INSTITUTION_SERVICE_BASE_URL } from "../../shared/constants/environment";
-import { Aggregator } from "../constants/aggregators";
+import type { Aggregator } from "@repo/shared-utils";
 
 interface AggregatorsResponse {
   aggregators: Aggregator[];

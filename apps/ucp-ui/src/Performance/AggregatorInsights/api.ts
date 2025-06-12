@@ -1,4 +1,5 @@
 import { api, TagTypes } from "../../baseApi";
+import type { Aggregator as BaseAggregator } from "@repo/shared-utils";
 import { INSTITUTION_SERVICE_BASE_URL } from "../../shared/constants/environment";
 
 interface JobTypePerformance {
@@ -6,11 +7,7 @@ interface JobTypePerformance {
   avgDuration: number;
 }
 
-export interface Aggregator {
-  id: number;
-  name: string;
-  displayName: string;
-  logo: string;
+export interface Aggregator extends BaseAggregator {
   avgSuccessRate: number | null;
   avgDuration: number | null;
   jobTypes: Record<string, JobTypePerformance>;

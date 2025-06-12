@@ -1,6 +1,6 @@
 import { api, TagTypes } from "../baseApi";
 import { saveAs } from "../shared/utils/fileSaver";
-import { Aggregator } from "../shared/constants/aggregators";
+import type { Aggregator } from "@repo/shared-utils";
 import { INSTITUTION_SERVICE_BASE_URL } from "../shared/constants/environment";
 
 interface InstitutionPermissions {
