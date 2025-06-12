@@ -1,7 +1,7 @@
 import { TimeFrameToAggregateWindowMap } from "@repo/backend-utils/src/constants";
 import { BUCKET, queryApi } from "../services/influxDb";
 import groupBy from "lodash.groupby";
-import { GraphMetricsResponse } from "@repo/backend-utils";
+import { GraphMetricsResponse } from "@repo/shared-utils";
 
 export type TimeFrame = keyof typeof TimeFrameToAggregateWindowMap;
 

@@ -6,7 +6,7 @@ import {
   wait,
 } from "../shared/tests/utils";
 import { getAggregatorGraphMetrics } from "./aggregatorGraphInfluxQueries";
-import { GraphMetricsResponse } from "@repo/backend-utils";
+import { GraphMetricsResponse } from "@repo/shared-utils";
 
 const getNowWithSomeForgiveness = () => Date.now() + 5000;
 
