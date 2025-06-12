@@ -35,8 +35,6 @@ import { setAccessToken } from "../shared/reducers/token";
 import { createFakeAccessToken } from "../shared/test/utils";
 import { createStore } from "../store";
 
-// Define a const for the mocked useSelector
-
 jest.mock("launchdarkly-react-client-sdk");
 
 const mockLogout = jest.fn();
