@@ -25,3 +25,5 @@ export const termsAndConditionsRoute = createRoute("termsAndConditions");
 
 export const termsAndConditionsPublicRoute =
   createPublicRoute("termsAndConditions");
+
+export const demoRoute = createRoute("demo");

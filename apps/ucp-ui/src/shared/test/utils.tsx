@@ -1,7 +1,4 @@
-export const createFakeAccessToken = (
-  clientId: string = "test",
-  permissions: string[] = [],
-) => {
+export const createFakeAccessToken = (permissions: string[] = []) => {
   const headers = {
     alg: "RS256",
     typ: "JWT",
@@ -15,7 +12,6 @@ export const createFakeAccessToken = (
     exp: 1741903227,
     scope: "read:widget-endpoints write:widget-endpoints",
     gty: "client-credentials",
-    azp: clientId,
     permissions,
   };
   const publicKey = {

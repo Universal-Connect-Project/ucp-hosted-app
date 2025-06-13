@@ -208,7 +208,7 @@ describe("<SideNav />", () => {
     });
 
     it("renders the demo link when token from createFakeAccessToken in mock store state has widget:demo permission", async () => {
-      const accessTokenWithDemoPermission = createFakeAccessToken("test", [
+      const accessTokenWithDemoPermission = createFakeAccessToken([
         "widget:demo",
       ]);
       const store = createStore();
@@ -220,7 +220,7 @@ describe("<SideNav />", () => {
     });
 
     it("does not render the demo link when user does not have widget:demo permission", () => {
-      const accessTokenWithoutDemoPermission = createFakeAccessToken("test", [
+      const accessTokenWithoutDemoPermission = createFakeAccessToken([
         "widget:other-permission",
       ]);
       const store = createStore();

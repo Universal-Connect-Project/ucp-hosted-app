@@ -28,6 +28,7 @@ import {
   termsAndConditionsRoute,
   PERFORMANCE_ROUTE,
   widgetManagementRoute,
+  demoRoute,
 } from "../shared/constants/routes";
 import { Link } from "react-router-dom";
 import {
@@ -43,7 +44,7 @@ import {
 import { SUPPORT_EMAIL } from "../shared/constants/support";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import { IS_STAGING } from "../shared/constants/environment";
-import { userPermissions } from "../shared/reducers/token";
+import { getUserPermissions } from "../shared/reducers/token";
 import { useSelector } from "react-redux";
 
 const SideNav = ({
@@ -56,7 +57,7 @@ const SideNav = ({
   const { pathname } = useLocation();
 
   const { performancePage } = useFlags();
-  const userPermissionsArray = useSelector(userPermissions);
+  const userPermissionsArray = useSelector(getUserPermissions);
 
   const shouldShowPerformanceLink: boolean = !!(performancePage !== undefined
     ? performancePage
@@ -85,7 +86,7 @@ const SideNav = ({
       ? [
           {
             label: SIDE_NAV_DEMO_LINK_TEXT,
-            matchPaths: [widgetManagementRoute.fullRoute],
+            matchPaths: [demoRoute.fullRoute],
             Icon: LightbulbOutlined,
             path: "",
           },

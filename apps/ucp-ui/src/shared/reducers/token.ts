@@ -31,7 +31,7 @@ export const getAccessToken = createAppSelector(
   (tokenState: TokenState) => tokenState.token,
 );
 
-export const userPermissions = createAppSelector(getAccessToken, (token) => {
+export const getUserPermissions = createAppSelector(getAccessToken, (token) => {
   if (!token) {
     return [];
   }
