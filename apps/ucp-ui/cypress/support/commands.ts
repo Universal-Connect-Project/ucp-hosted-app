@@ -70,10 +70,10 @@ Cypress.Commands.add("loginWithoutWidgetRole", () =>
   ),
 );
 
-Cypress.Commands.add("loginWithWidgetDemoRole", () =>
+Cypress.Commands.add("loginWithWidgetDemoPermissions", () =>
   login(
-    "auth_username_with_widget_demo_role",
-    "auth_password_with_widget_demo_role",
+    "auth_username_with_widget_demo_permissions",
+    "auth_password_with_widget_demo_permissions",
   ),
 );
 
@@ -98,7 +98,7 @@ declare global {
       loginWithWidgetRole(): Chainable<void>;
       loginWithoutWidgetRole(): Chainable<void>;
       waitForLoad(): Chainable<void>;
-      loginWithWidgetDemoRole(): Chainable<void>;
+      loginWithWidgetDemoPermissions(): Chainable<void>;
     }
   }
 }

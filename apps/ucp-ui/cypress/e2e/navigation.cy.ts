@@ -50,7 +50,7 @@ describe("Health", () => {
   });
 
   it("shows the demo link when the user has the permission", () => {
-    cy.loginWithWidgetDemoRole();
+    cy.loginWithWidgetDemoPermissions();
     cy.visit("/");
     cy.findByText("Demo").should("exist");
   });
