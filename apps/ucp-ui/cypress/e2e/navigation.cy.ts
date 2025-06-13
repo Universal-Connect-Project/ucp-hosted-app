@@ -49,6 +49,18 @@ describe("Health", () => {
     cy.findByText(TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT).should("exist");
   });
 
+  it("shows the demo link when the user has the permission", () => {
+    cy.loginWithWidgetDemoRole();
+    cy.visit("/");
+    cy.findByText("Demo").should("exist");
+  });
+
+  it("does not show the demo link when the user does not have the permission", () => {
+    cy.loginWithoutWidgetRole();
+    cy.visit("/");
+    cy.findByText("Demo").should("not.exist");
+  });
+
   it("logs you out", () => {
     cy.loginWithWidgetRole();
     cy.visit("/");
