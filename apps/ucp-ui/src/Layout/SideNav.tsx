@@ -42,8 +42,6 @@ import {
   SIDE_NAV_DEMO_LINK_TEXT,
 } from "./constants";
 import { SUPPORT_EMAIL } from "../shared/constants/support";
-import { useFlags } from "launchdarkly-react-client-sdk";
-import { IS_STAGING } from "../shared/constants/environment";
 import { getUserPermissions } from "../shared/reducers/token";
 import { useSelector } from "react-redux";
 
@@ -56,26 +54,17 @@ const SideNav = ({
 
   const { pathname } = useLocation();
 
-  const { performancePage } = useFlags();
   const userPermissionsArray = useSelector(getUserPermissions);
-
-  const shouldShowPerformanceLink: boolean = !!(performancePage !== undefined
-    ? performancePage
-    : IS_STAGING);
 
   const shouldShowDemoLink = userPermissionsArray?.includes("widget:demo");
 
   const links = [
-    ...(shouldShowPerformanceLink
-      ? [
-          {
-            label: SIDE_NAV_PERFORMANCE_LINK_TEXT,
-            matchPaths: [PERFORMANCE_ROUTE],
-            Icon: TrendingUpOutlined,
-            path: PERFORMANCE_ROUTE,
-          },
-        ]
-      : []),
+    {
+      label: SIDE_NAV_PERFORMANCE_LINK_TEXT,
+      matchPaths: [PERFORMANCE_ROUTE],
+      Icon: TrendingUpOutlined,
+      path: PERFORMANCE_ROUTE,
+    },
     {
       label: SIDE_NAV_INSTITUTIONS_LINK_TEXT,
       matchPaths: [INSTITUTIONS_ROUTE, institutionRoute.fullRoute],
