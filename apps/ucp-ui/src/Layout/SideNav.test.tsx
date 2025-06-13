@@ -29,13 +29,9 @@ import {
 import { INSTITUTIONS_PAGE_TITLE } from "../Institutions/constants";
 import { TERMS_AND_CONDITIONS_PAGE_TITLE_TEXT } from "../TermsAndConditions/constants";
 import { PERFORMANCE_PAGE_TITLE } from "../Performance/constants";
-
-import * as launchDarkly from "launchdarkly-react-client-sdk";
 import { setAccessToken } from "../shared/reducers/token";
 import { createFakeAccessToken } from "../shared/test/utils";
 import { createStore } from "../store";
-
-jest.mock("launchdarkly-react-client-sdk");
 
 const mockLogout = jest.fn();
 
@@ -48,10 +44,6 @@ jest.mock("@auth0/auth0-react", () => ({
 }));
 
 describe("<SideNav />", () => {
-  beforeEach(() => {
-    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({});
-  });
-
   describe("logged out experience", () => {
     it("renders a login button and navigates to the base path on click", async () => {
       const initialRoute = "/junk";
@@ -109,19 +101,7 @@ describe("<SideNav />", () => {
       ).toBeInTheDocument();
     });
 
-    it("doesnt render performance if the flag is off", () => {
-      render(<Routes />, { shouldRenderRouter: false });
-
-      expect(
-        screen.queryByRole("link", { name: SIDE_NAV_PERFORMANCE_LINK_TEXT }),
-      ).not.toBeInTheDocument();
-    });
-
     it("navigates to performance", async () => {
-      jest.spyOn(launchDarkly, "useFlags").mockReturnValue({
-        performancePage: true,
-      });
-
       render(<Routes />, { shouldRenderRouter: false });
 
       await userEvent.click(

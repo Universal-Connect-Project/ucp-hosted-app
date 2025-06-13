@@ -9,16 +9,10 @@ import {
 } from "./Layout/constants";
 import { PERFORMANCE_PAGE_TITLE } from "./Performance/constants";
 import { PERFORMANCE_ROUTE } from "./shared/constants/routes";
-import * as launchDarkly from "launchdarkly-react-client-sdk";
 
-jest.mock("launchdarkly-react-client-sdk");
 jest.mock("@auth0/auth0-react");
 
 describe("<Routes />", () => {
-  beforeEach(() => {
-    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({});
-  });
-
   it("renders Institutions by default", async () => {
     render(<Routes />, { shouldRenderRouter: false });
 
@@ -40,10 +34,6 @@ describe("<Routes />", () => {
   });
 
   it("renders Performance", async () => {
-    jest.spyOn(launchDarkly, "useFlags").mockReturnValue({
-      performancePage: true,
-    });
-
     render(<Routes />, {
       initialRoute: PERFORMANCE_ROUTE,
       shouldRenderRouter: false,
