@@ -79,7 +79,7 @@ jobs:
           touch ${ENV_FILE_PATH}
 
           # Secrets (can't load these from another job, due to GH security features)
-          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}   
+          echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
 
       - name: Seed Influx with Performance Data
         run: npm run test:seedInfluxPerformance --workspace apps/performance-service
@@ -95,6 +95,8 @@ jobs:
           CYPRESS_auth_password_without_widget_role: ${{ secrets.AUTH_PASSWORD_WITHOUT_WIDGET_ROLE }}
           CYPRESS_auth_username_super_admin: ${{ secrets.UI_AUTH_USERNAME_SUPER_ADMIN }}
           CYPRESS_auth_password_super_admin: ${{ secrets.UI_AUTH_PASSWORD_SUPER_ADMIN }}
+          CYPRESS_auth_username_with_widget_demo_permissions: ${{ secrets.AUTH_USERNAME_WITH_WIDGET_DEMO_PERMISSIONS }}
+          CYPRESS_auth_password_with_widget_demo_permissions: ${{ secrets.AUTH_PASSWORD_WITH_WIDGET_DEMO_PERMISSIONS }}
 
         with:
           project: apps/ucp-ui
@@ -103,7 +105,7 @@ jobs:
             npm run start --workspace apps/performance-service & sleep 10
             npm run dev:noRateLimiting --workspace apps/institution-service
             npm run dev --workspace apps/ucp-ui
-          wait-on: 'http://localhost:3000, http://localhost:8089/ping, http://localhost:8088/ping, http://localhost:8090/ping'
+          wait-on: "http://localhost:3000, http://localhost:8089/ping, http://localhost:8088/ping, http://localhost:8090/ping"
           wait-on-timeout: 120
 
       - name: Upload screenshots
