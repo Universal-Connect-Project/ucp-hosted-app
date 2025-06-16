@@ -1,0 +1,32 @@
+import React from "react";
+import { useParams } from "react-router-dom";
+import { useGetDemoTokenQuery, useGetDemoURLQuery } from "./api";
+
+const Demo = () => {
+  const { userId } = useParams();
+
+  const { data } = useGetDemoTokenQuery({ userId: userId as string });
+
+  const token = data?.token;
+
+  const { data: demoURLData } = useGetDemoURLQuery({ token: token as string });
+
+  const demoURL = demoURLData?.url;
+
+  return (
+    <div>
+      <h1>Demo Widget</h1>
+      {demoURL ? (
+        <iframe
+          src={demoURL}
+          title="Demo Widget"
+          style={{ width: "100%", height: "600px", border: "none" }}
+        />
+      ) : (
+        <p>Loading demo widget...</p>
+      )}
+    </div>
+  );
+};
+
+export default Demo;
