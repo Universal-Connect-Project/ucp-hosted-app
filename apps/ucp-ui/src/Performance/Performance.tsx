@@ -9,7 +9,7 @@ import Trends from "./Trends/Trends";
 
 const Performance = () => {
   return (
-    <PageContent shouldDisableVerticalOverflow>
+    <PageContent>
       <Stack className={styles.stack} spacing={4}>
         <PageTitle>{PERFORMANCE_PAGE_TITLE}</PageTitle>
         <Trends />
