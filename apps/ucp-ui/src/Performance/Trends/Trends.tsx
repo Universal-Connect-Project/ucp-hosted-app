@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Typography } from "@mui/material";
+import { Paper, Stack, Tooltip, Typography } from "@mui/material";
 import TimeFrameSelect, {
   useTimeFrameSelect,
 } from "../../shared/components/Forms/TimeFrameSelect";
@@ -9,6 +9,8 @@ import { formatMaxTwoDecimals } from "../../shared/utils/format";
 import { format } from "date-fns";
 import { TZDate } from "@date-fns/tz";
 import { oneDayOption } from "../../shared/components/Forms/constants";
+import styles from "./trends.module.css";
+import { InfoOutline } from "@mui/icons-material";
 
 const EDTTimeZone = "America/New_York";
 
@@ -120,23 +122,33 @@ const Trends = () => {
       <Stack direction="column" spacing={2}>
         <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
       </Stack>
-      <LineChart
-        dataset={performanceData}
-        height={400}
-        loading={isFetching}
-        series={series}
-        slotProps={{
-          legend: {
-            direction: "horizontal",
-            position: {
-              horizontal: "start",
-              vertical: "top",
-            },
-          },
-        }}
-        xAxis={xAxis}
-        yAxis={yAxis}
-      />
+      <Paper className={styles.chartContainer} variant="outlined">
+        <Stack spacing={3}>
+          <Stack alignItems="center" direction="row" spacing={1.5}>
+            <Typography variant="h6">Average Success Rate</Typography>
+            <Tooltip title="The percentage of connection attempts that successfully return data. All dates and times are in U.S. Eastern Time.">
+              <InfoOutline color="primary" />
+            </Tooltip>
+          </Stack>
+          <LineChart
+            dataset={performanceData}
+            height={300}
+            loading={isFetching}
+            series={series}
+            slotProps={{
+              legend: {
+                direction: "horizontal",
+                position: {
+                  horizontal: "start",
+                  vertical: "top",
+                },
+              },
+            }}
+            xAxis={xAxis}
+            yAxis={yAxis}
+          />
+        </Stack>
+      </Paper>
     </Stack>
   );
 };
