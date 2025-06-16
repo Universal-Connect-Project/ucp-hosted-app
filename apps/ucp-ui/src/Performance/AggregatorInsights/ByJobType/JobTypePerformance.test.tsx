@@ -57,6 +57,37 @@ describe("<JobTypePerformance />", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders correct format when no duration is include in the performance", () => {
+    render(
+      <Table>
+        <TableBody>
+          <JobTypePerformance
+            aggregators={
+              [
+                {
+                  id: "1",
+                  jobTypes: {
+                    transactions: {
+                      avgDuration: undefined,
+                      avgSuccessRate: 0,
+                    },
+                  },
+                },
+              ] as unknown as Aggregator[]
+            }
+            isLoading={false}
+            jobTypes="transactions"
+          />
+        </TableBody>
+      </Table>,
+    );
+
+    expect(screen.getByText("0% | -")).toBeInTheDocument();
+    expect(
+      screen.getByText(supportsJobTypeMap.transactions.displayName),
+    ).toBeInTheDocument();
+  });
+
   it("renders multiple job types with no data", () => {
     const aggregators = [
       {
