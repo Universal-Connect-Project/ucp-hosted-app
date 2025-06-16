@@ -7,6 +7,7 @@ import { formatMaxTwoDecimals } from "../../shared/utils/format";
 import { Paper, Stack, Tooltip, Typography } from "@mui/material";
 import styles from "./trendsChart.module.css";
 import { InfoOutline } from "@mui/icons-material";
+import FetchError from "../../shared/components/FetchError";
 
 const EDTTimeZone = "America/New_York";
 
@@ -27,7 +28,9 @@ const formatTooltip = ({ start, stop }: { start: Date; stop: Date }) => {
 
 const TrendsChart = ({
   data,
+  isError,
   isFetching,
+  refetch,
   shouldUseHourlyTicks,
   tooltipTitle,
   title,
@@ -36,8 +39,10 @@ const TrendsChart = ({
   yAxisMax,
 }: {
   data: AggregatorGraphMetricsResponse | undefined;
+  isError: boolean;
   isFetching: boolean;
   shouldUseHourlyTicks: boolean;
+  refetch: () => void;
   tooltipTitle: string;
   title: string;
   valueMultiplier: number;
@@ -128,6 +133,12 @@ const TrendsChart = ({
   return (
     <Paper className={styles.chartContainer} variant="outlined">
       <Stack spacing={3}>
+        {isError && (
+          <FetchError
+            description="Failed to fetch performance data"
+            refetch={refetch}
+          />
+        )}
         <Stack alignItems="center" direction="row" spacing={1.5}>
           <Typography variant="h6">{title}</Typography>
           <Tooltip title={tooltipTitle}>

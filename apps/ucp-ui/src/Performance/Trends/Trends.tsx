@@ -15,15 +15,23 @@ const Trends = () => {
 
   const shouldUseHourlyTicks = timeFrame === oneDayOption.value;
 
-  const { data: successData, isFetching: isFetchingSuccess } =
-    useGetAggregatorSuccessGraphDataQuery({
-      timeFrame,
-    });
+  const {
+    data: successData,
+    isError: isErrorSuccess,
+    isFetching: isFetchingSuccess,
+    refetch: refetchSuccess,
+  } = useGetAggregatorSuccessGraphDataQuery({
+    timeFrame,
+  });
 
-  const { data: durationData, isFetching: isFetchingDuration } =
-    useGetAggregatorDurationGraphDataQuery({
-      timeFrame,
-    });
+  const {
+    data: durationData,
+    isError: isErrorDuration,
+    isFetching: isFetchingDuration,
+    refetch: refetchDuration,
+  } = useGetAggregatorDurationGraphDataQuery({
+    timeFrame,
+  });
 
   return (
     <Stack spacing={3}>
@@ -34,7 +42,9 @@ const Trends = () => {
       <Stack direction="row" spacing={3}>
         <TrendsChart
           data={successData}
+          isError={isErrorSuccess}
           isFetching={isFetchingSuccess}
+          refetch={() => void refetchSuccess()}
           shouldUseHourlyTicks={shouldUseHourlyTicks}
           title="Average Success Rate"
           tooltipTitle="The percentage of connection attempts that are successful. All dates and times are in U.S. Eastern Time."
@@ -44,7 +54,9 @@ const Trends = () => {
         />
         <TrendsChart
           data={durationData}
+          isError={isErrorDuration}
           isFetching={isFetchingDuration}
+          refetch={() => void refetchDuration()}
           shouldUseHourlyTicks={shouldUseHourlyTicks}
           title="Average Speed"
           tooltipTitle="The average time (in seconds) it takes make a connection. All dates and times are in U.S. Eastern Time."
