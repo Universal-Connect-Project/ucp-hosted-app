@@ -5,6 +5,7 @@ import {
   userEvent,
   waitFor,
 } from "../../shared/test/testUtils";
+import { TZDate } from "@date-fns/tz";
 import {
   AGGREGATOR_SUCCESS_GRAPH_URL,
   useGetAggregatorSuccessGraphDataQuery,
@@ -23,9 +24,11 @@ import { http, HttpResponse } from "msw";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import { successGraphData } from "../../shared/test/testData/performanceGraphts";
 
-const start = new Date("2023-10-01T12:00:00Z");
-const dateWithinSameMinute = new Date("2023-10-01T12:00:04Z");
-const stop = new Date("2023-10-01T12:01:00Z");
+const EDTTimeZone = "America/New_York";
+
+const start = new TZDate("2023-10-01T12:00:00Z", EDTTimeZone);
+const dateWithinSameMinute = new TZDate("2023-10-01T12:00:04Z", EDTTimeZone);
+const stop = new TZDate("2023-10-01T12:01:00Z", EDTTimeZone);
 
 const militaryTimeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 const monthDayRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/;
@@ -61,7 +64,7 @@ describe("<TrendsChart />", () => {
           start,
           stop,
         }),
-      ).toEqual("10/01 @ 6:00 - 10/01 @ 6:01");
+      ).toEqual("10/01 @ 8:00 - 10/01 @ 8:01");
     });
 
     it("adds seconds to the tooltip when start and stop are within the same minute", () => {
@@ -70,7 +73,7 @@ describe("<TrendsChart />", () => {
           start,
           stop: dateWithinSameMinute,
         }),
-      ).toEqual("10/01 @ 6:00:00 - 10/01 @ 6:00:04");
+      ).toEqual("10/01 @ 8:00:00 - 10/01 @ 8:00:04");
     });
   });
 
