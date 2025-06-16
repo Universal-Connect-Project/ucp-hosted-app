@@ -32,9 +32,11 @@ const Trends = () => {
 
   const shouldUseHourlyTicks = timeFrame === oneDayOption.value;
 
-  const { data } = useGetAggregatorSuccessGraphDataQuery({ timeFrame });
-  const performanceData = data?.performance?.map(
-    ({ midpoint, start, stop, ...rest }) => {
+  const { data, isFetching } = useGetAggregatorSuccessGraphDataQuery({
+    timeFrame,
+  });
+  const performanceData =
+    data?.performance?.map(({ midpoint, start, stop, ...rest }) => {
       const midpointDate = new TZDate(midpoint, EDTTimeZone);
 
       return {
@@ -43,8 +45,7 @@ const Trends = () => {
         start: new TZDate(start, EDTTimeZone),
         stop: new TZDate(stop, EDTTimeZone),
       };
-    },
-  );
+    }) || [];
   const midpointToStartAndEndMap: Record<
     string,
     {
@@ -119,24 +120,23 @@ const Trends = () => {
       <Stack direction="column" spacing={2}>
         <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
       </Stack>
-      {data && (
-        <LineChart
-          dataset={performanceData}
-          height={400}
-          series={series}
-          slotProps={{
-            legend: {
-              direction: "horizontal",
-              position: {
-                horizontal: "start",
-                vertical: "top",
-              },
+      <LineChart
+        dataset={performanceData}
+        height={400}
+        loading={isFetching}
+        series={series}
+        slotProps={{
+          legend: {
+            direction: "horizontal",
+            position: {
+              horizontal: "start",
+              vertical: "top",
             },
-          }}
-          xAxis={xAxis}
-          yAxis={yAxis}
-        />
-      )}
+          },
+        }}
+        xAxis={xAxis}
+        yAxis={yAxis}
+      />
     </Stack>
   );
 };
