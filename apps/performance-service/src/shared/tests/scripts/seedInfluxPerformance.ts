@@ -49,15 +49,17 @@ const createPoints = async (): Promise<void> => {
     const timestamp = getRandomTimestamp();
     const success = getRandomNumber(0, 1);
 
-    const durationPoint = new Point("durationMetrics")
-      .tag("jobTypes", jobType)
-      .tag("institutionId", institutionId)
-      .tag("clientId", client)
-      .tag("aggregatorId", aggregator)
-      .intField("jobDuration", duration * 1000)
-      .timestamp(timestamp);
+    if (success) {
+      const durationPoint = new Point("durationMetrics")
+        .tag("jobTypes", jobType)
+        .tag("institutionId", institutionId)
+        .tag("clientId", client)
+        .tag("aggregatorId", aggregator)
+        .intField("jobDuration", duration * 1000)
+        .timestamp(timestamp);
 
-    writeApi.writePoint(durationPoint);
+      writeApi.writePoint(durationPoint);
+    }
 
     const successRatePoint = new Point("successRateMetrics")
       .tag("jobTypes", jobType)
@@ -68,8 +70,6 @@ const createPoints = async (): Promise<void> => {
       .timestamp(timestamp);
 
     writeApi.writePoint(successRatePoint);
-
-    console.log("points", durationPoint, successRatePoint);
   }
 
   await writeApi.flush();
