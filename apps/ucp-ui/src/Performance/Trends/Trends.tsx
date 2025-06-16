@@ -7,13 +7,10 @@ import {
   useGetAggregatorDurationGraphDataQuery,
   useGetAggregatorSuccessGraphDataQuery,
 } from "./api";
-import { oneDayOption } from "../../shared/components/Forms/constants";
 import TrendsChart from "./TrendsChart";
 
 const Trends = () => {
   const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
-
-  const shouldUseHourlyTicks = timeFrame === oneDayOption.value;
 
   const {
     data: successData,
@@ -45,7 +42,7 @@ const Trends = () => {
           isError={isErrorSuccess}
           isFetching={isFetchingSuccess}
           refetch={() => void refetchSuccess()}
-          shouldUseHourlyTicks={shouldUseHourlyTicks}
+          timeFrame={timeFrame}
           title="Average Success Rate"
           tooltipTitle="The percentage of connection attempts that are successful. All dates and times are in U.S. Eastern Time."
           valueMultiplier={100}
@@ -57,7 +54,7 @@ const Trends = () => {
           isError={isErrorDuration}
           isFetching={isFetchingDuration}
           refetch={() => void refetchDuration()}
-          shouldUseHourlyTicks={shouldUseHourlyTicks}
+          timeFrame={timeFrame}
           title="Average Speed"
           tooltipTitle="The average time (in seconds) it takes make a connection. All dates and times are in U.S. Eastern Time."
           valueMultiplier={1 / 1000}

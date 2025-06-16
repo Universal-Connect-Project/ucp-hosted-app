@@ -61,7 +61,7 @@ export const testInstitutionPermissions = {
   ],
   canDeleteInstitution: true,
   canEditInstitution: true,
-} as InstitutionDetailPermissions;
+} as unknown as InstitutionDetailPermissions;
 
 export const testInstitutionActiveAndInactive = {
   ...testInstitution,

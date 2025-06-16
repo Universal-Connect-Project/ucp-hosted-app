@@ -8,10 +8,15 @@ import { Paper, Stack, Tooltip, Typography } from "@mui/material";
 import styles from "./trendsChart.module.css";
 import { InfoOutline } from "@mui/icons-material";
 import FetchError from "../../shared/components/FetchError";
+import {
+  TREND_CHART_TOOLTIP_TEST_ID,
+  TRENDS_CHART_ERROR_TEXT,
+} from "./constants";
+import { oneDayOption } from "../../shared/components/Forms/constants";
 
 const EDTTimeZone = "America/New_York";
 
-const formatTooltip = ({ start, stop }: { start: Date; stop: Date }) => {
+export const formatTooltip = ({ start, stop }: { start: Date; stop: Date }) => {
   const formatDate = (date: Date) => format(date, "MM/dd @ H:mm");
   const formatDateWithSeconds = (date: Date) => format(date, "MM/dd @ H:mm:ss");
 
@@ -31,7 +36,7 @@ const TrendsChart = ({
   isError,
   isFetching,
   refetch,
-  shouldUseHourlyTicks,
+  timeFrame,
   tooltipTitle,
   title,
   valueMultiplier,
@@ -41,14 +46,16 @@ const TrendsChart = ({
   data: AggregatorGraphMetricsResponse | undefined;
   isError: boolean;
   isFetching: boolean;
-  shouldUseHourlyTicks: boolean;
   refetch: () => void;
-  tooltipTitle: string;
+  timeFrame: string;
   title: string;
+  tooltipTitle: string;
   valueMultiplier: number;
   valuePostfix: string;
   yAxisMax?: number;
 }) => {
+  const shouldUseHourlyTicks = timeFrame === oneDayOption.value;
+
   const performanceData =
     data?.performance?.map(({ midpoint, start, stop, ...rest }) => {
       const midpointDate = new TZDate(midpoint, EDTTimeZone);
@@ -134,15 +141,15 @@ const TrendsChart = ({
     <Paper className={styles.chartContainer} variant="outlined">
       <Stack spacing={3}>
         {isError && (
-          <FetchError
-            description="Failed to fetch performance data"
-            refetch={refetch}
-          />
+          <FetchError description={TRENDS_CHART_ERROR_TEXT} refetch={refetch} />
         )}
         <Stack alignItems="center" direction="row" spacing={1.5}>
           <Typography variant="h6">{title}</Typography>
           <Tooltip title={tooltipTitle}>
-            <InfoOutline color="primary" />
+            <InfoOutline
+              color="primary"
+              data-testid={TREND_CHART_TOOLTIP_TEST_ID}
+            />
           </Tooltip>
         </Stack>
         <LineChart
