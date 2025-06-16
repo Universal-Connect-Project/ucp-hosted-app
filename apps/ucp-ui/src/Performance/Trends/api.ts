@@ -11,6 +11,16 @@ interface AggregatorGraphParams {
 
 export const trendsApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    getAggregatorDurationGraphData: builder.query<
+      AggregatorGraphMetricsResponse,
+      AggregatorGraphParams
+    >({
+      query: ({ timeFrame }) => ({
+        params: { timeFrame },
+        url: AGGREGATOR_DURATION_GRAPH_URL,
+      }),
+      providesTags: [TagTypes.AGGREGATORS],
+    }),
     getAggregatorSuccessGraphData: builder.query<
       AggregatorGraphMetricsResponse,
       AggregatorGraphParams
@@ -25,4 +35,7 @@ export const trendsApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useGetAggregatorSuccessGraphDataQuery } = trendsApi;
+export const {
+  useGetAggregatorDurationGraphDataQuery,
+  useGetAggregatorSuccessGraphDataQuery,
+} = trendsApi;
