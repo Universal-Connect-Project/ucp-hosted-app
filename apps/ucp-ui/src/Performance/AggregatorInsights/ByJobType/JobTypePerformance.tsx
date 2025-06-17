@@ -44,7 +44,7 @@ const JobTypePerformance = ({
             isLoading={isLoading}
             key={aggregator.id}
           >
-            {`${formatMaxTwoDecimals(avgSuccessRate) || 0}% | ${avgDuration ? formatMaxTwoDecimals(avgDuration) + "s" : "-"}`}
+            {`${formatMaxTwoDecimals(avgSuccessRate) || 0}% | ${avgDuration ? formatMaxTwoDecimals(avgDuration) + "s" : "–"}`}
           </NoDataCell>
         );
       })}
