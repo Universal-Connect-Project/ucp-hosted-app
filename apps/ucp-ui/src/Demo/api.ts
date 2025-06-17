@@ -1,5 +1,5 @@
 import { api, TagTypes } from "../baseApi";
-import { INSTITUTION_SERVICE_BASE_URL } from "../shared/constants/environment";
+import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 
 interface TokenResponse {
   token: string;
@@ -17,8 +17,8 @@ interface WidgetParams {
   token: string;
 }
 
-export const TOKEN_URL = `${INSTITUTION_SERVICE_BASE_URL}/token`;
-export const WIDGET_URL = `${INSTITUTION_SERVICE_BASE_URL}/widget`;
+export const TOKEN_URL = `${WIDGET_DEMO_BASE_URL}/api/token`;
+export const WIDGET_URL = `${WIDGET_DEMO_BASE_URL}/widget`;
 
 export const demoApi = api.injectEndpoints({
   endpoints: (builder) => ({

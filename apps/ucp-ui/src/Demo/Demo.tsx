@@ -1,14 +1,12 @@
 import React from "react";
-import { useParams } from "react-router-dom";
 import { useGetDemoTokenQuery, useGetDemoURLQuery } from "./api";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Demo = () => {
-  const { userId } = useParams();
-
+  const userId = "some-user-id"; // Replace with actual user ID logic
   const { data } = useGetDemoTokenQuery({ userId: userId as string });
 
   const token = data?.token;
-
   const { data: demoURLData } = useGetDemoURLQuery({ token: token as string });
 
   const demoURL = demoURLData?.url;
