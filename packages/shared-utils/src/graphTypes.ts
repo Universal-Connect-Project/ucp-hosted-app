@@ -1,3 +1,5 @@
+import type { Aggregator } from "./aggregator";
+
 export interface PerformanceDataPoint {
   midpoint: string;
   start: string;
@@ -6,5 +8,10 @@ export interface PerformanceDataPoint {
 }
 
 export interface GraphMetricsResponse {
+  performance: PerformanceDataPoint[];
+}
+
+export interface AggregatorGraphMetricsResponse {
+  aggregators: Aggregator[];
   performance: PerformanceDataPoint[];
 }

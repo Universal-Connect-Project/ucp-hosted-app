@@ -1,11 +1,9 @@
 .tablePaper {
-  flex: 1;
-  position: relative;
+  height: 520px;
 }
 
 .tableContainer {
   border-radius: inherit;
-  position: absolute;
   overflow-y: auto;
   max-height: 100%;
 

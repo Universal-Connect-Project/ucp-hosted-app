@@ -7,11 +7,13 @@ export const thirtyDaysOption = {
   value: "30d",
 };
 
+export const oneDayOption = {
+  label: "Last 1 Day",
+  value: "1d",
+};
+
 export const timeFrameOptions = [
-  {
-    label: "Last 1 Day",
-    value: "1d",
-  },
+  oneDayOption,
   {
     label: "Last 7 Days",
     value: "1w",
