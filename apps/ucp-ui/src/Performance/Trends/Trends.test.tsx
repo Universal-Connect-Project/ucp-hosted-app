@@ -19,9 +19,11 @@ import {
 import { TRENDS_CHART_ERROR_TEXT } from "./constants";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import {
+  AGGREGATORS_LABEL_TEXT,
   oneDayOption,
   TIME_FRAME_LABEL_TEXT,
 } from "../../shared/components/Forms/constants";
+import { aggregatorsResponse } from "../../shared/api/testData/aggregators";
 
 const militaryTimeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 const monthDayRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/;
@@ -108,16 +110,16 @@ describe("<Trends />", () => {
     );
   });
 
-  it("allows changing the time frame", async () => {
+  it("allows changing the time frame and aggregators", async () => {
     render(<Trends />);
 
-    let timeFrameFromSuccess;
-    let timeFrameFromDuration;
+    let queryParamsFromSuccess;
+    let queryParamsFromDuration;
 
     server.use(
       http.get(AGGREGATOR_DURATION_GRAPH_URL, ({ request }) => {
         const searchParams = new URL(request.url).searchParams;
-        timeFrameFromDuration = searchParams.get("timeFrame");
+        queryParamsFromDuration = Object.fromEntries(searchParams.entries());
 
         return HttpResponse.json(durationGraphData);
       }),
@@ -125,7 +127,7 @@ describe("<Trends />", () => {
     server.use(
       http.get(AGGREGATOR_SUCCESS_GRAPH_URL, ({ request }) => {
         const searchParams = new URL(request.url).searchParams;
-        timeFrameFromSuccess = searchParams.get("timeFrame");
+        queryParamsFromSuccess = Object.fromEntries(searchParams.entries());
 
         return HttpResponse.json(successGraphData);
       }),
@@ -137,8 +139,33 @@ describe("<Trends />", () => {
       await screen.findByRole("option", { name: oneDayOption.label }),
     );
 
-    expect(timeFrameFromDuration).toBe(oneDayOption.value);
-    expect(timeFrameFromSuccess).toBe(oneDayOption.value);
+    expect(queryParamsFromDuration).toEqual({
+      aggregators: "",
+      timeFrame: oneDayOption.value,
+    });
+    expect(queryParamsFromSuccess).toEqual({
+      aggregators: "",
+      timeFrame: oneDayOption.value,
+    });
+
+    await userEvent.click(screen.getByLabelText(AGGREGATORS_LABEL_TEXT));
+
+    const { aggregators } = aggregatorsResponse;
+
+    await userEvent.click(
+      await screen.findByRole("option", {
+        name: aggregators[0].displayName,
+      }),
+    );
+
+    expect(queryParamsFromDuration).toEqual({
+      aggregators: aggregators[0].name,
+      timeFrame: oneDayOption.value,
+    });
+    expect(queryParamsFromSuccess).toEqual({
+      aggregators: aggregators[0].name,
+      timeFrame: oneDayOption.value,
+    });
   });
 
   it("uses hourly ticks for the one day time frame", async () => {
