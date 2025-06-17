@@ -39,7 +39,7 @@ const Trends = () => {
   return (
     <Stack spacing={3}>
       <Typography variant="h5">Trends</Typography>
-      <Stack direction="row" spacing={2}>
+      <Stack alignItems="flex-end" direction="row" spacing={2}>
         <AggregatorSelect
           onChange={handleAggregatorsChange}
           value={aggregators}
