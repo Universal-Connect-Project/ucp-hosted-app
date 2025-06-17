@@ -1,6 +1,5 @@
 import React from "react";
 import { useGetDemoTokenQuery, useGetDemoURLQuery } from "./api";
-import { useAuth0 } from "@auth0/auth0-react";
 
 const Demo = () => {
   const userId = "some-user-id"; // Replace with actual user ID logic
