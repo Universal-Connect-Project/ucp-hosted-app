@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  expectSkeletonLoader,
   render,
   screen,
   userEvent,
@@ -38,7 +39,7 @@ const tooltipTitle = "Test tooltip";
 
 const TestComponent = ({ timeFrame }: { timeFrame: string }) => {
   const { data, isError, isFetching, refetch } =
-    useGetAggregatorSuccessGraphDataQuery({ timeFrame });
+    useGetAggregatorSuccessGraphDataQuery({ aggregators: [], timeFrame });
 
   return (
     <TrendsChart
@@ -107,10 +108,11 @@ describe("<TrendsChart />", () => {
     expect(screen.queryByText(militaryTimeRegex)).not.toBeInTheDocument();
   });
 
-  it("shows a loading state", () => {
+  it("shows a loading state and renders an invisible skeleton loader", async () => {
     render(<TestComponent timeFrame={thirtyDaysOption.value} />);
 
     expect(screen.getByText("Loading data…")).toBeInTheDocument();
+    await expectSkeletonLoader();
   });
 
   it("shows an error state and allows retry", async () => {

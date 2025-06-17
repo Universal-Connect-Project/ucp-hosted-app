@@ -8,9 +8,13 @@ import {
   useGetAggregatorSuccessGraphDataQuery,
 } from "./api";
 import TrendsChart from "./TrendsChart";
+import AggregatorSelect, {
+  useAggregatorSelect,
+} from "../../shared/components/Forms/AggregatorSelect";
 
 const Trends = () => {
   const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
+  const { aggregators, handleAggregatorsChange } = useAggregatorSelect();
 
   const {
     data: successData,
@@ -18,6 +22,7 @@ const Trends = () => {
     isFetching: isFetchingSuccess,
     refetch: refetchSuccess,
   } = useGetAggregatorSuccessGraphDataQuery({
+    aggregators,
     timeFrame,
   });
 
@@ -27,13 +32,18 @@ const Trends = () => {
     isFetching: isFetchingDuration,
     refetch: refetchDuration,
   } = useGetAggregatorDurationGraphDataQuery({
+    aggregators,
     timeFrame,
   });
 
   return (
     <Stack spacing={3}>
       <Typography variant="h5">Trends</Typography>
-      <Stack direction="column" spacing={2}>
+      <Stack alignItems="flex-end" direction="row" spacing={2}>
+        <AggregatorSelect
+          onChange={handleAggregatorsChange}
+          value={aggregators}
+        />
         <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
       </Stack>
       <Stack direction="row" spacing={3}>
