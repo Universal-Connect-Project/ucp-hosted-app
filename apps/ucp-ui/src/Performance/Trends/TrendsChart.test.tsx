@@ -22,7 +22,7 @@ import {
 import { server } from "../../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
-import { successGraphData } from "../../shared/test/testData/performanceGraphts";
+import { successGraphData } from "../../shared/test/testData/performanceGraphs";
 
 const EDTTimeZone = "America/New_York";
 

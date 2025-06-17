@@ -30,7 +30,7 @@ import {
 import {
   durationGraphData,
   successGraphData,
-} from "./testData/performanceGraphts";
+} from "./testData/performanceGraphs";
 
 export const handlers = [
   http.post(INSTITUTION_SERVICE_CREATE_INSTITUTION_URL, () =>

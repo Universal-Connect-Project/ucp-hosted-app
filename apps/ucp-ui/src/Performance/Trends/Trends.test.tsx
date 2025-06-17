@@ -9,7 +9,7 @@ import Trends from "./Trends";
 import {
   durationGraphData,
   successGraphData,
-} from "../../shared/test/testData/performanceGraphts";
+} from "../../shared/test/testData/performanceGraphs";
 import { server } from "../../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import {
