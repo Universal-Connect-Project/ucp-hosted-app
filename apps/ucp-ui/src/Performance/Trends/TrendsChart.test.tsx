@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  expectSkeletonLoader,
   render,
   screen,
   userEvent,
@@ -107,10 +108,11 @@ describe("<TrendsChart />", () => {
     expect(screen.queryByText(militaryTimeRegex)).not.toBeInTheDocument();
   });
 
-  it("shows a loading state", () => {
+  it("shows a loading state and renders an invisible skeleton loader", async () => {
     render(<TestComponent timeFrame={thirtyDaysOption.value} />);
 
     expect(screen.getByText("Loading data…")).toBeInTheDocument();
+    await expectSkeletonLoader();
   });
 
   it("shows an error state and allows retry", async () => {

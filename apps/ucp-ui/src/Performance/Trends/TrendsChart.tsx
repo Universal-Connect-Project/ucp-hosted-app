@@ -13,6 +13,7 @@ import {
   TRENDS_CHART_ERROR_TEXT,
 } from "./constants";
 import { oneDayOption } from "../../shared/components/Forms/constants";
+import { InvisibleLoader } from "../../shared/components/Skeleton";
 
 const EDTTimeZone = "America/New_York";
 
@@ -139,6 +140,7 @@ const TrendsChart = ({
 
   return (
     <Paper className={styles.chartContainer} variant="outlined">
+      {isFetching && <InvisibleLoader />}
       <Stack spacing={3}>
         {isError && (
           <FetchError description={TRENDS_CHART_ERROR_TEXT} refetch={refetch} />
