@@ -28,3 +28,5 @@ export const timeFrameOptions = [
     value: "1y",
   },
 ];
+
+export const AGGREGATORS_LABEL_TEXT = "Aggregators";
