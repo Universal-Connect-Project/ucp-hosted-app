@@ -95,7 +95,7 @@ export const seedInfluxTestDb = async ({
   institutionId = "testInstitution",
   clientId = "testClient",
   aggregatorId = "mx",
-  duration = 10000,
+  duration,
   timestamp = new Date(),
   success = true,
   flush = true,

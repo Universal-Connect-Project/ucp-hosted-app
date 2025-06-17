@@ -4,12 +4,15 @@ import { Request, Response } from "express";
 
 import {
   allJobTypeCombinations,
+  seedInfluxTestDb,
   seedInfluxWithAllTimeFrameData,
   TEST_DURATION_ONE_MONTH,
   TEST_DURATION_ONE_WEEK,
+  wait,
 } from "../shared/tests/utils";
 import { getAggregatorMetrics } from "./aggregatorMetricsHandlers";
 import { TimeFrame } from "../aggregatorGraphMetrics/aggregatorGraphInfluxQueries";
+import { randomUUID } from "crypto";
 
 describe("getAggregatorMetrics", () => {
   beforeAll(async () => {
@@ -56,6 +59,43 @@ describe("getAggregatorMetrics", () => {
 
     expect(mxJobDuration).toBeGreaterThan(TEST_DURATION_ONE_WEEK / 1000);
     expect(mxJobDuration).toBeLessThanOrEqual(TEST_DURATION_ONE_MONTH / 1000);
+
+    expectedAggregatorMetricsResultsFormat(results);
+  });
+
+  it("gets an aggregator in the results even when it has no duration data", async () => {
+    const req = {
+      query: {
+        timeFrame: "",
+      },
+    } as unknown as Request;
+
+    const res = {
+      send: jest.fn(),
+    } as unknown as Response;
+
+    const aggregatorWithNoDuration = randomUUID();
+    await seedInfluxTestDb({
+      timestamp: new Date(),
+      aggregatorId: aggregatorWithNoDuration,
+      jobTypes: ["transactionHistory"],
+      success: false,
+      duration: undefined,
+    });
+
+    await wait(1000); // DB writing needs time to finish before reading
+
+    await getAggregatorMetrics(req, res);
+
+    const results = (res.send as jest.Mock).mock.calls[0][0];
+    expect(
+      results[aggregatorWithNoDuration].jobTypes["transactionHistory"],
+    ).toEqual(
+      expect.objectContaining({
+        avgSuccessRate: 0,
+        avgDuration: undefined,
+      }),
+    );
 
     expectedAggregatorMetricsResultsFormat(results);
   });
