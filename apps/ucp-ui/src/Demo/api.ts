@@ -6,7 +6,7 @@ interface TokenResponse {
 }
 
 interface DemoURLResponse {
-  url: string;
+  html: HTMLBaseElement;
 }
 
 interface TokenParams {
@@ -15,6 +15,8 @@ interface TokenParams {
 
 interface WidgetParams {
   token: string;
+  jobTypes: string;
+  userId: string;
 }
 
 export const TOKEN_URL = `${WIDGET_DEMO_BASE_URL}/api/token`;
@@ -28,11 +30,14 @@ export const demoApi = api.injectEndpoints({
         url: TOKEN_URL,
       }),
       providesTags: [TagTypes.DEMO],
+      keepUnusedDataFor: 0,
     }),
     getDemoURL: builder.query<DemoURLResponse, WidgetParams>({
-      query: ({ token }) => ({
+      query: ({ token, jobTypes, userId }) => ({
         params: { token },
-        url: WIDGET_URL,
+        url: `${WIDGET_URL}?jobTypes=${jobTypes}&userId=${userId}`,
+        responseHandler: (response) =>
+          response.text().then((text) => ({ html: text })),
       }),
       providesTags: [TagTypes.DEMO],
     }),
