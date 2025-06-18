@@ -2,7 +2,11 @@ import React from "react";
 import { AggregatorGraphMetricsResponse } from "@repo/shared-utils";
 import { format } from "date-fns";
 import { TZDate } from "@date-fns/tz";
-import { LineChart, LineSeriesType } from "@mui/x-charts";
+import {
+  LineChart,
+  LineSeriesType,
+  rainbowSurgePaletteLight,
+} from "@mui/x-charts";
 import { formatMaxTwoDecimals } from "../../shared/utils/format";
 import { Paper, Stack, Tooltip, Typography } from "@mui/material";
 import styles from "./trendsChart.module.css";
@@ -14,6 +18,8 @@ import {
 } from "./constants";
 import { oneDayOption } from "../../shared/components/Forms/constants";
 import { InvisibleLoader } from "../../shared/components/Skeleton";
+
+const chartColors = rainbowSurgePaletteLight;
 
 const EDTTimeZone = "America/New_York";
 
@@ -126,7 +132,8 @@ const TrendsChart = ({
   ];
 
   const series: LineSeriesType[] =
-    data?.aggregators?.map(({ displayName, name }) => ({
+    data?.aggregators?.map(({ aggregatorIndex, displayName, name }) => ({
+      color: chartColors[aggregatorIndex],
       curve: "linear",
       dataKey: name,
       label: displayName,
