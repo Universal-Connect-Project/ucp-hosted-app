@@ -39,7 +39,11 @@ const tooltipTitle = "Test tooltip";
 
 const TestComponent = ({ timeFrame }: { timeFrame: string }) => {
   const { data, isError, isFetching, refetch } =
-    useGetAggregatorSuccessGraphDataQuery({ aggregators: [], timeFrame });
+    useGetAggregatorSuccessGraphDataQuery({
+      aggregators: [],
+      jobTypes: [],
+      timeFrame,
+    });
 
   return (
     <TrendsChart
