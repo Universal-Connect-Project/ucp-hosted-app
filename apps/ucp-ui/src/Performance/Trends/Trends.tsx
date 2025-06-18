@@ -11,10 +11,15 @@ import TrendsChart from "./TrendsChart";
 import AggregatorSelect, {
   useAggregatorSelect,
 } from "../../shared/components/Forms/AggregatorSelect";
+import JobTypesSelect, {
+  useJobTypesSelect,
+} from "../../shared/components/Forms/JobTypesSelect";
+import styles from "./trends.module.css";
 
 const Trends = () => {
   const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
   const { aggregators, handleAggregatorsChange } = useAggregatorSelect();
+  const { jobTypes, handleJobTypesChange } = useJobTypesSelect();
 
   const {
     data: successData,
@@ -45,6 +50,15 @@ const Trends = () => {
           value={aggregators}
         />
         <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
+        <div className={styles.jobTypeSelectRelativeContainer}>
+          <div className={styles.jobTypeSelectAbsoluteContainer}>
+            <JobTypesSelect
+              className={styles.jobTypeSelect}
+              onChange={handleJobTypesChange}
+              value={jobTypes}
+            />
+          </div>
+        </div>
       </Stack>
       <Stack direction="row" spacing={3}>
         <TrendsChart

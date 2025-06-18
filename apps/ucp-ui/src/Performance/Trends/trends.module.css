@@ -1,0 +1,15 @@
+.jobTypeSelectRelativeContainer {
+  flex: 1;
+  position: relative;
+}
+
+.jobTypeSelectAbsoluteContainer {
+  bottom: 0;
+  position: absolute;
+  max-width: 100%;
+  width: 100%;
+}
+
+.jobTypeSelect {
+  width: 100%;
+}
