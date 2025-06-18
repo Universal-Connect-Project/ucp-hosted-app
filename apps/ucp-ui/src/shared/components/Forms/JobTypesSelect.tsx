@@ -63,8 +63,14 @@ const JobTypesSelect = ({
       onChange={onChange}
       value={value}
     >
-      {options?.map(({ label, value }) => (
-        <MenuItem key={value} value={value}>
+      {options?.map(({ label, value }, index) => (
+        <MenuItem
+          className={classNames({
+            [styles.topBorder]: index === allJobTypes.length,
+          })}
+          key={value}
+          value={value}
+        >
           {label}
         </MenuItem>
       ))}
