@@ -7,6 +7,7 @@ import {
 } from "../../constants/jobTypes";
 import styles from "./jobTypesSelect.module.css";
 import classNames from "classnames";
+import { JOB_TYPES_LABEL_TEXT } from "./constants";
 
 export const useJobTypesSelect = () => {
   const [jobTypes, setJobTypes] = useState<string[]>([]);
@@ -52,7 +53,7 @@ const JobTypesSelect = ({
   return (
     <TextField
       className={classNames(styles.container, className)}
-      label={"Job Types"}
+      label={JOB_TYPES_LABEL_TEXT}
       select
       slotProps={{
         select: {

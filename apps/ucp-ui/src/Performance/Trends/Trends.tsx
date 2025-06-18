@@ -28,6 +28,7 @@ const Trends = () => {
     refetch: refetchSuccess,
   } = useGetAggregatorSuccessGraphDataQuery({
     aggregators,
+    jobTypes,
     timeFrame,
   });
 
@@ -38,6 +39,7 @@ const Trends = () => {
     refetch: refetchDuration,
   } = useGetAggregatorDurationGraphDataQuery({
     aggregators,
+    jobTypes,
     timeFrame,
   });
 
