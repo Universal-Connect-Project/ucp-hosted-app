@@ -15,6 +15,16 @@ import {
 import { oneDayOption } from "../../shared/components/Forms/constants";
 import { InvisibleLoader } from "../../shared/components/Skeleton";
 
+const chartColors = [
+  "#74E4DA",
+  "#ED64A4",
+  "#F3DC46",
+  "#BABFC5",
+  "#60A9FF",
+  "#C8BAEE",
+  "#585E67",
+];
+
 const EDTTimeZone = "America/New_York";
 
 export const formatTooltip = ({ start, stop }: { start: Date; stop: Date }) => {
@@ -126,7 +136,8 @@ const TrendsChart = ({
   ];
 
   const series: LineSeriesType[] =
-    data?.aggregators?.map(({ displayName, name }) => ({
+    data?.aggregators?.map(({ aggregatorIndex, displayName, name }) => ({
+      color: chartColors[aggregatorIndex],
       curve: "linear",
       dataKey: name,
       label: displayName,

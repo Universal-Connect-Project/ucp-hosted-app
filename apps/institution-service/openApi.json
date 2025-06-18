@@ -219,6 +219,7 @@
                 "example": {
                   "aggregators": [
                     {
+                      "aggregatorIndex": 0,
                       "id": 98,
                       "name": "mx",
                       "displayName": "MX",
@@ -323,6 +324,7 @@
                 "example": {
                   "aggregators": [
                     {
+                      "aggregatorIndex": 0,
                       "id": 98,
                       "name": "mx",
                       "displayName": "MX",

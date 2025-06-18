@@ -12,6 +12,13 @@ export const createGetAggregatorGraph =
         ],
       });
 
+      const aggregatorsWithIndexes = aggregatorsData.map(
+        (aggregator, index) => ({
+          ...aggregator.dataValues,
+          aggregatorIndex: index,
+        }),
+      );
+
       const { aggregators, jobTypes, timeFrame } = req.query as {
         aggregators: string | undefined;
         jobTypes: string | undefined;
@@ -21,10 +28,10 @@ export const createGetAggregatorGraph =
       const aggregatorsFromQueryParam = aggregators && aggregators?.split(",");
 
       const filteredAggregators = aggregatorsFromQueryParam?.length
-        ? aggregatorsData.filter((aggregator) =>
+        ? aggregatorsWithIndexes.filter((aggregator) =>
             aggregatorsFromQueryParam.includes(aggregator.name),
           )
-        : aggregatorsData;
+        : aggregatorsWithIndexes;
 
       const getGraphFromPerformanceService =
         createGetAggregatorGraphFromPerformanceService(url);

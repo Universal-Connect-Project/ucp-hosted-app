@@ -55,6 +55,7 @@ describe("createGetAggregatorGraph", () => {
       expect.objectContaining({
         aggregators: expect.arrayContaining([
           expect.objectContaining({
+            aggregatorIndex: expect.any(Number),
             id: expect.any(Number),
             name: expect.any(String),
             displayName: expect.any(String) || null,
@@ -91,6 +92,7 @@ describe("createGetAggregatorGraph", () => {
       expect.objectContaining({
         aggregators: expect.arrayContaining([
           expect.objectContaining({
+            aggregatorIndex: expect.any(Number),
             id: expect.any(Number),
             name: expect.any(String),
             displayName: expect.any(String) || null,

@@ -127,6 +127,9 @@ describe("aggregators", () => {
     ) => {
       expect(response.status).to.eq(200);
       expect(response.body.aggregators[0]).to.haveOwnProperty("name");
+      expect(response.body.aggregators[0]).to.haveOwnProperty(
+        "aggregatorIndex",
+      );
 
       ["midpoint", "start", "stop"].forEach((attribute) => {
         expect(response.body.performance[0]).to.haveOwnProperty(attribute);
