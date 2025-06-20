@@ -1,6 +1,6 @@
 export interface Aggregator {
-  displayName: string;
-  id: number;
-  logo: string;
+  id: string;
   name: string;
+  displayName: string;
+  logo: string;
 }

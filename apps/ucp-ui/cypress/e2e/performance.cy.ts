@@ -1,18 +1,64 @@
 import { navigateToPerformance } from "../shared/navigation";
+import {
+  AGGREGATORS_LABEL_TEXT,
+  TIME_FRAME_LABEL_TEXT,
+} from "../../src/shared/components/Forms/constants";
+import { oneHundredEightyDaysOption } from "../../src/shared/components/Forms/constants";
 
 describe("performance", () => {
-  it("shows aggregators and performance data", () => {
+  it("shows the performance charts and filters", () => {
+    cy.loginWithoutWidgetRole();
+    cy.visit("/");
+    navigateToPerformance();
+
+    cy.findAllByText("MX").should("have.length", 3);
+
+    cy.get(".MuiMarkElement-root").should("have.length.at.least", 4);
+
+    cy.findByLabelText(AGGREGATORS_LABEL_TEXT).click();
+
+    cy.findByRole("option", { name: "Sophtron" }).click().type("{esc}");
+
+    cy.findAllByText("MX").should("have.length", 1);
+
+    cy.findAllByLabelText(TIME_FRAME_LABEL_TEXT).eq(0).click();
+
+    cy.findByRole("option", { name: oneHundredEightyDaysOption.label }).click();
+
+    cy.waitForLoad();
+
+    cy.get(".MuiMarkElement-root").should("have.length.at.least", 4);
+  });
+
+  it("shows aggregators and performance data by job type and filters", () => {
     cy.loginWithoutWidgetRole();
     cy.visit("/");
 
     navigateToPerformance();
 
-    cy.findByText("MX").should("exist");
+    cy.findAllByText("MX").should("have.length", 3);
 
-    cy.findAllByText(/^\d+(?:\.\d+)?%$/).should("have.length.at.least", 1);
-    cy.findAllByText(/^\d+(?:\.\d+)?s$/).should("have.length.at.least", 1);
+    const percentDataRegex = /^\d+(?:\.\d+)?%$/;
+    cy.findAllByText(percentDataRegex).should("have.length.at.least", 1);
 
-    cy.findAllByText(/^\d+(?:\.\d+)?%\s*\|\s*\d+(?:\.\d+)?s$/).should(
+    const durationDataRegex = /^\d+(?:\.\d+)?s$/;
+    cy.findAllByText(durationDataRegex).should("have.length.at.least", 1);
+
+    const percentAndDurationDataRegex =
+      /^\d+(?:\.\d+)?%\s*\|\s*\d+(?:\.\d+)?s$/;
+
+    cy.findAllByText(percentAndDurationDataRegex).should(
+      "have.length.at.least",
+      1,
+    );
+
+    cy.findAllByLabelText(TIME_FRAME_LABEL_TEXT).eq(1).click();
+
+    cy.findByRole("option", { name: oneHundredEightyDaysOption.label }).click();
+
+    cy.waitForLoad();
+
+    cy.findAllByText(percentAndDurationDataRegex).should(
       "have.length.at.least",
       1,
     );

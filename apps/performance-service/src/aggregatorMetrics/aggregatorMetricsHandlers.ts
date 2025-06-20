@@ -31,16 +31,21 @@ const queryInfluxAggregatorJobTypeAverages = async (
       |> filter(fn: (r) => r._measurement == "successRateMetrics")
       |> group(columns: ["aggregatorId", "jobTypes"])
       |> mean()
-      |> rename(columns: {_value: "avgSuccessRate"})
+      |> set(key: "_field", value: "avgSuccessRate")
 
     durations = from(bucket: "${BUCKET}")
       |> range(start: -${timeFrame})
       |> filter(fn: (r) => r._measurement == "durationMetrics")
       |> group(columns: ["aggregatorId", "jobTypes"])
       |> mean()
-      |> rename(columns: {_value: "avgDuration"})
+      |> set(key: "_field", value: "avgDuration")
 
-    join(tables: {success: successRates, duration: durations}, on: ["aggregatorId", "jobTypes"])
+    union(tables: [successRates, durations])
+      |> pivot(
+          rowKey: ["aggregatorId", "jobTypes"],
+          columnKey: ["_field"],
+          valueColumn: "_value"
+      )
       |> group(columns: ["aggregatorId"])
     `;
 
@@ -54,17 +59,22 @@ const queryInfluxAggregatorAverages = async (timeFrame: TimeFrame) => {
       |> filter(fn: (r) => r._measurement == "successRateMetrics")
       |> group(columns: ["aggregatorId"])
       |> mean()
-      |> rename(columns: {_value: "avgSuccessRate"})
+      |> set(key: "_field", value: "avgSuccessRate")
 
     durations = from(bucket: "${BUCKET}")
       |> range(start: -${timeFrame})
       |> filter(fn: (r) => r._measurement == "durationMetrics")
       |> group(columns: ["aggregatorId"])
       |> mean()
-      |> rename(columns: {_value: "avgDuration"})
+      |> set(key: "_field", value: "avgDuration")
 
-    join(tables: {success: successRates, duration: durations}, on: ["aggregatorId"])
-        |> group(columns: ["aggregatorId"])
+    union(tables: [successRates, durations])
+      |> pivot(
+          rowKey: ["aggregatorId"],
+          columnKey: ["_field"],
+          valueColumn: "_value"
+      )
+      |> group(columns: ["aggregatorId"])
     `;
 
   const results: influxResult[] = await queryApi.collectRows(fluxQuery);
@@ -80,7 +90,7 @@ interface influxResult {
 
 interface JobSpecificData {
   avgSuccessRate: number;
-  avgDuration: number;
+  avgDuration: number | undefined;
 }
 
 interface IndividualAggregatorMetrics {
@@ -106,7 +116,7 @@ const transformInfluxAggregatorDataToJson = (data: influxResult[]) => {
     }
 
     jsonOutput[aggregatorId].jobTypes[jobTypes] = {
-      avgDuration: avgDuration / 1000,
+      avgDuration: avgDuration ? avgDuration / 1000 : undefined,
       avgSuccessRate: avgSuccessRate * 100,
     };
   });
@@ -120,7 +130,9 @@ const addAggregatorAveragesToJson = (
   data.forEach((row) => {
     const { aggregatorId, avgDuration, avgSuccessRate } = row;
 
-    jsonObject[aggregatorId]["avgDuration"] = avgDuration / 1000;
+    jsonObject[aggregatorId]["avgDuration"] = avgDuration
+      ? avgDuration / 1000
+      : undefined;
     jsonObject[aggregatorId]["avgSuccessRate"] = avgSuccessRate * 100;
   });
 

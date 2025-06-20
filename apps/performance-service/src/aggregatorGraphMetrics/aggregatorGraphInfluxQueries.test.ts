@@ -243,21 +243,25 @@ describe("getAggregatorGraphMetrics", () => {
       const uniqueAggregatorId = `agg-${crypto.randomUUID()}`;
 
       await seedInfluxTestDb({
+        duration: 1000,
         jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
         aggregatorId: uniqueAggregatorId,
         success: true,
       });
       await seedInfluxTestDb({
+        duration: 1000,
         jobTypes: [ComboJobTypes.ACCOUNT_NUMBER, ComboJobTypes.TRANSACTIONS],
         aggregatorId: uniqueAggregatorId,
         success: false,
       });
       await seedInfluxTestDb({
+        duration: 1000,
         jobTypes: [ComboJobTypes.TRANSACTIONS],
         aggregatorId: uniqueAggregatorId,
         success: false,
       });
       await seedInfluxTestDb({
+        duration: 1000,
         jobTypes: [ComboJobTypes.TRANSACTIONS],
         aggregatorId: uniqueAggregatorId,
         success: true,
@@ -317,9 +321,11 @@ describe("getAggregatorGraphMetrics", () => {
 
     beforeAll(async () => {
       await seedInfluxTestDb({
+        duration: 1000,
         aggregatorId: aggId1,
       });
       await seedInfluxTestDb({
+        duration: 1000,
         aggregatorId: aggId2,
       });
 

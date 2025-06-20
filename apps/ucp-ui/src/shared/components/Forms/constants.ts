@@ -7,22 +7,31 @@ export const thirtyDaysOption = {
   value: "30d",
 };
 
+export const oneDayOption = {
+  label: "Last 1 Day",
+  value: "1d",
+};
+
+export const oneHundredEightyDaysOption = {
+  label: "Last 180 Days",
+  value: "180d",
+};
+
 export const timeFrameOptions = [
-  {
-    label: "Last 1 Day",
-    value: "1d",
-  },
+  oneDayOption,
   {
     label: "Last 7 Days",
     value: "1w",
   },
   thirtyDaysOption,
-  {
-    label: "Last 180 Days",
-    value: "180d",
-  },
+  oneHundredEightyDaysOption,
   {
     label: "Last 365 Days",
     value: "1y",
   },
 ];
+
+export const AGGREGATORS_LABEL_TEXT = "Aggregators";
+
+export const AGGREGATORS_ERROR_TEXT =
+  "Failed to load aggregators for filtering.";

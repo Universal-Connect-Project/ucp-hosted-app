@@ -38,7 +38,7 @@ const loadingAggregator = {
 const loadingAggregators = new Array(4).fill(0).map((current, index) => ({
   ...loadingAggregator,
   id: index,
-})) as Aggregator[];
+})) as unknown as Aggregator[];
 
 const OverallPerformanceCell = ({
   appendText,

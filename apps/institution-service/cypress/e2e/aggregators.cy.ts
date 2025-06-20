@@ -79,7 +79,9 @@ describe("aggregators", () => {
 
             if (["mx", "sophtron", "finicity"].includes(aggregator.name)) {
               expect(aggregator.avgSuccessRate).to.be.gte(0);
-              expect(aggregator.avgDuration).to.be.greaterThan(0);
+              expect(
+                aggregator.avgDuration == null || aggregator.avgDuration > 0,
+              ).to.be.true;
               expect(Object.keys(aggregator.jobTypes).length).to.be.greaterThan(
                 0,
               );
@@ -125,6 +127,9 @@ describe("aggregators", () => {
     ) => {
       expect(response.status).to.eq(200);
       expect(response.body.aggregators[0]).to.haveOwnProperty("name");
+      expect(response.body.aggregators[0]).to.haveOwnProperty(
+        "aggregatorIndex",
+      );
 
       ["midpoint", "start", "stop"].forEach((attribute) => {
         expect(response.body.performance[0]).to.haveOwnProperty(attribute);
