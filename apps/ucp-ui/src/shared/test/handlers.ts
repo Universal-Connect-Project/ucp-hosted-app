@@ -31,6 +31,7 @@ import {
   durationGraphData,
   successGraphData,
 } from "./testData/performanceGraphs";
+import { WIDGET_DEMO_BASE_URL } from "../constants/environment";
 
 export const handlers = [
   http.post(INSTITUTION_SERVICE_CREATE_INSTITUTION_URL, () =>
@@ -85,5 +86,12 @@ export const handlers = [
   ),
   http.get(AGGREGATOR_DURATION_GRAPH_URL, () =>
     HttpResponse.json(durationGraphData),
+  ),
+  http.get(`${WIDGET_DEMO_BASE_URL}/api/token/:userId`, () =>
+    HttpResponse.json({ token: "randomtoken" }),
+  ),
+  http.get(
+    `${WIDGET_DEMO_BASE_URL}/widget`,
+    () => new HttpResponse(null, { status: 200 }),
   ),
 ];
