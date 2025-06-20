@@ -13,9 +13,11 @@ import {
   widgetManagementRoute,
   BASE_ROUTE,
   termsAndConditionsPublicRoute,
+  DEMO_ROUTE,
 } from "./shared/constants/routes";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Performance from "./Performance/Performance";
+import Demo from "./Demo/Demo";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -40,6 +42,10 @@ const Routes = () => {
         {
           path: PERFORMANCE_ROUTE,
           element: <Performance />,
+        },
+        {
+          path: DEMO_ROUTE,
+          element: <Demo />,
         },
       ],
       path: BASE_ROUTE,

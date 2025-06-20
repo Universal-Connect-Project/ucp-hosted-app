@@ -53,6 +53,7 @@ export const UiUserPermissions = {
   DELETE_AGGREGATOR_INTEGRATION: "delete:aggregatorIntegration",
   DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR:
     "delete:aggregatorIntegration:aggregator",
+  WIDGET_DEMO: "widget:demo",
 };
 
 export const AUTH0_CLIENT_AUDIENCE = "ucp-hosted-apps";

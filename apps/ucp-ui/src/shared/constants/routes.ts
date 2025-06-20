@@ -8,6 +8,8 @@ const createPublicRoute = (childRoute: string) => ({
 });
 export const PERFORMANCE_ROUTE = "/performance";
 
+export const DEMO_ROUTE = "/demo";
+
 const createRoute = (childRoute: string) => ({
   childRoute,
   fullRoute: `/${childRoute}`,

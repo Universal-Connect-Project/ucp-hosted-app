@@ -7,6 +7,7 @@ export enum TagTypes {
   API_KEYS = "apiKeys",
   INSTITUTIONS = "institutions",
   INSTITUTION_PERMISSIONS = "institutionPermissions",
+  DEMO = "demo",
 }
 
 export const api = createApi({
