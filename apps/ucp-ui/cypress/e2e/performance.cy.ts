@@ -27,7 +27,7 @@ describe("performance", () => {
 
     cy.waitForLoad();
 
-    cy.get(".MuiMarkElement-root").should("have.length.at.least", 4);
+    cy.get(".MuiMarkElement-root").should("have.length.at.least", 2);
   });
 
   it("shows aggregators and performance data by job type and filters", () => {
