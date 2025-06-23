@@ -64,6 +64,7 @@ const Trends = () => {
           isError={isErrorDuration}
           isFetching={isFetchingDuration}
           refetch={() => void refetchDuration()}
+          shouldReverseYAxis
           timeFrame={timeFrame}
           title="Average Speed"
           tooltipTitle="The average time (in seconds) it takes make a connection. All dates and times are in U.S. Eastern Time."
