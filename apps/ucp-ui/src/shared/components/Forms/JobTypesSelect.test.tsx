@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "../../test/testUtils";
 import JobTypesSelect, { useJobTypesSelect } from "./JobTypesSelect";
-import { JOB_TYPES_LABEL_TEXT } from "./constants";
+import { JOB_TYPES_LABEL_TEXT, JOB_TYPES_UNSELECTED_TEXT } from "./constants";
 import { supportsJobTypeMap } from "../../constants/jobTypes";
 
 const TestComponent = () => {
@@ -34,10 +34,12 @@ describe("<JobTypesSelect />", () => {
     ).toBeInTheDocument();
   });
 
-  it("defaults to no job types selected and allows selecting multiple job types", async () => {
+  it("defaults to no job types selected, shows all Job Types, and allows selecting multiple job types", async () => {
     render(<TestComponent />);
 
     expect(await screen.findByText(JSON.stringify([]))).toBeInTheDocument();
+
+    expect(screen.getByText(JOB_TYPES_UNSELECTED_TEXT)).toBeInTheDocument();
 
     await userEvent.click(screen.getByLabelText(JOB_TYPES_LABEL_TEXT));
 

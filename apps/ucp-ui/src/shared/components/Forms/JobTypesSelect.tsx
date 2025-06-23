@@ -7,7 +7,7 @@ import {
 } from "../../constants/jobTypes";
 import styles from "./jobTypesSelect.module.css";
 import classNames from "classnames";
-import { JOB_TYPES_LABEL_TEXT } from "./constants";
+import { JOB_TYPES_LABEL_TEXT, JOB_TYPES_UNSELECTED_TEXT } from "./constants";
 
 export const useJobTypesSelect = () => {
   const [jobTypes, setJobTypes] = useState<string[]>([]);
@@ -41,6 +41,14 @@ const options = [
   })),
 ];
 
+const valueToLabelMap: Record<string, string> | undefined = options.reduce(
+  (acc: Record<string, string>, { label, value }) => ({
+    ...acc,
+    [value]: label,
+  }),
+  {},
+);
+
 const JobTypesSelect = ({
   className,
   onChange,
@@ -56,8 +64,23 @@ const JobTypesSelect = ({
       label={JOB_TYPES_LABEL_TEXT}
       select
       slotProps={{
+        inputLabel: {
+          shrink: true,
+        },
         select: {
+          displayEmpty: true,
           multiple: true,
+          renderValue: (selected: unknown) => {
+            const selectedArray = selected as string[];
+
+            if (!selectedArray || selectedArray.length === 0) {
+              return JOB_TYPES_UNSELECTED_TEXT;
+            }
+
+            return selectedArray
+              .map((value) => valueToLabelMap?.[value])
+              .join(", ");
+          },
         },
       }}
       onChange={onChange}
