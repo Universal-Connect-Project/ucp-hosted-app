@@ -47,11 +47,11 @@ const Trends = () => {
     <Stack spacing={3}>
       <Typography variant="h5">Trends</Typography>
       <Stack alignItems="flex-end" direction="row" spacing={2}>
+        <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
         <AggregatorSelect
           onChange={handleAggregatorsChange}
           value={aggregators}
         />
-        <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
         <div className={styles.jobTypeSelectRelativeContainer}>
           <div className={styles.jobTypeSelectAbsoluteContainer}>
             <JobTypesSelect
