@@ -4,6 +4,7 @@ const aggregatorThatsOnlyInSuccessGraph = "successGraphAggregator1";
 export const durationGraphData = {
   aggregators: [
     {
+      aggregatorIndex: 0,
       id: 2,
       name: "finicity",
       displayName: aggregatorThatsOnlyInDurationGraph,
@@ -12,6 +13,7 @@ export const durationGraphData = {
       updatedAt: "2025-06-16T14:21:34.230Z",
     },
     {
+      aggregatorIndex: 1,
       id: 98,
       name: "mx",
       displayName: "MX",
@@ -43,6 +45,7 @@ export const durationGraphData = {
 export const successGraphData = {
   aggregators: [
     {
+      aggregatorIndex: 0,
       id: 2,
       name: "finicity",
       displayName: aggregatorThatsOnlyInSuccessGraph,
@@ -51,6 +54,7 @@ export const successGraphData = {
       updatedAt: "2025-06-16T14:21:34.230Z",
     },
     {
+      aggregatorIndex: 1,
       id: 98,
       name: "mx",
       displayName: "MX",

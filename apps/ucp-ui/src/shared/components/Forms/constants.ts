@@ -32,6 +32,7 @@ export const timeFrameOptions = [
 ];
 
 export const AGGREGATORS_LABEL_TEXT = "Aggregators";
+export const AGGREGATORS_UNSELECTED_TEXT = "All Aggregators";
 
 export const AGGREGATORS_ERROR_TEXT =
   "Failed to load aggregators for filtering.";

@@ -8,7 +8,11 @@ import {
   waitForLoad,
 } from "../../test/testUtils";
 import { aggregatorsResponse } from "../../api/testData/aggregators";
-import { AGGREGATORS_ERROR_TEXT, AGGREGATORS_LABEL_TEXT } from "./constants";
+import {
+  AGGREGATORS_ERROR_TEXT,
+  AGGREGATORS_LABEL_TEXT,
+  AGGREGATORS_UNSELECTED_TEXT,
+} from "./constants";
 import { server } from "../../test/testServer";
 import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../../api/aggregators";
@@ -64,7 +68,7 @@ describe("<AggregatorSelect />", () => {
     expect(screen.queryByText(AGGREGATORS_ERROR_TEXT)).not.toBeInTheDocument();
   });
 
-  it("defaults to no aggregators selected and allows selecting multiple aggregators", async () => {
+  it("defaults to no aggregators selected, shows 'All Aggregators' and allows selecting multiple aggregators", async () => {
     render(<TestComponent />);
 
     await waitForLoad();
@@ -72,6 +76,8 @@ describe("<AggregatorSelect />", () => {
     aggregators.forEach(({ displayName }) => {
       expect(screen.queryByText(displayName)).not.toBeInTheDocument();
     });
+
+    expect(screen.getByText(AGGREGATORS_UNSELECTED_TEXT)).toBeInTheDocument();
 
     await userEvent.click(await screen.findByLabelText(AGGREGATORS_LABEL_TEXT));
 
