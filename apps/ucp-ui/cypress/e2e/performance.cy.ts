@@ -1,9 +1,11 @@
 import { navigateToPerformance } from "../shared/navigation";
 import {
   AGGREGATORS_LABEL_TEXT,
+  JOB_TYPES_LABEL_TEXT,
   TIME_FRAME_LABEL_TEXT,
 } from "../../src/shared/components/Forms/constants";
 import { oneHundredEightyDaysOption } from "../../src/shared/components/Forms/constants";
+import { supportsJobTypeMap } from "../../src/shared/constants/jobTypes";
 
 describe("performance", () => {
   it("shows the performance charts and filters", () => {
@@ -24,6 +26,14 @@ describe("performance", () => {
     cy.findAllByLabelText(TIME_FRAME_LABEL_TEXT).eq(0).click();
 
     cy.findByRole("option", { name: oneHundredEightyDaysOption.label }).click();
+
+    cy.findByLabelText(JOB_TYPES_LABEL_TEXT).click();
+
+    cy.findByRole("option", {
+      name: supportsJobTypeMap.transactions.displayName,
+    })
+      .click()
+      .type("{esc}");
 
     cy.waitForLoad();
 
