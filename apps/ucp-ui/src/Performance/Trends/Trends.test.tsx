@@ -20,10 +20,12 @@ import { TRENDS_CHART_ERROR_TEXT } from "./constants";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import {
   AGGREGATORS_LABEL_TEXT,
+  JOB_TYPES_LABEL_TEXT,
   oneDayOption,
   TIME_FRAME_LABEL_TEXT,
 } from "../../shared/components/Forms/constants";
 import { aggregatorsResponse } from "../../shared/api/testData/aggregators";
+import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
 
 const militaryTimeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 const monthDayRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/;
@@ -110,7 +112,7 @@ describe("<Trends />", () => {
     );
   });
 
-  it("allows changing the time frame and aggregators", async () => {
+  it("allows changing the time frame, aggregators, and jobTypes", async () => {
     render(<Trends />);
 
     let queryParamsFromSuccess;
@@ -141,10 +143,12 @@ describe("<Trends />", () => {
 
     expect(queryParamsFromDuration).toEqual({
       aggregators: "",
+      jobTypes: "",
       timeFrame: oneDayOption.value,
     });
     expect(queryParamsFromSuccess).toEqual({
       aggregators: "",
+      jobTypes: "",
       timeFrame: oneDayOption.value,
     });
 
@@ -160,10 +164,31 @@ describe("<Trends />", () => {
 
     expect(queryParamsFromDuration).toEqual({
       aggregators: aggregators[0].name,
+      jobTypes: "",
       timeFrame: oneDayOption.value,
     });
     expect(queryParamsFromSuccess).toEqual({
       aggregators: aggregators[0].name,
+      jobTypes: "",
+      timeFrame: oneDayOption.value,
+    });
+
+    await userEvent.click(screen.getByLabelText(JOB_TYPES_LABEL_TEXT));
+
+    await userEvent.click(
+      await screen.findByRole("option", {
+        name: supportsJobTypeMap.transactions.displayName,
+      }),
+    );
+
+    expect(queryParamsFromDuration).toEqual({
+      aggregators: aggregators[0].name,
+      jobTypes: "transactions",
+      timeFrame: oneDayOption.value,
+    });
+    expect(queryParamsFromSuccess).toEqual({
+      aggregators: aggregators[0].name,
+      jobTypes: "transactions",
       timeFrame: oneDayOption.value,
     });
   });

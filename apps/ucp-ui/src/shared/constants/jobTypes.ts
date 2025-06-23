@@ -61,3 +61,6 @@ const getAllCombinations = (): string[][] => {
 };
 
 export const allJobTypeCombinations = getAllCombinations();
+
+export const jobTypesCombinationsWithMoreThanOne =
+  allJobTypeCombinations.filter((jobTypes) => jobTypes.length > 1);
