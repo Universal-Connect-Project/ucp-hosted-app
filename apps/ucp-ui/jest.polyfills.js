@@ -40,3 +40,5 @@ Object.defineProperty(navigator, "clipboard", {
     writeText: async () => {},
   },
 });
+
+process.env.WIDGET_DEMO_BASE_URL = "http://localhost:1234";

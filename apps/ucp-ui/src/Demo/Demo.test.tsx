@@ -9,15 +9,8 @@ import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 describe("<Demo />", () => {
   beforeEach(() => {
     server.use(
-      http.get(`${WIDGET_DEMO_BASE_URL}/api/token/:userId`, () =>
+      http.get(`${WIDGET_DEMO_BASE_URL}/api/token`, () =>
         HttpResponse.json({ token: "randomstring" }),
-      ),
-    );
-
-    server.use(
-      http.get(
-        `${WIDGET_DEMO_BASE_URL}/widget`,
-        () => new HttpResponse(null, { status: 200 }),
       ),
     );
   });

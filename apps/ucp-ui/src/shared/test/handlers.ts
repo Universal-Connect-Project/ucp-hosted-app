@@ -87,11 +87,7 @@ export const handlers = [
   http.get(AGGREGATOR_DURATION_GRAPH_URL, () =>
     HttpResponse.json(durationGraphData),
   ),
-  http.get(`${WIDGET_DEMO_BASE_URL}/api/token/:userId`, () =>
+  http.get(`${WIDGET_DEMO_BASE_URL}/api/token`, () =>
     HttpResponse.json({ token: "randomtoken" }),
-  ),
-  http.get(
-    `${WIDGET_DEMO_BASE_URL}/widget`,
-    () => new HttpResponse(null, { status: 200 }),
   ),
 ];
