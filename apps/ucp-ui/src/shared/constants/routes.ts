@@ -1,12 +1,12 @@
 export const BASE_ROUTE = "/";
-export const INSTITUTIONS_ROUTE = BASE_ROUTE;
+export const INSTITUTIONS_ROUTE = "/institutions";
 export const PUBLIC_BASE_ROUTE = "/public";
 
 const createPublicRoute = (childRoute: string) => ({
   childRoute,
   fullRoute: `${PUBLIC_BASE_ROUTE}/${childRoute}`,
 });
-export const PERFORMANCE_ROUTE = "/performance";
+export const PERFORMANCE_ROUTE = BASE_ROUTE;
 
 const createRoute = (childRoute: string) => ({
   childRoute,

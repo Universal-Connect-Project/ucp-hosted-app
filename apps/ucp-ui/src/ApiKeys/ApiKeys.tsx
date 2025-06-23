@@ -19,6 +19,7 @@ import {
   API_KEYS_CLIENT_ID_LABEL_TEXT,
   API_KEYS_CLIENT_SECRET_LABEL_TEXT,
   API_KEYS_GET_KEYS_FAILURE_TEXT,
+  WIDGET_MANAGEMENT_PAGE_TITLE_TEXT,
 } from "./constants";
 import styles from "./apiKeys.module.css";
 import { useGetApiKeysQuery } from "./api";
@@ -101,7 +102,7 @@ const ApiKeys = () => {
   return (
     <PageContent>
       <Stack spacing={3.5}>
-        <PageTitle>Widget Management</PageTitle>
+        <PageTitle>{WIDGET_MANAGEMENT_PAGE_TITLE_TEXT}</PageTitle>
         <Card className={styles.apiKeysCard} variant="outlined">
           <CardHeader
             title={
