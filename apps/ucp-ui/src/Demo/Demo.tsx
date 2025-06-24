@@ -14,7 +14,6 @@ const Demo = () => {
   const {
     data: tokenData,
     isError: tokenError,
-    isLoading: isTokenLoading,
     refetch,
   } = useGetDemoTokenQuery({
     userId: userId as string,
@@ -36,9 +35,7 @@ const Demo = () => {
       <Stack spacing={4}>
         <PageTitle>{DEMO_PAGE_TITLE}</PageTitle>
         <div className={styles.iframeContainer}>
-          {isTokenLoading ? (
-            <div>Loading demo widget...</div>
-          ) : token ? (
+          {token ? (
             <iframe
               className={styles.iframe}
               src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=transactionHistory&userId=${userId}&token=${token}`}
