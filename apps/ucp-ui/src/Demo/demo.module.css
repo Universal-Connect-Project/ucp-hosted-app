@@ -1,5 +1,11 @@
-.iframe {
+.iframeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
+}
+.iframe {
+  width: 500px;
   height: 600px;
   border: none;
 }

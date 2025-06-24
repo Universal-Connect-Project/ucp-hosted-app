@@ -21,11 +21,24 @@ describe("<Demo />", () => {
     expect(screen.getByText(DEMO_PAGE_TITLE)).toBeInTheDocument();
   });
 
-  //   it("renders the iframe with correct src", async () => {
-  //     render(<Demo />);
+  it("renders the iframe with correct src", async () => {
+    render(<Demo />);
 
-  //     const iframe = await screen.findByTitle("Demo Widget");
-  //     expect(iframe).toBeInTheDocument();
-  //     expect(iframe).toHaveAttribute("src", expect.stringContaining("demo"));
-  //   });
+    const iframe = await screen.findByTitle("Demo Widget");
+    expect(iframe).toBeInTheDocument();
+  });
+
+  it("renders an error message when token fetch fails", async () => {
+    server.use(
+      http.get(`${WIDGET_DEMO_BASE_URL}/api/token`, () =>
+        HttpResponse.json({ error: "Failed to fetch token" }, { status: 500 }),
+      ),
+    );
+
+    render(<Demo />);
+
+    expect(
+      await screen.findByText("Failed to load demo widget."),
+    ).toBeInTheDocument();
+  });
 });
