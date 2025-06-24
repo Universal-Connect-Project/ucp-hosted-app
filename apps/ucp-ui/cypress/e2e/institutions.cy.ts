@@ -33,10 +33,13 @@ import {
 } from "../../src/Institutions/ChangeAggregatorIntegration/constants";
 import { supportsJobTypeMap } from "../../src/shared/constants/jobTypes";
 import { join } from "path";
+import { navigateToInstitutions } from "../shared/navigation";
 
 describe("institutions", () => {
   it("downloads the institutions json", () => {
     cy.loginWithoutWidgetRole();
+
+    navigateToInstitutions();
 
     cy.findByText(INSTITUTIONS_JSON_BUTTON_TEXT).click();
 
@@ -47,6 +50,8 @@ describe("institutions", () => {
 
   it("renders institutions, changes rows per page, paginates, and filters. It keeps the filters on reload", () => {
     cy.loginWithoutWidgetRole();
+
+    navigateToInstitutions();
 
     const rowRegex = new RegExp(INSTITUTIONS_ROW_TEST_ID);
 
@@ -120,6 +125,8 @@ describe("institutions", () => {
   it("renders institutions, sorts, checks order, sort again and checks order a second time", () => {
     cy.loginWithoutWidgetRole();
 
+    navigateToInstitutions();
+
     const rowRegex = new RegExp(INSTITUTIONS_ROW_TEST_ID);
 
     cy.waitForLoad();
@@ -154,6 +161,8 @@ describe("institutions", () => {
 
   it("creates an institution, navigates to its page, edits the institution, adds an aggregator integration, edits that aggregator integration, deletes the aggregator integration, and deletes the institution", () => {
     cy.loginSuperAdmin();
+
+    navigateToInstitutions();
 
     cy.findByRole("button", {
       name: INSTITUTIONS_ADD_INSTITUTION_BUTTON_TEXT,

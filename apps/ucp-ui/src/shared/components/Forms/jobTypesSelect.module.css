@@ -1,0 +1,11 @@
+.container {
+  &:global(.MuiFormControl-root) {
+    min-width: 200px;
+  }
+}
+
+.topBorder {
+  &:global(.MuiMenuItem-root) {
+    border-top: solid 1px var(--mui-palette-divider);
+  }
+}

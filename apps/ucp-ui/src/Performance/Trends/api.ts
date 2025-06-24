@@ -7,6 +7,7 @@ export const AGGREGATOR_DURATION_GRAPH_URL = `${INSTITUTION_SERVICE_BASE_URL}/ag
 
 interface AggregatorGraphParams {
   aggregators: string[];
+  jobTypes: string[];
   timeFrame: string;
 }
 
@@ -16,8 +17,8 @@ export const trendsApi = api.injectEndpoints({
       AggregatorGraphMetricsResponse,
       AggregatorGraphParams
     >({
-      query: ({ aggregators, timeFrame }) => ({
-        params: { aggregators, timeFrame },
+      query: ({ aggregators, jobTypes, timeFrame }) => ({
+        params: { aggregators, jobTypes, timeFrame },
         url: AGGREGATOR_DURATION_GRAPH_URL,
       }),
       providesTags: [TagTypes.AGGREGATORS],
@@ -26,8 +27,8 @@ export const trendsApi = api.injectEndpoints({
       AggregatorGraphMetricsResponse,
       AggregatorGraphParams
     >({
-      query: ({ aggregators, timeFrame }) => ({
-        params: { aggregators, timeFrame },
+      query: ({ aggregators, jobTypes, timeFrame }) => ({
+        params: { aggregators, jobTypes, timeFrame },
         url: AGGREGATOR_SUCCESS_GRAPH_URL,
       }),
       providesTags: [TagTypes.AGGREGATORS],

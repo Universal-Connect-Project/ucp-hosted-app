@@ -9,11 +9,11 @@ import {
   institutionRoute,
   termsAndConditionsRoute,
   PUBLIC_BASE_ROUTE,
-  PERFORMANCE_ROUTE,
   widgetManagementRoute,
   BASE_ROUTE,
   termsAndConditionsPublicRoute,
   DEMO_ROUTE,
+  INSTITUTIONS_ROUTE,
 } from "./shared/constants/routes";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Performance from "./Performance/Performance";
@@ -25,7 +25,7 @@ const Routes = () => {
       children: [
         {
           path: "",
-          element: <Institutions />,
+          element: <Performance />,
         },
         {
           path: institutionRoute.childRoute,
@@ -40,8 +40,8 @@ const Routes = () => {
           element: <TermsAndConditions />,
         },
         {
-          path: PERFORMANCE_ROUTE,
-          element: <Performance />,
+          path: INSTITUTIONS_ROUTE,
+          element: <Institutions />,
         },
         {
           path: DEMO_ROUTE,

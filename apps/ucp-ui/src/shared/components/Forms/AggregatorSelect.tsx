@@ -1,6 +1,10 @@
 import { MenuItem, SelectChangeEvent, Stack, TextField } from "@mui/material";
 import React, { ChangeEvent, useState } from "react";
-import { AGGREGATORS_ERROR_TEXT, AGGREGATORS_LABEL_TEXT } from "./constants";
+import {
+  AGGREGATORS_ERROR_TEXT,
+  AGGREGATORS_LABEL_TEXT,
+  AGGREGATORS_UNSELECTED_TEXT,
+} from "./constants";
 import styles from "./aggregatorSelect.module.css";
 import { useGetAggregatorsQuery } from "../../api/aggregators";
 import { SkeletonIfLoading } from "../Skeleton";
@@ -36,6 +40,15 @@ const AggregatorSelect = ({
 
   const aggregators = data?.aggregators;
 
+  const valueToLabelMap: Record<string, string> | undefined =
+    aggregators?.reduce(
+      (acc: Record<string, string>, aggregator) => ({
+        ...acc,
+        [aggregator.name]: aggregator.displayName,
+      }),
+      {},
+    );
+
   return (
     <Stack spacing={1}>
       {isError && (
@@ -51,16 +64,31 @@ const AggregatorSelect = ({
           label={AGGREGATORS_LABEL_TEXT}
           select={!!aggregators?.length}
           slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
             select: {
+              displayEmpty: true,
               multiple: true,
+              renderValue: (selected: unknown) => {
+                const selectedArray = selected as string[];
+
+                if (!selectedArray || selectedArray.length === 0) {
+                  return AGGREGATORS_UNSELECTED_TEXT;
+                }
+
+                return selectedArray
+                  .map((value) => valueToLabelMap?.[value])
+                  .join(", ");
+              },
             },
           }}
           onChange={onChange}
           value={value}
         >
-          {aggregators?.map(({ displayName, name }) => (
+          {aggregators?.map(({ name }) => (
             <MenuItem key={name} value={name}>
-              {displayName}
+              {valueToLabelMap?.[name]}
             </MenuItem>
           ))}
         </TextField>

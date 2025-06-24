@@ -1,9 +1,11 @@
 import { navigateToPerformance } from "../shared/navigation";
 import {
   AGGREGATORS_LABEL_TEXT,
+  JOB_TYPES_LABEL_TEXT,
   TIME_FRAME_LABEL_TEXT,
 } from "../../src/shared/components/Forms/constants";
 import { oneHundredEightyDaysOption } from "../../src/shared/components/Forms/constants";
+import { supportsJobTypeMap } from "../../src/shared/constants/jobTypes";
 
 describe("performance", () => {
   it("shows the performance charts and filters", () => {
@@ -25,9 +27,17 @@ describe("performance", () => {
 
     cy.findByRole("option", { name: oneHundredEightyDaysOption.label }).click();
 
+    cy.findByLabelText(JOB_TYPES_LABEL_TEXT).click();
+
+    cy.findByRole("option", {
+      name: supportsJobTypeMap.transactions.displayName,
+    })
+      .click()
+      .type("{esc}");
+
     cy.waitForLoad();
 
-    cy.get(".MuiMarkElement-root").should("have.length.at.least", 4);
+    cy.get(".MuiMarkElement-root").should("have.length.at.least", 2);
   });
 
   it("shows aggregators and performance data by job type and filters", () => {
