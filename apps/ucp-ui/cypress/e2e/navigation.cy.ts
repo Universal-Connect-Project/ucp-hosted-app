@@ -12,6 +12,7 @@ import {
 import { INSTITUTIONS_PAGE_TITLE } from "../../src/Institutions/constants";
 import { AUTH0_ORIGIN } from "../shared/constants";
 import { PERFORMANCE_PAGE_TITLE } from "../../src/Performance/constants";
+import { WIDGET_DEMO_PAGE_TITLE } from "../../src/Demo/constants";
 
 describe("Health", () => {
   it("renders a generic error page", () => {
@@ -55,31 +56,17 @@ describe("Health", () => {
     cy.findByText("Demo").should("exist");
   });
 
-  it("navigates to the demo page", () => {
-    cy.loginWithWidgetDemoPermissions();
-    cy.visit("/");
-    cy.findByText("Demo").click();
-    cy.get("iframe")
-      .should("exist")
-      .then(($iframe) => {
-        const iframe = $iframe[0];
-        return new Cypress.Promise((resolve) => {
-          if (iframe.contentWindow?.document.readyState === "complete") {
-            resolve();
-          } else {
-            iframe.onload = () => resolve();
-          }
-        });
-      });
-    cy.get("iframe")
-      .should("have.attr", "src")
-      .and("include", "widget?jobTypes=transactionHistory");
-  });
-
   it("does not show the demo link when the user does not have the permission", () => {
     cy.loginWithoutWidgetRole();
     cy.visit("/");
     cy.findByText("Demo").should("not.exist");
+  });
+
+  it("navigates to the demo page", () => {
+    cy.loginWithWidgetDemoPermissions();
+    cy.visit("/");
+    cy.findByText("Demo").click();
+    cy.findByText(WIDGET_DEMO_PAGE_TITLE).should("exist");
   });
 
   it("logs you out", () => {

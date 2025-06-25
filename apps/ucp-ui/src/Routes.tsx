@@ -12,7 +12,7 @@ import {
   widgetManagementRoute,
   BASE_ROUTE,
   termsAndConditionsPublicRoute,
-  DEMO_ROUTE,
+  WIDGET_DEMO_ROUTE,
   INSTITUTIONS_ROUTE,
 } from "./shared/constants/routes";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
@@ -44,7 +44,7 @@ const Routes = () => {
           element: <Institutions />,
         },
         {
-          path: DEMO_ROUTE,
+          path: WIDGET_DEMO_ROUTE,
           element: <Demo />,
         },
       ],

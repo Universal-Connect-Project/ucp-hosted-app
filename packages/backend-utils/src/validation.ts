@@ -10,14 +10,12 @@ export const validateAccessToken = ({
 }: {
   audience: string | string[];
   auth0Domain: string;
-}) => {
-  console.log([audience], [auth0Domain]);
-  return auth({
+}) =>
+  auth({
     audience: audience,
     issuerBaseURL: `https://${auth0Domain}`,
     tokenSigningAlg: "RS256",
   });
-};
 
 export const createRequestBodySchemaValidator = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {

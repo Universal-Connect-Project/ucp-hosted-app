@@ -1,1 +1,1 @@
-export const DEMO_PAGE_TITLE = "DEMO";
+export const WIDGET_DEMO_PAGE_TITLE = "WIDGET DEMO";

@@ -29,7 +29,7 @@ import {
   PERFORMANCE_ROUTE,
   widgetManagementRoute,
   demoRoute,
-  DEMO_ROUTE,
+  WIDGET_DEMO_ROUTE,
 } from "../shared/constants/routes";
 import { Link } from "react-router-dom";
 import {
@@ -78,7 +78,7 @@ const SideNav = ({
             label: SIDE_NAV_DEMO_LINK_TEXT,
             matchPaths: [demoRoute.fullRoute],
             Icon: LightbulbOutlined,
-            path: DEMO_ROUTE,
+            path: WIDGET_DEMO_ROUTE,
           },
         ]
       : []),

@@ -1,4 +1,4 @@
-import { api, TagTypes } from "../baseApi";
+import { api } from "../baseApi";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 
 interface TokenResponse {
@@ -18,7 +18,6 @@ export const demoApi = api.injectEndpoints({
         params: { userId },
         url: TOKEN_URL,
       }),
-      providesTags: [TagTypes.DEMO],
       keepUnusedDataFor: 0,
     }),
   }),
