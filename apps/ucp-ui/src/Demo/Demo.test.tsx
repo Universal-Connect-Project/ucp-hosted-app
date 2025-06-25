@@ -1,10 +1,11 @@
 import React from "react";
-import { render, screen } from "../shared/test/testUtils";
+import { render, screen, userEvent } from "../shared/test/testUtils";
 import Demo from "./Demo";
-import { WIDGET_DEMO_PAGE_TITLE } from "./constants";
+import { WIDGET_DEMO_ERROR_MESSAGE, WIDGET_DEMO_PAGE_TITLE } from "./constants";
 import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
+import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
 import { expectSkeletonLoader } from "../shared/test/testUtils";
 
 describe("<Demo />", () => {
@@ -17,7 +18,7 @@ describe("<Demo />", () => {
   it("renders the widget demo iframe", async () => {
     render(<Demo />);
 
-    const iframe = await screen.findByTitle("Demo Widget");
+    const iframe = await screen.findByTitle(WIDGET_DEMO_PAGE_TITLE);
     expect(iframe).toBeInTheDocument();
   });
 
@@ -31,7 +32,17 @@ describe("<Demo />", () => {
     render(<Demo />);
 
     expect(
-      await screen.findByText("Failed to load demo widget."),
+      await screen.findByText(WIDGET_DEMO_ERROR_MESSAGE),
     ).toBeInTheDocument();
+
+    server.use(
+      http.get(`${WIDGET_DEMO_BASE_URL}/api/token`, () =>
+        HttpResponse.json({ token: "randomtoken" }),
+      ),
+    );
+
+    await userEvent.click(screen.getByText(TRY_AGAIN_BUTTON_TEXT));
+    const iframe = await screen.findByTitle(WIDGET_DEMO_PAGE_TITLE);
+    expect(iframe).toBeInTheDocument();
   });
 });

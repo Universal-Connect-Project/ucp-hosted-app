@@ -1,8 +1,10 @@
-describe("Demo", () => {
+import { SIDE_NAV_DEMO_LINK_TEXT } from "../../src/Layout/constants";
+
+describe("Demo Widget", () => {
   it("navigates to the demo page", () => {
     cy.loginWithWidgetDemoPermissions();
     cy.visit("/");
-    cy.findByText("Demo").click();
+    cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
 
     cy.get("iframe")
       .its("0.contentDocument")
