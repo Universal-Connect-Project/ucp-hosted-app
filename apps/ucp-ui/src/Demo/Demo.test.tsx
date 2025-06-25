@@ -5,11 +5,12 @@ import { WIDGET_DEMO_PAGE_TITLE } from "./constants";
 import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
+import { expectSkeletonLoader } from "../shared/test/testUtils";
 
 describe("<Demo />", () => {
-  it("renders the page title", () => {
+  it("renders the page title, and shows a loading state", async () => {
     render(<Demo />);
-
+    await expectSkeletonLoader();
     expect(screen.getByText(WIDGET_DEMO_PAGE_TITLE)).toBeInTheDocument();
   });
 
