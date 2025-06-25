@@ -1,7 +1,11 @@
 import React from "react";
 import { render, screen, userEvent } from "../shared/test/testUtils";
 import Demo from "./Demo";
-import { WIDGET_DEMO_ERROR_MESSAGE, WIDGET_DEMO_PAGE_TITLE } from "./constants";
+import {
+  WIDGET_DEMO_ERROR_MESSAGE,
+  WIDGET_DEMO_IFRAME_TITLE,
+  WIDGET_DEMO_PAGE_TITLE,
+} from "./constants";
 import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
@@ -18,7 +22,7 @@ describe("<Demo />", () => {
   it("renders the widget demo iframe", async () => {
     render(<Demo />);
 
-    const iframe = await screen.findByTitle(WIDGET_DEMO_PAGE_TITLE);
+    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
     expect(iframe).toBeInTheDocument();
   });
 
@@ -42,7 +46,7 @@ describe("<Demo />", () => {
     );
 
     await userEvent.click(screen.getByText(TRY_AGAIN_BUTTON_TEXT));
-    const iframe = await screen.findByTitle(WIDGET_DEMO_PAGE_TITLE);
+    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
     expect(iframe).toBeInTheDocument();
   });
 });

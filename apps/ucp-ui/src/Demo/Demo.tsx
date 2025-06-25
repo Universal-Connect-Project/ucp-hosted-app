@@ -3,7 +3,11 @@ import { useGetDemoTokenQuery } from "./api";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 import PageContent from "../shared/components/PageContent";
 import PageTitle from "../shared/components/PageTitle";
-import { WIDGET_DEMO_ERROR_MESSAGE, WIDGET_DEMO_PAGE_TITLE } from "./constants";
+import {
+  WIDGET_DEMO_ERROR_MESSAGE,
+  WIDGET_DEMO_PAGE_TITLE,
+  WIDGET_DEMO_IFRAME_TITLE,
+} from "./constants";
 import { Stack } from "@mui/material";
 import FetchError from "../shared/components/FetchError";
 import styles from "./demo.module.css";
@@ -43,7 +47,7 @@ const Demo = () => {
                 <iframe
                   className={styles.iframe}
                   src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=transactionHistory&userId=${userId}&token=${token}`}
-                  title={WIDGET_DEMO_PAGE_TITLE}
+                  title={WIDGET_DEMO_IFRAME_TITLE}
                 />
               ) : null}
             </div>
