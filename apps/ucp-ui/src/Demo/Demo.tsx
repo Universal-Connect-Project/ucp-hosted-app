@@ -7,6 +7,7 @@ import { WIDGET_DEMO_PAGE_TITLE } from "./constants";
 import { Stack } from "@mui/material";
 import FetchError from "../shared/components/FetchError";
 import styles from "./demo.module.css";
+import { SkeletonIfLoading } from "../shared/components/Skeleton";
 
 const Demo = () => {
   const userId = "some-user-id"; // Replace with actual user ID logic
@@ -35,19 +36,19 @@ const Demo = () => {
     <PageContent>
       <Stack spacing={4}>
         <PageTitle>{WIDGET_DEMO_PAGE_TITLE}</PageTitle>
-        {tokenLoading ? (
-          <div className={styles.loading}>Loading demo widget...</div>
-        ) : (
-          <div className={styles.iframeContainer}>
-            {token ? (
-              <iframe
-                className={styles.iframe}
-                src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=transactionHistory&userId=${userId}&token=${token}`}
-                title="Demo Widget"
-              />
-            ) : null}
-          </div>
-        )}
+        <div className={styles.iframeContainer}>
+          <SkeletonIfLoading isLoading={tokenLoading}>
+            <div className={styles.iframeDimensionContainer}>
+              {token ? (
+                <iframe
+                  className={styles.iframe}
+                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=transactionHistory&userId=${userId}&token=${token}`}
+                  title="Demo Widget"
+                />
+              ) : null}
+            </div>
+          </SkeletonIfLoading>
+        </div>
       </Stack>
     </PageContent>
   );

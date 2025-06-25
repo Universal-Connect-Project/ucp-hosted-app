@@ -4,8 +4,14 @@
   align-items: center;
   width: 100%;
 }
-.iframe {
-  width: 500px;
+
+.iframeDimensionContainer {
   height: 600px;
+  width: 500px;
+}
+
+.iframe {
   border: none;
+  height: 600px;
+  width: 500px;
 }
