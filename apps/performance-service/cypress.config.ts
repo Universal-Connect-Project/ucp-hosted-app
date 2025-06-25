@@ -8,6 +8,10 @@ export default defineConfig({
   },
   e2e: {
     baseUrl: `http://localhost:${PORT}`,
+    retries: {
+      runMode: 1,
+      openMode: 0,
+    },
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },

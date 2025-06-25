@@ -1,0 +1,17 @@
+.iframeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.iframeDimensionContainer {
+  height: 600px;
+  width: 500px;
+}
+
+.iframe {
+  border: none;
+  height: 600px;
+  width: 500px;
+}

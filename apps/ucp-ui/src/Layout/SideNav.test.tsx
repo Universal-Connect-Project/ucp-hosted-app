@@ -32,6 +32,7 @@ import { PERFORMANCE_PAGE_TITLE } from "../Performance/constants";
 import { setAccessToken } from "../shared/reducers/token";
 import { createFakeAccessToken } from "../shared/test/utils";
 import { createStore } from "../store";
+import { WIDGET_DEMO_PAGE_TITLE } from "../Demo/constants";
 
 const mockLogout = jest.fn();
 
@@ -197,6 +198,24 @@ describe("<SideNav />", () => {
       render(<SideNav />, { store });
       const demoLink = await screen.findByText(SIDE_NAV_DEMO_LINK_TEXT);
       expect(demoLink).toBeInTheDocument();
+    });
+
+    it("navigates to the demo page when demo link is clicked", async () => {
+      const accessTokenWithDemoPermission = createFakeAccessToken([
+        "widget:demo",
+      ]);
+      const store = createStore();
+      store.dispatch(setAccessToken(accessTokenWithDemoPermission));
+      render(<Routes />, { shouldRenderRouter: false, store });
+      await userEvent.click(
+        screen.getByRole("link", {
+          name: SIDE_NAV_DEMO_LINK_TEXT,
+        }),
+      );
+
+      expect(
+        await screen.findByRole("heading", { name: WIDGET_DEMO_PAGE_TITLE }),
+      ).toBeInTheDocument();
     });
 
     it("does not render the demo link when user does not have widget:demo permission", () => {
