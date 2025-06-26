@@ -46,7 +46,7 @@ const Demo = () => {
               {token ? (
                 <iframe
                   className={styles.iframe}
-                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=transactionHistory&userId=${userId}&token=${token}`}
+                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=transactions&userId=${userId}&token=${token}`}
                   title={WIDGET_DEMO_IFRAME_TITLE}
                 />
               ) : null}
