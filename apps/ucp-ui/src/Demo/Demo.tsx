@@ -12,6 +12,7 @@ import { Stack } from "@mui/material";
 import FetchError from "../shared/components/FetchError";
 import styles from "./demo.module.css";
 import { SkeletonIfLoading } from "../shared/components/Skeleton";
+import { ComboJobTypes } from "@repo/shared-utils";
 
 const Demo = () => {
   const userId = "some-user-id"; // Replace with actual user ID logic
@@ -46,7 +47,7 @@ const Demo = () => {
               {token ? (
                 <iframe
                   className={styles.iframe}
-                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=transactions&userId=${userId}&token=${token}`}
+                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${ComboJobTypes.TRANSACTIONS}&userId=${userId}&token=${token}`}
                   title={WIDGET_DEMO_IFRAME_TITLE}
                 />
               ) : null}
