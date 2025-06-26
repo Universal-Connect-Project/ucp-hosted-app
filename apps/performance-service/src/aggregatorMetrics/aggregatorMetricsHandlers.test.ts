@@ -11,7 +11,7 @@ import {
   wait,
 } from "../shared/tests/utils";
 import { getAggregatorMetrics } from "./aggregatorMetricsHandlers";
-import { TimeFrame } from "../aggregatorGraphMetrics/aggregatorGraphInfluxQueries";
+import { TimeFrame } from "../shared/utils/graphInfluxQueries";
 import { randomUUID } from "crypto";
 
 describe("getAggregatorMetrics", () => {
