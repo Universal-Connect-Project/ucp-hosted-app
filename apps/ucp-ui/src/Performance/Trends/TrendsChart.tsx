@@ -137,6 +137,7 @@ const TrendsChart = ({
   const series: LineSeriesType[] =
     data?.aggregators?.map(({ aggregatorIndex, displayName, name }) => ({
       color: chartColors[aggregatorIndex],
+      connectNulls: true,
       curve: "linear",
       dataKey: name,
       label: displayName,
