@@ -34,7 +34,7 @@ describe("<RequestApiKeys />", () => {
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute(
       "href",
-      "mailto:ucw-support-aaaanxls523igauix7ft7lzjpu@mx.org.slack.com?subject=API Keys Request for test@test.com&body=%0D%0A%0D%0A----------Do not edit anything below this line----------%0D%0AUser Email: test@test.com",
+      "mailto:ucw-support-aaaanxls523igauix7ft7lzjpu@mx.org.slack.com?subject=API Keys Request for test@test.com&body=Company Name:%0D%0AAggregator(s) you are planning to implement:%0D%0AHow did you hear about us?%0D%0A%0D%0A----------Do not edit anything below this line----------%0D%0AUser Email: test@test.com",
     );
   });
 });
