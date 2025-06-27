@@ -39,7 +39,7 @@ const SectionHeaderRow = ({
                 className={styles.sectionHeaderCaption}
                 variant="caption"
               >
-                Success Rate (%), Speed (s)
+                Success Rate (%), Duration (s)
               </Typography>
             </Stack>
             {children}

@@ -43,7 +43,6 @@ const TrendsChart = ({
   isError,
   isFetching,
   refetch,
-  shouldReverseYAxis,
   timeFrame,
   tooltipTitle,
   title,
@@ -55,7 +54,6 @@ const TrendsChart = ({
   isError: boolean;
   isFetching: boolean;
   refetch: () => void;
-  shouldReverseYAxis?: boolean;
   timeFrame: string;
   title: string;
   tooltipTitle: string;
@@ -129,7 +127,6 @@ const TrendsChart = ({
     {
       max: yAxisMax,
       min: 0,
-      reverse: shouldReverseYAxis,
       valueFormatter: (value: number) => `${value * valueMultiplier}`,
     },
   ];
