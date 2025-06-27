@@ -50,7 +50,7 @@ export const validateAggregatorRequestSchema =
     }),
   );
 
-export const validateAggregatorGraphRequestSchema =
+export const validatePerformanceGraphRequestSchema =
   createRequestQueryParamSchemaValidator(
     Joi.object({
       aggregators: Joi.string().allow(""),

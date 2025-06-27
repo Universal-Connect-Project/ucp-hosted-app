@@ -1,27 +1,16 @@
 import { ComboJobTypes } from "@repo/shared-utils";
-import { createAggregatorGraphValidationTests } from "@repo/cypress-utils";
 import {
-  getDurationGraphPerformanceData,
-  getSuccessGraphPerformanceData,
+  createPerformanceGraphValidationTests,
+  expectLooksLikePerformanceData,
+} from "@repo/cypress-utils";
+import {
+  getAggregatorDurationGraphPerformanceData,
+  getAggregatorSuccessGraphPerformanceData,
   markSuccessfulEventRequest,
   startConnectionEventRequest,
 } from "../../shared/utils/requests";
 
-const expectLooksLikePerformanceData = (item) => {
-  expect(item).to.have.property("mx");
-
-  const expectDateString = (prop: string) => {
-    expect(item)
-      .to.have.property(prop)
-      .that.is.a("string")
-      .and.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/);
-  };
-
-  expectDateString("midpoint");
-  expectDateString("start");
-  expectDateString("stop");
-};
-describe("Graph endpoints", () => {
+describe("aggregator graph endpoints", () => {
   before(() => {
     const connectionId = crypto.randomUUID();
 
@@ -51,7 +40,7 @@ describe("Graph endpoints", () => {
     });
 
     it("gets aggregator graph response with valid inputs", () => {
-      getSuccessGraphPerformanceData({
+      getAggregatorSuccessGraphPerformanceData({
         timeFrame: "30d",
         jobTypes: ComboJobTypes.TRANSACTIONS,
         aggregators: "mx,sophtron,testAggregatorId",
@@ -59,11 +48,13 @@ describe("Graph endpoints", () => {
         expect(response.status).to.eq(200);
         cy.wrap(response.body)
           .its("performance")
-          .each(expectLooksLikePerformanceData);
+          .each((item) => expectLooksLikePerformanceData(item));
       });
     });
 
-    createAggregatorGraphValidationTests(getSuccessGraphPerformanceData);
+    createPerformanceGraphValidationTests(
+      getAggregatorSuccessGraphPerformanceData,
+    );
   });
 
   describe("Aggregator duration graph endpoints", () => {
@@ -81,7 +72,7 @@ describe("Graph endpoints", () => {
     });
 
     it("gets aggregator graph response with valid inputs", () => {
-      getDurationGraphPerformanceData({
+      getAggregatorDurationGraphPerformanceData({
         timeFrame: "30d",
         jobTypes: ComboJobTypes.TRANSACTIONS,
         aggregators: "mx,sophtron,testAggregatorId",
@@ -89,10 +80,12 @@ describe("Graph endpoints", () => {
         expect(response.status).to.eq(200);
         cy.wrap(response.body)
           .its("performance")
-          .each(expectLooksLikePerformanceData);
+          .each((item) => expectLooksLikePerformanceData(item));
       });
     });
 
-    createAggregatorGraphValidationTests(getDurationGraphPerformanceData);
+    createPerformanceGraphValidationTests(
+      getAggregatorDurationGraphPerformanceData,
+    );
   });
 });

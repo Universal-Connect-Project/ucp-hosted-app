@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { BUCKET, queryApi } from "../services/influxDb";
-import { TimeFrame } from "../aggregatorGraphMetrics/aggregatorGraphInfluxQueries";
+import { TimeFrame } from "../shared/consts/timeFrame";
 
 export const getAggregatorMetrics = async (req: Request, res: Response) => {
   try {

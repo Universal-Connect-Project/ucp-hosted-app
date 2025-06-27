@@ -17,6 +17,8 @@ export const shuffleArray = (array: string[]): string[] => {
   return newArray;
 };
 
+export const testInstitutionId = "testInstitution";
+
 export const createFakeAccessToken = (clientId: string = "test") => {
   const headers = {
     alg: "RS256",
@@ -92,7 +94,7 @@ interface SeedInfluxTestDbParams {
 
 export const seedInfluxTestDb = async ({
   jobTypes = ["transactions"],
-  institutionId = "testInstitution",
+  institutionId = testInstitutionId,
   clientId = "testClient",
   aggregatorId = "mx",
   duration,

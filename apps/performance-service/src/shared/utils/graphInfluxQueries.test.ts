@@ -3,9 +3,10 @@ import {
   seedInfluxTestDb,
   seedInfluxWithAllTimeFrameData,
   shuffleArray,
+  testInstitutionId,
   wait,
-} from "../shared/tests/utils";
-import { getAggregatorGraphMetrics } from "./aggregatorGraphInfluxQueries";
+} from "../tests/utils";
+import { getGraphMetrics } from "./graphInfluxQueries";
 import { GraphMetricsResponse } from "@repo/shared-utils";
 
 const getNowWithSomeForgiveness = () => Date.now() + 5000;
@@ -53,19 +54,53 @@ const testDataPoints = ({
   expect(midpoint).toBeGreaterThan(start);
 };
 
-describe("getAggregatorGraphMetrics", () => {
+describe("getGraphMetrics", () => {
   beforeAll(async () => {
     await seedInfluxWithAllTimeFrameData();
   });
 
+  describe("institution id options", () => {
+    it("gets nothing when institutionId is invalid", async () => {
+      const successData = await getGraphMetrics({
+        institutionId: "invalidInstitutionId",
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getGraphMetrics({
+        institutionId: "invalidInstitutionId",
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
+
+      expect(successData).toEqual({ performance: [] });
+      expect(durationData).toEqual({ performance: [] });
+    });
+
+    it("returns data when the institutionId is valid", async () => {
+      const successData = await getGraphMetrics({
+        institutionId: testInstitutionId,
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getGraphMetrics({
+        institutionId: testInstitutionId,
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
+
+      expect(successData.performance.length).toBeGreaterThan(0);
+      expect(durationData.performance.length).toBeGreaterThan(0);
+    });
+  });
+
   describe("time frame options", () => {
     it("gets hourly averages when getting 1 day of performance metrics", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         timeFrame: "1d",
         metric: "successRateMetrics",
       });
 
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         timeFrame: "1d",
         metric: "durationMetrics",
       });
@@ -83,12 +118,12 @@ describe("getAggregatorGraphMetrics", () => {
     });
 
     it("gets half day averages when getting 1 week of performance metrics", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         timeFrame: "1w",
         metric: "successRateMetrics",
       });
 
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         timeFrame: "1w",
         metric: "durationMetrics",
       });
@@ -106,12 +141,12 @@ describe("getAggregatorGraphMetrics", () => {
     });
 
     it("gets daily averages over 30 days of performance metrics", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         timeFrame: "30d",
         metric: "successRateMetrics",
       });
 
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         timeFrame: "30d",
         metric: "durationMetrics",
       });
@@ -130,12 +165,12 @@ describe("getAggregatorGraphMetrics", () => {
     });
 
     it("gets 12 day averages over 180 days of performance metrics", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         timeFrame: "180d",
         metric: "successRateMetrics",
       });
 
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         timeFrame: "180d",
         metric: "durationMetrics",
       });
@@ -155,12 +190,12 @@ describe("getAggregatorGraphMetrics", () => {
     });
 
     it("gets 30 day averages over 1 year of performance metrics", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         timeFrame: "1y",
         metric: "successRateMetrics",
       });
 
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         timeFrame: "1y",
         metric: "durationMetrics",
       });
@@ -182,12 +217,12 @@ describe("getAggregatorGraphMetrics", () => {
 
   describe("jobType options", () => {
     it("gets nothing when jobType is invalid", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         jobTypes: "invalidJobType",
         timeFrame: "1d",
         metric: "successRateMetrics",
       });
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         jobTypes: "invalidJobType",
         timeFrame: "1d",
         metric: "durationMetrics",
@@ -209,12 +244,12 @@ describe("getAggregatorGraphMetrics", () => {
 
     shuffledJobTypeCombinations.forEach((jobTypes) => {
       it(`gets data from valid jobTypes: ${jobTypes}`, async () => {
-        const successData = await getAggregatorGraphMetrics({
+        const successData = await getGraphMetrics({
           jobTypes,
           timeFrame: "1d",
           metric: "successRateMetrics",
         });
-        const durationData = await getAggregatorGraphMetrics({
+        const durationData = await getGraphMetrics({
           jobTypes,
           timeFrame: "1d",
           metric: "durationMetrics",
@@ -226,11 +261,11 @@ describe("getAggregatorGraphMetrics", () => {
     });
 
     it("gets data when no job types in params", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         timeFrame: "1d",
         metric: "successRateMetrics",
       });
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         timeFrame: "1d",
         metric: "durationMetrics",
       });
@@ -283,7 +318,7 @@ describe("getAggregatorGraphMetrics", () => {
         );
       };
 
-      const accountNumberData = await getAggregatorGraphMetrics({
+      const accountNumberData = await getGraphMetrics({
         jobTypes: ComboJobTypes.ACCOUNT_NUMBER,
         timeFrame: "1d",
         aggregators: uniqueAggregatorId,
@@ -292,7 +327,7 @@ describe("getAggregatorGraphMetrics", () => {
 
       expectValue({ data: accountNumberData, value: 1 });
 
-      const comboJobData = await getAggregatorGraphMetrics({
+      const comboJobData = await getGraphMetrics({
         jobTypes: [
           ComboJobTypes.TRANSACTIONS,
           ComboJobTypes.ACCOUNT_NUMBER,
@@ -304,7 +339,7 @@ describe("getAggregatorGraphMetrics", () => {
 
       expectValue({ data: comboJobData, value: 0 });
 
-      const transactionsData = await getAggregatorGraphMetrics({
+      const transactionsData = await getGraphMetrics({
         jobTypes: ComboJobTypes.TRANSACTIONS,
         aggregators: uniqueAggregatorId,
         timeFrame: "1d",
@@ -333,12 +368,12 @@ describe("getAggregatorGraphMetrics", () => {
     });
 
     it("gets nothing with an non-existant aggregator", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         aggregators: "noAggregator",
         timeFrame: "1d",
         metric: "successRateMetrics",
       });
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         jobTypes: "noAggregator",
         timeFrame: "1d",
         metric: "durationMetrics",
@@ -349,12 +384,12 @@ describe("getAggregatorGraphMetrics", () => {
     });
 
     it("gets single aggregator data", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         aggregators: aggId1,
         timeFrame: "1d",
         metric: "successRateMetrics",
       });
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         aggregators: aggId1,
         timeFrame: "1d",
         metric: "durationMetrics",
@@ -381,12 +416,12 @@ describe("getAggregatorGraphMetrics", () => {
     };
 
     it("gets combined aggregator data", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         aggregators: `${aggId1},${aggId2}`,
         timeFrame: "1d",
         metric: "successRateMetrics",
       });
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         aggregators: `${aggId1},${aggId2}`,
         timeFrame: "1d",
         metric: "durationMetrics",
@@ -397,11 +432,11 @@ describe("getAggregatorGraphMetrics", () => {
     });
 
     it("gets all aggregator data when none passed in", async () => {
-      const successData = await getAggregatorGraphMetrics({
+      const successData = await getGraphMetrics({
         timeFrame: "1d",
         metric: "successRateMetrics",
       });
-      const durationData = await getAggregatorGraphMetrics({
+      const durationData = await getGraphMetrics({
         timeFrame: "1d",
         metric: "durationMetrics",
       });

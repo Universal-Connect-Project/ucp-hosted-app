@@ -10,7 +10,7 @@ import {
   TIME_FRAME_ERROR_TEXT,
   PerformanceDataPoint,
 } from "@repo/shared-utils";
-import { createAggregatorGraphValidationTests } from "@repo/cypress-utils";
+import { createPerformanceGraphValidationTests } from "@repo/cypress-utils";
 
 interface AggregatorWithPerformance extends Aggregator {
   avgSuccessRate: number | null;
@@ -177,7 +177,7 @@ describe("aggregators", () => {
           );
         });
 
-        createAggregatorGraphValidationTests(getGraphFunction);
+        createPerformanceGraphValidationTests(getGraphFunction);
       });
 
     createGraphTests("aggregators/successGraph", getAggregatorSuccessGraph);
