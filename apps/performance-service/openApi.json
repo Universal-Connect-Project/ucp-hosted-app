@@ -458,6 +458,115 @@
         }
       }
     },
+    "/metrics/institution/:institutionId/successGraph": {
+      "get": {
+        "summary": "Fetch institution success graph metrics",
+        "description": "Retrieves success graph metrics for a specific institution based on provided time frame, job types, and aggregators.",
+        "parameters": [
+          {
+            "name": "institutionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the institution for which to fetch success graph metrics."
+          },
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["1d", "1w", "30d", "180d", "1y"]
+            },
+            "description": "Time frame for the metrics (e.g., '30d'). Defaults to 30d."
+          },
+          {
+            "name": "jobTypes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "transactions",
+                "transactions|accountOwner",
+                "accountNumber|transactions"
+              ]
+            },
+            "description": "A comma-separated list of job types. A combination of jobs can be achieved by passing a \"|\" separated list of job types. Defaults to no filtering by jobTypes."
+          },
+          {
+            "name": "aggregators",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": ["sophtron", "mx"]
+            },
+            "description": "A comma-separated list of aggregators. Defaults to all aggregators."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "performance": [
+                    {
+                      "start": "2025-05-08T04:00:00Z",
+                      "midpoint": "2025-05-08T16:00:00.000Z",
+                      "stop": "2025-05-09T04:00:00Z",
+                      "finicity": 1,
+                      "mx": null,
+                      "sophtron": 1,
+                      "testAggregatorId": null
+                    },
+                    {
+                      "start": "2025-05-09T04:00:00Z",
+                      "midpoint": "2025-05-09T16:00:00.000Z",
+                      "stop": "2025-05-10T04:00:00Z",
+                      "finicity": null,
+                      "mx": 1,
+                      "sophtron": null,
+                      "testAggregatorId": null
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "\"timeFrame\" must be one of [1d, 1w, 30d, 180d, 1y]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/events/{connectionId}/connectionStart": {
       "post": {
         "security": [
