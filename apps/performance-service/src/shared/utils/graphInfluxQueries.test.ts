@@ -3,6 +3,7 @@ import {
   seedInfluxTestDb,
   seedInfluxWithAllTimeFrameData,
   shuffleArray,
+  testInstitutionId,
   wait,
 } from "../tests/utils";
 import { getGraphMetrics } from "./graphInfluxQueries";
@@ -56,6 +57,40 @@ const testDataPoints = ({
 describe("getGraphMetrics", () => {
   beforeAll(async () => {
     await seedInfluxWithAllTimeFrameData();
+  });
+
+  describe("institution id options", () => {
+    it("gets nothing when institutionId is invalid", async () => {
+      const successData = await getGraphMetrics({
+        institutionId: "invalidInstitutionId",
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getGraphMetrics({
+        institutionId: "invalidInstitutionId",
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
+
+      expect(successData).toEqual({ performance: [] });
+      expect(durationData).toEqual({ performance: [] });
+    });
+
+    it("returns data when the institutionId is valid", async () => {
+      const successData = await getGraphMetrics({
+        institutionId: testInstitutionId,
+        timeFrame: "1d",
+        metric: "successRateMetrics",
+      });
+      const durationData = await getGraphMetrics({
+        institutionId: testInstitutionId,
+        timeFrame: "1d",
+        metric: "durationMetrics",
+      });
+
+      expect(successData.performance.length).toBeGreaterThan(0);
+      expect(durationData.performance.length).toBeGreaterThan(0);
+    });
   });
 
   describe("time frame options", () => {
