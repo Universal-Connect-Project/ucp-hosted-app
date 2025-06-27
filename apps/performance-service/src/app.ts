@@ -9,6 +9,7 @@ import { beginPollAndProcessEvents } from "./services/storageClient/redis";
 import performanceRoutingEndpoints from "./performanceRouting/performanceRoutingEndpoints";
 import aggregatorGraphEndpoints from "./aggregatorGraphMetrics/aggregatorGraphEndpoints";
 import aggregatorMetricsEndpoints from "./aggregatorMetrics/aggregatorMetricsEndpoints";
+import institutionPerformanceEndpoints from "./institutionPerformance/institutionPerformanceEndpoints";
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use("/events", eventRoutes);
 app.use(aggregatorGraphEndpoints);
 app.use(performanceRoutingEndpoints);
 app.use(aggregatorMetricsEndpoints);
+app.use(institutionPerformanceEndpoints);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(
