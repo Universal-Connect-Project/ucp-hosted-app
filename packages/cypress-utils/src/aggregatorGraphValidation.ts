@@ -1,11 +1,10 @@
-import {
-  ComboJobTypes,
-  JOB_TYPES_ERROR_TEXT,
-  TIME_FRAME_ERROR_TEXT,
-} from "@repo/shared-utils";
+import { ComboJobTypes, TIME_FRAME_ERROR_TEXT } from "@repo/shared-utils";
 
-const expectLooksLikePerformanceData = (item) => {
-  expect(item).to.have.property("mx");
+export const expectLooksLikePerformanceData = (
+  item,
+  expectedAggregator = "mx",
+) => {
+  expect(item).to.have.property(expectedAggregator);
 
   const expectDateString = (prop: string) => {
     expect(item)
@@ -34,8 +33,9 @@ type FetchFunction = (
   params: FetchFunctionParams,
 ) => Cypress.Chainable<FetchFunctionResponse>;
 
-export const createAggregatorGraphValidationTests = (
+export const createPerformanceGraphValidationTests = (
   fetchFunction: FetchFunction,
+  expectedAggregator?: string,
 ) =>
   describe("aggregator graph validation tests", () => {
     it("fails when timeFrame param is wrong", () => {
@@ -56,7 +56,9 @@ export const createAggregatorGraphValidationTests = (
         expect(response.status).to.eq(200);
         cy.wrap(response.body)
           .its("performance")
-          .each(expectLooksLikePerformanceData);
+          .each((value) =>
+            expectLooksLikePerformanceData(value, expectedAggregator),
+          );
       });
     });
   });

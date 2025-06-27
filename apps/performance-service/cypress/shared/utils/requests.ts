@@ -1,5 +1,6 @@
 import {
   INSTITUTION_SERVICE_ACCESS_TOKEN,
+  UCP_UI_USER_ACCESS_TOKEN,
   WIDGET_ACCESS_TOKEN,
 } from "../constants/accessTokens";
 import { createAuthorizationHeader } from "./authorization";
@@ -13,12 +14,15 @@ interface ConnectionStartRequestBody {
   recordDuration?: boolean;
 }
 
+export const testInstitutionId = "testInstitutionId";
+export const testAggregatorId = "testAggregatorId";
+
 export const startConnectionEventRequest = ({
   connectionId,
   body = {
     jobTypes: [ComboJobTypes.TRANSACTIONS],
-    institutionId: "testInstitutionId",
-    aggregatorId: "testAggregatorId",
+    institutionId: testInstitutionId,
+    aggregatorId: testAggregatorId,
     recordDuration: true,
   },
   failOnStatusCode = true,
@@ -82,7 +86,33 @@ export const getAllPerformanceData = () => {
   });
 };
 
-export const getSuccessGraphPerformanceData = ({
+export const getInstitutionSuccessGraphPerformanceData = ({
+  aggregators,
+  institutionId,
+  jobTypes,
+  timeFrame,
+}: {
+  aggregators?: string;
+  institutionId: string;
+  jobTypes?: string;
+  timeFrame?: string;
+}) => {
+  return cy.request({
+    url: `metrics/institution/${institutionId}/successGraph`,
+    qs: {
+      timeFrame,
+      jobTypes,
+      aggregators,
+    },
+    method: "GET",
+    failOnStatusCode: false,
+    headers: {
+      Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
+    },
+  });
+};
+
+export const getAggregatorSuccessGraphPerformanceData = ({
   timeFrame,
   jobTypes,
   aggregators,
@@ -108,7 +138,7 @@ export const getSuccessGraphPerformanceData = ({
   });
 };
 
-export const getDurationGraphPerformanceData = ({
+export const getAggregatorDurationGraphPerformanceData = ({
   timeFrame,
   jobTypes,
   aggregators,

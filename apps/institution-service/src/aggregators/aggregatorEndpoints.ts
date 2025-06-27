@@ -1,7 +1,7 @@
 import { RequestHandler, Router } from "express";
 import { validateUIAudience } from "../shared/utils/permissionValidation";
 import {
-  validateAggregatorGraphRequestSchema,
+  validatePerformanceGraphRequestSchema,
   validateAggregatorRequestSchema,
 } from "@repo/backend-utils";
 import { getAggregators } from "./getAggregators";
@@ -21,13 +21,13 @@ router.get(
 
 router.get(
   "/successGraph",
-  [validateUIAudience, validateAggregatorGraphRequestSchema],
+  [validateUIAudience, validatePerformanceGraphRequestSchema],
   getAggregatorSuccessGraph as RequestHandler,
 );
 
 router.get(
   "/durationGraph",
-  [validateUIAudience, validateAggregatorGraphRequestSchema],
+  [validateUIAudience, validatePerformanceGraphRequestSchema],
   getAggregatorDurationGraph as RequestHandler,
 );
 

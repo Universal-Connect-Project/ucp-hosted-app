@@ -5,19 +5,19 @@ import {
   getAggregatorSuccessGraphData,
   getAggregatorDurationGraphData,
 } from "./aggregatorGraphHandlers";
-import { validateAggregatorGraphRequestSchema } from "@repo/backend-utils";
+import { validatePerformanceGraphRequestSchema } from "@repo/backend-utils";
 
 const router = Router();
 
 router.get(
   "/metrics/aggregatorSuccessGraph",
-  [validateInstitutionServiceAudience, validateAggregatorGraphRequestSchema],
+  [validateInstitutionServiceAudience, validatePerformanceGraphRequestSchema],
   getAggregatorSuccessGraphData as RequestHandler,
 );
 
 router.get(
   "/metrics/aggregatorDurationGraph",
-  [validateInstitutionServiceAudience, validateAggregatorGraphRequestSchema],
+  [validateInstitutionServiceAudience, validatePerformanceGraphRequestSchema],
   getAggregatorDurationGraphData as RequestHandler,
 );
 
