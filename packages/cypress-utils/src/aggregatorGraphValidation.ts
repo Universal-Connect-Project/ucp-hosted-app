@@ -37,7 +37,7 @@ export const createPerformanceGraphValidationTests = (
   fetchFunction: FetchFunction,
   expectedAggregator?: string,
 ) =>
-  describe("aggregator graph validation tests", () => {
+  describe("graph validation tests", () => {
     it("fails when timeFrame param is wrong", () => {
       fetchFunction({
         timeFrame: "3d",

@@ -4,6 +4,7 @@ import {
   expectLooksLikePerformanceData,
 } from "@repo/cypress-utils";
 import {
+  getInstitutionDurationGraphPerformanceData,
   getInstitutionSuccessGraphPerformanceData,
   markSuccessfulEventRequest,
   startConnectionEventRequest,
@@ -11,25 +12,17 @@ import {
   testInstitutionId,
 } from "../../shared/utils/requests";
 
-describe("Institution graph endpoints", () => {
-  before(() => {
-    const connectionId = crypto.randomUUID();
-
-    startConnectionEventRequest({ connectionId }).then((response) => {
-      expect(response.status).to.eq(201);
-    });
-
-    markSuccessfulEventRequest(connectionId).then((response) => {
-      expect(response.status).to.eq(200);
-    });
-
-    cy.wait(6000); // 6 seconds for Redis processing poller to process and create a datapoint in Influx
-  });
-
-  describe("Institution success rate graph endpoints", () => {
+const createInstitutionGraphTests = ({
+  fetchFunction,
+  metric,
+}: {
+  fetchFunction: typeof getInstitutionDurationGraphPerformanceData;
+  metric: string;
+}) =>
+  describe(`Institution ${metric} graph endpoints`, () => {
     it("fails on improper authorization", () => {
       cy.request({
-        url: `metrics/institution/${testInstitutionId}/successGraph`,
+        url: `metrics/institution/${testInstitutionId}/${metric}Graph`,
         method: "GET",
         failOnStatusCode: false,
         headers: {
@@ -41,7 +34,7 @@ describe("Institution graph endpoints", () => {
     });
 
     it("returns an empty array if institutionId is invalid", () => {
-      getInstitutionSuccessGraphPerformanceData({
+      fetchFunction({
         institutionId: "invalid-id",
       }).then((response) => {
         const body = response.body as { performance: unknown[] };
@@ -51,7 +44,7 @@ describe("Institution graph endpoints", () => {
     });
 
     it("gets institution graph response with valid inputs", () => {
-      getInstitutionSuccessGraphPerformanceData({
+      fetchFunction({
         aggregators: `mx,sophtron,${testAggregatorId}`,
         institutionId: testInstitutionId,
         jobTypes: ComboJobTypes.TRANSACTIONS,
@@ -68,11 +61,36 @@ describe("Institution graph endpoints", () => {
 
     createPerformanceGraphValidationTests(
       (props: object) =>
-        getInstitutionSuccessGraphPerformanceData({
+        fetchFunction({
           ...props,
           institutionId: testInstitutionId,
         }),
       testAggregatorId,
     );
+  });
+
+describe("Institution graph endpoints", () => {
+  before(() => {
+    const connectionId = crypto.randomUUID();
+
+    startConnectionEventRequest({ connectionId }).then((response) => {
+      expect(response.status).to.eq(201);
+    });
+
+    markSuccessfulEventRequest(connectionId).then((response) => {
+      expect(response.status).to.eq(200);
+    });
+
+    cy.wait(6000); // 6 seconds for Redis processing poller to process and create a datapoint in Influx
+  });
+
+  createInstitutionGraphTests({
+    fetchFunction: getInstitutionDurationGraphPerformanceData,
+    metric: "duration",
+  });
+
+  createInstitutionGraphTests({
+    fetchFunction: getInstitutionSuccessGraphPerformanceData,
+    metric: "success",
   });
 });
