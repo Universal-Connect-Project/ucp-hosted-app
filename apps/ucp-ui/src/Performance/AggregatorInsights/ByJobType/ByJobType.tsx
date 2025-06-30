@@ -124,7 +124,7 @@ const ByJobType = () => {
                   ))}
                 </TableRowWithPaddingCells>
                 <TableRowWithPaddingCells>
-                  <TableCell>Overall Average Time To Connection</TableCell>
+                  <TableCell>Overall Average Time To Connect</TableCell>
                   {aggregators?.map(({ avgDuration, id }) => (
                     <OverallPerformanceCell
                       appendText="s"
