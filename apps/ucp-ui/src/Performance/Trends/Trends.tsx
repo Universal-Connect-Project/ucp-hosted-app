@@ -83,7 +83,7 @@ const Trends = () => {
           shouldReverseYAxis
           timeFrame={timeFrame}
           title="Average Time To Connection"
-          tooltipTitle="The average time (in seconds) it takes make a connection. All dates and times are in U.S. Eastern Time."
+          tooltipTitle="The average time (in seconds) it takes to make a connection. All dates and times are in U.S. Eastern Time."
           valueMultiplier={1 / 1000}
           valuePostfix="s"
         />
