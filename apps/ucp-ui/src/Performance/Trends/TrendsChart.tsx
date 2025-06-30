@@ -173,6 +173,7 @@ const TrendsChart = ({
           height={300}
           loading={isFetching}
           margin={{
+            bottom: shouldReverseYAxis ? magicLineXAxisUpNumber : 0,
             top: shouldReverseYAxis ? 0 : magicLineXAxisUpNumber,
           }}
           series={series}
