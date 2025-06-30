@@ -1,9 +1,8 @@
 import { TimeFrameToAggregateWindowMap } from "@repo/backend-utils/src/constants";
-import { BUCKET, queryApi } from "../services/influxDb";
+import { BUCKET, queryApi } from "../../services/influxDb";
 import groupBy from "lodash.groupby";
 import { GraphMetricsResponse } from "@repo/shared-utils";
-
-export type TimeFrame = keyof typeof TimeFrameToAggregateWindowMap;
+import { TimeFrame } from "../consts/timeFrame";
 
 interface AggSuccessInfluxObj {
   result: string;
@@ -45,29 +44,38 @@ const transformInfluxGraphMetrics = (
   return { performance };
 };
 
-export async function getAggregatorGraphMetrics({
-  timeFrame,
+export async function getGraphMetrics({
   aggregators,
+  institutionId,
   jobTypes,
   metric,
+  timeFrame,
 }: {
-  timeFrame: TimeFrame;
+  institutionId?: string;
   aggregators?: string | undefined;
   jobTypes?: string | undefined;
   metric: "successRateMetrics" | "durationMetrics";
+  timeFrame: TimeFrame;
 }): Promise<GraphMetricsResponse> {
   const formattedJobTypes = jobTypes
     ?.split(",")
     .map((jobType) => jobType.split("|").sort().join("|"));
+
   const jobTypesFilter = formattedJobTypes?.length
     ? `|> filter(fn: (r) => ${formattedJobTypes.map((type) => `r.jobTypes == string(v: "${type}")`).join(" or ")})`
     : "";
+
   const aggregatorFilter = aggregators?.length
     ? `|> filter(fn: (r) => ${aggregators
         .split(",")
         .map((aggregatorId) => `r.aggregatorId == string(v: "${aggregatorId}")`)
         .join(" or ")})`
     : "";
+
+  const institutionFilter = institutionId
+    ? `|> filter(fn: (r) => r.institutionId == string(v: "${institutionId}"))`
+    : "";
+
   const fluxQuery = `
     import "timezone"
 
@@ -76,6 +84,7 @@ export async function getAggregatorGraphMetrics({
     from(bucket: "${BUCKET}")
       |> range(start: -${timeFrame})
       |> filter(fn: (r) => r._measurement == "${metric}")
+      ${institutionFilter}
       ${aggregatorFilter}
       ${jobTypesFilter}
       |> group(columns: ["aggregatorId"])

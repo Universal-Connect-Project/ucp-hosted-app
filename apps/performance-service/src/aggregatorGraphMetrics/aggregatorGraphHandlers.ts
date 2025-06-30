@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
-import {
-  TimeFrame,
-  getAggregatorGraphMetrics,
-} from "./aggregatorGraphInfluxQueries";
+import { getGraphMetrics } from "../shared/utils/graphInfluxQueries";
+import { TimeFrame } from "../shared/consts/timeFrame";
 
 interface AggregatorGraphFilterQueryParams {
-  timeFrame?: TimeFrame;
   aggregators?: string;
   jobTypes?: string | undefined;
+  timeFrame?: TimeFrame;
 }
 
 export const getAggregatorSuccessGraphData = async (
@@ -18,7 +16,7 @@ export const getAggregatorSuccessGraphData = async (
     req.query as unknown as AggregatorGraphFilterQueryParams;
 
   try {
-    const successData = await getAggregatorGraphMetrics({
+    const successData = await getGraphMetrics({
       timeFrame: timeFrame || "30d",
       aggregators: aggregators || undefined,
       jobTypes: jobTypes || undefined,
@@ -38,7 +36,7 @@ export const getAggregatorDurationGraphData = async (
     req.query as unknown as AggregatorGraphFilterQueryParams;
 
   try {
-    const durationData = await getAggregatorGraphMetrics({
+    const durationData = await getGraphMetrics({
       timeFrame: timeFrame || "30d",
       aggregators: aggregators || undefined,
       jobTypes: jobTypes || undefined,

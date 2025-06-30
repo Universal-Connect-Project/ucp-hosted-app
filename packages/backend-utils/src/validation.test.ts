@@ -6,7 +6,7 @@ import {
 import {
   createRequestBodySchemaValidator,
   createRequestQueryParamSchemaValidator,
-  validateAggregatorGraphRequestSchema,
+  validatePerformanceGraphRequestSchema,
   validateAggregatorRequestSchema,
 } from "./validation";
 import { NextFunction, request, Request, Response } from "express";
@@ -132,11 +132,11 @@ describe("validation", () => {
     });
   });
 
-  describe("validateAggregatorGraphRequestSchema", () => {
+  describe("validatePerformanceGraphRequestSchema", () => {
     it("should allow a valid timeFrame query parameter", () => {
       const next = jest.fn();
 
-      validateAggregatorGraphRequestSchema(
+      validatePerformanceGraphRequestSchema(
         {
           query: {
             aggregators: "mx, sophtron",
@@ -160,7 +160,7 @@ describe("validation", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      validateAggregatorGraphRequestSchema(
+      validatePerformanceGraphRequestSchema(
         {
           query: { timeFrame: "invalid" },
         } as unknown as Request,
@@ -181,7 +181,7 @@ describe("validation", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      validateAggregatorGraphRequestSchema(
+      validatePerformanceGraphRequestSchema(
         {
           query: {
             jobTypes: "invalidJobType",
