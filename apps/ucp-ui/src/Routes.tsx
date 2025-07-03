@@ -17,7 +17,8 @@ import {
 } from "./shared/constants/routes";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Performance from "./Performance/Performance";
-import Demo from "./Demo/Demo";
+// import Demo from "./Demo/Demo";
+import DemoLandingPage from "./Demo/DemoLandingPage";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -45,7 +46,7 @@ const Routes = () => {
         },
         {
           path: WIDGET_DEMO_ROUTE,
-          element: <Demo />,
+          element: <DemoLandingPage />,
         },
       ],
       path: BASE_ROUTE,

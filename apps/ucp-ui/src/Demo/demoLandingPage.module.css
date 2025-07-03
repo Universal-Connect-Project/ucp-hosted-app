@@ -1,0 +1,50 @@
+.paper {
+  &:global(.MuiPaper-root) {
+    height: 516px;
+    width: 410px;
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+.paragraph {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+.title {
+  font-size: 23px;
+  font-weight: 700;
+  margin-left: 40px;
+  color: #1a1a1a;
+  margin-bottom: 40px;
+}
+.formGroup {
+  margin-left: 40px;
+  margin-bottom: 32px;
+  margin-right: 40px;
+}
+.select {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  margin-top: 4px;
+}
+.button {
+  float: right;
+}
+.buttonContainer {
+  margin-left: 40px;
+  margin-right: 40px;
+}
+.requiredText {
+  font-size: 13px;
+  font-weight: 400;
+  color: #666;
+}
+.menuItem {
+  &:global(.MuiMenuItem-root) {
+    margin-left: auto;
+  }
+}
