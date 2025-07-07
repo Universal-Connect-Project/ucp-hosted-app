@@ -24,12 +24,18 @@
   margin-bottom: 32px;
   margin-right: 40px;
 }
-.select {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-  margin-top: 4px;
+.formLabel {
+  :global(.MuiFormLabel-asterisk) {
+    color: #e32727;
+    font-size: 15px;
+  }
+}
+.formControl {
+  &:global(.MuiFormControl-root) {
+    margin-left: 40px;
+    margin-bottom: 32px;
+    margin-right: 40px;
+  }
 }
 .button {
   float: right;
@@ -46,5 +52,26 @@
 .menuItem {
   &:global(.MuiMenuItem-root) {
     margin-left: auto;
+  }
+}
+.select {
+  &:global(.MuiInputBase-root) {
+    margin-top: 4px;
+  }
+}
+.errorText {
+  &:global(.MuiFormHelperText-root) {
+    font-size: 13px;
+    color: #e32727;
+    margin-left: 0px;
+    display: flex;
+    align-items: center;
+  }
+}
+.errorIcon {
+  &:global(.MuiSvgIcon-root) {
+    font-size: 16px;
+    margin-right: 4px;
+    color: #e32727;
   }
 }
