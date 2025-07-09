@@ -1,4 +1,10 @@
-import { MenuItem, SelectChangeEvent, TextField } from "@mui/material";
+import {
+  Checkbox,
+  ListItemText,
+  MenuItem,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
 import React, { ChangeEvent, useState } from "react";
 import {
   allJobTypes,
@@ -86,15 +92,16 @@ const JobTypesSelect = ({
       onChange={onChange}
       value={value}
     >
-      {options?.map(({ label, value }, index) => (
+      {options?.map(({ label, value: currentValue }, index) => (
         <MenuItem
           className={classNames({
             [styles.topBorder]: index === allJobTypes.length,
           })}
-          key={value}
-          value={value}
+          key={currentValue}
+          value={currentValue}
         >
-          {label}
+          <Checkbox checked={value?.includes(currentValue)} />
+          <ListItemText primary={label} />
         </MenuItem>
       ))}
     </TextField>
