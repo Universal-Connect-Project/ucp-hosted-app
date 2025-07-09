@@ -100,7 +100,7 @@ const JobTypesSelect = ({
           key={currentValue}
           value={currentValue}
         >
-          <Checkbox checked={value?.includes(currentValue)} />
+          <Checkbox checked={value.includes(currentValue)} />
           <ListItemText primary={label} />
         </MenuItem>
       ))}
