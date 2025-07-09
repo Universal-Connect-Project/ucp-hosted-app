@@ -1,4 +1,11 @@
-import { MenuItem, SelectChangeEvent, Stack, TextField } from "@mui/material";
+import {
+  Checkbox,
+  ListItemText,
+  MenuItem,
+  SelectChangeEvent,
+  Stack,
+  TextField,
+} from "@mui/material";
 import React, { ChangeEvent, useState } from "react";
 import {
   AGGREGATORS_ERROR_TEXT,
@@ -88,7 +95,8 @@ const AggregatorSelect = ({
         >
           {aggregators?.map(({ name }) => (
             <MenuItem key={name} value={name}>
-              {valueToLabelMap?.[name]}
+              <Checkbox checked={value.includes(name)} />
+              <ListItemText primary={valueToLabelMap?.[name]} />
             </MenuItem>
           ))}
         </TextField>
