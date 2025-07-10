@@ -11,8 +11,8 @@ import {
   wait,
 } from "../shared/tests/utils";
 import { getAggregatorMetrics } from "./aggregatorMetricsHandlers";
-import { TimeFrame } from "../aggregatorGraphMetrics/aggregatorGraphInfluxQueries";
 import { randomUUID } from "crypto";
+import { TimeFrame } from "../shared/consts/timeFrame";
 
 describe("getAggregatorMetrics", () => {
   beforeAll(async () => {

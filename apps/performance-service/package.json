@@ -11,10 +11,10 @@
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "redisserver": "sh ./scripts/start-redis.sh",
     "prettier": "prettier . --check",
-    "test": "jest",
+    "test": "jest --runInBand",
     "start:influxDb": "sh ./scripts/start-influx.sh",
     "test:seedInfluxPerformance": "ts-node ./src/shared/tests/scripts/seedInfluxPerformance.ts",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch --runInBand"
   },
   "dependencies": {
     "@influxdata/influxdb-client": "^1.35.0",

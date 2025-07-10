@@ -37,7 +37,7 @@ const RequestAPIKeyAccess = () => {
       </CardContent>
       <CardActions className={styles.cardActions}>
         <Button
-          href={`mailto:${SUPPORT_EMAIL}?subject=API Keys Request for ${user?.email}&body=${newLine}${newLine}----------Do not edit anything below this line----------${newLine}User Email: ${user?.email}`}
+          href={`mailto:${SUPPORT_EMAIL}?subject=API Keys Request for ${user?.email}&body=Company Name:${newLine}Aggregator(s) you are planning to implement:${newLine}How did you hear about us?${newLine}${newLine}----------Do not edit anything below this line----------${newLine}User Email: ${user?.email}`}
           size="large"
           startIcon={<MailOutline />}
           variant="contained"

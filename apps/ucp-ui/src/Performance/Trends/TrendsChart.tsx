@@ -97,6 +97,7 @@ const TrendsChart = ({
   const xAxis = [
     {
       dataKey: "midpoint",
+      position: shouldReverseYAxis ? ("top" as const) : ("bottom" as const),
       tickMinStep: shouldUseHourlyTicks ? undefined : 24 * 60 * 60 * 1000,
       valueFormatter: (value: Date, context: { location: string }) => {
         if (context.location === "tick") {
@@ -149,6 +150,8 @@ const TrendsChart = ({
           : null,
     })) || [];
 
+  const magicLineXAxisUpNumber = 21;
+
   return (
     <Paper className={styles.chartContainer} variant="outlined">
       {isFetching && <InvisibleLoader />}
@@ -169,6 +172,10 @@ const TrendsChart = ({
           dataset={performanceData}
           height={300}
           loading={isFetching}
+          margin={{
+            bottom: shouldReverseYAxis ? magicLineXAxisUpNumber : 0,
+            top: shouldReverseYAxis ? 0 : magicLineXAxisUpNumber,
+          }}
           series={series}
           slotProps={{
             legend: {
