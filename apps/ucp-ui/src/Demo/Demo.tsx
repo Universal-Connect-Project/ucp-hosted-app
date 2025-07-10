@@ -14,7 +14,13 @@ import styles from "./demo.module.css";
 import { SkeletonIfLoading } from "../shared/components/Skeleton";
 import { ComboJobTypes } from "@repo/shared-utils";
 
-const Demo = () => {
+const Demo = ({
+  JobTypes,
+  aggregator,
+}: {
+  JobTypes: (typeof ComboJobTypes)[keyof typeof ComboJobTypes][];
+  aggregator: string;
+}) => {
   const userId = "some-user-id"; // Replace with actual user ID logic
 
   const {
@@ -47,7 +53,9 @@ const Demo = () => {
               {token ? (
                 <iframe
                   className={styles.iframe}
-                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${ComboJobTypes.TRANSACTIONS}&userId=${userId}&token=${token}`}
+                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${JobTypes.join(
+                    ",",
+                  )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
                   title={WIDGET_DEMO_IFRAME_TITLE}
                 />
               ) : null}

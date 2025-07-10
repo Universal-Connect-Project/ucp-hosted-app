@@ -25,6 +25,7 @@ import {
   CONNECTIONS_TAB,
 } from "./constants";
 import styles from "./demoLandingPage.module.css";
+import Demo from "./Demo";
 const DemoLandingPage = () => {
   const [aggregator, setAggregator] = useState("MX");
   const [checkboxState, setCheckboxState] = useState({
@@ -34,6 +35,7 @@ const DemoLandingPage = () => {
     transactionHistory: false,
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [jobTypes, setJobTypes] = useState<string[]>([]);
 
   const handleChange = (event: SelectChangeEvent) => {
     setAggregator(event.target.value);
@@ -51,15 +53,21 @@ const DemoLandingPage = () => {
     [accountNumber, accountOwner, transactions, transactionHistory].filter(
       (v) => v,
     ).length < 1;
-
   const handleOnSubmit = () => {
     setIsSubmitted(true);
     if (error) {
-      return false;
+      return;
     }
-    // Handle form submission logic here
-    console.log("Form submitted with selected option:", checkboxState);
+    const newJobTypes = Object.entries(checkboxState)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .filter(([_, value]) => value)
+      .map(([key]) => key);
+    setJobTypes(newJobTypes);
   };
+
+  if (isSubmitted && !error) {
+    return <Demo JobTypes={jobTypes} aggregator={aggregator.toLowerCase()} />;
+  }
 
   return (
     <PageContent>
