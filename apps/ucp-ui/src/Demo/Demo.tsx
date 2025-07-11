@@ -13,13 +13,16 @@ import FetchError from "../shared/components/FetchError";
 import styles from "./demo.module.css";
 import { SkeletonIfLoading } from "../shared/components/Skeleton";
 import { ComboJobTypes } from "@repo/shared-utils";
+import PhoneContainer from "./PhoneContainer";
 
 const Demo = ({
   JobTypes,
   aggregator,
+  onReset,
 }: {
   JobTypes: (typeof ComboJobTypes)[keyof typeof ComboJobTypes][];
   aggregator: string;
+  onReset: () => void;
 }) => {
   const userId = "some-user-id"; // Replace with actual user ID logic
 
@@ -49,17 +52,13 @@ const Demo = ({
         <PageTitle>{WIDGET_DEMO_PAGE_TITLE}</PageTitle>
         <div className={styles.iframeContainer}>
           <SkeletonIfLoading isLoading={tokenLoading}>
-            <div className={styles.iframeDimensionContainer}>
-              {token ? (
-                <iframe
-                  className={styles.iframe}
-                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${JobTypes.join(
-                    ",",
-                  )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
-                  title={WIDGET_DEMO_IFRAME_TITLE}
-                />
-              ) : null}
-            </div>
+            <PhoneContainer
+              src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${JobTypes.join(
+                ",",
+              )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
+              title={WIDGET_DEMO_IFRAME_TITLE}
+              onReset={onReset}
+            />
           </SkeletonIfLoading>
         </div>
       </Stack>

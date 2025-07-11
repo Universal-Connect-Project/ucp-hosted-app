@@ -26,6 +26,8 @@ import {
 } from "./constants";
 import styles from "./demoLandingPage.module.css";
 import Demo from "./Demo";
+import Connections from "./Connections";
+
 const DemoLandingPage = () => {
   const [aggregator, setAggregator] = useState("MX");
   const [checkboxState, setCheckboxState] = useState({
@@ -36,6 +38,11 @@ const DemoLandingPage = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [jobTypes, setJobTypes] = useState<string[]>([]);
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   const handleChange = (event: SelectChangeEvent) => {
     setAggregator(event.target.value);
@@ -65,123 +72,141 @@ const DemoLandingPage = () => {
     setJobTypes(newJobTypes);
   };
 
-  if (isSubmitted && !error) {
-    return <Demo JobTypes={jobTypes} aggregator={aggregator.toLowerCase()} />;
-  }
+  const handleReset = () => {
+    setIsSubmitted(false);
+  };
 
   return (
     <PageContent>
       <Stack spacing={4}>
         <PageTitle>{WIDGET_DEMO_PAGE_TITLE}</PageTitle>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs value={0}>
+          <Tabs value={tabValue} onChange={handleTabChange}>
             <Tab label={CONNECT_TAB} />
             <Tab label={CONNECTIONS_TAB} />
           </Tabs>
         </Box>
-        <Paper className={styles.paper}>
-          <Stack spacing={2} sx={{ padding: 2 }}>
-            <Box>
-              <h3 className={styles.title}>Configuration</h3>
-              <FormControl required className={styles.formControl}>
-                <FormLabel className={styles.formLabel}>
-                  <p className={styles.paragraph} style={{ display: "inline" }}>
-                    {"Job type "}
-                  </p>
-                </FormLabel>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={accountNumber}
-                      onChange={handleCheck}
-                      name="accountNumber"
+        {tabValue === 0 &&
+          (isSubmitted && !error ? (
+            <Demo
+              JobTypes={jobTypes}
+              aggregator={aggregator.toLowerCase()}
+              onReset={handleReset}
+            />
+          ) : (
+            <Paper className={styles.paper}>
+              <Stack spacing={2} sx={{ padding: 2 }}>
+                <Box>
+                  <h3 className={styles.title}>Configuration</h3>
+                  <FormControl required className={styles.formControl}>
+                    <FormLabel className={styles.formLabel}>
+                      <p
+                        className={styles.paragraph}
+                        style={{ display: "inline" }}
+                      >
+                        {"Job type "}
+                      </p>
+                    </FormLabel>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          size="small"
+                          checked={accountNumber}
+                          onChange={handleCheck}
+                          name="accountNumber"
+                        />
+                      }
+                      label="Account Number"
                     />
-                  }
-                  label="Account Number"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={accountOwner}
-                      size="small"
-                      onChange={handleCheck}
-                      name="accountOwner"
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={accountOwner}
+                          size="small"
+                          onChange={handleCheck}
+                          name="accountOwner"
+                        />
+                      }
+                      label="Account Owner"
                     />
-                  }
-                  label="Account Owner"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={transactions}
-                      size="small"
-                      onChange={handleCheck}
-                      name="transactions"
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={transactions}
+                          size="small"
+                          onChange={handleCheck}
+                          name="transactions"
+                        />
+                      }
+                      label="Transactions"
                     />
-                  }
-                  label="Transactions"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={transactionHistory}
-                      size="small"
-                      onChange={handleCheck}
-                      name="transactionHistory"
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={transactionHistory}
+                          size="small"
+                          onChange={handleCheck}
+                          name="transactionHistory"
+                        />
+                      }
+                      label="Transaction History"
                     />
-                  }
-                  label="Transaction History"
-                />
-                {isSubmitted && error && (
-                  <FormHelperText role="alert" className={styles.errorText}>
-                    <ErrorIcon className={styles.errorIcon} />
-                    {"Please select at least one job type."}
-                  </FormHelperText>
-                )}
-              </FormControl>
+                    {isSubmitted && error && (
+                      <FormHelperText role="alert" className={styles.errorText}>
+                        <ErrorIcon className={styles.errorIcon} />
+                        {"Please select at least one job type."}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
 
-              <FormGroup className={styles.formGroup}>
-                <FormLabel>
-                  <p className={styles.paragraph} style={{ display: "inline" }}>
-                    {"Aggregator"}
-                  </p>
-                </FormLabel>
-                <Select
-                  className={styles.select}
-                  value={aggregator}
-                  onChange={handleChange}
-                  label="Aggregator"
-                >
-                  <MenuItem className={styles.menuItem} value={"MX"}>
-                    {"MX"}
-                  </MenuItem>
-                  <MenuItem className={styles.menuItem} value={"Sophtron"}>
-                    {"Sophtron"}
-                  </MenuItem>
-                </Select>
-              </FormGroup>
-              <Box className={styles.buttonContainer}>
-                <span style={{ color: "#e32727", fontSize: "13px" }}>*</span>
-                <p
-                  className={styles.requiredText}
-                  style={{ display: "inline" }}
-                >
-                  {" Required"}
-                </p>
+                  <FormGroup className={styles.formGroup}>
+                    <FormLabel>
+                      <p
+                        className={styles.paragraph}
+                        style={{ display: "inline" }}
+                      >
+                        {"Aggregator"}
+                      </p>
+                    </FormLabel>
+                    <Select
+                      className={styles.select}
+                      value={aggregator}
+                      onChange={handleChange}
+                      label="Aggregator"
+                    >
+                      <MenuItem className={styles.menuItem} value={"MX"}>
+                        {"MX"}
+                      </MenuItem>
+                      <MenuItem className={styles.menuItem} value={"Sophtron"}>
+                        {"Sophtron"}
+                      </MenuItem>
+                    </Select>
+                  </FormGroup>
+                  <Box className={styles.buttonContainer}>
+                    <span style={{ color: "#e32727", fontSize: "13px" }}>
+                      *
+                    </span>
+                    <p
+                      className={styles.requiredText}
+                      style={{ display: "inline" }}
+                    >
+                      {" Required"}
+                    </p>
 
-                <Button
-                  className={styles.button}
-                  variant="contained"
-                  color="primary"
-                  onClick={handleOnSubmit}
-                >
-                  Launch
-                </Button>
-              </Box>
-            </Box>
-          </Stack>
-        </Paper>
+                    <Button
+                      className={styles.button}
+                      variant="contained"
+                      color="primary"
+                      onClick={handleOnSubmit}
+                    >
+                      Launch
+                    </Button>
+                  </Box>
+                </Box>
+              </Stack>
+            </Paper>
+          ))}
+        {tabValue === 1 && <Connections />}
       </Stack>
     </PageContent>
   );
