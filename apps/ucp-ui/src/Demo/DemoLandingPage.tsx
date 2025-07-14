@@ -52,6 +52,9 @@ const DemoLandingPage = () => {
       ...checkboxState,
       [event.target.name]: event.target.checked,
     });
+    if (isSubmitted) {
+      setIsSubmitted(false);
+    }
   };
 
   const { accountNumber, accountOwner, transactions, transactionHistory } =
@@ -169,6 +172,7 @@ const DemoLandingPage = () => {
                       </p>
                     </FormLabel>
                     <Select
+                      data-testid="aggregator-select"
                       className={styles.select}
                       value={aggregator}
                       onChange={handleChange}

@@ -2,10 +2,9 @@ import React from "react";
 import { useGetDemoTokenQuery } from "./api";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 import PageContent from "../shared/components/PageContent";
-import PageTitle from "../shared/components/PageTitle";
+
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
-  WIDGET_DEMO_PAGE_TITLE,
   WIDGET_DEMO_IFRAME_TITLE,
 } from "./constants";
 import { Stack } from "@mui/material";
@@ -49,8 +48,7 @@ const Demo = ({
   return (
     <PageContent>
       <Stack spacing={4}>
-        <PageTitle>{WIDGET_DEMO_PAGE_TITLE}</PageTitle>
-        <div className={styles.iframeContainer}>
+        <div className={styles.iframeContainer} data-testid="demo-component">
           <SkeletonIfLoading isLoading={tokenLoading}>
             <PhoneContainer
               src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${JobTypes.join(
