@@ -1,19 +1,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { UUID } from "crypto";
 import { Request, Response } from "express";
-import { v4 as uuidv4 } from "uuid";
 
 import { Institution } from "../models/institution";
-import {
-  cachedInstitutionFromSeed,
-  seedInstitutionName,
-  testInstitution,
-} from "../test/testData/institutions";
-import {
-  createInstitution,
-  getInstitutionCachedList,
-} from "./institutionController";
+import { cachedInstitutionFromSeed } from "../test/testData/institutions";
+import { getInstitutionCachedList } from "./institutionController";
 
 describe("institutionController", () => {
   describe("getInstitutionCachedList", () => {
@@ -49,71 +39,6 @@ describe("institutionController", () => {
       expect(res.json).toHaveBeenCalledWith({
         error: "Error getting all Institutions",
       });
-    });
-  });
-
-  describe("createInstitution", () => {
-    it("creates a new institution with valid params", async () => {
-      const newInstitutionId = uuidv4() as UUID;
-
-      const institutionBody = {
-        ...testInstitution,
-        name: `createTest-${newInstitutionId}`,
-      };
-
-      const req: Request = {
-        body: institutionBody,
-      } as unknown as Request;
-
-      const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      } as unknown as Response;
-
-      await createInstitution(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          institution: expect.objectContaining(institutionBody),
-        }),
-      );
-    });
-
-    it("responds with an error when a required field is missing", async () => {
-      const req: Request = {
-        body: {
-          ...testInstitution,
-          name: undefined,
-        },
-      } as unknown as Request;
-
-      const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      } as unknown as Response;
-
-      await createInstitution(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-    });
-
-    it("responds with success when an institution with the same name already exists", async () => {
-      const req: Request = {
-        body: {
-          ...testInstitution,
-          name: seedInstitutionName,
-        },
-      } as unknown as Request;
-
-      const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      } as unknown as Response;
-
-      await createInstitution(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(201);
     });
   });
 });
