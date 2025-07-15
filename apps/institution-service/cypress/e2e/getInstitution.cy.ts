@@ -1,6 +1,4 @@
 import {
-  AggregatorIntegrationResponse,
-  InstitutionDetail,
   InstitutionPermissions,
   InstitutionResponse,
 } from "controllers/institutionController";
@@ -21,6 +19,10 @@ import {
   createTestInstitutionWithAllAggregators,
   deleteInstitution,
 } from "../shared/utils/institutions";
+import {
+  AggregatorIntegrationResponse,
+  InstitutionDetail,
+} from "institutions/consts";
 
 const checkEditAndDeleteInstitutionPermissions = ({
   accessTokenEnv,

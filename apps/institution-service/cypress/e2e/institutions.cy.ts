@@ -3,7 +3,7 @@ import { checkIsSorted } from "../../src/test/utils";
 import {
   InstitutionDetail,
   PaginatedInstitutionsResponse,
-} from "../../src/controllers/institutionController";
+} from "institutions/consts";
 import { DEFAULT_PAGINATION_PAGE_SIZE, PORT } from "../../src/shared/const";
 import { testInstitution } from "../../src/test/testData/institutions";
 import {

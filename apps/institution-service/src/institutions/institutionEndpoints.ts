@@ -5,7 +5,6 @@ import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import {
   createInstitution,
   getInstitutionCachedList,
-  getPaginatedInstitutions,
   updateInstitution,
 } from "../controllers/institutionController";
 import {
@@ -19,6 +18,7 @@ import {
 } from "../shared/utils/permissionValidation";
 import { deleteInstitution } from "./deleteInstitution";
 import { getInstitution } from "./getInstitution";
+import { getPaginatedInstitutions } from "./getPaginatedInstitutions";
 
 const router = Router();
 

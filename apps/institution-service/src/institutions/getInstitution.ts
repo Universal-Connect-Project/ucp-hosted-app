@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { validate } from "uuid";
 import { Institution } from "../models/institution";
 import { Aggregator } from "../models/aggregator";
-import { InstitutionDetail } from "../controllers/institutionController";
 import {
   getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
@@ -11,6 +10,7 @@ import {
   validateUserCanEditInstitution,
 } from "../shared/utils/permissionValidation";
 import { UUID } from "crypto";
+import { InstitutionDetail } from "./consts";
 
 export const getInstitution = async (req: Request, res: Response) => {
   try {
