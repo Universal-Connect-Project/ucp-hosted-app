@@ -1,3 +1,5 @@
+import { Aggregator } from "../models/aggregator";
+
 export interface AggregatorIntegrationResponse {
   aggregator_institution_id: string;
   id: number;
@@ -36,4 +38,25 @@ export interface PaginatedInstitutionsResponse {
   totalRecords: number;
   totalPages: number;
   institutions: InstitutionDetail[];
+}
+
+interface AggregatorIntegrationPermissions {
+  canDelete: boolean;
+  canEdit: boolean;
+}
+
+export interface InstitutionPermissions {
+  aggregatorIntegrationPermissionsMap: Record<
+    string,
+    AggregatorIntegrationPermissions
+  >;
+  aggregatorsThatCanBeAdded: Aggregator[];
+  canDeleteInstitution: boolean;
+  canEditInstitution: boolean;
+  hasAccessToAllAggregators?: boolean;
+}
+
+export interface InstitutionResponse {
+  institution: InstitutionDetail;
+  permissions: InstitutionPermissions;
 }

@@ -2,7 +2,6 @@ import { createRequestBodySchemaValidator } from "@repo/backend-utils";
 import { UiUserPermissions, WidgetHostPermissions } from "@repo/shared-utils";
 import { RequestHandler, Router } from "express";
 import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
-import { getInstitutionCachedList } from "../controllers/institutionController";
 import {
   institutionSchema,
   validateUserCanDeleteInstitution,
@@ -17,6 +16,7 @@ import { getInstitution } from "./getInstitution";
 import { getPaginatedInstitutions } from "./getPaginatedInstitutions";
 import { createInstitution } from "./createInstitution";
 import { updateInstitution } from "./updateInstitution";
+import { getInstitutionCachedList } from "./getInstitutionCacheList";
 
 const router = Router();
 

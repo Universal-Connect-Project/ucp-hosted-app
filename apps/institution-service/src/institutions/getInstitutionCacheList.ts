@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Aggregator } from "../models/aggregator";
 import { Institution } from "../models/institution";
 import { transformInstitutionToCachedInstitution } from "../services/institutionService";
-import { InstitutionDetail } from "../institutions/consts";
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {
@@ -45,24 +44,3 @@ export const getInstitutionCachedList = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Error getting all Institutions" });
   }
 };
-
-interface AggregatorIntegrationPermissions {
-  canDelete: boolean;
-  canEdit: boolean;
-}
-
-export interface InstitutionPermissions {
-  aggregatorIntegrationPermissionsMap: Record<
-    string,
-    AggregatorIntegrationPermissions
-  >;
-  aggregatorsThatCanBeAdded: Aggregator[];
-  canDeleteInstitution: boolean;
-  canEditInstitution: boolean;
-  hasAccessToAllAggregators?: boolean;
-}
-
-export interface InstitutionResponse {
-  institution: InstitutionDetail;
-  permissions: InstitutionPermissions;
-}

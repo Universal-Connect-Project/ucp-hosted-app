@@ -1,7 +1,7 @@
 import {
   InstitutionPermissions,
   InstitutionResponse,
-} from "controllers/institutionController";
+} from "institutions/consts";
 import { PORT } from "shared/const";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
