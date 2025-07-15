@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./PhoneContainer.module.css";
+import styles from "./phoneContainer.module.css";
 import { Button } from "@mui/material";
 
 interface PhoneContainerProps {

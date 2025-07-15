@@ -4,7 +4,6 @@ import Demo from "./Demo";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
   WIDGET_DEMO_IFRAME_TITLE,
-  WIDGET_DEMO_PAGE_TITLE,
 } from "./constants";
 import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
@@ -12,17 +11,24 @@ import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
 import { expectSkeletonLoader } from "../shared/test/testUtils";
 
+const jobTypes = ["accountNumber", "accountOwner"];
+const aggregator = "MX";
+const onReset = jest.fn();
+
 describe("<Demo />", () => {
-  it("renders the page title, and shows a loading state", async () => {
-    render(<Demo />);
+  it("shows a loading state", async () => {
+    render(
+      <Demo JobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+    );
     await expectSkeletonLoader();
-    expect(screen.getByText(WIDGET_DEMO_PAGE_TITLE)).toBeInTheDocument();
   });
 
-  it("renders the widget demo iframe", async () => {
-    render(<Demo />);
+  it("renders the widget demo iframe", () => {
+    render(
+      <Demo JobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+    );
 
-    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
+    const iframe = screen.getByTitle("Widget Demo Iframe");
     expect(iframe).toBeInTheDocument();
   });
 
@@ -33,7 +39,9 @@ describe("<Demo />", () => {
       ),
     );
 
-    render(<Demo />);
+    render(
+      <Demo JobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+    );
 
     expect(
       await screen.findByText(WIDGET_DEMO_ERROR_MESSAGE),
