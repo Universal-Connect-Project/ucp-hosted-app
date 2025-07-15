@@ -4,7 +4,6 @@ import { RequestHandler, Router } from "express";
 import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import {
   createInstitution,
-  deleteInstitution,
   getInstitution,
   getInstitutionCachedList,
   getPaginatedInstitutions,
@@ -19,6 +18,7 @@ import {
   validateUIAudience,
   validateWidgetAudience,
 } from "../shared/utils/permissionValidation";
+import { deleteInstitution } from "./deleteInstitution";
 
 const router = Router();
 

@@ -1,6 +1,5 @@
 import {
   INSTITUTION_SERVICE_ACCESS_TOKEN,
-  UCP_UI_USER_ACCESS_TOKEN,
   WIDGET_ACCESS_TOKEN,
 } from "../constants/accessTokens";
 import { createAuthorizationHeader } from "./authorization";
@@ -109,7 +108,9 @@ const createGetInstitutionGraphData =
       method: "GET",
       failOnStatusCode: false,
       headers: {
-        Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
+        Authorization: createAuthorizationHeader(
+          INSTITUTION_SERVICE_ACCESS_TOKEN,
+        ),
       },
     });
   };

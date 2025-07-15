@@ -8,7 +8,7 @@ import sequelize from "./database";
 import { defineAssociations } from "./models/associations";
 import aggregatorIntegrationRoutes from "./routes/aggregatorIntegrationRoutes";
 import aggregatorRoutes from "./aggregators/aggregatorEndpoints";
-import institutionRoutes from "./routes/institutionRoutes";
+import institutionRoutes from "./institutions/institutionEndpoints";
 import permissionsRoutes from "./routes/permissionRoutes";
 import { PORT } from "./shared/const";
 
