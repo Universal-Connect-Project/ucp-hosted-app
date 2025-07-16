@@ -6,17 +6,13 @@ import {
   Box,
   Paper,
   FormGroup,
-  FormLabel,
   FormControlLabel,
   Checkbox,
-  Select,
   MenuItem,
   Button,
-  SelectChangeEvent,
   FormControl,
-  FormHelperText,
+  TextField,
 } from "@mui/material";
-import ErrorIcon from "@mui/icons-material/Error";
 import PageContent from "../shared/components/PageContent";
 import PageTitle from "../shared/components/PageTitle";
 import {
@@ -27,57 +23,62 @@ import {
 import styles from "./demoLandingPage.module.css";
 import Demo from "./Demo";
 import Connections from "./Connections";
+import { RequiredHeader } from "../shared/components/requiredHeader";
+import { useForm, Controller } from "react-hook-form";
+
+type FormValues = {
+  accountNumber: boolean;
+  accountOwner: boolean;
+  transactions: boolean;
+  transactionHistory: boolean;
+  aggregator: string;
+};
 
 const DemoLandingPage = () => {
-  const [aggregator, setAggregator] = useState("MX");
-  const [checkboxState, setCheckboxState] = useState({
-    accountNumber: true,
-    accountOwner: false,
-    transactions: false,
-    transactionHistory: false,
-  });
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [jobTypes, setJobTypes] = useState<string[]>([]);
   const [tabValue, setTabValue] = useState(0);
+  const {
+    handleSubmit,
+    control,
+    formState: { isSubmitted, errors },
+    getValues,
+    reset,
+  } = useForm<FormValues>({
+    defaultValues: {
+      accountNumber: true,
+      accountOwner: false,
+      transactions: false,
+      transactionHistory: false,
+      aggregator: "MX",
+    },
+  });
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setAggregator(event.target.value);
-  };
-  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckboxState({
-      ...checkboxState,
-      [event.target.name]: event.target.checked,
-    });
-    if (isSubmitted) {
-      setIsSubmitted(false);
-    }
-  };
+  const handleOnSubmit = (data: FormValues) => {
+    const newJobTypes = Object.entries(data)
+      .filter(([key, value]) => key !== "aggregator" && value)
+      .map(([key]) => key);
 
-  const { accountNumber, accountOwner, transactions, transactionHistory } =
-    checkboxState;
-  const error =
-    [accountNumber, accountOwner, transactions, transactionHistory].filter(
-      (v) => v,
-    ).length < 1;
-  const handleOnSubmit = () => {
-    setIsSubmitted(true);
-    if (error) {
+    if (newJobTypes.length === 0) {
       return;
     }
-    const newJobTypes = Object.entries(checkboxState)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .filter(([_, value]) => value)
-      .map(([key]) => key);
     setJobTypes(newJobTypes);
   };
 
   const handleReset = () => {
-    setIsSubmitted(false);
+    setJobTypes([]);
+    reset();
   };
+
+  const aggregator = getValues("aggregator");
+  const error =
+    Object.values(errors).length > 0 &&
+    !Object.values(getValues())
+      .slice(0, 4)
+      .some((v) => v);
 
   return (
     <PageContent>
@@ -90,7 +91,7 @@ const DemoLandingPage = () => {
           </Tabs>
         </Box>
         {tabValue === 0 &&
-          (isSubmitted && !error ? (
+          (isSubmitted && jobTypes.length > 0 ? (
             <Demo
               JobTypes={jobTypes}
               aggregator={aggregator.toLowerCase()}
@@ -100,112 +101,142 @@ const DemoLandingPage = () => {
             <Paper className={styles.paper}>
               <Stack spacing={2} sx={{ padding: 2 }}>
                 <Box>
-                  <h3 className={styles.title}>Configuration</h3>
-                  <FormControl required className={styles.formControl}>
-                    <FormLabel className={styles.formLabel}>
-                      <p
-                        className={styles.paragraph}
-                        style={{ display: "inline" }}
-                      >
-                        {"Job type "}
-                      </p>
-                    </FormLabel>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          size="small"
-                          checked={accountNumber}
-                          onChange={handleCheck}
-                          name="accountNumber"
+                  <form
+                    id="demo-form"
+                    onSubmit={(e) => void handleSubmit(handleOnSubmit)(e)}
+                  >
+                    <h3 className={styles.title}>Configuration</h3>
+                    <FormControl required className={styles.formControl}>
+                      <div className={styles.formLabel}>
+                        <RequiredHeader
+                          title={"Job type*"}
+                          error={error}
+                          errorMessage={"*Please select at least one job type."}
                         />
-                      }
-                      label="Account Number"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={accountOwner}
-                          size="small"
-                          onChange={handleCheck}
-                          name="accountOwner"
-                        />
-                      }
-                      label="Account Owner"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={transactions}
-                          size="small"
-                          onChange={handleCheck}
-                          name="transactions"
-                        />
-                      }
-                      label="Transactions"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={transactionHistory}
-                          size="small"
-                          onChange={handleCheck}
-                          name="transactionHistory"
-                        />
-                      }
-                      label="Transaction History"
-                    />
-                    {isSubmitted && error && (
-                      <FormHelperText role="alert" className={styles.errorText}>
-                        <ErrorIcon className={styles.errorIcon} />
-                        {"Please select at least one job type."}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
+                      </div>
+                      <Controller
+                        name="accountNumber"
+                        control={control}
+                        render={({ field }) => (
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                size="small"
+                                checked={field.value}
+                                onChange={field.onChange}
+                                name={field.name}
+                              />
+                            }
+                            label="Account Number"
+                          />
+                        )}
+                      />
+                      <Controller
+                        name="accountOwner"
+                        control={control}
+                        render={({ field }) => (
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={field.value}
+                                size="small"
+                                onChange={field.onChange}
+                                name={field.name}
+                              />
+                            }
+                            label="Account Owner"
+                          />
+                        )}
+                      />
+                      <Controller
+                        name="transactions"
+                        control={control}
+                        render={({ field }) => (
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={field.value}
+                                size="small"
+                                onChange={field.onChange}
+                                name={field.name}
+                              />
+                            }
+                            label="Transactions"
+                          />
+                        )}
+                      />
+                      <Controller
+                        name="transactionHistory"
+                        control={control}
+                        rules={{
+                          validate: () => {
+                            const {
+                              accountNumber,
+                              accountOwner,
+                              transactions,
+                              transactionHistory,
+                            } = getValues();
+                            return (
+                              accountNumber ||
+                              accountOwner ||
+                              transactions ||
+                              transactionHistory ||
+                              false
+                            );
+                          },
+                        }}
+                        render={({ field }) => (
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={field.value}
+                                size="small"
+                                onChange={field.onChange}
+                                name={field.name}
+                              />
+                            }
+                            label="Transaction History"
+                          />
+                        )}
+                      />
+                    </FormControl>
 
-                  <FormGroup className={styles.formGroup}>
-                    <FormLabel>
-                      <p
-                        className={styles.paragraph}
-                        style={{ display: "inline" }}
+                    <FormGroup className={styles.formGroup}>
+                      <Controller
+                        name="aggregator"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            fullWidth
+                            select
+                            label="Aggregator"
+                            {...field}
+                          >
+                            <MenuItem className={styles.menuItem} value={"MX"}>
+                              {"MX"}
+                            </MenuItem>
+                            <MenuItem
+                              className={styles.menuItem}
+                              value={"Sophtron"}
+                            >
+                              {"Sophtron"}
+                            </MenuItem>
+                          </TextField>
+                        )}
+                      />
+                    </FormGroup>
+                    <Box className={styles.buttonContainer}>
+                      <Button
+                        className={styles.button}
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        form="demo-form"
                       >
-                        {"Aggregator"}
-                      </p>
-                    </FormLabel>
-                    <Select
-                      data-testid="aggregator-select"
-                      className={styles.select}
-                      value={aggregator}
-                      onChange={handleChange}
-                      label="Aggregator"
-                    >
-                      <MenuItem className={styles.menuItem} value={"MX"}>
-                        {"MX"}
-                      </MenuItem>
-                      <MenuItem className={styles.menuItem} value={"Sophtron"}>
-                        {"Sophtron"}
-                      </MenuItem>
-                    </Select>
-                  </FormGroup>
-                  <Box className={styles.buttonContainer}>
-                    <span style={{ color: "#e32727", fontSize: "13px" }}>
-                      *
-                    </span>
-                    <p
-                      className={styles.requiredText}
-                      style={{ display: "inline" }}
-                    >
-                      {" Required"}
-                    </p>
-
-                    <Button
-                      className={styles.button}
-                      variant="contained"
-                      color="primary"
-                      onClick={handleOnSubmit}
-                    >
-                      Launch
-                    </Button>
-                  </Box>
+                        Launch
+                      </Button>
+                    </Box>
+                  </form>
                 </Box>
               </Stack>
             </Paper>

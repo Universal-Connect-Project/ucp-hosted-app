@@ -17,7 +17,6 @@ import {
 } from "./shared/constants/routes";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Performance from "./Performance/Performance";
-// import Demo from "./Demo/Demo";
 import DemoLandingPage from "./Demo/DemoLandingPage";
 
 const Routes = () => {

@@ -1,0 +1,6 @@
+.textError {
+  color: var(--mui-palette-error-main);
+}
+.textSecondary {
+  color: var(--mui-palette-text-secondary);
+}

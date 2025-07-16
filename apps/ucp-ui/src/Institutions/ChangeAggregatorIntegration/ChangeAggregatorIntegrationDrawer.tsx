@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { Institution, InstitutionDetailPermissions } from "../api";
-import { Button, Divider, Drawer, MenuItem, Typography } from "@mui/material";
+import { Button, Divider, Drawer, MenuItem } from "@mui/material";
 import {
   CheckboxName,
   ChangeAggregatorIntegrationInputs,
@@ -36,11 +36,11 @@ import {
 import { useAppDispatch } from "../../shared/utils/redux";
 import { displaySnackbar } from "../../shared/reducers/snackbar";
 import FormSubmissionError from "../../shared/components/FormSubmissionError";
-import classNames from "classnames";
 import { DEFAULT_LOGO_URL } from "../Institution/constants";
 import NameLogo from "./NameLogo";
 import ConfirmRemoveAggregatorIntegration from "./ConfirmRemoveAggregatorIntegration";
 import { useConfirmationDrawer } from "../../shared/components/Drawer/ConfirmationDrawer";
+import { RequiredHeader } from "../../shared/components/requiredHeader";
 
 const formId = "changeAggregatorIntegration";
 
@@ -329,24 +329,11 @@ const ChangeAggregatorIntegrationDrawer = ({
                   )}
                 />
                 <div className={styles.jobTypesContainer}>
-                  <div>
-                    <Typography
-                      className={classNames({
-                        [styles.textError]: isJobTypeError,
-                      })}
-                      variant="body1"
-                    >
-                      Job types supported*
-                    </Typography>
-                    <Typography
-                      className={classNames(styles.textSecondary, {
-                        [styles.textError]: isJobTypeError,
-                      })}
-                      variant="caption"
-                    >
-                      *At least one type required
-                    </Typography>
-                  </div>
+                  <RequiredHeader
+                    title="Job types supported*"
+                    error={isJobTypeError}
+                    errorMessage=" *At least one type required"
+                  />
                   {checkboxes.map(({ description, name, displayName }) => (
                     <SupportsCheckbox
                       control={control}
