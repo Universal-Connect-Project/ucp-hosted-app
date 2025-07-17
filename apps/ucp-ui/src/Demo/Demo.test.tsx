@@ -9,26 +9,18 @@ import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
-import { expectSkeletonLoader } from "../shared/test/testUtils";
 
 const jobTypes = ["accountNumber", "accountOwner"];
 const aggregator = "MX";
 const onReset = jest.fn();
 
 describe("<Demo />", () => {
-  it("shows a loading state", async () => {
-    render(
-      <Demo JobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
-    );
-    await expectSkeletonLoader();
-  });
-
-  it("renders the widget demo iframe", () => {
+  it("renders the widget demo iframe", async () => {
     render(
       <Demo JobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
     );
 
-    const iframe = screen.getByTitle("Widget Demo Iframe");
+    const iframe = await screen.findByTitle("Widget Demo Iframe");
     expect(iframe).toBeInTheDocument();
   });
 

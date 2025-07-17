@@ -1,5 +1,10 @@
 import React from "react";
-import { render, screen, userEvent } from "../shared/test/testUtils";
+import {
+  expectSkeletonLoader,
+  render,
+  screen,
+  userEvent,
+} from "../shared/test/testUtils";
 import PhoneContainer from "./PhoneContainer";
 
 describe("PhoneContainer", () => {
@@ -7,7 +12,13 @@ describe("PhoneContainer", () => {
     src: "https://example.com",
     title: "Test Iframe",
     onReset: jest.fn(),
+    isLoading: false,
   };
+
+  it("shows a loading state when isLoading is true", async () => {
+    render(<PhoneContainer {...mockProps} isLoading={true} />);
+    await expectSkeletonLoader();
+  });
 
   it("renders the iframe with the correct src and title", () => {
     render(<PhoneContainer {...mockProps} />);

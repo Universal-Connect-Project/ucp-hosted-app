@@ -10,7 +10,6 @@ import {
 import { Stack } from "@mui/material";
 import FetchError from "../shared/components/FetchError";
 import styles from "./demo.module.css";
-import { SkeletonIfLoading } from "../shared/components/Skeleton";
 import { ComboJobTypes } from "@repo/shared-utils";
 import PhoneContainer from "./PhoneContainer";
 
@@ -49,17 +48,16 @@ const Demo = ({
     <PageContent>
       <Stack spacing={4}>
         <div className={styles.iframeContainer} data-testid="demo-component">
-          <SkeletonIfLoading isLoading={tokenLoading || !token}>
-            {token ? (
-              <PhoneContainer
-                src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${JobTypes.join(
-                  ",",
-                )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
-                title={WIDGET_DEMO_IFRAME_TITLE}
-                onReset={onReset}
-              />
-            ) : null}
-          </SkeletonIfLoading>
+          {token ? (
+            <PhoneContainer
+              isLoading={tokenLoading}
+              src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${JobTypes.join(
+                ",",
+              )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
+              title={WIDGET_DEMO_IFRAME_TITLE}
+              onReset={onReset}
+            />
+          ) : null}
         </div>
       </Stack>
     </PageContent>
