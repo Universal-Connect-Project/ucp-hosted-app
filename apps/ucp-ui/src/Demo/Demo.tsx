@@ -49,14 +49,16 @@ const Demo = ({
     <PageContent>
       <Stack spacing={4}>
         <div className={styles.iframeContainer} data-testid="demo-component">
-          <SkeletonIfLoading isLoading={tokenLoading}>
-            <PhoneContainer
-              src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${JobTypes.join(
-                ",",
-              )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
-              title={WIDGET_DEMO_IFRAME_TITLE}
-              onReset={onReset}
-            />
+          <SkeletonIfLoading isLoading={tokenLoading || !token}>
+            {token ? (
+              <PhoneContainer
+                src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${JobTypes.join(
+                  ",",
+                )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
+                title={WIDGET_DEMO_IFRAME_TITLE}
+                onReset={onReset}
+              />
+            ) : null}
           </SkeletonIfLoading>
         </div>
       </Stack>
