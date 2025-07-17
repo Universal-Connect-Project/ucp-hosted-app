@@ -46,12 +46,12 @@ const transformInfluxGraphMetrics = (
 };
 
 const getFilteredAggregators = async (aggregators: string | undefined) => {
-  const institutionServiceAggregatorsWithIndexes = (
-    await getAggregators()
-  ).aggregators.map((aggregator, index) => ({
-    ...aggregator,
-    aggregatorIndex: index,
-  }));
+  const institutionServiceAggregatorsWithIndexes = (await getAggregators()).map(
+    (aggregator, index) => ({
+      ...aggregator,
+      aggregatorIndex: index,
+    }),
+  );
 
   const institutionServiceAggregatorNames =
     institutionServiceAggregatorsWithIndexes.map(({ name }) => name);

@@ -6,7 +6,7 @@ interface AggregatorsResponse {
   aggregators: Aggregator[];
 }
 
-export const getAggregators = async (): Promise<AggregatorsResponse> => {
+export const getAggregators = async (): Promise<Aggregator[]> => {
   const token = await getPerformanceServiceAccessToken();
 
   const response = await fetch(
@@ -27,5 +27,5 @@ export const getAggregators = async (): Promise<AggregatorsResponse> => {
     throw new Error(errorData.error);
   }
 
-  return (await response.json()) as AggregatorsResponse;
+  return ((await response.json()) as AggregatorsResponse).aggregators;
 };

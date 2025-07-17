@@ -1,6 +1,6 @@
 import { RequestHandler, Router } from "express";
 
-import { validateInstitutionServiceAudience } from "../middlewares/validationMiddleware";
+import { validateUIAudience } from "../middlewares/validationMiddleware";
 import {
   getAggregatorSuccessGraphData,
   getAggregatorDurationGraphData,
@@ -11,13 +11,13 @@ const router = Router();
 
 router.get(
   "/metrics/aggregatorSuccessGraph",
-  [validateInstitutionServiceAudience, validatePerformanceGraphRequestSchema],
+  [validateUIAudience, validatePerformanceGraphRequestSchema],
   getAggregatorSuccessGraphData as RequestHandler,
 );
 
 router.get(
   "/metrics/aggregatorDurationGraph",
-  [validateInstitutionServiceAudience, validatePerformanceGraphRequestSchema],
+  [validateUIAudience, validatePerformanceGraphRequestSchema],
   getAggregatorDurationGraphData as RequestHandler,
 );
 

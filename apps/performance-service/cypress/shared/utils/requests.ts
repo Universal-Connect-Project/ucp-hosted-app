@@ -1,5 +1,4 @@
 import {
-  INSTITUTION_SERVICE_ACCESS_TOKEN,
   UCP_UI_USER_ACCESS_TOKEN,
   WIDGET_ACCESS_TOKEN,
 } from "../constants/accessTokens";
@@ -15,7 +14,7 @@ interface ConnectionStartRequestBody {
 }
 
 export const testInstitutionId = "testInstitutionId";
-export const testAggregatorId = "testAggregatorId";
+export const testAggregatorId = "mx";
 
 export const startConnectionEventRequest = ({
   connectionId,
@@ -141,9 +140,7 @@ const createGetAggregatorGraphData =
       method: "GET",
       failOnStatusCode: false,
       headers: {
-        Authorization: createAuthorizationHeader(
-          INSTITUTION_SERVICE_ACCESS_TOKEN,
-        ),
+        Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
       },
     });
   };
@@ -167,9 +164,7 @@ export const getAggregatorPerformanceMetrics = ({
     method: "GET",
     failOnStatusCode: false,
     headers: {
-      Authorization: createAuthorizationHeader(
-        INSTITUTION_SERVICE_ACCESS_TOKEN,
-      ),
+      Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
     },
   });
 };

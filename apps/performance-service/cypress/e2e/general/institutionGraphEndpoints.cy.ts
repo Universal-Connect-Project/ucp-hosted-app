@@ -1,8 +1,8 @@
 import { ComboJobTypes } from "@repo/shared-utils";
 import {
   createPerformanceGraphValidationTests,
-  expectLooksLikePerformanceData,
-} from "@repo/cypress-utils";
+  expectPerformanceResults,
+} from "../../shared/utils/aggregatorGraphValidation";
 import {
   getInstitutionDurationGraphPerformanceData,
   getInstitutionSuccessGraphPerformanceData,
@@ -49,23 +49,14 @@ const createInstitutionGraphTests = ({
         institutionId: testInstitutionId,
         jobTypes: ComboJobTypes.TRANSACTIONS,
         timeFrame: "30d",
-      }).then((response) => {
-        expect(response.status).to.eq(200);
-        cy.wrap(response.body)
-          .its("performance")
-          .each((item) =>
-            expectLooksLikePerformanceData(item, testAggregatorId),
-          );
-      });
+      }).then(expectPerformanceResults);
     });
 
-    createPerformanceGraphValidationTests(
-      (props: object) =>
-        fetchFunction({
-          ...props,
-          institutionId: testInstitutionId,
-        }),
-      testAggregatorId,
+    createPerformanceGraphValidationTests((props: object) =>
+      fetchFunction({
+        ...props,
+        institutionId: testInstitutionId,
+      }),
     );
   });
 

@@ -2,7 +2,6 @@ import "../dotEnv";
 import { validateAccessToken } from "@repo/backend-utils";
 import {
   AUTH0_CLIENT_AUDIENCE,
-  AUTH0_INSTITUTION_SERVICE_AUDIENCE,
   AUTH0_WIDGET_AUDIENCE,
 } from "@repo/shared-utils";
 import { NextFunction } from "express";
@@ -11,11 +10,6 @@ import { Request, Response } from "express";
 
 export const validateUIAudience = validateAccessToken({
   audience: AUTH0_CLIENT_AUDIENCE,
-  auth0Domain: process.env.AUTH0_DOMAIN as string,
-});
-
-export const validateInstitutionServiceAudience = validateAccessToken({
-  audience: AUTH0_INSTITUTION_SERVICE_AUDIENCE,
   auth0Domain: process.env.AUTH0_DOMAIN as string,
 });
 

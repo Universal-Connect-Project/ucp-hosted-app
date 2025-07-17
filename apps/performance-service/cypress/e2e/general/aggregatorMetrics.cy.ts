@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { UCP_UI_USER_ACCESS_TOKEN } from "../../shared/constants/accessTokens";
-import { createAuthorizationHeader } from "../../shared/utils/authorization";
 import {
   startConnectionEventRequest,
   markSuccessfulEventRequest,
   getAggregatorPerformanceMetrics,
 } from "../../shared/utils/requests";
 
-describe("Aggreagator Metrics", () => {
+describe("Aggregator Metrics", () => {
   before(() => {
     const connectionId = crypto.randomUUID();
 
@@ -28,7 +26,7 @@ describe("Aggreagator Metrics", () => {
       method: "GET",
       failOnStatusCode: false,
       headers: {
-        Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
+        Authorization: "Bearer junk",
       },
     }).then((response) => {
       expect(response.status).to.eq(401);
@@ -49,18 +47,18 @@ describe("Aggreagator Metrics", () => {
   it("works without timeFrame param", () => {
     getAggregatorPerformanceMetrics({}).then((response) => {
       expect(response.status).to.eq(200);
-      expect(response.body).to.have.property("testAggregatorId");
+      expect(response.body).to.have.property("mx");
 
-      expect(response.body.testAggregatorId).to.have.property("avgSuccessRate");
-      expect(response.body.testAggregatorId).to.have.property("avgDuration");
-      expect(response.body.testAggregatorId).to.have.property("jobTypes");
+      expect(response.body.mx).to.have.property("avgSuccessRate");
+      expect(response.body.mx).to.have.property("avgDuration");
+      expect(response.body.mx).to.have.property("jobTypes");
 
-      expect(
-        response.body.testAggregatorId.jobTypes.transactions,
-      ).to.have.property("avgSuccessRate");
-      expect(
-        response.body.testAggregatorId.jobTypes.transactions,
-      ).to.have.property("avgDuration");
+      expect(response.body.mx.jobTypes.transactions).to.have.property(
+        "avgSuccessRate",
+      );
+      expect(response.body.mx.jobTypes.transactions).to.have.property(
+        "avgDuration",
+      );
     });
   });
 
@@ -69,18 +67,18 @@ describe("Aggreagator Metrics", () => {
       timeFrame: "1y",
     }).then((response) => {
       expect(response.status).to.eq(200);
-      expect(response.body).to.have.property("testAggregatorId");
+      expect(response.body).to.have.property("mx");
 
-      expect(response.body.testAggregatorId).to.have.property("avgSuccessRate");
-      expect(response.body.testAggregatorId).to.have.property("avgDuration");
-      expect(response.body.testAggregatorId).to.have.property("jobTypes");
+      expect(response.body.mx).to.have.property("avgSuccessRate");
+      expect(response.body.mx).to.have.property("avgDuration");
+      expect(response.body.mx).to.have.property("jobTypes");
 
-      expect(
-        response.body.testAggregatorId.jobTypes.transactions,
-      ).to.have.property("avgSuccessRate");
-      expect(
-        response.body.testAggregatorId.jobTypes.transactions,
-      ).to.have.property("avgDuration");
+      expect(response.body.mx.jobTypes.transactions).to.have.property(
+        "avgSuccessRate",
+      );
+      expect(response.body.mx.jobTypes.transactions).to.have.property(
+        "avgDuration",
+      );
     });
   });
 });

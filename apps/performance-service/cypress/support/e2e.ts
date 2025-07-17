@@ -17,7 +17,6 @@
 // Import commands.js using ES2015 syntax:
 import {
   AUTH0_CLIENT_AUDIENCE,
-  AUTH0_INSTITUTION_SERVICE_AUDIENCE,
   AUTH0_WIDGET_AUDIENCE,
   DefaultPermissions,
   UiClientPermissions,
@@ -25,7 +24,6 @@ import {
 } from "@repo/shared-utils";
 import { JwtPayload } from "jsonwebtoken";
 import {
-  INSTITUTION_SERVICE_ACCESS_TOKEN,
   UCP_UI_USER_ACCESS_TOKEN,
   WIDGET_ACCESS_TOKEN,
 } from "../shared/constants/accessTokens";
@@ -86,15 +84,6 @@ before(() => {
     clientParams: {
       clientIdString: "WIDGET_CLIENT_ID",
       clientSecretString: "WIDGET_CLIENT_SECRET",
-    },
-  });
-
-  authenticateAndStoreToken({
-    audience: AUTH0_INSTITUTION_SERVICE_AUDIENCE,
-    variableName: INSTITUTION_SERVICE_ACCESS_TOKEN,
-    clientParams: {
-      clientIdString: "INSTITUTION_SERVICE_CLIENT_ID",
-      clientSecretString: "INSTITUTION_SERVICE_CLIENT_SECRET",
     },
   });
 
