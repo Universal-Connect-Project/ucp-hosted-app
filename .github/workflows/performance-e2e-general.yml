@@ -8,6 +8,19 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
       redis:
         image: redis:7.2-alpine
         options: >-
@@ -47,6 +60,10 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Setup Postgres Database
+        run: |
+          npm run db:setup --workspace apps/institution-service
 
       - name: Setup InfluxDB Bucket & Org
         run: |
