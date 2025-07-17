@@ -1,3 +1,5 @@
+import { AUTH0_PERFORMANCE_SERVICE_AUDIENCE } from "@repo/shared-utils";
+
 let tokenCache: { token: string; expiresAt: number } | null = null;
 
 export const clearTokenCache = () => {
@@ -19,9 +21,9 @@ export const getPerformanceServiceAccessToken = async (): Promise<string> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        client_id: process.env.AUTH0_INSTITUTION_CLIENT_ID!,
-        client_secret: process.env.AUTH0_INSTITUTION_CLIENT_SECRET!,
-        audience: "institution-service",
+        client_id: process.env.AUTH0_PERFORMANCE_CLIENT_ID!,
+        client_secret: process.env.AUTH0_PERFORMANCE_CLIENT_SECRET!,
+        audience: AUTH0_PERFORMANCE_SERVICE_AUDIENCE,
         grant_type: "client_credentials",
       }),
     },

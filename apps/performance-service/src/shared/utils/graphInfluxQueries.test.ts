@@ -8,6 +8,10 @@ import {
 } from "../tests/utils";
 import { getGraphMetrics } from "./graphInfluxQueries";
 import { GraphMetricsResponse } from "@repo/shared-utils";
+import { testAggregatorsWithIndexes } from "../tests/testData/aggregators";
+import { server } from "../tests/testServer";
+import { http, HttpResponse } from "msw";
+import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../tests/handlers";
 
 const getNowWithSomeForgiveness = () => Date.now() + 5000;
 
@@ -72,8 +76,14 @@ describe("getGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData).toEqual({ performance: [] });
-      expect(durationData).toEqual({ performance: [] });
+      expect(successData).toEqual({
+        aggregators: testAggregatorsWithIndexes,
+        performance: [],
+      });
+      expect(durationData).toEqual({
+        aggregators: testAggregatorsWithIndexes,
+        performance: [],
+      });
     });
 
     it("returns data when the institutionId is valid", async () => {
@@ -228,8 +238,14 @@ describe("getGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData).toEqual({ performance: [] });
-      expect(durationData).toEqual({ performance: [] });
+      expect(successData).toEqual({
+        aggregators: testAggregatorsWithIndexes,
+        performance: [],
+      });
+      expect(durationData).toEqual({
+        aggregators: testAggregatorsWithIndexes,
+        performance: [],
+      });
     });
 
     const shuffledJobTypeCombinations = Object.values(ComboJobTypes)
@@ -318,6 +334,19 @@ describe("getGraphMetrics", () => {
         );
       };
 
+      server.use(
+        http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
+          HttpResponse.json({
+            aggregators: [
+              {
+                id: uniqueAggregatorId,
+                name: uniqueAggregatorId,
+              },
+            ],
+          }),
+        ),
+      );
+
       const accountNumberData = await getGraphMetrics({
         jobTypes: ComboJobTypes.ACCOUNT_NUMBER,
         timeFrame: "1d",
@@ -367,20 +396,39 @@ describe("getGraphMetrics", () => {
       await wait(1500);
     });
 
-    it("gets nothing with an non-existant aggregator", async () => {
+    beforeEach(() => {
+      server.use(
+        http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
+          HttpResponse.json({
+            aggregators: [
+              { id: aggId1, name: aggId1 },
+              { id: aggId2, name: aggId2 },
+            ],
+          }),
+        ),
+      );
+    });
+
+    it("gets nothing with a non-existent aggregator", async () => {
       const successData = await getGraphMetrics({
         aggregators: "noAggregator",
         timeFrame: "1d",
         metric: "successRateMetrics",
       });
       const durationData = await getGraphMetrics({
-        jobTypes: "noAggregator",
+        aggregators: "noAggregator",
         timeFrame: "1d",
         metric: "durationMetrics",
       });
 
-      expect(successData).toEqual({ performance: [] });
-      expect(durationData).toEqual({ performance: [] });
+      expect(successData).toEqual({
+        aggregators: [],
+        performance: [],
+      });
+      expect(durationData).toEqual({
+        aggregators: [],
+        performance: [],
+      });
     });
 
     it("gets single aggregator data", async () => {
