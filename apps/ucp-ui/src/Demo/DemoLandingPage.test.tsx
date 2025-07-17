@@ -36,7 +36,7 @@ describe("DemoLandingPage", () => {
     await userEvent.click(screen.getByRole("button", { name: "Launch" }));
 
     expect(screen.getByTestId("demo-component")).toBeInTheDocument();
-    const iframe = screen.getByTitle("Widget Demo Iframe");
+    const iframe = await screen.findByTitle("Widget Demo Iframe");
     expect(iframe).toBeInTheDocument();
     expect(iframe).toHaveAttribute(
       "src",
