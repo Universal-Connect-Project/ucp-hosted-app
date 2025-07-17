@@ -12,6 +12,7 @@ import { testAggregatorsWithIndexes } from "../tests/testData/aggregators";
 import { server } from "../tests/testServer";
 import { http, HttpResponse } from "msw";
 import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../tests/handlers";
+import intersection from "lodash.intersection";
 
 const getNowWithSomeForgiveness = () => Date.now() + 5000;
 
@@ -56,6 +57,23 @@ const testDataPoints = ({
   expect(stop).toBeLessThan(nowWithSomeForgiveness);
   expect(midpoint).toBeLessThan(stop);
   expect(midpoint).toBeGreaterThan(start);
+};
+
+const expectAggregators = ({
+  aggregatorsToExpect,
+  aggregators,
+}: {
+  aggregatorsToExpect: string[];
+  aggregators: { id: string }[];
+}) => {
+  expect(aggregators.length).toEqual(aggregatorsToExpect.length);
+
+  expect(
+    intersection(
+      aggregators.map(({ id }) => id),
+      aggregatorsToExpect,
+    ),
+  ).toHaveLength(aggregatorsToExpect.length);
 };
 
 describe("getGraphMetrics", () => {
@@ -452,6 +470,16 @@ describe("getGraphMetrics", () => {
         });
       };
 
+      const aggregatorsToExpect = [aggId1];
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: successData.aggregators,
+      });
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: durationData.aggregators,
+      });
+
       expectDataOnlyFromFirstAggregator(successData);
       expectDataOnlyFromFirstAggregator(durationData);
     });
@@ -475,6 +503,17 @@ describe("getGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
+      const aggregatorsToExpect = [aggId1, aggId2];
+
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: successData.aggregators,
+      });
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: durationData.aggregators,
+      });
+
       expectDataFromBothAggregators(successData);
       expectDataFromBothAggregators(durationData);
     });
@@ -487,6 +526,16 @@ describe("getGraphMetrics", () => {
       const durationData = await getGraphMetrics({
         timeFrame: "1d",
         metric: "durationMetrics",
+      });
+
+      const aggregatorsToExpect = [aggId1, aggId2];
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: successData.aggregators,
+      });
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: durationData.aggregators,
       });
 
       expectDataFromBothAggregators(successData);
