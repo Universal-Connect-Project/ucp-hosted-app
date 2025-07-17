@@ -5,6 +5,22 @@ import {
   getAggregatorPerformanceMetrics,
 } from "../../shared/utils/requests";
 
+const expectSuccessResult = (response) => {
+  expect(response.status).to.eq(200);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const mxAggregator = response.body.aggregators.find(
+    ({ name }) => name === "mx",
+  );
+
+  expect(mxAggregator).to.have.property("avgSuccessRate");
+  expect(mxAggregator).to.have.property("avgDuration");
+  expect(mxAggregator).to.have.property("jobTypes");
+
+  expect(mxAggregator.jobTypes.transactions).to.have.property("avgSuccessRate");
+  expect(mxAggregator.jobTypes.transactions).to.have.property("avgDuration");
+};
+
 describe("Aggregator Metrics", () => {
   before(() => {
     const connectionId = crypto.randomUUID();
@@ -45,40 +61,12 @@ describe("Aggregator Metrics", () => {
   });
 
   it("works without timeFrame param", () => {
-    getAggregatorPerformanceMetrics({}).then((response) => {
-      expect(response.status).to.eq(200);
-      expect(response.body).to.have.property("mx");
-
-      expect(response.body.mx).to.have.property("avgSuccessRate");
-      expect(response.body.mx).to.have.property("avgDuration");
-      expect(response.body.mx).to.have.property("jobTypes");
-
-      expect(response.body.mx.jobTypes.transactions).to.have.property(
-        "avgSuccessRate",
-      );
-      expect(response.body.mx.jobTypes.transactions).to.have.property(
-        "avgDuration",
-      );
-    });
+    getAggregatorPerformanceMetrics({}).then(expectSuccessResult);
   });
 
   it("works with timeFrame param", () => {
     getAggregatorPerformanceMetrics({
       timeFrame: "1y",
-    }).then((response) => {
-      expect(response.status).to.eq(200);
-      expect(response.body).to.have.property("mx");
-
-      expect(response.body.mx).to.have.property("avgSuccessRate");
-      expect(response.body.mx).to.have.property("avgDuration");
-      expect(response.body.mx).to.have.property("jobTypes");
-
-      expect(response.body.mx.jobTypes.transactions).to.have.property(
-        "avgSuccessRate",
-      );
-      expect(response.body.mx.jobTypes.transactions).to.have.property(
-        "avgDuration",
-      );
-    });
+    }).then(expectSuccessResult);
   });
 });

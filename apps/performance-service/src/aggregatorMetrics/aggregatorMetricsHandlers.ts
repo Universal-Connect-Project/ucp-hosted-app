@@ -12,7 +12,12 @@ export const getAggregatorMetrics = async (req: Request, res: Response) => {
       (req.query?.timeFrame || "30d") as TimeFrame,
       aggregators,
     );
-    res.send(data);
+    res.send({
+      aggregators: aggregators.map((aggregator) => ({
+        ...aggregator,
+        ...data[aggregator.name],
+      })),
+    });
   } catch (error) {
     res.status(400).json({ error });
   }
