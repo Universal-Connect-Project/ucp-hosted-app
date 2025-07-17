@@ -1,9 +1,9 @@
 import { AggregatorGraphMetricsResponse } from "@repo/shared-utils";
 import { api, TagTypes } from "../../baseApi";
-import { INSTITUTION_SERVICE_BASE_URL } from "../../shared/constants/environment";
+import { PERFORMANCE_SERVICE_BASE_URL } from "../../shared/constants/environment";
 
-export const AGGREGATOR_SUCCESS_GRAPH_URL = `${INSTITUTION_SERVICE_BASE_URL}/aggregators/successGraph`;
-export const AGGREGATOR_DURATION_GRAPH_URL = `${INSTITUTION_SERVICE_BASE_URL}/aggregators/durationGraph`;
+export const AGGREGATOR_SUCCESS_GRAPH_URL = `${PERFORMANCE_SERVICE_BASE_URL}/metrics/aggregatorSuccessGraph`;
+export const AGGREGATOR_DURATION_GRAPH_URL = `${PERFORMANCE_SERVICE_BASE_URL}/metrics/aggregatorDurationGraph`;
 
 interface AggregatorGraphParams {
   aggregators: string[];
