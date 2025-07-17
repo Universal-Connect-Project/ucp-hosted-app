@@ -99,7 +99,6 @@ jobs:
           wait-on-timeout: 180000
           spec: apps/institution-service/cypress/e2e/*.cy.ts
         env:
-          AUTH0_PERFORMANCE_CLIENT_SECRET: ${{ secrets.PERFORMANCE_SERVICE_CLIENT_SECRET }}
           REDIS_SERVER: redis://localhost:6379
           CYPRESS_MX_AGGREGATOR_ADMIN_USERNAME: ${{ secrets.MX_AGGREGATOR_ADMIN_USERNAME }}
           CYPRESS_MX_AGGREGATOR_ADMIN_PASSWORD: ${{ secrets.MX_AGGREGATOR_ADMIN_PASSWORD }}

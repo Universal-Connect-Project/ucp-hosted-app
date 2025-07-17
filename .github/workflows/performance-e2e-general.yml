@@ -71,6 +71,7 @@ jobs:
           wait-on: "http://localhost:8090/ping"
           spec: apps/performance-service/cypress/e2e/general/*.cy.ts
         env:
+          AUTH0_PERFORMANCE_CLIENT_SECRET: ${{ secrets.PERFORMANCE_SERVICE_CLIENT_SECRET }}
           REDIS_SERVER: redis://localhost:6379
           INFLUX_URL: http://localhost:8086
           EVENT_PROCESSING_TIME_LIMIT_SECONDS: 3
