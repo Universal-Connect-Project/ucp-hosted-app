@@ -210,6 +210,7 @@ const DemoLandingPage = () => {
                             fullWidth
                             select
                             label="Aggregator"
+                            data-testid="aggregator-select"
                             {...field}
                           >
                             <MenuItem className={styles.menuItem} value={"MX"}>
