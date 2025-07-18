@@ -12,18 +12,14 @@ import {
   Button,
   FormControl,
   TextField,
+  Typography,
 } from "@mui/material";
 import PageContent from "../shared/components/PageContent";
 import PageTitle from "../shared/components/PageTitle";
-import {
-  WIDGET_DEMO_PAGE_TITLE,
-  CONNECT_TAB,
-  CONNECTIONS_TAB,
-} from "./constants";
+import { WIDGET_DEMO_PAGE_TITLE, CONNECT_TAB } from "./constants";
 import styles from "./demoLandingPage.module.css";
 import Demo from "./Demo";
-import Connections from "./Connections";
-import { RequiredHeader } from "../shared/components/requiredHeader";
+import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
 import { useForm, Controller } from "react-hook-form";
 
 type FormValues = {
@@ -35,7 +31,6 @@ type FormValues = {
 };
 
 const DemoLandingPage = () => {
-  const [jobTypes, setJobTypes] = useState<string[]>([]);
   const [tabValue, setTabValue] = useState(0);
   const {
     handleSubmit,
@@ -65,20 +60,18 @@ const DemoLandingPage = () => {
     if (newJobTypes.length === 0) {
       return;
     }
-    setJobTypes(newJobTypes);
   };
 
   const handleReset = () => {
-    setJobTypes([]);
     reset();
   };
 
   const aggregator = getValues("aggregator");
-  const error =
-    Object.values(errors).length > 0 &&
-    !Object.values(getValues())
-      .slice(0, 4)
-      .some((v) => v);
+  const jobTypes = Object.entries(getValues())
+    .filter(([key, value]) => key !== "aggregator" && value)
+    .map(([key]) => key);
+
+  const error = isSubmitted && Object.keys(errors).length > 0;
 
   return (
     <PageContent>
@@ -87,13 +80,12 @@ const DemoLandingPage = () => {
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs value={tabValue} onChange={handleTabChange}>
             <Tab label={CONNECT_TAB} />
-            <Tab label={CONNECTIONS_TAB} />
           </Tabs>
         </Box>
         {tabValue === 0 &&
           (isSubmitted && jobTypes.length > 0 ? (
             <Demo
-              JobTypes={jobTypes}
+              jobTypes={jobTypes}
               aggregator={aggregator.toLowerCase()}
               onReset={handleReset}
             />
@@ -102,18 +94,23 @@ const DemoLandingPage = () => {
               <Stack spacing={2} sx={{ padding: 2 }}>
                 <Box>
                   <form
+                    className={styles.margins}
                     id="demo-form"
                     onSubmit={(e) => void handleSubmit(handleOnSubmit)(e)}
                   >
-                    <h3 className={styles.title}>Configuration</h3>
-                    <FormControl required className={styles.formControl}>
-                      <div className={styles.formLabel}>
-                        <RequiredHeader
-                          title={"Job type*"}
-                          error={error}
-                          errorMessage={"*Please select at least one job type."}
-                        />
-                      </div>
+                    <Stack sx={{ my: 4 }}>
+                      <Typography variant="h5" fontWeight={700}>
+                        Configuration
+                      </Typography>
+                    </Stack>
+
+                    <FormControl required>
+                      <RequiredCheckboxGroupHeader
+                        title={"Job type"}
+                        error={error}
+                        errorMessage={"Please select at least one job type."}
+                      />
+
                       <Controller
                         name="accountNumber"
                         control={control}
@@ -200,33 +197,29 @@ const DemoLandingPage = () => {
                         )}
                       />
                     </FormControl>
-
-                    <FormGroup className={styles.formGroup}>
-                      <Controller
-                        name="aggregator"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            fullWidth
-                            select
-                            label="Aggregator"
-                            data-testid="aggregator-select"
-                            {...field}
-                          >
-                            <MenuItem className={styles.menuItem} value={"MX"}>
-                              {"MX"}
-                            </MenuItem>
-                            <MenuItem
-                              className={styles.menuItem}
-                              value={"Sophtron"}
+                    <Stack sx={{ my: 4 }}>
+                      <FormGroup>
+                        <Controller
+                          name="aggregator"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              fullWidth
+                              select
+                              label="Aggregator"
+                              data-testid="aggregator-select"
+                              {...field}
                             >
-                              {"Sophtron"}
-                            </MenuItem>
-                          </TextField>
-                        )}
-                      />
-                    </FormGroup>
-                    <Box className={styles.buttonContainer}>
+                              <MenuItem value={"MX"}>{"MX"}</MenuItem>
+                              <MenuItem value={"Sophtron"}>
+                                {"Sophtron"}
+                              </MenuItem>
+                            </TextField>
+                          )}
+                        />
+                      </FormGroup>
+                    </Stack>
+                    <Box>
                       <Button
                         className={styles.button}
                         variant="contained"
@@ -242,7 +235,6 @@ const DemoLandingPage = () => {
               </Stack>
             </Paper>
           ))}
-        {tabValue === 1 && <Connections />}
       </Stack>
     </PageContent>
   );

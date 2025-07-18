@@ -40,7 +40,7 @@ import { DEFAULT_LOGO_URL } from "../Institution/constants";
 import NameLogo from "./NameLogo";
 import ConfirmRemoveAggregatorIntegration from "./ConfirmRemoveAggregatorIntegration";
 import { useConfirmationDrawer } from "../../shared/components/Drawer/ConfirmationDrawer";
-import { RequiredHeader } from "../../shared/components/requiredHeader";
+import { RequiredCheckboxGroupHeader } from "../../shared/components/RequiredCheckboxGroupHeader";
 
 const formId = "changeAggregatorIntegration";
 
@@ -329,10 +329,10 @@ const ChangeAggregatorIntegrationDrawer = ({
                   )}
                 />
                 <div className={styles.jobTypesContainer}>
-                  <RequiredHeader
-                    title="Job types supported*"
+                  <RequiredCheckboxGroupHeader
+                    title="Job types supported"
                     error={isJobTypeError}
-                    errorMessage=" *At least one type required"
+                    errorMessage="At least one type required"
                   />
                   {checkboxes.map(({ description, name, displayName }) => (
                     <SupportsCheckbox

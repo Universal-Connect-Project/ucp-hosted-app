@@ -7,66 +7,12 @@
     margin-right: auto;
   }
 }
-.paragraph {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-.title {
-  font-size: 23px;
-  font-weight: 700;
+
+.margins {
   margin-left: 40px;
-  color: #1a1a1a;
-  margin-bottom: 40px;
-}
-.formGroup {
-  margin-left: 40px;
-  margin-bottom: 32px;
   margin-right: 40px;
 }
-.formLabel {
-  :global(.MuiFormLabel-asterisk) {
-    color: #e32727;
-    font-size: 15px;
-  }
-}
-.formControl {
-  &:global(.MuiFormControl-root) {
-    margin-left: 40px;
-    margin-bottom: 32px;
-    margin-right: 40px;
-  }
-}
+
 .button {
   float: right;
-}
-.buttonContainer {
-  margin-left: 40px;
-  margin-right: 40px;
-}
-.menuItem {
-  &:global(.MuiMenuItem-root) {
-    margin-left: auto;
-  }
-}
-.select {
-  &:global(.MuiInputBase-root) {
-    margin-top: 4px;
-  }
-}
-.errorText {
-  &:global(.MuiFormHelperText-root) {
-    font-size: 13px;
-    color: #e32727;
-    margin-left: 0px;
-    display: flex;
-    align-items: center;
-  }
-}
-.errorIcon {
-  &:global(.MuiSvgIcon-root) {
-    font-size: 16px;
-    margin-right: 4px;
-    color: #e32727;
-  }
 }

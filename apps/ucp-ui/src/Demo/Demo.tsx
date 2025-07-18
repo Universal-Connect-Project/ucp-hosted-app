@@ -12,13 +12,14 @@ import FetchError from "../shared/components/FetchError";
 import styles from "./demo.module.css";
 import { ComboJobTypes } from "@repo/shared-utils";
 import PhoneContainer from "./PhoneContainer";
+import { SkeletonIfLoading } from "../shared/components/Skeleton";
 
 const Demo = ({
-  JobTypes,
+  jobTypes,
   aggregator,
   onReset,
 }: {
-  JobTypes: (typeof ComboJobTypes)[keyof typeof ComboJobTypes][];
+  jobTypes: (typeof ComboJobTypes)[keyof typeof ComboJobTypes][];
   aggregator: string;
   onReset: () => void;
 }) => {
@@ -35,29 +36,29 @@ const Demo = ({
 
   const token = tokenData?.token;
 
-  if (tokenError) {
-    return (
-      <FetchError
-        description={WIDGET_DEMO_ERROR_MESSAGE}
-        refetch={() => void refetch()}
-      />
-    );
-  }
-
   return (
     <PageContent>
       <Stack spacing={4}>
         <div className={styles.iframeContainer} data-testid="demo-component">
-          {token ? (
-            <PhoneContainer
-              isLoading={tokenLoading}
-              src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${JobTypes.join(
-                ",",
-              )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
-              title={WIDGET_DEMO_IFRAME_TITLE}
-              onReset={onReset}
+          {tokenError && (
+            <FetchError
+              description={WIDGET_DEMO_ERROR_MESSAGE}
+              refetch={() => void refetch()}
             />
-          ) : null}
+          )}
+          <SkeletonIfLoading isLoading={tokenLoading}>
+            <div className={styles.iframeDimensionsContainer}>
+              {token && (
+                <PhoneContainer
+                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
+                    ",",
+                  )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
+                  title={WIDGET_DEMO_IFRAME_TITLE}
+                  onReset={onReset}
+                />
+              )}
+            </div>
+          </SkeletonIfLoading>
         </div>
       </Stack>
     </PageContent>
