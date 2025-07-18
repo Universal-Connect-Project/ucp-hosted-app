@@ -1,4 +1,20 @@
-import { ComboJobTypes, TIME_FRAME_ERROR_TEXT } from "@repo/shared-utils";
+import {
+  AggregatorGraphMetricsResponse,
+  ComboJobTypes,
+  TIME_FRAME_ERROR_TEXT,
+} from "@repo/shared-utils";
+
+export const expectPerformanceResults = (
+  response: Cypress.Response<AggregatorGraphMetricsResponse>,
+) => {
+  expect(response.status).to.eq(200);
+
+  expect(response.body.aggregators.length).to.be.greaterThan(0);
+  expect(response.body.performance.length).to.be.greaterThan(0);
+  cy.wrap(response.body.performance).each((item) =>
+    expectLooksLikePerformanceData(item),
+  );
+};
 
 export const expectLooksLikePerformanceData = (
   item,
@@ -26,6 +42,7 @@ interface FetchFunctionParams {
 
 interface FetchFunctionResponse {
   status: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body: any;
 }
 
@@ -35,7 +52,6 @@ type FetchFunction = (
 
 export const createPerformanceGraphValidationTests = (
   fetchFunction: FetchFunction,
-  expectedAggregator?: string,
 ) =>
   describe("graph validation tests", () => {
     it("fails when timeFrame param is wrong", () => {
@@ -52,13 +68,6 @@ export const createPerformanceGraphValidationTests = (
     });
 
     it("works without any filter params", () => {
-      fetchFunction({}).then((response) => {
-        expect(response.status).to.eq(200);
-        cy.wrap(response.body)
-          .its("performance")
-          .each((value) =>
-            expectLooksLikePerformanceData(value, expectedAggregator),
-          );
-      });
+      fetchFunction({}).then(expectPerformanceResults);
     });
   });

@@ -13,30 +13,49 @@ import {
 import { getAggregatorMetrics } from "./aggregatorMetricsHandlers";
 import { randomUUID } from "crypto";
 import { TimeFrame } from "../shared/consts/timeFrame";
+import { server } from "../shared/tests/testServer";
+import { http, HttpResponse } from "msw";
+import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../shared/tests/handlers";
+import { testAggregators } from "../shared/tests/testData/aggregators";
+
+type Aggregator = {
+  name: string;
+  avgSuccessRate: number;
+  avgDuration: number;
+  jobTypes: Record<string, { avgSuccessRate: number; avgDuration: number }>;
+};
+
+type Results = { aggregators: Aggregator[] };
+
+const findMxResult = (results: Results) => {
+  return results.aggregators.find(({ name }) => name === "mx") as Aggregator;
+};
 
 describe("getAggregatorMetrics", () => {
   beforeAll(async () => {
     await seedInfluxWithAllTimeFrameData();
   });
 
-  const expectedAggregatorMetricsResultsFormat = (results: unknown) => {
-    expect(results).toEqual(
+  const expectedAggregatorMetricsResultsFormat = (results: Results) => {
+    const mxResult = findMxResult(results);
+
+    expect(mxResult).toEqual(
       expect.objectContaining({
-        mx: expect.objectContaining({
-          avgSuccessRate: expect.any(Number),
-          avgDuration: expect.any(Number),
-          jobTypes: expect.objectContaining(
-            allJobTypeCombinations.reduce((acc, jobType) => {
-              return {
-                ...acc,
-                [jobType]: expect.objectContaining({
-                  avgSuccessRate: expect.any(Number),
-                  avgDuration: expect.any(Number),
-                }),
-              };
-            }, {}),
-          ),
-        }),
+        avgSuccessRate: expect.any(Number),
+        avgDuration: expect.any(Number),
+        jobTypes: expect.objectContaining(
+          allJobTypeCombinations.reduce((acc, jobType) => {
+            return {
+              ...acc,
+              [jobType]: expect.objectContaining({
+                avgSuccessRate: expect.any(Number),
+                avgDuration: expect.any(Number),
+              }),
+            };
+          }, {}),
+        ),
+        logo: expect.any(String),
+        name: expect.any(String),
       }),
     );
   };
@@ -54,13 +73,14 @@ describe("getAggregatorMetrics", () => {
 
     await getAggregatorMetrics(req, res);
 
-    const results = (res.send as jest.Mock).mock.calls[0][0];
-    const mxJobDuration = results.mx.avgDuration;
+    const result = (res.send as jest.Mock).mock.calls[0][0] as Results;
+    const mxResult = findMxResult(result);
+    const mxJobDuration = mxResult.avgDuration;
 
     expect(mxJobDuration).toBeGreaterThan(TEST_DURATION_ONE_WEEK / 1000);
     expect(mxJobDuration).toBeLessThanOrEqual(TEST_DURATION_ONE_MONTH / 1000);
 
-    expectedAggregatorMetricsResultsFormat(results);
+    expectedAggregatorMetricsResultsFormat(result);
   });
 
   it("gets an aggregator in the results even when it has no duration data", async () => {
@@ -85,11 +105,24 @@ describe("getAggregatorMetrics", () => {
 
     await wait(1000); // DB writing needs time to finish before reading
 
+    server.use(
+      http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
+        HttpResponse.json({
+          aggregators: [...testAggregators, { name: aggregatorWithNoDuration }],
+        }),
+      ),
+    );
+
     await getAggregatorMetrics(req, res);
 
-    const results = (res.send as jest.Mock).mock.calls[0][0];
+    const results = (res.send as jest.Mock).mock.calls[0][0] as Results;
+
+    const aggregatorWithNoDurationResults = results.aggregators.find(
+      (aggregator) => aggregator.name === aggregatorWithNoDuration,
+    ) as Aggregator;
+
     expect(
-      results[aggregatorWithNoDuration].jobTypes["transactionHistory"],
+      aggregatorWithNoDurationResults.jobTypes["transactionHistory"],
     ).toEqual(
       expect.objectContaining({
         avgSuccessRate: 0,
@@ -111,8 +144,8 @@ describe("getAggregatorMetrics", () => {
 
     await getAggregatorMetrics(req, res);
 
-    const results = (res.send as jest.Mock).mock.calls[0][0];
-    const mxJobDuration = results.mx.avgDuration;
+    const results = (res.send as jest.Mock).mock.calls[0][0] as Results;
+    const mxJobDuration = findMxResult(results).avgDuration;
 
     expect(mxJobDuration).toBeGreaterThan(TEST_DURATION_ONE_WEEK / 1000);
     expect(mxJobDuration).toBeLessThanOrEqual(TEST_DURATION_ONE_MONTH / 1000);
@@ -139,18 +172,23 @@ describe("getAggregatorMetrics", () => {
     await getAggregatorMetrics(createRequest("180d"), res);
     await getAggregatorMetrics(createRequest("1y"), res);
 
-    const oneDayResults = (res.send as jest.Mock).mock.calls[0][0];
-    const oneWeekResults = (res.send as jest.Mock).mock.calls[1][0];
-    const oneMonthResults = (res.send as jest.Mock).mock.calls[2][0];
-    const halfYearResults = (res.send as jest.Mock).mock.calls[3][0];
-    const oneYearResults = (res.send as jest.Mock).mock.calls[4][0];
+    const oneDayResults = (res.send as jest.Mock).mock.calls[0][0] as Results;
+    const oneWeekResults = (res.send as jest.Mock).mock.calls[1][0] as Results;
+    const oneMonthResults = (res.send as jest.Mock).mock.calls[2][0] as Results;
+    const halfYearResults = (res.send as jest.Mock).mock.calls[3][0] as Results;
+    const oneYearResults = (res.send as jest.Mock).mock.calls[4][0] as Results;
+
+    const oneDayMxResult = findMxResult(oneDayResults);
+    const oneWeekMxResult = findMxResult(oneWeekResults);
+    const oneMonthMxResult = findMxResult(oneMonthResults);
+    const halfYearMxResult = findMxResult(halfYearResults);
+    const oneYearMxResult = findMxResult(oneYearResults);
 
     expect(
-      oneDayResults.mx.avgDuration <
-        oneWeekResults.mx.avgDuration <
-        oneMonthResults.mx.avgDuration <
-        halfYearResults.mx.avgDuration <
-        oneYearResults.mx.avgDuration,
+      oneDayMxResult.avgDuration < oneWeekMxResult.avgDuration &&
+        oneWeekMxResult.avgDuration < oneMonthMxResult.avgDuration &&
+        oneMonthMxResult.avgDuration < halfYearMxResult.avgDuration &&
+        halfYearMxResult.avgDuration < oneYearMxResult.avgDuration,
     ).toBeTruthy();
 
     expectedAggregatorMetricsResultsFormat(oneDayResults);
@@ -158,5 +196,5 @@ describe("getAggregatorMetrics", () => {
     expectedAggregatorMetricsResultsFormat(oneMonthResults);
     expectedAggregatorMetricsResultsFormat(halfYearResults);
     expectedAggregatorMetricsResultsFormat(oneYearResults);
-  });
+  }, 10000);
 });

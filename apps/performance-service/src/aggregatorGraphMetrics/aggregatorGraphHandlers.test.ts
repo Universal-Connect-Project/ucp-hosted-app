@@ -7,13 +7,21 @@ import {
   getAggregatorSuccessGraphData,
   getAggregatorDurationGraphData,
 } from "./aggregatorGraphHandlers";
+import { server } from "../shared/tests/testServer";
+import { http, HttpResponse } from "msw";
+import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../shared/tests/handlers";
 
-const testAggregator = { id: "testAggId", duration: 1234 };
+const testAggregator = { duration: 1234, id: "testAggId", name: "testAggId" };
 const dataPointFrom28DaysAgoAggregator = {
-  id: "olderPointAggId",
   duration: 2222,
+  id: "olderPointAggId",
+  name: "olderPointAggId",
 };
-const differentJobTypeAggregator = { id: "diffJobAggId", duration: 3333 };
+const differentJobTypeAggregator = {
+  duration: 3333,
+  id: "diffJobAggId",
+  name: "diffJobAggId",
+};
 
 const expectDurationFromAggregator = ({
   aggregatorId,
@@ -95,6 +103,20 @@ describe("getAggregatorSuccessGraphData", () => {
     });
 
     await wait(1500);
+  });
+
+  beforeEach(() => {
+    server.use(
+      http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
+        HttpResponse.json({
+          aggregators: [
+            testAggregator,
+            dataPointFrom28DaysAgoAggregator,
+            differentJobTypeAggregator,
+          ],
+        }),
+      ),
+    );
   });
 
   it("takes query params and gets success data", async () => {
@@ -210,11 +232,25 @@ describe("getAggregatorDurationGraphData", () => {
     await wait(1500);
   });
 
+  beforeEach(() => {
+    server.use(
+      http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
+        HttpResponse.json({
+          aggregators: [
+            testAggregator,
+            dataPointFrom28DaysAgoAggregator,
+            differentJobTypeAggregator,
+          ],
+        }),
+      ),
+    );
+  });
+
   it("takes query params and gets duration data", async () => {
     const req = {
       query: {
         timeFrame: "1d",
-        aggregators: testAggregator,
+        aggregators: testAggregator.id,
         jobTypes: ComboJobTypes.TRANSACTIONS,
       },
     } as unknown as Request;

@@ -8,6 +8,11 @@ import {
 } from "../tests/utils";
 import { getGraphMetrics } from "./graphInfluxQueries";
 import { GraphMetricsResponse } from "@repo/shared-utils";
+import { testAggregatorsWithIndexes } from "../tests/testData/aggregators";
+import { server } from "../tests/testServer";
+import { http, HttpResponse } from "msw";
+import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../tests/handlers";
+import intersection from "lodash.intersection";
 
 const getNowWithSomeForgiveness = () => Date.now() + 5000;
 
@@ -54,6 +59,23 @@ const testDataPoints = ({
   expect(midpoint).toBeGreaterThan(start);
 };
 
+const expectAggregators = ({
+  aggregatorsToExpect,
+  aggregators,
+}: {
+  aggregatorsToExpect: string[];
+  aggregators: { id: string }[];
+}) => {
+  expect(aggregators.length).toEqual(aggregatorsToExpect.length);
+
+  expect(
+    intersection(
+      aggregators.map(({ id }) => id),
+      aggregatorsToExpect,
+    ),
+  ).toHaveLength(aggregatorsToExpect.length);
+};
+
 describe("getGraphMetrics", () => {
   beforeAll(async () => {
     await seedInfluxWithAllTimeFrameData();
@@ -72,8 +94,14 @@ describe("getGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData).toEqual({ performance: [] });
-      expect(durationData).toEqual({ performance: [] });
+      expect(successData).toEqual({
+        aggregators: testAggregatorsWithIndexes,
+        performance: [],
+      });
+      expect(durationData).toEqual({
+        aggregators: testAggregatorsWithIndexes,
+        performance: [],
+      });
     });
 
     it("returns data when the institutionId is valid", async () => {
@@ -228,8 +256,14 @@ describe("getGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
-      expect(successData).toEqual({ performance: [] });
-      expect(durationData).toEqual({ performance: [] });
+      expect(successData).toEqual({
+        aggregators: testAggregatorsWithIndexes,
+        performance: [],
+      });
+      expect(durationData).toEqual({
+        aggregators: testAggregatorsWithIndexes,
+        performance: [],
+      });
     });
 
     const shuffledJobTypeCombinations = Object.values(ComboJobTypes)
@@ -318,6 +352,19 @@ describe("getGraphMetrics", () => {
         );
       };
 
+      server.use(
+        http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
+          HttpResponse.json({
+            aggregators: [
+              {
+                id: uniqueAggregatorId,
+                name: uniqueAggregatorId,
+              },
+            ],
+          }),
+        ),
+      );
+
       const accountNumberData = await getGraphMetrics({
         jobTypes: ComboJobTypes.ACCOUNT_NUMBER,
         timeFrame: "1d",
@@ -367,20 +414,39 @@ describe("getGraphMetrics", () => {
       await wait(1500);
     });
 
-    it("gets nothing with an non-existant aggregator", async () => {
+    beforeEach(() => {
+      server.use(
+        http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
+          HttpResponse.json({
+            aggregators: [
+              { id: aggId1, name: aggId1 },
+              { id: aggId2, name: aggId2 },
+            ],
+          }),
+        ),
+      );
+    });
+
+    it("gets nothing with a non-existent aggregator", async () => {
       const successData = await getGraphMetrics({
         aggregators: "noAggregator",
         timeFrame: "1d",
         metric: "successRateMetrics",
       });
       const durationData = await getGraphMetrics({
-        jobTypes: "noAggregator",
+        aggregators: "noAggregator",
         timeFrame: "1d",
         metric: "durationMetrics",
       });
 
-      expect(successData).toEqual({ performance: [] });
-      expect(durationData).toEqual({ performance: [] });
+      expect(successData).toEqual({
+        aggregators: [],
+        performance: [],
+      });
+      expect(durationData).toEqual({
+        aggregators: [],
+        performance: [],
+      });
     });
 
     it("gets single aggregator data", async () => {
@@ -403,6 +469,16 @@ describe("getGraphMetrics", () => {
           expect(point).not.toHaveProperty(aggId2);
         });
       };
+
+      const aggregatorsToExpect = [aggId1];
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: successData.aggregators,
+      });
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: durationData.aggregators,
+      });
 
       expectDataOnlyFromFirstAggregator(successData);
       expectDataOnlyFromFirstAggregator(durationData);
@@ -427,6 +503,17 @@ describe("getGraphMetrics", () => {
         metric: "durationMetrics",
       });
 
+      const aggregatorsToExpect = [aggId1, aggId2];
+
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: successData.aggregators,
+      });
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: durationData.aggregators,
+      });
+
       expectDataFromBothAggregators(successData);
       expectDataFromBothAggregators(durationData);
     });
@@ -439,6 +526,16 @@ describe("getGraphMetrics", () => {
       const durationData = await getGraphMetrics({
         timeFrame: "1d",
         metric: "durationMetrics",
+      });
+
+      const aggregatorsToExpect = [aggId1, aggId2];
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: successData.aggregators,
+      });
+      expectAggregators({
+        aggregatorsToExpect,
+        aggregators: durationData.aggregators,
       });
 
       expectDataFromBothAggregators(successData);

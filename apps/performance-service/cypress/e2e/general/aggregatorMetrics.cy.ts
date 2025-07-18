@@ -1,13 +1,27 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { UCP_UI_USER_ACCESS_TOKEN } from "../../shared/constants/accessTokens";
-import { createAuthorizationHeader } from "../../shared/utils/authorization";
 import {
   startConnectionEventRequest,
   markSuccessfulEventRequest,
   getAggregatorPerformanceMetrics,
 } from "../../shared/utils/requests";
 
-describe("Aggreagator Metrics", () => {
+const expectSuccessResult = (response) => {
+  expect(response.status).to.eq(200);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const mxAggregator = response.body.aggregators.find(
+    ({ name }) => name === "mx",
+  );
+
+  expect(mxAggregator).to.have.property("avgSuccessRate");
+  expect(mxAggregator).to.have.property("avgDuration");
+  expect(mxAggregator).to.have.property("jobTypes");
+
+  expect(mxAggregator.jobTypes.transactions).to.have.property("avgSuccessRate");
+  expect(mxAggregator.jobTypes.transactions).to.have.property("avgDuration");
+};
+
+describe("Aggregator Metrics", () => {
   before(() => {
     const connectionId = crypto.randomUUID();
 
@@ -28,7 +42,7 @@ describe("Aggreagator Metrics", () => {
       method: "GET",
       failOnStatusCode: false,
       headers: {
-        Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
+        Authorization: "Bearer junk",
       },
     }).then((response) => {
       expect(response.status).to.eq(401);
@@ -47,40 +61,12 @@ describe("Aggreagator Metrics", () => {
   });
 
   it("works without timeFrame param", () => {
-    getAggregatorPerformanceMetrics({}).then((response) => {
-      expect(response.status).to.eq(200);
-      expect(response.body).to.have.property("testAggregatorId");
-
-      expect(response.body.testAggregatorId).to.have.property("avgSuccessRate");
-      expect(response.body.testAggregatorId).to.have.property("avgDuration");
-      expect(response.body.testAggregatorId).to.have.property("jobTypes");
-
-      expect(
-        response.body.testAggregatorId.jobTypes.transactions,
-      ).to.have.property("avgSuccessRate");
-      expect(
-        response.body.testAggregatorId.jobTypes.transactions,
-      ).to.have.property("avgDuration");
-    });
+    getAggregatorPerformanceMetrics({}).then(expectSuccessResult);
   });
 
   it("works with timeFrame param", () => {
     getAggregatorPerformanceMetrics({
       timeFrame: "1y",
-    }).then((response) => {
-      expect(response.status).to.eq(200);
-      expect(response.body).to.have.property("testAggregatorId");
-
-      expect(response.body.testAggregatorId).to.have.property("avgSuccessRate");
-      expect(response.body.testAggregatorId).to.have.property("avgDuration");
-      expect(response.body.testAggregatorId).to.have.property("jobTypes");
-
-      expect(
-        response.body.testAggregatorId.jobTypes.transactions,
-      ).to.have.property("avgSuccessRate");
-      expect(
-        response.body.testAggregatorId.jobTypes.transactions,
-      ).to.have.property("avgDuration");
-    });
+    }).then(expectSuccessResult);
   });
 });

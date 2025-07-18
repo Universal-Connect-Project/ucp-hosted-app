@@ -1,5 +1,5 @@
 import { RequestHandler, Router } from "express";
-import { validateInstitutionServiceAudience } from "../middlewares/validationMiddleware";
+import { validateUIAudience } from "../middlewares/validationMiddleware";
 import { getAggregatorMetrics } from "./aggregatorMetricsHandlers";
 import { validateAggregatorRequestSchema } from "@repo/backend-utils";
 
@@ -7,7 +7,7 @@ const router = Router();
 
 router.get(
   "/metrics/aggregators",
-  [validateInstitutionServiceAudience, validateAggregatorRequestSchema],
+  [validateUIAudience, validateAggregatorRequestSchema],
   getAggregatorMetrics as RequestHandler,
 );
 

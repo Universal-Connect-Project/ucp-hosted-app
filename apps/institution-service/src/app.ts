@@ -11,6 +11,7 @@ import aggregatorRoutes from "./aggregators/aggregatorEndpoints";
 import institutionRoutes from "./institutions/institutionEndpoints";
 import permissionsRoutes from "./routes/permissionRoutes";
 import { PORT } from "./shared/const";
+import performanceAuthEndpoints from "./performanceAuth/performanceAuthEndpoints";
 
 const createLimiter = (
   options: { timeIntervalInMinutes: number; requestLimit: number } = {
@@ -83,6 +84,7 @@ app.use("/institutions", institutionRoutes);
 app.use("/permissions", permissionsRoutes);
 app.use("/aggregatorIntegrations", aggregatorIntegrationRoutes);
 app.use("/aggregators", aggregatorRoutes);
+app.use("/performanceAuth", performanceAuthEndpoints);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(

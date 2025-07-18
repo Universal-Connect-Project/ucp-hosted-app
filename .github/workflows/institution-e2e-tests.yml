@@ -93,13 +93,11 @@ jobs:
           project: apps/institution-service
           start: |
             npm run dev --workspace apps/authentication-service & sleep 10
-            npm run start --workspace apps/performance-service & sleep 10
             npm run dev:noRateLimiting --workspace apps/institution-service
-          wait-on: "http://localhost:8089/ping, http://localhost:8088/ping, http://localhost:8090/ping"
+          wait-on: "http://localhost:8089/ping, http://localhost:8088/ping"
           wait-on-timeout: 180000
           spec: apps/institution-service/cypress/e2e/*.cy.ts
         env:
-          AUTH0_INSTITUTION_CLIENT_SECRET: ${{ secrets.INSTITUTION_SERVICE_CLIENT_SECRET }}
           REDIS_SERVER: redis://localhost:6379
           CYPRESS_MX_AGGREGATOR_ADMIN_USERNAME: ${{ secrets.MX_AGGREGATOR_ADMIN_USERNAME }}
           CYPRESS_MX_AGGREGATOR_ADMIN_PASSWORD: ${{ secrets.MX_AGGREGATOR_ADMIN_PASSWORD }}

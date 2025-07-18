@@ -17,9 +17,9 @@ export const createGetInstitutionGraph =
 
     try {
       const data = await getGraphMetrics({
-        aggregators,
+        aggregators: aggregators || undefined,
         institutionId,
-        jobTypes,
+        jobTypes: jobTypes || undefined,
         metric,
         timeFrame: timeFrame || "30d",
       });

@@ -1,8 +1,8 @@
 import { ComboJobTypes } from "@repo/shared-utils";
 import {
   createPerformanceGraphValidationTests,
-  expectLooksLikePerformanceData,
-} from "@repo/cypress-utils";
+  expectPerformanceResults,
+} from "../../shared/utils/aggregatorGraphValidation";
 import {
   getAggregatorDurationGraphPerformanceData,
   getAggregatorSuccessGraphPerformanceData,
@@ -43,13 +43,8 @@ describe("aggregator graph endpoints", () => {
       getAggregatorSuccessGraphPerformanceData({
         timeFrame: "30d",
         jobTypes: ComboJobTypes.TRANSACTIONS,
-        aggregators: "mx,sophtron,testAggregatorId",
-      }).then((response) => {
-        expect(response.status).to.eq(200);
-        cy.wrap(response.body)
-          .its("performance")
-          .each((item) => expectLooksLikePerformanceData(item));
-      });
+        aggregators: "mx,sophtron",
+      }).then(expectPerformanceResults);
     });
 
     createPerformanceGraphValidationTests(
@@ -75,13 +70,8 @@ describe("aggregator graph endpoints", () => {
       getAggregatorDurationGraphPerformanceData({
         timeFrame: "30d",
         jobTypes: ComboJobTypes.TRANSACTIONS,
-        aggregators: "mx,sophtron,testAggregatorId",
-      }).then((response) => {
-        expect(response.status).to.eq(200);
-        cy.wrap(response.body)
-          .its("performance")
-          .each((item) => expectLooksLikePerformanceData(item));
-      });
+        aggregators: "mx,sophtron",
+      }).then(expectPerformanceResults);
     });
 
     createPerformanceGraphValidationTests(

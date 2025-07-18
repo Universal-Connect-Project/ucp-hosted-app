@@ -1,8 +1,10 @@
 import { TimeFrameToAggregateWindowMap } from "@repo/backend-utils/src/constants";
 import { BUCKET, queryApi } from "../../services/influxDb";
 import groupBy from "lodash.groupby";
-import { GraphMetricsResponse } from "@repo/shared-utils";
+import { GraphMetricsResponse, PerformanceDataPoint } from "@repo/shared-utils";
 import { TimeFrame } from "../consts/timeFrame";
+import { getAggregators } from "../requests/getAggregators";
+import intersection from "lodash.intersection";
 
 interface AggSuccessInfluxObj {
   result: string;
@@ -22,7 +24,7 @@ const getMidpoint = (start: string, end: string) => {
 
 const transformInfluxGraphMetrics = (
   dataPoints: AggSuccessInfluxObj[],
-): GraphMetricsResponse => {
+): PerformanceDataPoint[] => {
   const groupedByAggregatorId = groupBy(dataPoints, "aggregatorId");
 
   const aggregatorIds = Object.keys(groupedByAggregatorId);
@@ -30,7 +32,7 @@ const transformInfluxGraphMetrics = (
   const firstAggregatorId = aggregatorIds[0];
   const firstAggregatorDataPoints = groupedByAggregatorId[firstAggregatorId];
 
-  const performance =
+  return (
     firstAggregatorDataPoints?.map(({ _start, _stop }, index) =>
       aggregatorIds.reduce(
         (acc, aggregatorId) => ({
@@ -39,9 +41,28 @@ const transformInfluxGraphMetrics = (
         }),
         { start: _start, midpoint: getMidpoint(_start, _stop), stop: _stop },
       ),
-    ) || [];
+    ) || []
+  );
+};
 
-  return { performance };
+const getFilteredAggregators = async (aggregators: string | undefined) => {
+  const institutionServiceAggregatorsWithIndexes = (await getAggregators()).map(
+    (aggregator, index) => ({
+      ...aggregator,
+      aggregatorIndex: index,
+    }),
+  );
+
+  const institutionServiceAggregatorNames =
+    institutionServiceAggregatorsWithIndexes.map(({ name }) => name);
+
+  const aggregatorsToFilter = aggregators
+    ? intersection(institutionServiceAggregatorNames, aggregators.split(","))
+    : institutionServiceAggregatorNames;
+
+  return institutionServiceAggregatorsWithIndexes.filter(({ name }) =>
+    aggregatorsToFilter.includes(name),
+  );
 };
 
 export async function getGraphMetrics({
@@ -57,6 +78,15 @@ export async function getGraphMetrics({
   metric: "successRateMetrics" | "durationMetrics";
   timeFrame: TimeFrame;
 }): Promise<GraphMetricsResponse> {
+  const filteredAggregators = await getFilteredAggregators(aggregators);
+
+  if (!filteredAggregators.length) {
+    return {
+      aggregators: [],
+      performance: [],
+    };
+  }
+
   const formattedJobTypes = jobTypes
     ?.split(",")
     .map((jobType) => jobType.split("|").sort().join("|"));
@@ -65,10 +95,9 @@ export async function getGraphMetrics({
     ? `|> filter(fn: (r) => ${formattedJobTypes.map((type) => `r.jobTypes == string(v: "${type}")`).join(" or ")})`
     : "";
 
-  const aggregatorFilter = aggregators?.length
-    ? `|> filter(fn: (r) => ${aggregators
-        .split(",")
-        .map((aggregatorId) => `r.aggregatorId == string(v: "${aggregatorId}")`)
+  const aggregatorFilter = filteredAggregators?.length
+    ? `|> filter(fn: (r) => ${filteredAggregators
+        .map(({ name }) => `r.aggregatorId == string(v: "${name}")`)
         .join(" or ")})`
     : "";
 
@@ -94,5 +123,8 @@ export async function getGraphMetrics({
 
   const results: AggSuccessInfluxObj[] = await queryApi.collectRows(fluxQuery);
 
-  return transformInfluxGraphMetrics(results);
+  return {
+    aggregators: filteredAggregators,
+    performance: transformInfluxGraphMetrics(results),
+  };
 }

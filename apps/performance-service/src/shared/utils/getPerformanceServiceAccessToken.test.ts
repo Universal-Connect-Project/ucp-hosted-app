@@ -1,11 +1,11 @@
 import { http, HttpResponse } from "msw";
-import { server } from "../test/testServer";
+import { server } from "../../shared/tests/testServer";
 import {
   clearTokenCache,
   getPerformanceServiceAccessToken,
 } from "./getPerformanceServiceAccessToken";
-import { AUTH0_AUTH_TOKEN_URL } from "../test/handlers";
-import { tokenResponse } from "../test/testData/auth0";
+import { AUTH0_AUTH_TOKEN_URL } from "../../shared/tests/handlers";
+import { tokenResponse } from "../../shared/tests/testData/auth0";
 
 describe("getPerformanceServiceAccessToken", () => {
   beforeEach(() => {

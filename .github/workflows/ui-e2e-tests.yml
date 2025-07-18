@@ -87,7 +87,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
-          AUTH0_INSTITUTION_CLIENT_SECRET: ${{ secrets.INSTITUTION_SERVICE_CLIENT_SECRET }}
+          AUTH0_PERFORMANCE_CLIENT_SECRET: ${{ secrets.PERFORMANCE_SERVICE_CLIENT_SECRET }}
           REDIS_SERVER: redis://localhost:6379
           CYPRESS_auth_username_with_widget_role: ${{ secrets.AUTH_USERNAME_WITH_WIDGET_ROLE }}
           CYPRESS_auth_password_with_widget_role: ${{ secrets.AUTH_PASSWORD_WITH_WIDGET_ROLE }}

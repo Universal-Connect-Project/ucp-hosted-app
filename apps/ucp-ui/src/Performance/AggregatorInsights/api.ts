@@ -1,6 +1,6 @@
 import { api, TagTypes } from "../../baseApi";
 import type { Aggregator as BaseAggregator } from "@repo/shared-utils";
-import { INSTITUTION_SERVICE_BASE_URL } from "../../shared/constants/environment";
+import { PERFORMANCE_SERVICE_BASE_URL } from "../../shared/constants/environment";
 
 interface JobTypePerformance {
   avgSuccessRate: number;
@@ -21,7 +21,7 @@ interface AggregatorPerformanceByJobTypeParans {
   timeFrame: string;
 }
 
-export const AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_URL = `${INSTITUTION_SERVICE_BASE_URL}/aggregators/performance`;
+export const AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_URL = `${PERFORMANCE_SERVICE_BASE_URL}/metrics/aggregators`;
 
 export const aggregatorInsightsApi = api.injectEndpoints({
   endpoints: (builder) => ({

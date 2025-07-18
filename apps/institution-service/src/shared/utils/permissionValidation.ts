@@ -1,6 +1,7 @@
 import { validateAccessToken } from "@repo/backend-utils";
 import {
   AUTH0_CLIENT_AUDIENCE,
+  AUTH0_PERFORMANCE_SERVICE_AUDIENCE,
   AUTH0_WIDGET_AUDIENCE,
   UiUserPermissions,
 } from "@repo/shared-utils";
@@ -13,6 +14,11 @@ import { Institution } from "../../models/institution";
 
 export const validateUIAudience = validateAccessToken({
   audience: AUTH0_CLIENT_AUDIENCE,
+  auth0Domain: process.env.AUTH0_DOMAIN as string,
+});
+
+export const validatePerformanceServiceAudience = validateAccessToken({
+  audience: AUTH0_PERFORMANCE_SERVICE_AUDIENCE,
   auth0Domain: process.env.AUTH0_DOMAIN as string,
 });
 

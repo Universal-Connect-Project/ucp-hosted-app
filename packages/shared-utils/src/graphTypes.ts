@@ -12,6 +12,7 @@ export interface PerformanceDataPoint {
 }
 
 export interface GraphMetricsResponse {
+  aggregators: AggregatorWithIndex[];
   performance: PerformanceDataPoint[];
 }
 
