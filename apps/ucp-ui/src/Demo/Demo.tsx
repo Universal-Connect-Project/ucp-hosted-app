@@ -47,17 +47,17 @@ const Demo = ({
             />
           )}
           <SkeletonIfLoading isLoading={tokenLoading}>
-            <div className={styles.iframeDimensionsContainer}>
-              {token && (
-                <PhoneContainer
-                  src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
-                    ",",
-                  )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
-                  title={WIDGET_DEMO_IFRAME_TITLE}
-                  onReset={onReset}
-                />
-              )}
-            </div>
+            {token ? (
+              <PhoneContainer
+                src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
+                  ",",
+                )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
+                title={WIDGET_DEMO_IFRAME_TITLE}
+                onReset={onReset}
+              />
+            ) : (
+              <div className={styles.phoneDimensionsContainer} />
+            )}
           </SkeletonIfLoading>
         </div>
       </Stack>
