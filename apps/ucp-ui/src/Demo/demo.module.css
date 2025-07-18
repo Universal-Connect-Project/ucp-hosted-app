@@ -5,9 +5,9 @@
   width: 100%;
 }
 
-.iframeDimensionContainer {
-  height: 600px;
-  width: 500px;
+.phoneDimensionsContainer {
+  width: 415px;
+  height: 852px;
 }
 
 .iframe {

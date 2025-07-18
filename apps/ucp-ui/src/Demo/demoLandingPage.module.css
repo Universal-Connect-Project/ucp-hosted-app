@@ -1,0 +1,18 @@
+.paper {
+  &:global(.MuiPaper-root) {
+    height: 516px;
+    width: 410px;
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.margins {
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.button {
+  float: right;
+}

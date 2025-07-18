@@ -1,29 +1,28 @@
 import React from "react";
-import { render, screen, userEvent } from "../shared/test/testUtils";
+import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
 import Demo from "./Demo";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
   WIDGET_DEMO_IFRAME_TITLE,
-  WIDGET_DEMO_PAGE_TITLE,
 } from "./constants";
 import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
-import { expectSkeletonLoader } from "../shared/test/testUtils";
+
+const jobTypes = ["accountNumber", "accountOwner"];
+const aggregator = "MX";
+const onReset = jest.fn();
 
 describe("<Demo />", () => {
-  it("renders the page title, and shows a loading state", async () => {
-    render(<Demo />);
-    await expectSkeletonLoader();
-    expect(screen.getByText(WIDGET_DEMO_PAGE_TITLE)).toBeInTheDocument();
-  });
-
   it("renders the widget demo iframe", async () => {
-    render(<Demo />);
-
-    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
-    expect(iframe).toBeInTheDocument();
+    render(
+      <Demo jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+    );
+    await waitFor(() => {
+      const iframe = screen.getByTitle("Widget Demo Iframe");
+      expect(iframe).toBeInTheDocument();
+    });
   });
 
   it("renders an error message when token fetch fails", async () => {
@@ -33,7 +32,9 @@ describe("<Demo />", () => {
       ),
     );
 
-    render(<Demo />);
+    render(
+      <Demo jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+    );
 
     expect(
       await screen.findByText(WIDGET_DEMO_ERROR_MESSAGE),
@@ -46,7 +47,9 @@ describe("<Demo />", () => {
     );
 
     await userEvent.click(screen.getByText(TRY_AGAIN_BUTTON_TEXT));
-    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
-    expect(iframe).toBeInTheDocument();
+    await waitFor(async () => {
+      const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
+      expect(iframe).toBeInTheDocument();
+    });
   });
 });
