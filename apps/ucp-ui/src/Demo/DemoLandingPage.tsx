@@ -20,7 +20,7 @@ import { WIDGET_DEMO_PAGE_TITLE, CONNECT_TAB } from "./constants";
 import styles from "./demoLandingPage.module.css";
 import Demo from "./Demo";
 import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 
 interface FormValues {
   accountNumber: boolean;
@@ -37,6 +37,10 @@ interface JobTypeCheckbox {
 }
 
 const DemoLandingPage = () => {
+  const [submittedValues, setSubmittedValues] = useState<FormValues | null>(
+    null,
+  );
+
   const [tabValue, setTabValue] = useState(0);
   const checkboxes: JobTypeCheckbox[] = [
     { defaultValue: true, name: "accountNumber", label: "Account Number" },
@@ -56,39 +60,42 @@ const DemoLandingPage = () => {
   );
 
   const {
-    handleSubmit,
     control,
-    formState: { isSubmitted, errors },
+    formState: { errors },
     getValues,
+    handleSubmit,
     reset,
+    trigger,
   } = useForm<FormValues>({
     defaultValues,
+    mode: "onTouched",
   });
+
+  const isJobTypeError = checkboxes.some(({ name }) => errors[name]);
+
+  const triggerJobTypesValidation = () =>
+    trigger(checkboxes.map(({ name }) => name));
+
+  const validateAnyJobTypeSelected = (
+    _value: string | boolean,
+    formValues: FormValues,
+  ): boolean => checkboxes.some(({ name }) => formValues[name]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const handleOnSubmit = (data: FormValues) => {
-    const newJobTypes = Object.entries(data)
-      .filter(([key, value]) => key !== "aggregator" && value)
-      .map(([key]) => key);
-
-    if (newJobTypes.length === 0) {
-      return;
-    }
-  };
+  const onSubmit: SubmitHandler<FormValues> = setSubmittedValues;
 
   const handleReset = () => {
     reset();
+    setSubmittedValues(null);
   };
 
   const aggregator = getValues("aggregator");
-  const jobTypes = Object.entries(getValues())
+  const jobTypes = Object.entries(submittedValues || {})
     .filter(([key, value]) => key !== "aggregator" && value)
     .map(([key]) => key);
-
-  const error = isSubmitted && Object.keys(errors).length > 0;
 
   return (
     <PageContent>
@@ -100,7 +107,7 @@ const DemoLandingPage = () => {
           </Tabs>
         </Box>
         {tabValue === 0 &&
-          (isSubmitted && jobTypes.length > 0 ? (
+          (submittedValues ? (
             <Demo
               jobTypes={jobTypes}
               aggregator={aggregator.toLowerCase()}
@@ -113,7 +120,8 @@ const DemoLandingPage = () => {
                   <form
                     className={styles.margins}
                     id="demo-form"
-                    onSubmit={(e) => void handleSubmit(handleOnSubmit)(e)}
+                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                    onSubmit={handleSubmit(onSubmit)}
                   >
                     <Stack sx={{ my: 4 }}>
                       <Typography variant="h5" fontWeight={700}>
@@ -124,7 +132,7 @@ const DemoLandingPage = () => {
                     <FormControl required>
                       <RequiredCheckboxGroupHeader
                         title={"Job type"}
-                        error={error}
+                        error={isJobTypeError}
                         errorMessage={"Please select at least one job type."}
                       />
 
@@ -133,107 +141,26 @@ const DemoLandingPage = () => {
                           key={checkbox.name}
                           name={checkbox.name}
                           control={control}
-                          render={({ field }) => (
+                          render={({ field: { name, onChange, value } }) => (
                             <FormControlLabel
                               control={
                                 <Checkbox
                                   size="small"
-                                  checked={field.value as boolean}
-                                  onChange={field.onChange}
-                                  name={field.name}
+                                  checked={value as boolean}
+                                  onChange={(event) => {
+                                    onChange(event);
+
+                                    void triggerJobTypesValidation();
+                                  }}
+                                  name={name}
                                 />
                               }
                               label={checkbox.label}
                             />
                           )}
+                          rules={{ validate: validateAnyJobTypeSelected }}
                         />
                       ))}
-
-                      {/* <Controller
-                        name="accountNumber"
-                        control={control}
-                        render={({ field }) => (
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                size="small"
-                                checked={field.value}
-                                onChange={field.onChange}
-                                name={field.name}
-                              />
-                            }
-                            label="Account Number"
-                          />
-                        )}
-                      />
-                      <Controller
-                        name="accountOwner"
-                        control={control}
-                        render={({ field }) => (
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={field.value}
-                                size="small"
-                                onChange={field.onChange}
-                                name={field.name}
-                              />
-                            }
-                            label="Account Owner"
-                          />
-                        )}
-                      />
-                      <Controller
-                        name="transactions"
-                        control={control}
-                        render={({ field }) => (
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={field.value}
-                                size="small"
-                                onChange={field.onChange}
-                                name={field.name}
-                              />
-                            }
-                            label="Transactions"
-                          />
-                        )}
-                      /> */}
-                      {/* <Controller
-                        name="transactionHistory"
-                        control={control}
-                        rules={{
-                          validate: () => {
-                            const {
-                              accountNumber,
-                              accountOwner,
-                              transactions,
-                              transactionHistory,
-                            } = getValues();
-                            return (
-                              accountNumber ||
-                              accountOwner ||
-                              transactions ||
-                              transactionHistory ||
-                              false
-                            );
-                          },
-                        }}
-                        render={({ field }) => (
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={field.value}
-                                size="small"
-                                onChange={field.onChange}
-                                name={field.name}
-                              />
-                            }
-                            label="Transaction History"
-                          />
-                        )}
-                      /> */}
                     </FormControl>
                     <Stack sx={{ my: 4 }}>
                       <FormGroup>
