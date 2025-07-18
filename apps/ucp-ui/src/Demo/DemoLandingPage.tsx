@@ -22,16 +22,27 @@ import Demo from "./Demo";
 import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
 import { useForm, Controller } from "react-hook-form";
 
-type FormValues = {
+interface FormValues {
   accountNumber: boolean;
   accountOwner: boolean;
   transactions: boolean;
   transactionHistory: boolean;
   aggregator: string;
-};
+}
+
+interface Checkbox {
+  name: keyof FormValues;
+  label: string;
+}
 
 const DemoLandingPage = () => {
   const [tabValue, setTabValue] = useState(0);
+  const checkboxes: Checkbox[] = [
+    { name: "accountNumber", label: "Account Number" },
+    { name: "accountOwner", label: "Account Owner" },
+    { name: "transactions", label: "Transactions" },
+    { name: "transactionHistory", label: "Transaction History" },
+  ];
   const {
     handleSubmit,
     control,
@@ -111,7 +122,28 @@ const DemoLandingPage = () => {
                         errorMessage={"Please select at least one job type."}
                       />
 
-                      <Controller
+                      {checkboxes.map((checkbox) => (
+                        <Controller
+                          key={checkbox.name}
+                          name={checkbox.name}
+                          control={control}
+                          render={({ field }) => (
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  checked={field.value as boolean}
+                                  onChange={field.onChange}
+                                  name={field.name}
+                                />
+                              }
+                              label={checkbox.label}
+                            />
+                          )}
+                        />
+                      ))}
+
+                      {/* <Controller
                         name="accountNumber"
                         control={control}
                         render={({ field }) => (
@@ -161,8 +193,8 @@ const DemoLandingPage = () => {
                             label="Transactions"
                           />
                         )}
-                      />
-                      <Controller
+                      /> */}
+                      {/* <Controller
                         name="transactionHistory"
                         control={control}
                         rules={{
@@ -195,7 +227,7 @@ const DemoLandingPage = () => {
                             label="Transaction History"
                           />
                         )}
-                      />
+                      /> */}
                     </FormControl>
                     <Stack sx={{ my: 4 }}>
                       <FormGroup>

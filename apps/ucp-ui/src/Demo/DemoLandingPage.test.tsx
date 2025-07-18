@@ -1,8 +1,18 @@
 import React from "react";
-import { render, screen, userEvent } from "../shared/test/testUtils";
+import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
 import DemoLandingPage from "./DemoLandingPage";
+import { server } from "../shared/test/testServer";
+import { http, HttpResponse } from "msw";
+import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 
 describe("DemoLandingPage", () => {
+  beforeEach(() => {
+    server.use(
+      http.get(`${WIDGET_DEMO_BASE_URL}/api/token`, () => {
+        return HttpResponse.json({ token: "test-token" });
+      }),
+    );
+  });
   it("renders the initial configuration form", () => {
     render(<DemoLandingPage />);
     expect(screen.getByText("Configuration")).toBeInTheDocument();
@@ -33,14 +43,15 @@ describe("DemoLandingPage", () => {
     await userEvent.click(screen.getByLabelText("Account Owner"));
     expect(screen.queryByTestId("demo-component")).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Launch" }));
-
     expect(screen.getByTestId("demo-component")).toBeInTheDocument();
-    const iframe = await screen.findByTitle("Widget Demo Iframe");
-    expect(iframe).toBeInTheDocument();
-    expect(iframe).toHaveAttribute(
-      "src",
-      expect.stringContaining("jobTypes=accountOwner"),
-    );
+    await waitFor(async () => {
+      const iframe = await screen.findByTitle("Widget Demo Iframe");
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute(
+        "src",
+        expect.stringContaining("jobTypes=accountOwner"),
+      );
+    });
   });
 
   it("launches the Demo component with correct props when form is valid", async () => {
@@ -51,16 +62,19 @@ describe("DemoLandingPage", () => {
     await userEvent.click(screen.getByRole("button", { name: "Launch" }));
 
     expect(screen.getByTestId("demo-component")).toBeInTheDocument();
-    const iframe = await screen.findByTitle("Widget Demo Iframe");
-    expect(iframe).toBeInTheDocument();
-    expect(iframe).toHaveAttribute(
-      "src",
-      expect.stringContaining("aggregatorOverride=sophtron"),
-    );
-    expect(iframe).toHaveAttribute(
-      "src",
-      expect.stringContaining("jobTypes=accountNumber,transactions"),
-    );
+
+    await waitFor(async () => {
+      const iframe = await screen.findByTitle("Widget Demo Iframe");
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute(
+        "src",
+        expect.stringContaining("aggregatorOverride=sophtron"),
+      );
+      expect(iframe).toHaveAttribute(
+        "src",
+        expect.stringContaining("jobTypes=accountNumber,transactions"),
+      );
+    });
   });
 
   it("resets the view when onReset is called from Demo component", async () => {

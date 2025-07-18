@@ -1,11 +1,13 @@
 import React from "react";
 import styles from "./phoneContainer.module.css";
 import { Button } from "@mui/material";
+import { SkeletonIfLoading } from "../shared/components/Skeleton";
 
 interface PhoneContainerProps {
   src: string;
   title: string;
   onReset: () => void;
+  isLoading: boolean;
 }
 /**
  * A component that displays a phone-like container with an iframe.
@@ -14,17 +16,20 @@ const PhoneContainer: React.FC<PhoneContainerProps> = ({
   src,
   title,
   onReset,
+  isLoading,
 }) => {
   return (
     <div>
       <div className={styles.phone}>
-        <iframe
-          src={src}
-          title={title}
-          className={styles.phoneScreen}
-          allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-          sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-        />
+        <SkeletonIfLoading className={styles.phoneScreen} isLoading={isLoading}>
+          <iframe
+            src={isLoading ? "" : src}
+            title={title}
+            className={styles.phoneScreen}
+            allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+            sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+          />
+        </SkeletonIfLoading>
 
         <svg
           className={styles.phoneMute}

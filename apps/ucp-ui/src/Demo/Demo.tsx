@@ -12,7 +12,6 @@ import FetchError from "../shared/components/FetchError";
 import styles from "./demo.module.css";
 import { ComboJobTypes } from "@repo/shared-utils";
 import PhoneContainer from "./PhoneContainer";
-import { SkeletonIfLoading } from "../shared/components/Skeleton";
 
 const Demo = ({
   jobTypes,
@@ -46,19 +45,15 @@ const Demo = ({
               refetch={() => void refetch()}
             />
           )}
-          <SkeletonIfLoading isLoading={tokenLoading}>
-            {token ? (
-              <PhoneContainer
-                src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
-                  ",",
-                )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
-                title={WIDGET_DEMO_IFRAME_TITLE}
-                onReset={onReset}
-              />
-            ) : (
-              <div className={styles.phoneDimensionsContainer} />
-            )}
-          </SkeletonIfLoading>
+
+          <PhoneContainer
+            src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
+              ",",
+            )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
+            title={WIDGET_DEMO_IFRAME_TITLE}
+            onReset={onReset}
+            isLoading={tokenLoading}
+          />
         </div>
       </Stack>
     </PageContent>

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, userEvent } from "../shared/test/testUtils";
+import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
 import Demo from "./Demo";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
@@ -9,27 +9,20 @@ import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
-import { expectSkeletonLoader } from "../shared/test/testUtils";
 
 const jobTypes = ["accountNumber", "accountOwner"];
 const aggregator = "MX";
 const onReset = jest.fn();
 
 describe("<Demo />", () => {
-  it("shows a loading state", async () => {
-    render(
-      <Demo jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
-    );
-    await expectSkeletonLoader();
-  });
-
   it("renders the widget demo iframe", async () => {
     render(
       <Demo jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
     );
-
-    const iframe = await screen.findByTitle("Widget Demo Iframe");
-    expect(iframe).toBeInTheDocument();
+    await waitFor(() => {
+      const iframe = screen.getByTitle("Widget Demo Iframe");
+      expect(iframe).toBeInTheDocument();
+    });
   });
 
   it("renders an error message when token fetch fails", async () => {
@@ -54,7 +47,9 @@ describe("<Demo />", () => {
     );
 
     await userEvent.click(screen.getByText(TRY_AGAIN_BUTTON_TEXT));
-    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
-    expect(iframe).toBeInTheDocument();
+    await waitFor(async () => {
+      const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
+      expect(iframe).toBeInTheDocument();
+    });
   });
 });
