@@ -62,7 +62,6 @@ const DemoLandingPage = () => {
   const {
     control,
     formState: { errors },
-    getValues,
     handleSubmit,
     reset,
     trigger,
@@ -92,10 +91,32 @@ const DemoLandingPage = () => {
     setSubmittedValues(null);
   };
 
-  const aggregator = getValues("aggregator");
-  const jobTypes = Object.entries(submittedValues || {})
-    .filter(([key, value]) => key !== "aggregator" && value)
-    .map(([key]) => key);
+  if (submittedValues) {
+    const aggregator = submittedValues.aggregator;
+    const jobTypes = Object.entries(submittedValues)
+      .filter(([key, value]) => key !== "aggregator" && value)
+      .map(([key]) => key);
+
+    return (
+      <PageContent>
+        <Stack spacing={4}>
+          <PageTitle>{WIDGET_DEMO_PAGE_TITLE}</PageTitle>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs value={tabValue} onChange={handleTabChange}>
+              <Tab label={CONNECT_TAB} />
+            </Tabs>
+          </Box>
+          {tabValue === 0 && (
+            <Demo
+              jobTypes={jobTypes}
+              aggregator={aggregator.toLowerCase()}
+              onReset={handleReset}
+            />
+          )}
+        </Stack>
+      </PageContent>
+    );
+  }
 
   return (
     <PageContent>
@@ -106,100 +127,91 @@ const DemoLandingPage = () => {
             <Tab label={CONNECT_TAB} />
           </Tabs>
         </Box>
-        {tabValue === 0 &&
-          (submittedValues ? (
-            <Demo
-              jobTypes={jobTypes}
-              aggregator={aggregator.toLowerCase()}
-              onReset={handleReset}
-            />
-          ) : (
-            <Paper className={styles.paper}>
-              <Stack spacing={2} sx={{ padding: 2 }}>
-                <Box>
-                  <form
-                    className={styles.margins}
-                    id="demo-form"
-                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                    onSubmit={handleSubmit(onSubmit)}
-                  >
-                    <Stack sx={{ my: 4 }}>
-                      <Typography variant="h5" fontWeight={700}>
-                        Configuration
-                      </Typography>
-                    </Stack>
+        {tabValue === 0 && (
+          <Paper className={styles.paper}>
+            <Stack spacing={2} sx={{ padding: 2 }}>
+              <Box>
+                <form
+                  className={styles.margins}
+                  id="demo-form"
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  onSubmit={handleSubmit(onSubmit)}
+                >
+                  <Stack sx={{ my: 4 }}>
+                    <Typography variant="h5" fontWeight={700}>
+                      Configuration
+                    </Typography>
+                  </Stack>
 
-                    <FormControl required>
-                      <RequiredCheckboxGroupHeader
-                        title={"Job type"}
-                        error={isJobTypeError}
-                        errorMessage={"Please select at least one job type."}
+                  <FormControl required>
+                    <RequiredCheckboxGroupHeader
+                      title={"Job type"}
+                      error={isJobTypeError}
+                      errorMessage={"Please select at least one job type."}
+                    />
+
+                    {checkboxes.map((checkbox) => (
+                      <Controller
+                        key={checkbox.name}
+                        name={checkbox.name}
+                        control={control}
+                        render={({ field: { name, onChange, value } }) => (
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                size="small"
+                                checked={value as boolean}
+                                onChange={(event) => {
+                                  onChange(event);
+
+                                  void triggerJobTypesValidation();
+                                }}
+                                name={name}
+                              />
+                            }
+                            label={checkbox.label}
+                          />
+                        )}
+                        rules={{ validate: validateAnyJobTypeSelected }}
                       />
-
-                      {checkboxes.map((checkbox) => (
-                        <Controller
-                          key={checkbox.name}
-                          name={checkbox.name}
-                          control={control}
-                          render={({ field: { name, onChange, value } }) => (
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  checked={value as boolean}
-                                  onChange={(event) => {
-                                    onChange(event);
-
-                                    void triggerJobTypesValidation();
-                                  }}
-                                  name={name}
-                                />
-                              }
-                              label={checkbox.label}
-                            />
-                          )}
-                          rules={{ validate: validateAnyJobTypeSelected }}
-                        />
-                      ))}
-                    </FormControl>
-                    <Stack sx={{ my: 4 }}>
-                      <FormGroup>
-                        <Controller
-                          name="aggregator"
-                          control={control}
-                          render={({ field }) => (
-                            <TextField
-                              fullWidth
-                              select
-                              label="Aggregator"
-                              data-testid="aggregator-select"
-                              {...field}
-                            >
-                              <MenuItem value={"MX"}>{"MX"}</MenuItem>
-                              <MenuItem value={"Sophtron"}>
-                                {"Sophtron"}
-                              </MenuItem>
-                            </TextField>
-                          )}
-                        />
-                      </FormGroup>
-                    </Stack>
-                    <Box>
-                      <Button
-                        className={styles.button}
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        form="demo-form"
-                      >
-                        Launch
-                      </Button>
-                    </Box>
-                  </form>
-                </Box>
-              </Stack>
-            </Paper>
-          ))}
+                    ))}
+                  </FormControl>
+                  <Stack sx={{ my: 4 }}>
+                    <FormGroup>
+                      <Controller
+                        name="aggregator"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            fullWidth
+                            select
+                            label="Aggregator"
+                            data-testid="aggregator-select"
+                            {...field}
+                          >
+                            <MenuItem value={"MX"}>{"MX"}</MenuItem>
+                            <MenuItem value={"Sophtron"}>{"Sophtron"}</MenuItem>
+                          </TextField>
+                        )}
+                      />
+                    </FormGroup>
+                  </Stack>
+                  <Box>
+                    <Button
+                      className={styles.button}
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      form="demo-form"
+                    >
+                      Launch
+                    </Button>
+                  </Box>
+                </form>
+              </Box>
+            </Stack>
+          </Paper>
+        )}
       </Stack>
     </PageContent>
   );
