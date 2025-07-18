@@ -30,19 +30,31 @@ interface FormValues {
   aggregator: string;
 }
 
-interface Checkbox {
+interface JobTypeCheckbox {
+  defaultValue?: boolean;
   name: keyof FormValues;
   label: string;
 }
 
 const DemoLandingPage = () => {
   const [tabValue, setTabValue] = useState(0);
-  const checkboxes: Checkbox[] = [
-    { name: "accountNumber", label: "Account Number" },
+  const checkboxes: JobTypeCheckbox[] = [
+    { defaultValue: true, name: "accountNumber", label: "Account Number" },
     { name: "accountOwner", label: "Account Owner" },
     { name: "transactions", label: "Transactions" },
     { name: "transactionHistory", label: "Transaction History" },
   ];
+
+  const defaultValues = checkboxes.reduce(
+    (acc, { defaultValue, name }) => ({
+      ...acc,
+      [name]: !!defaultValue,
+    }),
+    {
+      aggregator: "MX",
+    },
+  );
+
   const {
     handleSubmit,
     control,
@@ -50,13 +62,7 @@ const DemoLandingPage = () => {
     getValues,
     reset,
   } = useForm<FormValues>({
-    defaultValues: {
-      accountNumber: true,
-      accountOwner: false,
-      transactions: false,
-      transactionHistory: false,
-      aggregator: "MX",
-    },
+    defaultValues,
   });
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
