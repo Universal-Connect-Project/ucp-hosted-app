@@ -1,0 +1,43 @@
+import React from "react";
+import {
+  expectSkeletonLoader,
+  render,
+  screen,
+  userEvent,
+} from "../shared/test/testUtils";
+import PhoneContainer from "./PhoneContainer";
+import { RESET_BUTTON_TEXT } from "./constants";
+
+describe("PhoneContainer", () => {
+  const mockProps = {
+    src: "https://example.com",
+    title: "Test Iframe",
+    onReset: jest.fn(),
+    isLoading: false,
+  };
+
+  it("renders the skeletonLoader when isLoading is true", async () => {
+    render(<PhoneContainer {...mockProps} isLoading={true} />);
+    await expectSkeletonLoader();
+  });
+
+  it("renders the iframe with the correct src and title", () => {
+    render(<PhoneContainer {...mockProps} />);
+    const iframe = screen.getByTitle(mockProps.title);
+    expect(iframe).toBeInTheDocument();
+    expect(iframe).toHaveAttribute("src", mockProps.src);
+  });
+
+  it("renders the reset button", () => {
+    render(<PhoneContainer {...mockProps} />);
+    const resetButton = screen.getByRole("button", { name: RESET_BUTTON_TEXT });
+    expect(resetButton).toBeInTheDocument();
+  });
+
+  it("calls onReset when the reset button is clicked", async () => {
+    render(<PhoneContainer {...mockProps} />);
+    const resetButton = screen.getByRole("button", { name: RESET_BUTTON_TEXT });
+    await userEvent.click(resetButton);
+    expect(mockProps.onReset).toHaveBeenCalledTimes(1);
+  });
+});
