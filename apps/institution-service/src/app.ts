@@ -2,8 +2,6 @@ import "./dotEnv";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import logger from "morgan";
-
-import { rateLimit } from "express-rate-limit";
 import sequelize from "./database";
 import { defineAssociations } from "./models/associations";
 import aggregatorIntegrationRoutes from "./routes/aggregatorIntegrationRoutes";
@@ -12,39 +10,11 @@ import institutionRoutes from "./institutions/institutionEndpoints";
 import permissionsRoutes from "./routes/permissionRoutes";
 import { PORT } from "./shared/const";
 import performanceAuthEndpoints from "./performanceAuth/performanceAuthEndpoints";
-
-const performanceAuthPath = "/performanceAuth";
-const institutionsCacheListPath = "/institutions/cacheList";
-
-const createLimiter = (options?: {
-  requestLimit?: number;
-  skip?: (req: Request) => boolean;
-  timeIntervalInMinutes?: number;
-}) => {
-  const { requestLimit = 100, timeIntervalInMinutes = 1, skip } = options || {};
-
-  return rateLimit({
-    handler: (_req, res, _next, _options) =>
-      res.status(429).json({ message: "Too many requests" }),
-    limit: requestLimit, // Limit to 100 requests per windowMs
-    skip,
-    windowMs: timeIntervalInMinutes * 60 * 1000, // 1 minute
-  });
-};
-
-const defaultLimiter = createLimiter({
-  skip: (req: Request) => {
-    return (
-      req.path.startsWith(performanceAuthPath) ||
-      req.path.startsWith(institutionsCacheListPath)
-    );
-  },
-});
-
-const cacheListLimiter = createLimiter({
-  requestLimit: 3,
-  timeIntervalInMinutes: 1,
-});
+import {
+  INSTITUTIONS_ROUTE,
+  PERFORMANCE_AUTH_ROUTE,
+} from "./shared/consts/routes";
+import { useRateLimiting } from "./useRateLimiting";
 
 sequelize
   .authenticate()
@@ -58,10 +28,7 @@ sequelize
 
 const app = express();
 
-if (process.env.DISABLE_RATE_LIMITING !== "true") {
-  app.use(defaultLimiter);
-  app.use(institutionsCacheListPath, cacheListLimiter);
-}
+useRateLimiting(app);
 
 app.set("etag", "strong");
 app.use(express.json()); // http://expressjs.com/en/api.html#express.json
@@ -91,11 +58,11 @@ app.get("/ping", (_req: Request, res: Response) => {
 });
 
 // Routes
-app.use("/institutions", institutionRoutes);
+app.use(INSTITUTIONS_ROUTE, institutionRoutes);
 app.use("/permissions", permissionsRoutes);
 app.use("/aggregatorIntegrations", aggregatorIntegrationRoutes);
 app.use("/aggregators", aggregatorRoutes);
-app.use(performanceAuthPath, performanceAuthEndpoints);
+app.use(PERFORMANCE_AUTH_ROUTE, performanceAuthEndpoints);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(
