@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./phoneContainer.module.css";
 import { Button } from "@mui/material";
 import { SkeletonIfLoading } from "../shared/components/Skeleton";
+import { RESET_BUTTON_TEXT } from "./constants";
 
 interface PhoneContainerProps {
   src: string;
@@ -97,7 +98,7 @@ const PhoneContainer: React.FC<PhoneContainerProps> = ({
       </div>
       <div className={styles.buttonContainer}>
         <Button color="primary" variant="text" onClick={onReset}>
-          {"Reset"}
+          {RESET_BUTTON_TEXT}
         </Button>
       </div>
     </div>

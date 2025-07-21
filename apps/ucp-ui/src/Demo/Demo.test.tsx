@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
+import { render, screen, userEvent } from "../shared/test/testUtils";
 import Demo from "./Demo";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
@@ -19,10 +19,9 @@ describe("<Demo />", () => {
     render(
       <Demo jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
     );
-    await waitFor(() => {
-      const iframe = screen.getByTitle("Widget Demo Iframe");
-      expect(iframe).toBeInTheDocument();
-    });
+
+    const iframe = await screen.findByTitle("Widget Demo Iframe");
+    expect(iframe).toBeInTheDocument();
   });
 
   it("renders an error message when token fetch fails", async () => {
@@ -47,9 +46,7 @@ describe("<Demo />", () => {
     );
 
     await userEvent.click(screen.getByText(TRY_AGAIN_BUTTON_TEXT));
-    await waitFor(async () => {
-      const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
-      expect(iframe).toBeInTheDocument();
-    });
+    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
+    expect(iframe).toBeInTheDocument();
   });
 });

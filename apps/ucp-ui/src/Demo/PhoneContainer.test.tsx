@@ -6,6 +6,7 @@ import {
   userEvent,
 } from "../shared/test/testUtils";
 import PhoneContainer from "./PhoneContainer";
+import { RESET_BUTTON_TEXT } from "./constants";
 
 describe("PhoneContainer", () => {
   const mockProps = {
@@ -29,13 +30,13 @@ describe("PhoneContainer", () => {
 
   it("renders the reset button", () => {
     render(<PhoneContainer {...mockProps} />);
-    const resetButton = screen.getByRole("button", { name: /reset/i });
+    const resetButton = screen.getByRole("button", { name: RESET_BUTTON_TEXT });
     expect(resetButton).toBeInTheDocument();
   });
 
   it("calls onReset when the reset button is clicked", async () => {
     render(<PhoneContainer {...mockProps} />);
-    const resetButton = screen.getByRole("button", { name: /reset/i });
+    const resetButton = screen.getByRole("button", { name: RESET_BUTTON_TEXT });
     await userEvent.click(resetButton);
     expect(mockProps.onReset).toHaveBeenCalledTimes(1);
   });
