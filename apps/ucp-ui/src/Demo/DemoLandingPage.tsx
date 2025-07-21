@@ -20,6 +20,8 @@ import {
   WIDGET_DEMO_PAGE_TITLE,
   CONNECT_TAB,
   LAUNCH_BUTTON_TEXT,
+  CONFIGURATION_HEADER,
+  JOB_TYPE_ERROR_MESSAGE,
 } from "./constants";
 import styles from "./demoLandingPage.module.css";
 import Demo from "./Demo";
@@ -131,7 +133,7 @@ const DemoLandingPage = () => {
                 spacing={5}
               >
                 <Typography variant="h5" fontWeight={700}>
-                  Configuration
+                  {CONFIGURATION_HEADER}
                 </Typography>
 
                 <Stack spacing={4}>
@@ -139,7 +141,7 @@ const DemoLandingPage = () => {
                     <RequiredCheckboxGroupHeader
                       title={"Job type"}
                       error={isJobTypeError}
-                      errorMessage={"Please select at least one job type."}
+                      errorMessage={JOB_TYPE_ERROR_MESSAGE}
                     />
 
                     {checkboxes.map((checkbox) => (
