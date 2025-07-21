@@ -103,33 +103,6 @@ const DemoLandingPage = () => {
     setSubmittedValues(null);
   };
 
-  if (submittedValues) {
-    const aggregator = submittedValues.aggregator;
-    const jobTypes = Object.entries(submittedValues)
-      .filter(([key, value]) => key !== "aggregator" && value)
-      .map(([key]) => key);
-
-    return (
-      <PageContent>
-        <Stack spacing={4}>
-          <PageTitle>{WIDGET_DEMO_PAGE_TITLE}</PageTitle>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs value={tabValue} onChange={handleTabChange}>
-              <Tab label={CONNECT_TAB} />
-            </Tabs>
-          </Box>
-          {tabValue === 0 && (
-            <Demo
-              jobTypes={jobTypes}
-              aggregator={aggregator.toLowerCase()}
-              onReset={handleReset}
-            />
-          )}
-        </Stack>
-      </PageContent>
-    );
-  }
-
   return (
     <PageContent>
       <Stack spacing={4}>
@@ -139,90 +112,99 @@ const DemoLandingPage = () => {
             <Tab label={CONNECT_TAB} />
           </Tabs>
         </Box>
-        {tabValue === 0 && (
-          <Paper className={styles.paper}>
-            <Stack
-              component="form"
-              id={formId}
-              // eslint-disable-next-line @typescript-eslint/no-misused-promises
-              onSubmit={handleSubmit(onSubmit)}
-              spacing={5}
-            >
-              <Typography variant="h5" fontWeight={700}>
-                Configuration
-              </Typography>
-
-              <Stack spacing={4}>
-                <FormControl required>
-                  <RequiredCheckboxGroupHeader
-                    title={"Job type"}
-                    error={isJobTypeError}
-                    errorMessage={"Please select at least one job type."}
-                  />
-
-                  {checkboxes.map((checkbox) => (
-                    <Controller
-                      key={checkbox.name}
-                      name={checkbox.name}
-                      control={control}
-                      render={({ field: { name, onChange, value } }) => (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              size="small"
-                              checked={value as boolean}
-                              onChange={(event) => {
-                                onChange(event);
-
-                                void triggerJobTypesValidation();
-                              }}
-                              name={name}
-                            />
-                          }
-                          label={checkbox.label}
-                        />
-                      )}
-                      rules={{ validate: validateAnyJobTypeSelected }}
-                    />
-                  ))}
-                </FormControl>
-                <FormGroup>
-                  <Controller
-                    name="aggregator"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        fullWidth
-                        select
-                        label="Aggregator"
-                        data-testid="aggregator-select"
-                        {...field}
-                      >
-                        {aggregators.map((aggregator) => (
-                          <MenuItem
-                            key={aggregator.value}
-                            value={aggregator.value}
-                          >
-                            {aggregator.label}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    )}
-                  />
-                </FormGroup>
-              </Stack>
-              <Button
-                className={styles.button}
-                variant="contained"
-                color="primary"
-                type="submit"
-                form={formId}
+        {tabValue === 0 &&
+          (submittedValues ? (
+            <Demo
+              jobTypes={Object.entries(submittedValues)
+                .filter(([key, value]) => key !== "aggregator" && value)
+                .map(([key]) => key)}
+              aggregator={submittedValues.aggregator.toLowerCase()}
+              onReset={handleReset}
+            />
+          ) : (
+            <Paper className={styles.paper}>
+              <Stack
+                component="form"
+                id={formId}
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                onSubmit={handleSubmit(onSubmit)}
+                spacing={5}
               >
-                {LAUNCH_BUTTON_TEXT}
-              </Button>
-            </Stack>
-          </Paper>
-        )}
+                <Typography variant="h5" fontWeight={700}>
+                  Configuration
+                </Typography>
+
+                <Stack spacing={4}>
+                  <FormControl required>
+                    <RequiredCheckboxGroupHeader
+                      title={"Job type"}
+                      error={isJobTypeError}
+                      errorMessage={"Please select at least one job type."}
+                    />
+
+                    {checkboxes.map((checkbox) => (
+                      <Controller
+                        key={checkbox.name}
+                        name={checkbox.name}
+                        control={control}
+                        render={({ field: { name, onChange, value } }) => (
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                size="small"
+                                checked={value as boolean}
+                                onChange={(event) => {
+                                  onChange(event);
+
+                                  void triggerJobTypesValidation();
+                                }}
+                                name={name}
+                              />
+                            }
+                            label={checkbox.label}
+                          />
+                        )}
+                        rules={{ validate: validateAnyJobTypeSelected }}
+                      />
+                    ))}
+                  </FormControl>
+                  <FormGroup>
+                    <Controller
+                      name="aggregator"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          fullWidth
+                          select
+                          label="Aggregator"
+                          data-testid="aggregator-select"
+                          {...field}
+                        >
+                          {aggregators.map((aggregator) => (
+                            <MenuItem
+                              key={aggregator.value}
+                              value={aggregator.value}
+                            >
+                              {aggregator.label}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      )}
+                    />
+                  </FormGroup>
+                </Stack>
+                <Button
+                  className={styles.button}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  form={formId}
+                >
+                  {LAUNCH_BUTTON_TEXT}
+                </Button>
+              </Stack>
+            </Paper>
+          ))}
       </Stack>
     </PageContent>
   );

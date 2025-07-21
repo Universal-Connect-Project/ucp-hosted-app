@@ -8,10 +8,18 @@ describe("DemoLandingPage", () => {
   it("renders the initial configuration form", () => {
     render(<DemoLandingPage />);
     expect(screen.getByText("Configuration")).toBeInTheDocument();
-    expect(screen.getByLabelText("Account Number")).toBeChecked();
-    expect(screen.getByLabelText("Account Owner")).not.toBeChecked();
-    expect(screen.getByLabelText("Transactions")).not.toBeChecked();
-    expect(screen.getByLabelText("Transaction History")).not.toBeChecked();
+    expect(
+      screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
+    ).toBeChecked();
+    expect(
+      screen.getByLabelText(supportsJobTypeMap.accountOwner.displayName),
+    ).not.toBeChecked();
+    expect(
+      screen.getByLabelText(supportsJobTypeMap.transactions.displayName),
+    ).not.toBeChecked();
+    expect(
+      screen.getByLabelText(supportsJobTypeMap.transactionHistory.displayName),
+    ).not.toBeChecked();
     expect(screen.getByText("MX")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
