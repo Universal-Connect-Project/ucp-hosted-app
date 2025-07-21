@@ -1,6 +1,6 @@
 import { PORT } from "shared/const";
 
-describe("Rate Limiting", () => {
+describe("General rate limiting", () => {
   it("tests the default rate limiting middleware by sending 101 requests in less than a minute", () => {
     let successfullResponseCount = 0;
     let limitedResponseCount = 0;
