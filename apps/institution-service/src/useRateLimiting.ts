@@ -8,15 +8,22 @@ import {
 const createLimiter = (options?: {
   requestLimit?: number;
   skip?: (req: Request) => boolean;
+  skipSuccessfulRequests?: boolean;
   timeIntervalInMinutes?: number;
 }) => {
-  const { requestLimit = 100, timeIntervalInMinutes = 1, skip } = options || {};
+  const {
+    requestLimit = 100,
+    timeIntervalInMinutes = 1,
+    skip,
+    skipSuccessfulRequests,
+  } = options || {};
 
   return rateLimit({
     handler: (_req, res, _next, _options) =>
       res.status(429).json({ message: "Too many requests" }),
     limit: requestLimit, // Limit to 100 requests per windowMs
     skip,
+    skipSuccessfulRequests,
     windowMs: timeIntervalInMinutes * 60 * 1000, // 1 minute
   });
 };
@@ -35,9 +42,14 @@ const cacheListLimiter = createLimiter({
   timeIntervalInMinutes: 1,
 });
 
+const performanceAuthBeforeAuthLimiter = createLimiter({
+  skipSuccessfulRequests: true,
+});
+
 export const useRateLimiting = (app: Application) => {
   if (process.env.DISABLE_RATE_LIMITING !== "true") {
     app.use(defaultLimiter);
     app.use(CACHE_LIST_ROUTE, cacheListLimiter);
+    app.use(PERFORMANCE_AUTH_ROUTE, performanceAuthBeforeAuthLimiter);
   }
 };
