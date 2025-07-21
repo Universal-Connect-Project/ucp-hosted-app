@@ -20,7 +20,7 @@ describe("<Demo />", () => {
       <Demo jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
     );
 
-    const iframe = await screen.findByTitle("Widget Demo Iframe");
+    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
     expect(iframe).toBeInTheDocument();
   });
 
