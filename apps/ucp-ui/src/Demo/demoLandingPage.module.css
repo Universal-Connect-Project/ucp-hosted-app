@@ -1,0 +1,10 @@
+.paper {
+  &:global(.MuiPaper-root) {
+    align-self: center;
+    width: 370px;
+    padding: 40px;
+  }
+}
+.button {
+  align-self: flex-end;
+}
