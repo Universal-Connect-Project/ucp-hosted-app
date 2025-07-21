@@ -5,7 +5,11 @@ import {
   PERFORMANCE_AUTH_ROUTE,
 } from "./shared/consts/routes";
 
-const createLimiter = (options?: {
+export const getShouldUseRateLimiting = () => {
+  return process.env.DISABLE_RATE_LIMITING !== "true";
+};
+
+export const createLimiter = (options?: {
   requestLimit?: number;
   skip?: (req: Request) => boolean;
   skipSuccessfulRequests?: boolean;
@@ -47,7 +51,7 @@ const performanceAuthBeforeAuthLimiter = createLimiter({
 });
 
 export const useRateLimiting = (app: Application) => {
-  if (process.env.DISABLE_RATE_LIMITING !== "true") {
+  if (getShouldUseRateLimiting()) {
     app.use(defaultLimiter);
     app.use(CACHE_LIST_ROUTE, cacheListLimiter);
     app.use(PERFORMANCE_AUTH_ROUTE, performanceAuthBeforeAuthLimiter);
