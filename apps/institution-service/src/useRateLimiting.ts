@@ -25,10 +25,10 @@ export const createLimiter = (options?: {
   return rateLimit({
     handler: (_req, res, _next, _options) =>
       res.status(429).json({ message: "Too many requests" }),
-    limit: requestLimit, // Limit to 100 requests per windowMs
+    limit: requestLimit,
     skip,
     skipSuccessfulRequests,
-    windowMs: timeIntervalInMinutes * 60 * 1000, // 1 minute
+    windowMs: timeIntervalInMinutes * 60 * 1000,
   });
 };
 
