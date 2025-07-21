@@ -13,26 +13,37 @@ import permissionsRoutes from "./routes/permissionRoutes";
 import { PORT } from "./shared/const";
 import performanceAuthEndpoints from "./performanceAuth/performanceAuthEndpoints";
 
-const createLimiter = (
-  options: { timeIntervalInMinutes: number; requestLimit: number } = {
-    timeIntervalInMinutes: 1,
-    requestLimit: 100,
-  },
-) => {
-  const { timeIntervalInMinutes, requestLimit } = options;
+const performanceAuthPath = "/performanceAuth";
+const institutionsCacheListPath = "/institutions/cacheList";
+
+const createLimiter = (options?: {
+  requestLimit?: number;
+  skip?: (req: Request) => boolean;
+  timeIntervalInMinutes?: number;
+}) => {
+  const { requestLimit = 100, timeIntervalInMinutes = 1, skip } = options || {};
+
   return rateLimit({
-    windowMs: timeIntervalInMinutes * 60 * 1000, // 1 minute
-    limit: requestLimit, // Limit to 100 requests per windowMs
     handler: (_req, res, _next, _options) =>
       res.status(429).json({ message: "Too many requests" }),
+    limit: requestLimit, // Limit to 100 requests per windowMs
+    skip,
+    windowMs: timeIntervalInMinutes * 60 * 1000, // 1 minute
   });
 };
 
-const defaultLimiter = createLimiter();
+const defaultLimiter = createLimiter({
+  skip: (req: Request) => {
+    return (
+      req.path.startsWith(performanceAuthPath) ||
+      req.path.startsWith(institutionsCacheListPath)
+    );
+  },
+});
 
 const cacheListLimiter = createLimiter({
-  timeIntervalInMinutes: 1,
   requestLimit: 3,
+  timeIntervalInMinutes: 1,
 });
 
 sequelize
@@ -49,7 +60,7 @@ const app = express();
 
 if (process.env.DISABLE_RATE_LIMITING !== "true") {
   app.use(defaultLimiter);
-  app.use("/institutions/cacheList", cacheListLimiter);
+  app.use(institutionsCacheListPath, cacheListLimiter);
 }
 
 app.set("etag", "strong");
@@ -84,7 +95,7 @@ app.use("/institutions", institutionRoutes);
 app.use("/permissions", permissionsRoutes);
 app.use("/aggregatorIntegrations", aggregatorIntegrationRoutes);
 app.use("/aggregators", aggregatorRoutes);
-app.use("/performanceAuth", performanceAuthEndpoints);
+app.use(performanceAuthPath, performanceAuthEndpoints);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(
