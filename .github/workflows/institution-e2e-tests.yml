@@ -108,6 +108,8 @@ jobs:
           CYPRESS_WEB_UI_CLIENT_ID: ${{ vars.WEB_UI_CLIENT_ID }}
           CYPRESS_WIDGET_CLIENT_ID: ${{ vars.WIDGET_CLIENT_ID }}
           CYPRESS_WIDGET_CLIENT_SECRET: ${{ secrets.WIDGET_CLIENT_SECRET }}
+          CYPRESS_PERFORMANCE_SERVICE_CLIENT_ID: ${{ vars.PERFORMANCE_SERVICE_CLIENT_ID }}
+          CYPRESS_PERFORMANCE_SERVICE_CLIENT_SECRET: ${{ secrets.PERFORMANCE_SERVICE_CLIENT_SECRET }}
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
