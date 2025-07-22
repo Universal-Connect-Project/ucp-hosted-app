@@ -30,5 +30,9 @@ describe("Widget Demo", () => {
     cy.findByRole("button", { name: "Reset" }).click();
     cy.findByTestId("demo-component").should("not.exist");
     cy.findByText("Configuration").should("be.visible");
+    cy.findByRole("tab", { name: "Connections" }).click();
+    cy.findByText("MX Bank").should("exist");
+    cy.findByText("Account Number").should("exist");
+    cy.findByText("MX").should("exist");
   });
 });

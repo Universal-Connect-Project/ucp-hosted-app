@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
-import DemoLandingPage from "./DemoLandingPage";
+import ConnectConfiguration from "./ConnectConfiguration";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import {
   CONFIGURATION_HEADER,
@@ -10,9 +10,9 @@ import {
   WIDGET_DEMO_IFRAME_TITLE,
 } from "./constants";
 
-describe("DemoLandingPage", () => {
+describe("ConnectConfiguration", () => {
   it("renders the initial configuration form", () => {
-    render(<DemoLandingPage />);
+    render(<ConnectConfiguration />);
     expect(screen.getByText(CONFIGURATION_HEADER)).toBeInTheDocument();
     expect(
       screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
@@ -33,7 +33,7 @@ describe("DemoLandingPage", () => {
   });
 
   it("shows an error if Launch is clicked with no job types selected", async () => {
-    render(<DemoLandingPage />);
+    render(<ConnectConfiguration />);
     await userEvent.click(
       screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
     );
@@ -44,7 +44,7 @@ describe("DemoLandingPage", () => {
   });
 
   it("doesn't allow submission if no jobtypes are selected requires re-submission after fixing the error", async () => {
-    render(<DemoLandingPage />);
+    render(<ConnectConfiguration />);
     await userEvent.click(
       screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
     );
@@ -71,7 +71,7 @@ describe("DemoLandingPage", () => {
   });
 
   it("launches the Demo component with correct props when form is valid", async () => {
-    render(<DemoLandingPage />);
+    render(<ConnectConfiguration />);
     await userEvent.click(
       screen.getByLabelText(supportsJobTypeMap.transactions.displayName),
     );
@@ -98,7 +98,7 @@ describe("DemoLandingPage", () => {
   });
 
   it("resets the view when onReset is called from Demo component", async () => {
-    render(<DemoLandingPage />);
+    render(<ConnectConfiguration />);
     await userEvent.click(
       screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
     );

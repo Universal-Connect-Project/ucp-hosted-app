@@ -34,6 +34,7 @@ const Demo = ({
   });
 
   const token = tokenData?.token;
+  const targetOrigin = window.location.origin;
 
   return (
     <PageContent>
@@ -49,7 +50,7 @@ const Demo = ({
           <PhoneContainer
             src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
               ",",
-            )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}`}
+            )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}&targetOrigin=${targetOrigin}`}
             title={WIDGET_DEMO_IFRAME_TITLE}
             onReset={onReset}
             isLoading={tokenLoading}
