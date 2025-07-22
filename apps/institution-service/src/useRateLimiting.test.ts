@@ -6,7 +6,7 @@ describe("useRateLimiting", () => {
     delete process.env.DISABLE_RATE_LIMITING;
   });
 
-  beforeEach(() => {
+  afterEach(() => {
     delete process.env.DISABLE_RATE_LIMITING;
   });
 
