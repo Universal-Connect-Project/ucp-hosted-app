@@ -11,7 +11,7 @@ import {
 } from "./constants";
 import { setConnectionDetails } from "../shared/reducers/demo";
 
-describe("DemoTabs", () => {
+describe("WidgetDemo", () => {
   it("renders the component with initial tabs", () => {
     const store = createStore();
     store.dispatch(setConnectionDetails({ aggregator: "MX", jobTypes: [] }));

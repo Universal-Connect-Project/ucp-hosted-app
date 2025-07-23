@@ -14,7 +14,7 @@ const jobTypes = ["accountNumber", "accountOwner"];
 const aggregator = "MX";
 const onReset = jest.fn();
 
-describe("<Demo />", () => {
+describe("<Connect />", () => {
   it("renders the widget demo iframe", async () => {
     render(
       <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
