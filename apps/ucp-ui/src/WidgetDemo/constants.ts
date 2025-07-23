@@ -9,3 +9,7 @@ export const CONFIGURATION_HEADER = "Configuration";
 export const JOB_TYPE_ERROR_MESSAGE = "Please select at least one job type.";
 export const INSTITUTION_SELECTED = "connect/selectedInstitution";
 export const MEMBER_CONNECTED = "connect/memberConnected";
+export const AGGREGATORS = [
+  { value: "mx", label: "MX" },
+  { value: "sophtron", label: "Sophtron" },
+];

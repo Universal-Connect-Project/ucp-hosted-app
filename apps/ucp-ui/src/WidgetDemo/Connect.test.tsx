@@ -1,20 +1,24 @@
 import React from "react";
-import { render, screen, userEvent } from "../shared/test/testUtils";
+import { render, screen, userEvent, fireEvent } from "../shared/test/testUtils";
 import Connect from "./Connect";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
   WIDGET_DEMO_IFRAME_TITLE,
+  INSTITUTION_SELECTED,
+  MEMBER_CONNECTED,
 } from "./constants";
 import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 import { TRY_AGAIN_BUTTON_TEXT } from "../shared/components/constants";
+import { createStore } from "../store";
+import { addConnection } from "../shared/reducers/demo";
 
 const jobTypes = ["accountNumber", "accountOwner"];
 const aggregator = "MX";
 const onReset = jest.fn();
 
-describe("<Connect />", () => {
+describe("Connect", () => {
   it("renders the widget demo iframe", async () => {
     render(
       <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
@@ -48,5 +52,75 @@ describe("<Connect />", () => {
     await userEvent.click(screen.getByText(TRY_AGAIN_BUTTON_TEXT));
     const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
     expect(iframe).toBeInTheDocument();
+  });
+
+  it("dispatches addConnection on successful member connection", () => {
+    const store = createStore();
+    const dispatchSpy = jest.spyOn(store, "dispatch");
+
+    render(
+      <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+      { store },
+    );
+
+    fireEvent(
+      window,
+      new MessageEvent("message", {
+        origin: WIDGET_DEMO_BASE_URL,
+        data: {
+          type: INSTITUTION_SELECTED,
+          metadata: { name: "Test Institution" },
+        },
+      }),
+    );
+
+    fireEvent(
+      window,
+      new MessageEvent("message", {
+        origin: WIDGET_DEMO_BASE_URL,
+        data: { type: MEMBER_CONNECTED },
+      }),
+    );
+
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      addConnection({
+        aggregator: "MX",
+        jobTypes: ["Account Number", "Account Owner"],
+        institution: "Test Institution",
+      }),
+    );
+  });
+
+  it("does not dispatch addConnection if origin is incorrect", () => {
+    const store = createStore();
+    const dispatchSpy = jest.spyOn(store, "dispatch");
+
+    render(
+      <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+      { store },
+    );
+
+    fireEvent(
+      window,
+      new MessageEvent("message", {
+        origin: "http://wrong-origin.com",
+        data: {
+          type: INSTITUTION_SELECTED,
+          metadata: { name: "Test Institution" },
+        },
+      }),
+    );
+
+    fireEvent(
+      window,
+      new MessageEvent("message", {
+        origin: "http://wrong-origin.com",
+        data: { type: MEMBER_CONNECTED },
+      }),
+    );
+
+    expect(dispatchSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: "demo/addConnection" }),
+    );
   });
 });

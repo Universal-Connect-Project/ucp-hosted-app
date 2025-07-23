@@ -15,14 +15,13 @@ import {
   LAUNCH_BUTTON_TEXT,
   CONFIGURATION_HEADER,
   JOB_TYPE_ERROR_MESSAGE,
+  AGGREGATORS,
 } from "./constants";
 import styles from "./connectConfiguration.module.css";
 import Connect from "./Connect";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { allJobTypes, supportsJobTypeMap } from "../shared/constants/jobTypes";
 import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
-import { setConnectionDetails } from "../shared/reducers/demo";
-import { useAppDispatch } from "../shared/utils/redux";
 
 export interface FormValues {
   accountNumber: boolean;
@@ -41,15 +40,9 @@ interface JobTypeCheckbox {
 const formId = "demoForm";
 
 const ConnectConfiguration = () => {
-  const dispatch = useAppDispatch();
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(
     null,
   );
-
-  const aggregators = [
-    { value: "mx", label: "MX" },
-    { value: "sophtron", label: "Sophtron" },
-  ];
 
   const checkboxes: JobTypeCheckbox[] = allJobTypes.map((jobType) => ({
     name: jobType as keyof FormValues,
@@ -89,24 +82,6 @@ const ConnectConfiguration = () => {
   ): boolean => checkboxes.some(({ name }) => formValues[name]);
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    const selectedJobTypeNames = Object.entries(data)
-      .filter(([key, value]) => key !== "aggregator" && value)
-      .map(([key]) => key);
-
-    const jobTypeLabels = checkboxes
-      .filter((checkbox) => selectedJobTypeNames.includes(checkbox.name))
-      .map((checkbox) => checkbox.label);
-
-    const aggregatorLabel =
-      aggregators.find((agg) => agg.value === data.aggregator)?.label ??
-      data.aggregator;
-
-    dispatch(
-      setConnectionDetails({
-        aggregator: aggregatorLabel,
-        jobTypes: jobTypeLabels,
-      }),
-    );
     setSubmittedValues(data);
   };
 
@@ -186,7 +161,7 @@ const ConnectConfiguration = () => {
                   data-testid="aggregator-select"
                   {...field}
                 >
-                  {aggregators.map((aggregator) => (
+                  {AGGREGATORS.map((aggregator) => (
                     <MenuItem key={aggregator.value} value={aggregator.value}>
                       {aggregator.label}
                     </MenuItem>
