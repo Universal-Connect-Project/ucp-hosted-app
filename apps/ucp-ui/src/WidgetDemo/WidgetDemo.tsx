@@ -25,7 +25,7 @@ interface IframeMessage {
   };
 }
 
-const DemoTabs: React.FC = () => {
+const WidgetDemo: React.FC = () => {
   const dispatch = useAppDispatch();
   const [connectionGuid, setConnectionGuid] = useState<string | null>(null);
   const [institutionName, setInstitutionName] = useState("");
@@ -84,4 +84,4 @@ const DemoTabs: React.FC = () => {
   );
 };
 
-export default DemoTabs;
+export default WidgetDemo;

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent, fireEvent } from "../shared/test/testUtils";
 import { createStore } from "../store";
-import DemoTabs from "./DemoTabs";
+import WidgetDemo from "./WidgetDemo";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 import {
   CONNECT_TAB,
@@ -15,7 +15,7 @@ describe("DemoTabs", () => {
   it("renders the component with initial tabs", () => {
     const store = createStore();
     store.dispatch(setConnectionDetails({ aggregator: "MX", jobTypes: [] }));
-    render(<DemoTabs />, { store });
+    render(<WidgetDemo />, { store });
 
     expect(screen.getByText(CONNECT_TAB)).toBeInTheDocument();
     expect(screen.getByText(CONNECTIONS_TAB)).toBeInTheDocument();
@@ -24,7 +24,7 @@ describe("DemoTabs", () => {
   it("switches tabs correctly", async () => {
     const store = createStore();
     store.dispatch(setConnectionDetails({ aggregator: "MX", jobTypes: [] }));
-    render(<DemoTabs />, { store });
+    render(<WidgetDemo />, { store });
 
     await userEvent.click(screen.getByText(CONNECTIONS_TAB));
     expect(screen.getByText("Institution")).toBeInTheDocument();
@@ -33,7 +33,7 @@ describe("DemoTabs", () => {
   it("handles iframe messages correctly", () => {
     const store = createStore();
     store.dispatch = jest.fn();
-    render(<DemoTabs />, { store });
+    render(<WidgetDemo />, { store });
 
     const institutionSelectedEvent = {
       origin: WIDGET_DEMO_BASE_URL,
@@ -69,7 +69,7 @@ describe("DemoTabs", () => {
   it("ignores messages from other origins", () => {
     const store = createStore();
     store.dispatch = jest.fn();
-    render(<DemoTabs />, { store });
+    render(<WidgetDemo />, { store });
 
     const event = {
       origin: "http://other-origin.com",

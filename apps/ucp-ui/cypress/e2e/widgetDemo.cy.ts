@@ -1,4 +1,4 @@
-import { WIDGET_DEMO_PAGE_TITLE } from "../../src/Demo/constants";
+import { WIDGET_DEMO_PAGE_TITLE } from "../../src/WidgetDemo/constants";
 import { SIDE_NAV_DEMO_LINK_TEXT } from "../../src/Layout/constants";
 
 describe("Widget Demo", () => {

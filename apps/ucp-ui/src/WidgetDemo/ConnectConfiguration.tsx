@@ -17,7 +17,7 @@ import {
   JOB_TYPE_ERROR_MESSAGE,
 } from "./constants";
 import styles from "./connectConfiguration.module.css";
-import Demo from "./Demo";
+import Connect from "./Connect";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { allJobTypes, supportsJobTypeMap } from "../shared/constants/jobTypes";
 import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
@@ -117,7 +117,7 @@ const ConnectConfiguration = () => {
 
   if (submittedValues) {
     return (
-      <Demo
+      <Connect
         jobTypes={Object.entries(submittedValues)
           .filter(([key, value]) => key !== "aggregator" && value)
           .map(([key]) => key)}

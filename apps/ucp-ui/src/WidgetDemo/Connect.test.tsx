@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "../shared/test/testUtils";
-import Demo from "./Demo";
+import Connect from "./Connect";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
   WIDGET_DEMO_IFRAME_TITLE,
@@ -17,7 +17,7 @@ const onReset = jest.fn();
 describe("<Demo />", () => {
   it("renders the widget demo iframe", async () => {
     render(
-      <Demo jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+      <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
     );
 
     const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
@@ -32,7 +32,7 @@ describe("<Demo />", () => {
     );
 
     render(
-      <Demo jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+      <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
     );
 
     expect(

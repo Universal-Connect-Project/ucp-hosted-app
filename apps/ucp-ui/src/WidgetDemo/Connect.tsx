@@ -13,7 +13,7 @@ import styles from "./demo.module.css";
 import { ComboJobTypes } from "@repo/shared-utils";
 import PhoneContainer from "./PhoneContainer";
 
-const Demo = ({
+const Connect = ({
   jobTypes,
   aggregator,
   onReset,
@@ -61,4 +61,4 @@ const Demo = ({
   );
 };
 
-export default Demo;
+export default Connect;
