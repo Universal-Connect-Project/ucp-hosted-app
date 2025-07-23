@@ -16,7 +16,7 @@ import {
   AGGREGATOR_DURATION_GRAPH_URL,
   AGGREGATOR_SUCCESS_GRAPH_URL,
 } from "./api";
-import { TRENDS_CHART_ERROR_TEXT } from "./constants";
+import { TRENDS_CHART_ERROR_TEXT } from "../../shared/components/trendsChartConstants";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
 import {
   AGGREGATORS_LABEL_TEXT,

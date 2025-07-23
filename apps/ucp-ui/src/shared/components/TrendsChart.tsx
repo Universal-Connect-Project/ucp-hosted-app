@@ -7,17 +7,17 @@ import {
   LineSeriesType,
   rainbowSurgePaletteLight,
 } from "@mui/x-charts";
-import { formatMaxTwoDecimals } from "../../shared/utils/format";
+import { formatMaxTwoDecimals } from "../utils/format";
 import { Paper, Stack, Tooltip, Typography } from "@mui/material";
 import styles from "./trendsChart.module.css";
 import { InfoOutline } from "@mui/icons-material";
-import FetchError from "../../shared/components/FetchError";
+import FetchError from "./FetchError";
 import {
   TREND_CHART_TOOLTIP_TEST_ID,
   TRENDS_CHART_ERROR_TEXT,
-} from "./constants";
-import { oneDayOption } from "../../shared/components/Forms/constants";
-import { InvisibleLoader } from "../../shared/components/Skeleton";
+} from "./trendsChartConstants";
+import { oneDayOption } from "./Forms/constants";
+import { InvisibleLoader } from "./Skeleton";
 
 const chartColors = rainbowSurgePaletteLight;
 

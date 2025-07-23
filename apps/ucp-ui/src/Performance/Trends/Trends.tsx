@@ -7,7 +7,7 @@ import {
   useGetAggregatorDurationGraphDataQuery,
   useGetAggregatorSuccessGraphDataQuery,
 } from "./api";
-import TrendsChart from "./TrendsChart";
+import TrendsChart from "../../shared/components/TrendsChart";
 import AggregatorSelect, {
   useAggregatorSelect,
 } from "../../shared/components/Forms/AggregatorSelect";
