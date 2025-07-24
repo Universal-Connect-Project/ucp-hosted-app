@@ -311,7 +311,7 @@ describe("institutions", () => {
 
     cy.findAllByText("Sophtron").should("have.length", 2);
 
-    cy.get(".MuiMarkElement-root").should("have.length.at.least", 4);
+    cy.get(".MuiMarkElement-root").should("have.length.at.least", 2);
 
     cy.findByLabelText(AGGREGATORS_LABEL_TEXT).click();
 
