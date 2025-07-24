@@ -34,6 +34,12 @@ import {
 import { supportsJobTypeMap } from "../../src/shared/constants/jobTypes";
 import { join } from "path";
 import { navigateToInstitutions } from "../shared/navigation";
+import {
+  AGGREGATORS_LABEL_TEXT,
+  JOB_TYPES_LABEL_TEXT,
+  oneHundredEightyDaysOption,
+  TIME_FRAME_LABEL_TEXT,
+} from "../../src/shared/components/Forms/constants";
 
 describe("institutions", () => {
   it("downloads the institutions json", () => {
@@ -293,5 +299,37 @@ describe("institutions", () => {
     }).click();
 
     cy.findByText("Delete Me Edited has been archived");
+  });
+
+  it("renders an institution performance chart and filters", () => {
+    cy.loginWithoutWidgetRole();
+
+    cy.visit("/institutions/ed625b3a-cd81-4aa8-a6f6-2d8321ea47b0");
+
+    cy.findAllByText("Sophtron").should("have.length", 2);
+
+    cy.get(".MuiMarkElement-root").should("have.length.at.least", 4);
+
+    cy.findByLabelText(AGGREGATORS_LABEL_TEXT).click();
+
+    cy.findByRole("option", { name: "MX" }).click().type("{esc}");
+
+    cy.findAllByText("Sophtron").should("have.length", 1);
+
+    cy.findAllByLabelText(TIME_FRAME_LABEL_TEXT).eq(0).click();
+
+    cy.findByRole("option", { name: oneHundredEightyDaysOption.label }).click();
+
+    cy.findByLabelText(JOB_TYPES_LABEL_TEXT).click();
+
+    cy.findByRole("option", {
+      name: supportsJobTypeMap.accountOwner.displayName,
+    })
+      .click()
+      .type("{esc}");
+
+    cy.waitForLoad();
+
+    cy.get(".MuiMarkElement-root").should("have.length.at.least", 2);
   });
 });
