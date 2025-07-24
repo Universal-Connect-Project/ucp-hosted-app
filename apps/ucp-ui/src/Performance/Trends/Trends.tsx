@@ -7,7 +7,6 @@ import {
   useGetAggregatorDurationGraphDataQuery,
   useGetAggregatorSuccessGraphDataQuery,
 } from "./api";
-import TrendsChart from "../../shared/components/TrendsChart";
 import AggregatorSelect, {
   useAggregatorSelect,
 } from "../../shared/components/Forms/AggregatorSelect";
@@ -16,6 +15,7 @@ import JobTypesSelect, {
 } from "../../shared/components/Forms/JobTypesSelect";
 import jobTypesStyles from "../../shared/styles/performanceJobTypeFilter.module.css";
 import { SuccessRateTrendsChart } from "../../shared/components/SuccessRateTrendsChart";
+import { DurationTrendsChart } from "../../shared/components/DurationTrendsChart";
 
 const Trends = () => {
   const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
@@ -77,17 +77,12 @@ const Trends = () => {
           refetch={() => void refetchSuccess()}
           timeFrame={timeFrame}
         />
-        <TrendsChart
+        <DurationTrendsChart
           data={durationData}
           isError={isErrorDuration}
           isFetching={isFetchingDuration}
           refetch={() => void refetchDuration()}
-          shouldReverseYAxis
           timeFrame={timeFrame}
-          title="Average Time To Connect"
-          tooltipTitle="The average time (in seconds) it takes to make a connection. All dates and times are in U.S. Eastern Time."
-          valueMultiplier={1 / 1000}
-          valuePostfix="s"
         />
       </Stack>
     </Stack>

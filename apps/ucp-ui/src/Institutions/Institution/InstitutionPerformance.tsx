@@ -10,12 +10,12 @@ import JobTypesSelect, {
   useJobTypesSelect,
 } from "../../shared/components/Forms/JobTypesSelect";
 import jobTypesStyles from "../../shared/styles/performanceJobTypeFilter.module.css";
-import TrendsChart from "../../shared/components/TrendsChart";
 import {
   useGetInstitutionDurationGraphDataQuery,
   useGetInstitutionSuccessGraphDataQuery,
 } from "./api";
 import { SuccessRateTrendsChart } from "../../shared/components/SuccessRateTrendsChart";
+import { DurationTrendsChart } from "../../shared/components/DurationTrendsChart";
 
 export const InstitutionPerformance = ({
   institutionId,
@@ -83,17 +83,12 @@ export const InstitutionPerformance = ({
           refetch={() => void refetchSuccess()}
           timeFrame={timeFrame}
         />
-        <TrendsChart
+        <DurationTrendsChart
           data={durationData}
           isError={isErrorDuration}
           isFetching={isFetchingDuration}
           refetch={() => void refetchDuration()}
-          shouldReverseYAxis
           timeFrame={timeFrame}
-          title="Average Time To Connect"
-          tooltipTitle="The average time (in seconds) it takes to make a connection. All dates and times are in U.S. Eastern Time."
-          valueMultiplier={1 / 1000}
-          valuePostfix="s"
         />
       </Stack>
     </Stack>
