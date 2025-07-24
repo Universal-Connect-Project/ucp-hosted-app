@@ -46,13 +46,13 @@ import {
   INSTITUTION_OAUTH_TOOLTIP_TEXT,
 } from "../../shared/constants/institution";
 import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
+import { SUCCESS_RATE_TRENDS_CHART_TITLE } from "../../shared/components/successRateTrendsChartConsts";
 
 describe("<Institution />", () => {
   it("renders performance charts", async () => {
     render(<Institution />);
-    expect(await screen.findByText("Average Success Rate")).toBeInTheDocument();
     expect(
-      await screen.findByText("Average Time To Connect"),
+      await screen.findByText(SUCCESS_RATE_TRENDS_CHART_TITLE),
     ).toBeInTheDocument();
   });
 
