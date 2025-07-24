@@ -15,6 +15,7 @@ import {
   useGetInstitutionDurationGraphDataQuery,
   useGetInstitutionSuccessGraphDataQuery,
 } from "./api";
+import { SuccessRateTrendsChart } from "../../shared/components/SuccessRateTrendsChart";
 
 export const InstitutionPerformance = ({
   institutionId,
@@ -75,17 +76,12 @@ export const InstitutionPerformance = ({
         </div>
       </Stack>
       <Stack direction="row" spacing={3}>
-        <TrendsChart
+        <SuccessRateTrendsChart
           data={successData}
           isError={isErrorSuccess}
           isFetching={isFetchingSuccess}
           refetch={() => void refetchSuccess()}
           timeFrame={timeFrame}
-          title="Average Success Rate"
-          tooltipTitle="The percentage of connection attempts that are successful. All dates and times are in U.S. Eastern Time."
-          valueMultiplier={100}
-          valuePostfix="%"
-          yAxisMax={1}
         />
         <TrendsChart
           data={durationData}
