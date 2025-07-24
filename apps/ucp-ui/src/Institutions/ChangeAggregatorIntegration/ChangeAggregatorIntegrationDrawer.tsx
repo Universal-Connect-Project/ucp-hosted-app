@@ -41,6 +41,7 @@ import NameLogo from "./NameLogo";
 import ConfirmRemoveAggregatorIntegration from "./ConfirmRemoveAggregatorIntegration";
 import { useConfirmationDrawer } from "../../shared/components/Drawer/ConfirmationDrawer";
 import { RequiredCheckboxGroupHeader } from "../../shared/components/RequiredCheckboxGroupHeader";
+import { CHANGE_AGGREGATOR_INTEGRATION_DRAWER_TEST_ID } from "./consts";
 
 const formId = "changeAggregatorIntegration";
 
@@ -206,7 +207,12 @@ const ChangeAggregatorIntegrationDrawer = ({
 
   return (
     <>
-      <Drawer anchor="right" onClose={handleCloseDrawer} open={isOpen}>
+      <Drawer
+        anchor="right"
+        data-testid={CHANGE_AGGREGATOR_INTEGRATION_DRAWER_TEST_ID}
+        onClose={handleCloseDrawer}
+        open={isOpen}
+      >
         {shouldShowConfirmation ? (
           <ConfirmRemoveAggregatorIntegration
             aggregatorIntegration={aggregatorIntegration}

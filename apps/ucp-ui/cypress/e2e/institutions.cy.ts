@@ -1,3 +1,4 @@
+import { CHANGE_AGGREGATOR_INTEGRATION_DRAWER_TEST_ID } from "../../src/Institutions/ChangeAggregatorIntegration/consts";
 import {
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
   INSTITUTIONS_JSON_BUTTON_TEXT,
@@ -226,13 +227,15 @@ describe("institutions", () => {
       name: INSTITUTION_ADD_AGGREGATOR_INTEGRATION_BUTTON_TEXT,
     }).click();
 
-    cy.findAllByLabelText(
-      new RegExp(
-        INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
-      ),
-    )
-      .eq(0)
-      .click();
+    cy.findByTestId(CHANGE_AGGREGATOR_INTEGRATION_DRAWER_TEST_ID).within(() => {
+      cy.findAllByLabelText(
+        new RegExp(
+          INSTITUTION_AGGREGATOR_INTEGRATION_FORM_AGGREGATOR_ID_LABEL_TEXT,
+        ),
+      )
+        .eq(0)
+        .click();
+    });
 
     cy.findByRole("option", { name: "MX" }).click();
 
