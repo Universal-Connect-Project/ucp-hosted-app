@@ -8,8 +8,6 @@ const createPublicRoute = (childRoute: string) => ({
 });
 export const PERFORMANCE_ROUTE = BASE_ROUTE;
 
-export const WIDGET_DEMO_ROUTE = "/widgetDemo";
-
 const createRoute = (childRoute: string) => ({
   childRoute,
   fullRoute: `/${childRoute}`,
@@ -28,4 +26,4 @@ export const termsAndConditionsRoute = createRoute("termsAndConditions");
 export const termsAndConditionsPublicRoute =
   createPublicRoute("termsAndConditions");
 
-export const demoRoute = createRoute("demo");
+export const widgetDemoRoute = createRoute("widgetDemo");
