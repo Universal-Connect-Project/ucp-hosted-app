@@ -6,7 +6,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Typography,
   Stack,
 } from "@mui/material";
@@ -20,7 +19,7 @@ const Connections = () => {
 
   return (
     <Stack spacing={2}>
-      <TableContainer className={styles.table} component={Paper}>
+      <TableContainer className={styles.table}>
         <Table>
           <TableHead>
             <TableRow>
