@@ -12,8 +12,8 @@ import {
   widgetManagementRoute,
   BASE_ROUTE,
   termsAndConditionsPublicRoute,
-  WIDGET_DEMO_ROUTE,
   INSTITUTIONS_ROUTE,
+  widgetDemoRoute,
 } from "./shared/constants/routes";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Performance from "./Performance/Performance";
@@ -44,7 +44,7 @@ const Routes = () => {
           element: <Institutions />,
         },
         {
-          path: WIDGET_DEMO_ROUTE,
+          path: widgetDemoRoute.childRoute,
           element: <WidgetDemo />,
         },
       ],

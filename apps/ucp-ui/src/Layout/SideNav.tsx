@@ -28,8 +28,7 @@ import {
   termsAndConditionsRoute,
   PERFORMANCE_ROUTE,
   widgetManagementRoute,
-  demoRoute,
-  WIDGET_DEMO_ROUTE,
+  widgetDemoRoute,
 } from "../shared/constants/routes";
 import { Link } from "react-router-dom";
 import {
@@ -76,9 +75,9 @@ const SideNav = ({
       ? [
           {
             label: SIDE_NAV_DEMO_LINK_TEXT,
-            matchPaths: [demoRoute.fullRoute],
+            matchPaths: [widgetDemoRoute.fullRoute],
             Icon: LightbulbOutlined,
-            path: WIDGET_DEMO_ROUTE,
+            path: widgetDemoRoute.fullRoute,
           },
         ]
       : []),

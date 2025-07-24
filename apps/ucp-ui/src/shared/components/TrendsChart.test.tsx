@@ -5,25 +5,22 @@ import {
   screen,
   userEvent,
   waitFor,
-} from "../../shared/test/testUtils";
+} from "../test/testUtils";
 import { TZDate } from "@date-fns/tz";
 import {
   AGGREGATOR_SUCCESS_GRAPH_URL,
   useGetAggregatorSuccessGraphDataQuery,
-} from "./api";
+} from "../../Performance/Trends/api";
 import TrendsChart, { formatTooltip } from "./TrendsChart";
-import {
-  oneDayOption,
-  thirtyDaysOption,
-} from "../../shared/components/Forms/constants";
+import { oneDayOption, thirtyDaysOption } from "./Forms/constants";
 import {
   TREND_CHART_TOOLTIP_TEST_ID,
   TRENDS_CHART_ERROR_TEXT,
-} from "./constants";
-import { server } from "../../shared/test/testServer";
+} from "./trendsChartConstants";
+import { server } from "../test/testServer";
 import { http, HttpResponse } from "msw";
-import { TRY_AGAIN_BUTTON_TEXT } from "../../shared/components/constants";
-import { successGraphData } from "../../shared/test/testData/performanceGraphs";
+import { TRY_AGAIN_BUTTON_TEXT } from "./constants";
+import { successGraphData } from "../test/testData/performanceGraphs";
 
 const EDTTimeZone = "America/New_York";
 

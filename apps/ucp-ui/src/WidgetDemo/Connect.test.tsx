@@ -1,5 +1,11 @@
 import React from "react";
-import { render, screen, userEvent, fireEvent } from "../shared/test/testUtils";
+import {
+  render,
+  screen,
+  userEvent,
+  fireEvent,
+  waitForLoad,
+} from "../shared/test/testUtils";
 import Connect from "./Connect";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
@@ -23,7 +29,7 @@ describe("Connect", () => {
     render(
       <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
     );
-
+    await waitForLoad();
     const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
     expect(iframe).toBeInTheDocument();
   });

@@ -1,12 +1,8 @@
-import React from "react";
 import { Stack, Typography } from "@mui/material";
+import React from "react";
 import TimeFrameSelect, {
   useTimeFrameSelect,
 } from "../../shared/components/Forms/TimeFrameSelect";
-import {
-  useGetAggregatorDurationGraphDataQuery,
-  useGetAggregatorSuccessGraphDataQuery,
-} from "./api";
 import AggregatorSelect, {
   useAggregatorSelect,
 } from "../../shared/components/Forms/AggregatorSelect";
@@ -14,10 +10,18 @@ import JobTypesSelect, {
   useJobTypesSelect,
 } from "../../shared/components/Forms/JobTypesSelect";
 import jobTypesStyles from "../../shared/styles/performanceJobTypeFilter.module.css";
+import {
+  useGetInstitutionDurationGraphDataQuery,
+  useGetInstitutionSuccessGraphDataQuery,
+} from "./api";
 import { SuccessRateTrendsChart } from "../../shared/components/SuccessRateTrendsChart";
 import { DurationTrendsChart } from "../../shared/components/DurationTrendsChart";
 
-const Trends = () => {
+export const InstitutionPerformance = ({
+  institutionId,
+}: {
+  institutionId: string;
+}) => {
   const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
   const { aggregators, handleAggregatorsChange } = useAggregatorSelect();
   const { jobTypes, handleJobTypesChange } = useJobTypesSelect();
@@ -27,9 +31,10 @@ const Trends = () => {
     isError: isErrorSuccess,
     isFetching: isFetchingSuccess,
     refetch: refetchSuccess,
-  } = useGetAggregatorSuccessGraphDataQuery(
+  } = useGetInstitutionSuccessGraphDataQuery(
     {
       aggregators,
+      institutionId,
       jobTypes,
       timeFrame,
     },
@@ -41,9 +46,10 @@ const Trends = () => {
     isError: isErrorDuration,
     isFetching: isFetchingDuration,
     refetch: refetchDuration,
-  } = useGetAggregatorDurationGraphDataQuery(
+  } = useGetInstitutionDurationGraphDataQuery(
     {
       aggregators,
+      institutionId,
       jobTypes,
       timeFrame,
     },
@@ -51,8 +57,8 @@ const Trends = () => {
   );
 
   return (
-    <Stack spacing={3}>
-      <Typography variant="h5">Trends</Typography>
+    <Stack spacing={2}>
+      <Typography variant="overline">Performance</Typography>
       <Stack alignItems="flex-end" direction="row" spacing={2}>
         <TimeFrameSelect onChange={handleTimeFrameChange} value={timeFrame} />
         <AggregatorSelect
@@ -88,5 +94,3 @@ const Trends = () => {
     </Stack>
   );
 };
-
-export default Trends;

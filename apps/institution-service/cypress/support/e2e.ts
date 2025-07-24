@@ -17,6 +17,7 @@
 // Import commands.js using ES2015 syntax:
 import {
   AUTH0_CLIENT_AUDIENCE,
+  AUTH0_PERFORMANCE_SERVICE_AUDIENCE,
   AUTH0_WIDGET_AUDIENCE,
   DefaultPermissions,
   UiClientPermissions,
@@ -26,6 +27,7 @@ import { JwtPayload } from "jsonwebtoken";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
+  PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
   WIDGET_ACCESS_TOKEN,
@@ -124,6 +126,17 @@ before(() => {
     clientParams: {
       clientIdString: "WIDGET_CLIENT_ID",
       clientSecretString: "WIDGET_CLIENT_SECRET",
+    },
+  });
+
+  authenticateAndStoreToken({
+    audience: AUTH0_PERFORMANCE_SERVICE_AUDIENCE,
+    passwordEnvString: "",
+    usernameEnvString: "",
+    variableName: PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV,
+    clientParams: {
+      clientIdString: "PERFORMANCE_SERVICE_CLIENT_ID",
+      clientSecretString: "PERFORMANCE_SERVICE_CLIENT_SECRET",
     },
   });
 });

@@ -17,18 +17,19 @@ import { getPaginatedInstitutions } from "./getPaginatedInstitutions";
 import { createInstitution } from "./createInstitution";
 import { updateInstitution } from "./updateInstitution";
 import { getInstitutionCachedList } from "./getInstitutionCacheList";
+import { CACHE_LIST_CHILD_ROUTE } from "../shared/consts/routes";
 
 const router = Router();
 
 router.get(
-  "/cacheList",
+  CACHE_LIST_CHILD_ROUTE,
   [validateWidgetAudience],
   requiredScopes(WidgetHostPermissions.READ_WIDGET_ENDPOINTS),
   getInstitutionCachedList as RequestHandler,
 );
 
 router.get(
-  "/cacheList/download",
+  `${CACHE_LIST_CHILD_ROUTE}/download`,
   [validateUIAudience],
   getInstitutionCachedList as RequestHandler,
 );

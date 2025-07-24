@@ -30,6 +30,7 @@ import styles from "./institution.module.css";
 import InstitutionField from "./InstitutionField";
 import InstitutionSection from "./InstitutionSection";
 import AggregatorIntegrations from "./AggregatorIntegrations";
+import { InstitutionPerformance } from "./InstitutionPerformance";
 
 const Institution = () => {
   const { institutionId } = useParams();
@@ -46,109 +47,115 @@ const Institution = () => {
 
   return (
     <PageContent>
-      {isError ? (
-        <FetchError
-          description={INSTITUTION_ERROR_TEXT}
-          refetch={() => void refetch()}
-        />
-      ) : (
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <Breadcrumbs>
-              <Link
-                color="inherit"
-                component={RouterLink}
-                to={INSTITUTIONS_ROUTE}
-                underline="hover"
-              >
-                Institutions
-              </Link>
-              <Typography>
-                {isFetching ? (
-                  <TextSkeletonIfLoading isLoading width="200px" />
-                ) : (
-                  name
-                )}
-              </Typography>
-            </Breadcrumbs>
-            <div className={styles.editNameLogoContainer}>
-              <div className={styles.nameLogoContainer}>
-                <SkeletonIfLoading
-                  className={styles.logoSkeleton}
-                  isLoading={isFetching}
+      <div className={styles.container}>
+        {isError ? (
+          <FetchError
+            description={INSTITUTION_ERROR_TEXT}
+            refetch={() => void refetch()}
+          />
+        ) : (
+          <>
+            <div className={styles.header}>
+              <Breadcrumbs>
+                <Link
+                  color="inherit"
+                  component={RouterLink}
+                  to={INSTITUTIONS_ROUTE}
+                  underline="hover"
                 >
-                  <img className={styles.logo} src={logo ?? DEFAULT_LOGO_URL} />
-                </SkeletonIfLoading>
-                <Typography variant="h4">
+                  Institutions
+                </Link>
+                <Typography>
                   {isFetching ? (
-                    <TextSkeletonIfLoading isLoading width="400px" />
+                    <TextSkeletonIfLoading isLoading width="200px" />
                   ) : (
                     name
                   )}
                 </Typography>
+              </Breadcrumbs>
+              <div className={styles.editNameLogoContainer}>
+                <div className={styles.nameLogoContainer}>
+                  <SkeletonIfLoading
+                    className={styles.logoSkeleton}
+                    isLoading={isFetching}
+                  >
+                    <img
+                      className={styles.logo}
+                      src={logo ?? DEFAULT_LOGO_URL}
+                    />
+                  </SkeletonIfLoading>
+                  <Typography variant="h4">
+                    {isFetching ? (
+                      <TextSkeletonIfLoading isLoading width="400px" />
+                    ) : (
+                      name
+                    )}
+                  </Typography>
+                </div>
+                {!isFetching && (
+                  <EditInstitution
+                    institution={institution}
+                    permissions={permissions}
+                  />
+                )}
               </div>
-              {!isFetching && (
-                <EditInstitution
-                  institution={institution}
-                  permissions={permissions}
+            </div>
+            <InstitutionSection title="INSTITUTION DETAILS">
+              <div className={styles.institutionFields}>
+                <InstitutionField
+                  isLoading={isFetching}
+                  name="UCP ID"
+                  tooltip={INSTITUTION_UCP_ID_TOOLTIP_TEXT}
+                  tooltipTestId={INSTITUTION_UCP_ID_TOOLTIP_TEST_ID}
+                  value={id}
                 />
-              )}
-            </div>
-          </div>
-          <InstitutionSection title="INSTITUTION DETAILS">
-            <div className={styles.institutionFields}>
-              <InstitutionField
-                isLoading={isFetching}
-                name="UCP ID"
-                tooltip={INSTITUTION_UCP_ID_TOOLTIP_TEXT}
-                tooltipTestId={INSTITUTION_UCP_ID_TOOLTIP_TEST_ID}
-                value={id}
-              />
-              <InstitutionField
-                isLoading={isFetching}
-                name="Institution URL"
-                tooltip={INSTITUTION_URL_TOOLTIP_TEXT}
-                tooltipTestId={INSTITUTION_URL_TOOLTIP_TEST_ID}
-                value={url}
-              />
-              <InstitutionField
-                isLoading={isFetching}
-                name="Logo URL"
-                tooltip={INSTITUTION_LOGO_TOOLTIP_TEXT}
-                tooltipTestId={INSTITUTION_LOGO_TOOLTIP_TEST_ID}
-                value={logo}
-              />
-              <InstitutionField
-                isLoading={isFetching}
-                name="Routing Number(s)"
-                tooltip={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT}
-                tooltipTestId={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID}
-                value={routing_numbers?.join(", ")}
-              />
-              <InstitutionField
-                isLoading={isFetching}
-                name="Search Keywords"
-                tooltip={INSTITUTION_KEYWORDS_TOOLTIP_TEXT}
-                tooltipTestId={INSTITUTION_KEYWORDS_TOOLTIP_TEST_ID}
-                value={keywords?.join(", ")}
-              />
-              <InstitutionField
-                isLoading={isFetching}
-                name="Test Institution"
-                shouldDisableValueTooltip
-                tooltip={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEXT}
-                tooltipTestId={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID}
-                value={is_test_bank ? "Yes" : "No"}
-              />
-            </div>
-          </InstitutionSection>
-          <AggregatorIntegrations
-            institution={institution}
-            isLoading={isFetching}
-            permissions={permissions}
-          />
-        </div>
-      )}
+                <InstitutionField
+                  isLoading={isFetching}
+                  name="Institution URL"
+                  tooltip={INSTITUTION_URL_TOOLTIP_TEXT}
+                  tooltipTestId={INSTITUTION_URL_TOOLTIP_TEST_ID}
+                  value={url}
+                />
+                <InstitutionField
+                  isLoading={isFetching}
+                  name="Logo URL"
+                  tooltip={INSTITUTION_LOGO_TOOLTIP_TEXT}
+                  tooltipTestId={INSTITUTION_LOGO_TOOLTIP_TEST_ID}
+                  value={logo}
+                />
+                <InstitutionField
+                  isLoading={isFetching}
+                  name="Routing Number(s)"
+                  tooltip={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEXT}
+                  tooltipTestId={INSTITUTION_ROUTING_NUMBERS_TOOLTIP_TEST_ID}
+                  value={routing_numbers?.join(", ")}
+                />
+                <InstitutionField
+                  isLoading={isFetching}
+                  name="Search Keywords"
+                  tooltip={INSTITUTION_KEYWORDS_TOOLTIP_TEXT}
+                  tooltipTestId={INSTITUTION_KEYWORDS_TOOLTIP_TEST_ID}
+                  value={keywords?.join(", ")}
+                />
+                <InstitutionField
+                  isLoading={isFetching}
+                  name="Test Institution"
+                  shouldDisableValueTooltip
+                  tooltip={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEXT}
+                  tooltipTestId={INSTITUTION_TEST_INSTITUTION_TOOLTIP_TEST_ID}
+                  value={is_test_bank ? "Yes" : "No"}
+                />
+              </div>
+            </InstitutionSection>
+            <AggregatorIntegrations
+              institution={institution}
+              isLoading={isFetching}
+              permissions={permissions}
+            />
+          </>
+        )}
+        <InstitutionPerformance institutionId={institutionId as string} />
+      </div>
     </PageContent>
   );
 };
