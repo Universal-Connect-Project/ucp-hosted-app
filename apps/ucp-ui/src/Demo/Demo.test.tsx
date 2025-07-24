@@ -1,5 +1,10 @@
 import React from "react";
-import { render, screen, userEvent } from "../shared/test/testUtils";
+import {
+  render,
+  screen,
+  userEvent,
+  waitForLoad,
+} from "../shared/test/testUtils";
 import Demo from "./Demo";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
@@ -19,6 +24,8 @@ describe("<Demo />", () => {
     render(
       <Demo jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
     );
+
+    await waitForLoad();
 
     const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
     expect(iframe).toBeInTheDocument();
