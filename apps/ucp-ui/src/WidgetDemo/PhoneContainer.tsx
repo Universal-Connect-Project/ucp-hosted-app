@@ -5,7 +5,7 @@ import { SkeletonIfLoading } from "../shared/components/Skeleton";
 import { RESET_BUTTON_TEXT } from "./constants";
 
 interface PhoneContainerProps {
-  src: string;
+  src: React.ReactNode;
   title: string;
   onReset: () => void;
   isLoading: boolean;
@@ -19,17 +19,25 @@ const PhoneContainer: React.FC<PhoneContainerProps> = ({
   onReset,
   isLoading,
 }) => {
+  const isComponent = typeof src !== "string";
+
   return (
     <div>
       <div className={styles.phone}>
         <SkeletonIfLoading className={styles.phoneScreen} isLoading={isLoading}>
-          <iframe
-            src={isLoading ? "" : src}
-            title={title}
-            className={styles.phoneScreen}
-            allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-            sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-          />
+          {isComponent ? (
+            <div className={`${styles.phoneScreen} ${styles.errorContent}`}>
+              {src}
+            </div>
+          ) : (
+            <iframe
+              src={isLoading ? "" : src}
+              title={title}
+              className={styles.phoneScreen}
+              allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+              sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+            />
+          )}
         </SkeletonIfLoading>
 
         <svg

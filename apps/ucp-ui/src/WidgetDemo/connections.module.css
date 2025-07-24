@@ -1,14 +1,11 @@
-.paper {
-  &:global(.MuiPaper-root) {
-    align-self: center;
-    width: 370px;
-    padding: 40px;
+.table {
+  &:global(.MuiTableContainer-root) {
     background-color: var(--mui-palette-common-white);
     border: solid 1px var(--mui-palette-divider);
     border-collapse: separate;
     border-radius: var(--mui-shape-borderRadius);
+    flex: 1;
+    height: min-content;
+    width: unset;
   }
-}
-.button {
-  align-self: flex-end;
 }

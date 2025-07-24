@@ -86,22 +86,25 @@ const Connect = ({
       window.removeEventListener("message", handleMessage);
     };
   });
+  const tokenErrorComponent = (
+    <FetchError
+      description={WIDGET_DEMO_ERROR_MESSAGE}
+      refetch={() => void refetch()}
+    />
+  );
 
   return (
     <PageContent>
       <Stack spacing={4}>
         <div className={styles.iframeContainer} data-testid="demo-component">
-          {tokenError && (
-            <FetchError
-              description={WIDGET_DEMO_ERROR_MESSAGE}
-              refetch={() => void refetch()}
-            />
-          )}
-
           <PhoneContainer
-            src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
-              ",",
-            )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}&targetOrigin=${targetOrigin}`}
+            src={
+              tokenError
+                ? tokenErrorComponent
+                : `${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
+                    ",",
+                  )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}&targetOrigin=${targetOrigin}`
+            }
             title={WIDGET_DEMO_IFRAME_TITLE}
             onReset={onReset}
             isLoading={tokenLoading}
