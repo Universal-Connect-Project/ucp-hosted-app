@@ -32,6 +32,10 @@ import {
   successGraphData,
 } from "./testData/performanceGraphs";
 import { WIDGET_DEMO_BASE_URL } from "../constants/environment";
+import {
+  INSTITUTION_DURATION_GRAPH_URL,
+  INSTITUTION_SUCCESS_GRAPH_URL,
+} from "../../Institutions/Institution/api";
 
 export const handlers = [
   http.post(INSTITUTION_SERVICE_CREATE_INSTITUTION_URL, () =>
@@ -89,5 +93,11 @@ export const handlers = [
   ),
   http.get(`${WIDGET_DEMO_BASE_URL}/api/token`, () =>
     HttpResponse.json({ token: "randomtoken" }),
+  ),
+  http.get(INSTITUTION_SUCCESS_GRAPH_URL, () =>
+    HttpResponse.json(successGraphData),
+  ),
+  http.get(INSTITUTION_DURATION_GRAPH_URL, () =>
+    HttpResponse.json(durationGraphData),
   ),
 ];

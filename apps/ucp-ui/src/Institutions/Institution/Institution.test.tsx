@@ -48,6 +48,14 @@ import {
 import { supportsJobTypeMap } from "../../shared/constants/jobTypes";
 
 describe("<Institution />", () => {
+  it("renders performance charts", async () => {
+    render(<Institution />);
+    expect(await screen.findByText("Average Success Rate")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Average Time To Connect"),
+    ).toBeInTheDocument();
+  });
+
   it("shows a loading state, renders all the fields, renders an edit button, and sorts the aggregator integrations by display name", async () => {
     render(<Institution />);
 
