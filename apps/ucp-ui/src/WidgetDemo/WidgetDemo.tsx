@@ -7,7 +7,7 @@ import {
 } from "./constants";
 import Connections from "./Connections";
 import PageTitle from "../shared/components/PageTitle";
-import ConnectConfiguration from "./ConnectConfiguration";
+import WidgetConfiguration from "./WidgetConfiguration";
 import PageContent from "../shared/components/PageContent";
 
 const WidgetDemo: React.FC = () => {
@@ -27,7 +27,7 @@ const WidgetDemo: React.FC = () => {
             <Tab label={CONNECTIONS_TAB} />
           </Tabs>
         </Box>
-        {tabValue === 0 && <ConnectConfiguration />}
+        {tabValue === 0 && <WidgetConfiguration />}
         {tabValue === 1 && <Connections />}
       </Stack>
     </PageContent>

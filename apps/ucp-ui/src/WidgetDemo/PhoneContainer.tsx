@@ -1,43 +1,24 @@
 import React from "react";
 import styles from "./phoneContainer.module.css";
-import { Button } from "@mui/material";
+
 import { SkeletonIfLoading } from "../shared/components/Skeleton";
-import { RESET_BUTTON_TEXT } from "./constants";
 
 interface PhoneContainerProps {
-  src: React.ReactNode;
-  title: string;
-  onReset: () => void;
+  children: React.ReactNode;
   isLoading: boolean;
 }
 /**
  * A component that displays a phone-like container with an iframe.
  */
 const PhoneContainer: React.FC<PhoneContainerProps> = ({
-  src,
-  title,
-  onReset,
   isLoading,
+  children,
 }) => {
-  const isComponent = typeof src !== "string";
-
   return (
     <div>
       <div className={styles.phone}>
         <SkeletonIfLoading className={styles.phoneScreen} isLoading={isLoading}>
-          {isComponent ? (
-            <div className={`${styles.phoneScreen} ${styles.errorContent}`}>
-              {src}
-            </div>
-          ) : (
-            <iframe
-              src={isLoading ? "" : src}
-              title={title}
-              className={styles.phoneScreen}
-              allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-              sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-            />
-          )}
+          {children}
         </SkeletonIfLoading>
 
         <svg
@@ -103,11 +84,6 @@ const PhoneContainer: React.FC<PhoneContainerProps> = ({
             fill="#D1D1D6"
           />
         </svg>
-      </div>
-      <div className={styles.buttonContainer}>
-        <Button color="primary" variant="text" onClick={onReset}>
-          {RESET_BUTTON_TEXT}
-        </Button>
       </div>
     </div>
   );

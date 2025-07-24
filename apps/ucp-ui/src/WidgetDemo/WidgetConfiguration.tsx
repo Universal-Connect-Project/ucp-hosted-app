@@ -17,8 +17,8 @@ import {
   JOB_TYPE_ERROR_MESSAGE,
   AGGREGATORS,
 } from "./constants";
-import styles from "./connectConfiguration.module.css";
-import Connect from "./Connect";
+import styles from "./widgetConfiguration.module.css";
+import ConnectWidget from "./ConnectWidget";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { allJobTypes, supportsJobTypeMap } from "../shared/constants/jobTypes";
 import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
@@ -39,7 +39,7 @@ interface JobTypeCheckbox {
 
 const formId = "demoForm";
 
-const ConnectConfiguration = () => {
+const WidgetConfiguration = () => {
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(
     null,
   );
@@ -92,7 +92,7 @@ const ConnectConfiguration = () => {
 
   if (submittedValues) {
     return (
-      <Connect
+      <ConnectWidget
         jobTypes={Object.entries(submittedValues)
           .filter(([key, value]) => key !== "aggregator" && value)
           .map(([key]) => key)}
@@ -185,4 +185,4 @@ const ConnectConfiguration = () => {
   );
 };
 
-export default ConnectConfiguration;
+export default WidgetConfiguration;

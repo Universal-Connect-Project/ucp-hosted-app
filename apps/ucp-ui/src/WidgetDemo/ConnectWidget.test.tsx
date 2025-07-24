@@ -1,17 +1,12 @@
 import React from "react";
-import {
-  render,
-  screen,
-  userEvent,
-  fireEvent,
-  waitForLoad,
-} from "../shared/test/testUtils";
-import Connect from "./Connect";
+import { render, screen, userEvent, fireEvent } from "../shared/test/testUtils";
+import ConnectWidget from "./ConnectWidget";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
   WIDGET_DEMO_IFRAME_TITLE,
   INSTITUTION_SELECTED,
   MEMBER_CONNECTED,
+  RESET_BUTTON_TEXT,
 } from "./constants";
 import { server } from "../shared/test/testServer";
 import { http, HttpResponse } from "msw";
@@ -27,9 +22,12 @@ const onReset = jest.fn();
 describe("Connect", () => {
   it("renders the widget demo iframe", async () => {
     render(
-      <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+      <ConnectWidget
+        jobTypes={jobTypes}
+        aggregator={aggregator}
+        onReset={onReset}
+      />,
     );
-    await waitForLoad();
     const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
     expect(iframe).toBeInTheDocument();
   });
@@ -42,7 +40,11 @@ describe("Connect", () => {
     );
 
     render(
-      <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+      <ConnectWidget
+        jobTypes={jobTypes}
+        aggregator={aggregator}
+        onReset={onReset}
+      />,
     );
 
     expect(
@@ -59,13 +61,29 @@ describe("Connect", () => {
     const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
     expect(iframe).toBeInTheDocument();
   });
+  it("calls onReset when the reset button is clicked", async () => {
+    render(
+      <ConnectWidget
+        jobTypes={jobTypes}
+        aggregator={aggregator}
+        onReset={onReset}
+      />,
+    );
+
+    await userEvent.click(screen.getByText(RESET_BUTTON_TEXT));
+    expect(onReset).toHaveBeenCalledTimes(1);
+  });
 
   it("dispatches addConnection on successful member connection", () => {
     const store = createStore();
     const dispatchSpy = jest.spyOn(store, "dispatch");
 
     render(
-      <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+      <ConnectWidget
+        jobTypes={jobTypes}
+        aggregator={aggregator}
+        onReset={onReset}
+      />,
       { store },
     );
 
@@ -102,7 +120,11 @@ describe("Connect", () => {
     const dispatchSpy = jest.spyOn(store, "dispatch");
 
     render(
-      <Connect jobTypes={jobTypes} aggregator={aggregator} onReset={onReset} />,
+      <ConnectWidget
+        jobTypes={jobTypes}
+        aggregator={aggregator}
+        onReset={onReset}
+      />,
       { store },
     );
 

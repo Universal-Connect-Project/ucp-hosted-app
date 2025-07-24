@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { useGetDemoTokenQuery } from "./api";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
-import PageContent from "../shared/components/PageContent";
 import {
   AGGREGATORS,
   INSTITUTION_SELECTED,
   MEMBER_CONNECTED,
+  RESET_BUTTON_TEXT,
 } from "./constants";
 import { useAppDispatch } from "../shared/utils/redux";
 import { addConnection, Connection } from "../shared/reducers/demo";
@@ -13,9 +13,9 @@ import {
   WIDGET_DEMO_ERROR_MESSAGE,
   WIDGET_DEMO_IFRAME_TITLE,
 } from "./constants";
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import FetchError from "../shared/components/FetchError";
-import styles from "./connect.module.css";
+import styles from "./connectWidget.module.css";
 import { ComboJobTypes } from "@repo/shared-utils";
 import PhoneContainer from "./PhoneContainer";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
@@ -28,7 +28,7 @@ interface IframeMessage {
   };
 }
 
-const Connect = ({
+const ConnectWidget = ({
   jobTypes,
   aggregator,
   onReset,
@@ -86,33 +86,38 @@ const Connect = ({
       window.removeEventListener("message", handleMessage);
     };
   });
-  const tokenErrorComponent = (
-    <FetchError
-      description={WIDGET_DEMO_ERROR_MESSAGE}
-      refetch={() => void refetch()}
-    />
-  );
 
   return (
-    <PageContent>
-      <Stack spacing={4}>
-        <div className={styles.iframeContainer} data-testid="demo-component">
-          <PhoneContainer
-            src={
-              tokenError
-                ? tokenErrorComponent
-                : `${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
-                    ",",
-                  )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}&targetOrigin=${targetOrigin}`
-            }
-            title={WIDGET_DEMO_IFRAME_TITLE}
-            onReset={onReset}
-            isLoading={tokenLoading}
-          />
-        </div>
-      </Stack>
-    </PageContent>
+    <Stack spacing={4}>
+      <div className={styles.iframeContainer} data-testid="demo-component">
+        <PhoneContainer isLoading={tokenLoading}>
+          {tokenError ? (
+            <div className={`${styles.errorContent} ${styles.phoneContainer}`}>
+              <FetchError
+                description={WIDGET_DEMO_ERROR_MESSAGE}
+                refetch={() => void refetch()}
+              />
+            </div>
+          ) : (
+            <iframe
+              className={styles.phoneContainer}
+              src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
+                ",",
+              )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}&targetOrigin=${targetOrigin}`}
+              title={WIDGET_DEMO_IFRAME_TITLE}
+              allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+              sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+            />
+          )}
+        </PhoneContainer>
+      </div>
+      <div className={styles.buttonContainer}>
+        <Button color="primary" variant="text" onClick={onReset}>
+          {RESET_BUTTON_TEXT}
+        </Button>
+      </div>
+    </Stack>
   );
 };
 
-export default Connect;
+export default ConnectWidget;
