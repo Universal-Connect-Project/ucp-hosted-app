@@ -110,7 +110,13 @@ describe("WidgetConfiguration", () => {
 
   it("calls onSubmit with the correct data when form is valid", async () => {
     const onSubmit = jest.fn();
-    render(<TestWrapper onSubmit={onSubmit} />);
+    render(
+      <TestWrapper
+        onSubmit={(data) => {
+          onSubmit(data);
+        }}
+      />,
+    );
 
     await userEvent.click(
       screen.getByLabelText(supportsJobTypeMap.transactions.displayName),
@@ -121,15 +127,12 @@ describe("WidgetConfiguration", () => {
       screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
     );
 
-    expect(onSubmit).toHaveBeenCalledWith(
-      {
-        accountNumber: true,
-        accountOwner: false,
-        transactions: true,
-        transactionHistory: false,
-        aggregator: "sophtron",
-      },
-      expect.anything(),
-    );
+    expect(onSubmit).toHaveBeenCalledWith({
+      accountNumber: true,
+      accountOwner: false,
+      transactions: true,
+      transactionHistory: false,
+      aggregator: "sophtron",
+    });
   });
 });
