@@ -31,7 +31,7 @@ export interface FormValues {
   aggregator: string;
 }
 interface WidgetConfigurationProps {
-  control: Control<FormValues, unknown, FormValues>;
+  control: Control<FormValues, undefined>;
   isJobTypeError: boolean;
   triggerJobTypesValidation: () => Promise<boolean>;
   validateAnyJobTypeSelected: (
