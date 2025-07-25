@@ -1,30 +1,85 @@
 import React from "react";
-import { render, screen, userEvent, waitFor } from "../shared/test/testUtils";
+import { render, screen, userEvent } from "../shared/test/testUtils";
+import { useForm } from "react-hook-form";
 import WidgetConfiguration from "./WidgetConfiguration";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import {
   CONFIGURATION_HEADER,
   JOB_TYPE_ERROR_MESSAGE,
   LAUNCH_BUTTON_TEXT,
-  RESET_BUTTON_TEXT,
-  WIDGET_DEMO_IFRAME_TITLE,
 } from "./constants";
+
+const defaultValues = {
+  accountNumber: true,
+  accountOwner: false,
+  transactions: false,
+  transactionHistory: false,
+  aggregator: "mx",
+};
+
+interface IFormValues {
+  accountNumber: boolean;
+  accountOwner: boolean;
+  transactions: boolean;
+  transactionHistory: boolean;
+  aggregator: string;
+}
+
+interface ITestWrapperProps {
+  onSubmit?: (data: IFormValues) => void;
+  formDefaultValues?: IFormValues;
+}
+
+const TestWrapper = ({
+  onSubmit = jest.fn(),
+  formDefaultValues = defaultValues,
+}: ITestWrapperProps) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    trigger,
+  } = useForm<IFormValues>({
+    defaultValues: formDefaultValues,
+    mode: "onChange",
+  });
+
+  const validateAnyJobTypeSelected = (
+    _value: string | boolean,
+    formValues: IFormValues,
+  ): boolean => {
+    return (
+      formValues.accountNumber ||
+      formValues.accountOwner ||
+      formValues.transactions ||
+      formValues.transactionHistory
+    );
+  };
+  const props = {
+    control,
+    isJobTypeError: !!(
+      errors.accountNumber ||
+      errors.accountOwner ||
+      errors.transactions ||
+      errors.transactionHistory
+    ),
+    triggerJobTypesValidation: () => trigger(),
+    validateAnyJobTypeSelected,
+    onSubmit: handleSubmit(onSubmit),
+  };
+
+  return <WidgetConfiguration {...props} />;
+};
 
 describe("WidgetConfiguration", () => {
   it("renders the initial configuration form", () => {
-    render(<WidgetConfiguration />);
+    render(<TestWrapper />);
     expect(screen.getByText(CONFIGURATION_HEADER)).toBeInTheDocument();
     expect(
       screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
     ).toBeChecked();
     expect(
       screen.getByLabelText(supportsJobTypeMap.accountOwner.displayName),
-    ).not.toBeChecked();
-    expect(
-      screen.getByLabelText(supportsJobTypeMap.transactions.displayName),
-    ).not.toBeChecked();
-    expect(
-      screen.getByLabelText(supportsJobTypeMap.transactionHistory.displayName),
     ).not.toBeChecked();
     expect(screen.getByText("MX")).toBeInTheDocument();
     expect(
@@ -33,45 +88,30 @@ describe("WidgetConfiguration", () => {
   });
 
   it("shows an error if Launch is clicked with no job types selected", async () => {
-    render(<WidgetConfiguration />);
-    await userEvent.click(
-      screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
+    const onSubmit = jest.fn();
+    render(
+      <TestWrapper
+        onSubmit={onSubmit}
+        formDefaultValues={{
+          ...defaultValues,
+          accountNumber: false,
+          accountOwner: false,
+          transactions: false,
+          transactionHistory: false,
+        }}
+      />,
     );
     await userEvent.click(
       screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
     );
     expect(screen.getByText(`*${JOB_TYPE_ERROR_MESSAGE}`)).toBeInTheDocument();
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it("doesn't allow submission if no jobtypes are selected requires re-submission after fixing the error", async () => {
-    render(<WidgetConfiguration />);
-    await userEvent.click(
-      screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
-    );
-    await userEvent.click(
-      screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
-    );
-    expect(screen.getByText(`*${JOB_TYPE_ERROR_MESSAGE}`)).toBeInTheDocument();
-    await userEvent.click(
-      screen.getByLabelText(supportsJobTypeMap.accountOwner.displayName),
-    );
-    expect(screen.queryByTestId("demo-component")).not.toBeInTheDocument();
-    await userEvent.click(
-      screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
-    );
-    expect(screen.getByTestId("demo-component")).toBeInTheDocument();
-    await waitFor(() => {
-      const iframe = screen.getByTitle(WIDGET_DEMO_IFRAME_TITLE);
-      expect(iframe).toBeInTheDocument();
-      expect(iframe).toHaveAttribute(
-        "src",
-        expect.stringContaining("jobTypes=accountOwner"),
-      );
-    });
-  });
+  it("calls onSubmit with the correct data when form is valid", async () => {
+    const onSubmit = jest.fn();
+    render(<TestWrapper onSubmit={onSubmit} />);
 
-  it("launches the Demo component with correct props when form is valid", async () => {
-    render(<WidgetConfiguration />);
     await userEvent.click(
       screen.getByLabelText(supportsJobTypeMap.transactions.displayName),
     );
@@ -81,34 +121,15 @@ describe("WidgetConfiguration", () => {
       screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
     );
 
-    expect(screen.getByTestId("demo-component")).toBeInTheDocument();
-
-    await waitFor(() => {
-      const iframe = screen.getByTitle(WIDGET_DEMO_IFRAME_TITLE);
-      expect(iframe).toBeInTheDocument();
-      expect(iframe).toHaveAttribute(
-        "src",
-        expect.stringContaining("aggregatorOverride=sophtron"),
-      );
-      expect(iframe).toHaveAttribute(
-        "src",
-        expect.stringContaining("jobTypes=accountNumber,transactions"),
-      );
-    });
-  });
-
-  it("resets the view when onReset is called from Demo component", async () => {
-    render(<WidgetConfiguration />);
-    await userEvent.click(
-      screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
+    expect(onSubmit).toHaveBeenCalledWith(
+      {
+        accountNumber: true,
+        accountOwner: false,
+        transactions: true,
+        transactionHistory: false,
+        aggregator: "sophtron",
+      },
+      expect.anything(),
     );
-
-    expect(screen.getByTestId("demo-component")).toBeInTheDocument();
-    await userEvent.click(
-      await screen.findByRole("button", { name: RESET_BUTTON_TEXT }),
-    );
-
-    expect(screen.getByText(CONFIGURATION_HEADER)).toBeInTheDocument();
-    expect(screen.queryByTestId("demo-component")).not.toBeInTheDocument();
   });
 });

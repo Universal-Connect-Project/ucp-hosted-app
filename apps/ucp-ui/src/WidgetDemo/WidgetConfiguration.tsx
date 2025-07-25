@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Stack,
   Paper,
@@ -18,10 +18,10 @@ import {
   AGGREGATORS,
 } from "./constants";
 import styles from "./widgetConfiguration.module.css";
-import ConnectWidget from "./ConnectWidget";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { allJobTypes, supportsJobTypeMap } from "../shared/constants/jobTypes";
+import { Control, Controller } from "react-hook-form";
+
 import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
+import { allJobTypes, supportsJobTypeMap } from "../shared/constants/jobTypes";
 
 export interface FormValues {
   accountNumber: boolean;
@@ -30,7 +30,16 @@ export interface FormValues {
   transactionHistory: boolean;
   aggregator: string;
 }
-
+interface WidgetConfigurationProps {
+  control: Control<FormValues, unknown, FormValues>;
+  isJobTypeError: boolean;
+  triggerJobTypesValidation: () => Promise<boolean>;
+  validateAnyJobTypeSelected: (
+    _value: string | boolean,
+    formValues: FormValues,
+  ) => boolean;
+  onSubmit: () => Promise<void> | void;
+}
 interface JobTypeCheckbox {
   defaultValue?: boolean;
   name: keyof FormValues;
@@ -39,76 +48,25 @@ interface JobTypeCheckbox {
 
 const formId = "demoForm";
 
-const WidgetConfiguration = () => {
-  const [submittedValues, setSubmittedValues] = useState<FormValues | null>(
-    null,
-  );
-
+const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
+  control,
+  isJobTypeError,
+  triggerJobTypesValidation,
+  validateAnyJobTypeSelected,
+  onSubmit,
+}) => {
   const checkboxes: JobTypeCheckbox[] = allJobTypes.map((jobType) => ({
     name: jobType as keyof FormValues,
     label: supportsJobTypeMap[jobType].displayName,
     defaultValue: jobType === "accountNumber",
   }));
-
-  const defaultValues = checkboxes.reduce(
-    (acc, { defaultValue, name }) => ({
-      ...acc,
-      [name]: !!defaultValue,
-    }),
-    {
-      aggregator: "mx",
-    },
-  );
-
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-    trigger,
-    reset,
-  } = useForm<FormValues>({
-    defaultValues,
-    mode: "onTouched",
-  });
-
-  const isJobTypeError = checkboxes.some(({ name }) => errors[name]);
-
-  const triggerJobTypesValidation = () =>
-    trigger(checkboxes.map(({ name }) => name));
-
-  const validateAnyJobTypeSelected = (
-    _value: string | boolean,
-    formValues: FormValues,
-  ): boolean => checkboxes.some(({ name }) => formValues[name]);
-
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    setSubmittedValues(data);
-  };
-
-  const handleReset = () => {
-    reset(defaultValues);
-    setSubmittedValues(null);
-  };
-
-  if (submittedValues) {
-    return (
-      <ConnectWidget
-        jobTypes={Object.entries(submittedValues)
-          .filter(([key, value]) => key !== "aggregator" && value)
-          .map(([key]) => key)}
-        aggregator={submittedValues.aggregator}
-        onReset={handleReset}
-      />
-    );
-  }
-
   return (
     <Paper className={styles.paper}>
       <Stack
         component="form"
         id={formId}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={onSubmit}
         spacing={5}
       >
         <Typography variant="h5" fontWeight={700}>
