@@ -1,7 +1,15 @@
 import { INSTITUTION_SERVICE_URL } from "../environment";
 import { getPerformanceServiceAccessToken } from "../utils/getPerformanceServiceAccessToken";
 
-interface InstitutionsResponse {}
+export interface Institution {
+  id: string;
+  name: string;
+  logo: string;
+}
+
+interface InstitutionsResponse {
+  institutions: Institution[];
+}
 
 export const getInstitutions = async ({
   page,
