@@ -21,10 +21,13 @@ const ConnectWidget = ({
   aggregator: string;
   onReset: () => void;
 }) => {
-  const userId = React.useMemo(
-    () => Math.random().toString(36).substring(2),
-    [],
-  );
+  const userId = React.useMemo(() => {
+    const array = new Uint8Array(16);
+    window.crypto.getRandomValues(array);
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+      "",
+    );
+  }, []);
 
   const {
     data: tokenData,
