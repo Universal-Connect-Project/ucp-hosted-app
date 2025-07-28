@@ -65,10 +65,8 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
       <Stack
         component="form"
         id={formId}
-        onSubmit={(e) => {
-          e.preventDefault();
-          void onSubmit();
-        }}
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        onSubmit={onSubmit}
         spacing={5}
       >
         <Typography variant="h5" fontWeight={700}>

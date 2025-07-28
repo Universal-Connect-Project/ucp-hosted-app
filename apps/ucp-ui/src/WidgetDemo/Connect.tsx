@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import ConnectWidget from "./ConnectWidget";
 import { allJobTypes, supportsJobTypeMap } from "../shared/constants/jobTypes";
@@ -38,6 +38,8 @@ const Connect: React.FC = () => {
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(
     null,
   );
+  const [institutionName, setInstitutionName] = useState("");
+  const [isConnectionSuccess, setIsConnectionSuccess] = useState(false);
   const dispatch = useAppDispatch();
 
   const checkboxes: JobTypeCheckbox[] = allJobTypes.map((jobType) => ({
@@ -94,7 +96,6 @@ const Connect: React.FC = () => {
   const aggregatorDisplayName =
     AGGREGATORS.find((agg) => agg.value === submittedValues?.aggregator)
       ?.label || submittedValues?.aggregator;
-  const institutionNameRef = useRef("");
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent<IframeMessage>) => {
@@ -104,16 +105,11 @@ const Connect: React.FC = () => {
 
       const { type, metadata } = event.data;
       if (type === INSTITUTION_SELECTED) {
-        institutionNameRef.current = metadata?.name || "";
+        setInstitutionName(metadata?.name as string);
       }
 
       if (type === MEMBER_CONNECTED) {
-        const newConnection: Connection = {
-          aggregator: aggregatorDisplayName || "",
-          jobTypes: jobTypeDisplayNames,
-          institution: institutionNameRef.current,
-        };
-        dispatch(addConnection(newConnection));
+        setIsConnectionSuccess(true);
       }
     };
 
@@ -121,7 +117,25 @@ const Connect: React.FC = () => {
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  });
+  }, [setIsConnectionSuccess, setInstitutionName]);
+
+  useEffect(() => {
+    if (isConnectionSuccess) {
+      const newConnection: Connection = {
+        aggregator: aggregatorDisplayName as string,
+        jobTypes: jobTypeDisplayNames,
+        institution: institutionName,
+      };
+      dispatch(addConnection(newConnection));
+      setIsConnectionSuccess(false);
+    }
+  }, [
+    isConnectionSuccess,
+    aggregatorDisplayName,
+    jobTypeDisplayNames,
+    institutionName,
+    dispatch,
+  ]);
 
   if (submittedValues) {
     return (

@@ -11,6 +11,7 @@ import FetchError from "../shared/components/FetchError";
 import styles from "./connectWidget.module.css";
 import { ComboJobTypes } from "@repo/shared-utils";
 import PhoneContainer from "./PhoneContainer";
+import { v4 as uuidv4 } from "uuid";
 
 const ConnectWidget = ({
   jobTypes,
@@ -22,11 +23,7 @@ const ConnectWidget = ({
   onReset: () => void;
 }) => {
   const userId = React.useMemo(() => {
-    const array = new Uint8Array(16);
-    crypto.getRandomValues(array);
-    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
-      "",
-    );
+    return uuidv4();
   }, []);
 
   const {
