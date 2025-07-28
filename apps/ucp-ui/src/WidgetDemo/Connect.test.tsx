@@ -14,7 +14,6 @@ import {
   MEMBER_CONNECTED,
 } from "./constants";
 import { createStore } from "../store";
-import { addConnection } from "../shared/reducers/demo";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 
@@ -47,7 +46,6 @@ describe("Connect", () => {
 
   it("dispatches addConnection on successful member connection", async () => {
     const store = createStore();
-    const dispatchSpy = jest.spyOn(store, "dispatch");
 
     render(<Connect />, { store });
     await userEvent.click(
@@ -77,19 +75,19 @@ describe("Connect", () => {
         data: { type: MEMBER_CONNECTED },
       }),
     );
-
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      addConnection({
+    await waitFor(() => {
+      const state = store.getState();
+      expect(state.demo.connections).toHaveLength(1);
+      expect(state.demo.connections[0]).toEqual({
         aggregator: "MX",
         jobTypes: ["Account Number", "Account Owner"],
         institution: "Test Institution",
-      }),
-    );
+      });
+    });
   });
 
   it("does not dispatch addConnection if origin is incorrect", () => {
     const store = createStore();
-    const dispatchSpy = jest.spyOn(store, "dispatch");
 
     render(<Connect />, { store });
 
@@ -111,9 +109,7 @@ describe("Connect", () => {
         data: { type: MEMBER_CONNECTED },
       }),
     );
-
-    expect(dispatchSpy).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: "demo/addConnection" }),
-    );
+    const state = store.getState();
+    expect(state.demo.connections).toHaveLength(0);
   });
 });

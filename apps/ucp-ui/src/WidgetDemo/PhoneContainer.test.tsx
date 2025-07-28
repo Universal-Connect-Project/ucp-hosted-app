@@ -16,14 +16,13 @@ describe("PhoneContainer", () => {
     await expectSkeletonLoader();
   });
 
-  it("renders the iframe with children", () => {
+  it("renders the provided children", () => {
     render(
       <PhoneContainer {...mockProps}>
-        <iframe title="Test Iframe" src="https://example.com" />{" "}
+        <div>Test Child</div>
       </PhoneContainer>,
     );
-    const iframe = screen.getByTitle("Test Iframe");
-    expect(iframe).toBeInTheDocument();
-    expect(iframe).toHaveAttribute("src", "https://example.com");
+    const child = screen.getByText("Test Child");
+    expect(child).toBeInTheDocument();
   });
 });

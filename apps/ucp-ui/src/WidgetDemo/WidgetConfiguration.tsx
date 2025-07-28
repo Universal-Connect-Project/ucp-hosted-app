@@ -15,51 +15,46 @@ import {
   LAUNCH_BUTTON_TEXT,
   CONFIGURATION_HEADER,
   JOB_TYPE_ERROR_MESSAGE,
-  AGGREGATORS,
+  checkboxes,
+  FormValues,
 } from "./constants";
 import styles from "./widgetConfiguration.module.css";
-import { Control, Controller } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldErrors,
+  UseFormTrigger,
+} from "react-hook-form";
 
 import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
-import { allJobTypes, supportsJobTypeMap } from "../shared/constants/jobTypes";
 
-export interface FormValues {
-  accountNumber: boolean;
-  accountOwner: boolean;
-  transactions: boolean;
-  transactionHistory: boolean;
-  aggregator: string;
-}
 interface WidgetConfigurationProps {
   control: Control<FormValues, undefined>;
-  isJobTypeError: boolean;
-  triggerJobTypesValidation: () => Promise<boolean>;
-  validateAnyJobTypeSelected: (
-    _value: string | boolean,
-    formValues: FormValues,
-  ) => boolean;
+  trigger: UseFormTrigger<FormValues>;
+  errors: FieldErrors<FormValues>;
   onSubmit: () => Promise<void> | void;
-}
-interface JobTypeCheckbox {
-  defaultValue?: boolean;
-  name: keyof FormValues;
-  label: string;
+  aggregators: { value: string; label: string }[] | undefined;
 }
 
 const formId = "demoForm";
 
 const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
   control,
-  isJobTypeError,
-  triggerJobTypesValidation,
-  validateAnyJobTypeSelected,
+  trigger,
+  errors,
   onSubmit,
+  aggregators,
 }) => {
-  const checkboxes: JobTypeCheckbox[] = allJobTypes.map((jobType) => ({
-    name: jobType as keyof FormValues,
-    label: supportsJobTypeMap[jobType].displayName,
-    defaultValue: jobType === "accountNumber",
-  }));
+  const isJobTypeError = checkboxes.some(({ name }) => errors[name]);
+
+  const triggerJobTypesValidation = () =>
+    trigger(checkboxes.map(({ name }) => name));
+
+  const validateAnyJobTypeSelected = (
+    _value: string | boolean,
+    formValues: FormValues,
+  ): boolean => checkboxes.some(({ name }) => formValues[name]);
+
   return (
     <Paper className={styles.paper}>
       <Stack
@@ -114,12 +109,11 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
               render={({ field }) => (
                 <TextField
                   fullWidth
-                  select
+                  select={!!aggregators?.length}
                   label="Aggregator"
-                  data-testid="aggregator-select"
                   {...field}
                 >
-                  {AGGREGATORS.map((aggregator) => (
+                  {aggregators?.map((aggregator) => (
                     <MenuItem key={aggregator.value} value={aggregator.value}>
                       {aggregator.label}
                     </MenuItem>

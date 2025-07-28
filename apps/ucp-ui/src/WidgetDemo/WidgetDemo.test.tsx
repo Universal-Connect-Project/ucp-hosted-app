@@ -10,6 +10,8 @@ describe("WidgetDemo", () => {
 
     expect(screen.getByText(CONNECT_TAB)).toBeInTheDocument();
     expect(screen.getByText(CONNECTIONS_TAB)).toBeInTheDocument();
+    expect(screen.getByText("Configuration")).toBeInTheDocument();
+    expect(screen.getByText("Job type*")).toBeInTheDocument();
   });
 
   it("switches tabs correctly", async () => {
