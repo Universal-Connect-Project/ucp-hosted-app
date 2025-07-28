@@ -21,7 +21,10 @@ const ConnectWidget = ({
   aggregator: string;
   onReset: () => void;
 }) => {
-  const userId = "some-user-id"; // Replace with actual user ID logic
+  const userId = React.useMemo(
+    () => Math.random().toString(36).substring(2),
+    [],
+  );
 
   const {
     data: tokenData,
@@ -29,7 +32,7 @@ const ConnectWidget = ({
     isLoading: tokenLoading,
     refetch,
   } = useGetDemoTokenQuery({
-    userId: userId as string,
+    userId,
   });
 
   const token = tokenData?.token;
