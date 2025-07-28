@@ -49,7 +49,7 @@ export const validateInstitutionsWithPerformanceQueryParams =
       pageSize: Joi.string().required(),
       search: Joi.string(),
       timeFrame: Joi.string()
-        .allow("")
+        .required()
         .valid(...Object.keys(TimeFrameToAggregateWindowMap)),
     }),
   );

@@ -72,7 +72,7 @@ interface QueryParams {
   page: string;
   pageSize: string;
   search?: string;
-  timeFrame?: string;
+  timeFrame: string;
 }
 
 export const getInstitutionsWithPerformance = async (
@@ -102,14 +102,14 @@ export const getInstitutionsWithPerformance = async (
         aggregators,
         institutions,
         jobTypes,
-        timeFrame: (timeFrame || "30d") as TimeFrame,
+        timeFrame: timeFrame as TimeFrame,
       })}
 
       ${createDurationQuery({
         aggregators,
         institutions,
         jobTypes,
-        timeFrame: (timeFrame || "30d") as TimeFrame,
+        timeFrame: timeFrame as TimeFrame,
       })}
       
       union(tables: [successRates, durations])
