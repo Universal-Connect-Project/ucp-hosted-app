@@ -57,11 +57,6 @@ describe("institutions with performance metrics", () => {
           expect(response.body.institutions).to.be.an("array");
           expect(response.body.institutions).to.have.length.greaterThan(0);
 
-          cy.log(
-            "Institutions with performance metrics:",
-            response.body.institutions,
-          );
-
           expect(
             response.body.institutions.some(({ performance }) =>
               Object.values(performance).some(

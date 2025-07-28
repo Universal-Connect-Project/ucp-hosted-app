@@ -90,7 +90,6 @@ jobs:
           wait-on: "http://localhost:8088/ping, http://localhost:8090/ping"
           spec: apps/performance-service/cypress/e2e/general/*.cy.ts
         env:
-          DEBUG: 'cypress:*' # Enables all Cypress debug logs
           AUTH0_PERFORMANCE_CLIENT_SECRET: ${{ secrets.PERFORMANCE_SERVICE_CLIENT_SECRET }}
           REDIS_SERVER: redis://localhost:6379
           INFLUX_URL: http://localhost:8086
