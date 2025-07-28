@@ -21,12 +21,23 @@ const createMetricQuery =
   ({
     aggregators,
     institutions,
+    jobTypes,
     timeFrame,
   }: {
     aggregators: Aggregator[];
     institutions: Institution[];
+    jobTypes?: string;
     timeFrame: TimeFrame;
-  }) => `
+  }) => {
+    const formattedJobTypes = jobTypes
+      ?.split(",")
+      .map((jobType) => jobType.split("|").sort().join("|"));
+
+    const jobTypesFilter = formattedJobTypes?.length
+      ? `|> filter(fn: (r) => ${formattedJobTypes.map((type) => `r.jobTypes == string(v: "${type}")`).join(" or ")})`
+      : "";
+
+    return `
 ${resultVariableName} = from(bucket: "${BUCKET}")
   |> range(start: -${timeFrame})
   |> filter(fn: (r) => ${aggregators
@@ -35,11 +46,13 @@ ${resultVariableName} = from(bucket: "${BUCKET}")
   |> filter(fn: (r) => ${institutions
     .map(({ id }) => `r.institutionId == string(v: "${id}")`)
     .join(" or ")})
+  ${jobTypesFilter}
   |> filter(fn: (r) => r._measurement == "${measurement}")
   |> group(columns: ["aggregatorId", "institutionId"])
   |> mean()
   |> set(key: "_field", value: "${value}")
 `;
+  };
 
 const createSuccessRateQuery = createMetricQuery({
   measurement: "successRateMetrics",
@@ -87,12 +100,14 @@ export const getInstitutionsWithPerformance = async (
       ${createSuccessRateQuery({
         aggregators,
         institutions,
+        jobTypes,
         timeFrame: (timeFrame || "30d") as TimeFrame,
       })}
 
       ${createDurationQuery({
         aggregators,
         institutions,
+        jobTypes,
         timeFrame: (timeFrame || "30d") as TimeFrame,
       })}
       
