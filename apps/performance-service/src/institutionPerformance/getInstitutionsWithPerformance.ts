@@ -7,6 +7,7 @@ import { BUCKET, queryApi } from "../services/influxDb";
 import { getAggregators } from "../shared/requests/getAggregators";
 import { Aggregator } from "@repo/shared-utils";
 import { TimeFrame } from "../shared/consts/timeFrame";
+import groupBy from "lodash.groupby";
 
 const createMetricQuery =
   ({
@@ -91,7 +92,7 @@ export const getInstitutionsWithPerformance = async (
     ).institutions;
 
     if (!institutions.length) {
-      return res.send({ institutions, performanceResults: [] });
+      return res.send({ institutions: [], performanceResults: [] });
     }
 
     const aggregators = await getAggregators();
@@ -122,7 +123,32 @@ export const getInstitutionsWithPerformance = async (
 
     const performanceResults = await queryApi.collectRows(fluxQuery);
 
-    res.send({ institutions, performanceResults });
+    const groupedByInstitutionId = groupBy(performanceResults, "institutionId");
+
+    const institutionsWithPerformance = institutions.map((institution) => {
+      const performance = groupedByInstitutionId[institution.id] || [];
+      return {
+        ...institution,
+        performance: performance.reduce<
+          Record<string, { avgSuccessRate: number; avgDuration: number }>
+        >((acc, curr) => {
+          const { aggregatorId, avgSuccessRate, avgDuration } = curr as {
+            aggregatorId: string;
+            avgSuccessRate: number;
+            avgDuration: number;
+          };
+          return {
+            ...acc,
+            [aggregatorId]: {
+              avgSuccessRate,
+              avgDuration,
+            },
+          };
+        }, {}),
+      };
+    });
+
+    res.send({ aggregators, institutions: institutionsWithPerformance });
   } catch (error) {
     res.status(400).send({ error: "Internal Server Error" });
   }
