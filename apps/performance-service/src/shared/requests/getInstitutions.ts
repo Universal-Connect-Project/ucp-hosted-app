@@ -27,7 +27,6 @@ export const getInstitutions = async ({
   );
 
   url.search = new URLSearchParams({
-    includeInactiveIntegrations: "true",
     page,
     pageSize,
     search: search || "",
