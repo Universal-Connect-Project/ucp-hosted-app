@@ -83,24 +83,18 @@ export const getPerformanceAuthInstitutions = async (
   };
 
   try {
-    let order: OrderItem[] = [];
     const { limit, offset, page } = getPaginationOptions(req);
 
     const sortBy = req.query?.sortBy
       ? parseSort(req.query.sortBy as string)
       : parseSort("name:ASC");
 
-    if (sortBy.column === "name") {
-      order = [
-        ["createdAt", SortDirection.DESC],
-        ["name", sortBy.direction as SortDirection],
-      ];
-    } else {
-      order = [
-        [sortBy.column, sortBy.direction as SortDirection],
-        ["name", SortDirection.ASC],
-      ];
-    }
+    const order: OrderItem[] = [
+      [sortBy.column, sortBy.direction as SortDirection],
+      sortBy.column === "name"
+        ? ["createdAt", SortDirection.DESC]
+        : ["name", SortDirection.ASC],
+    ];
 
     const { count, rows } = await Institution.findAndCountAll({
       distinct: true,
@@ -109,6 +103,7 @@ export const getPerformanceAuthInstitutions = async (
       limit,
       offset,
       order,
+      raw: true,
     });
 
     return res.status(200).json({
