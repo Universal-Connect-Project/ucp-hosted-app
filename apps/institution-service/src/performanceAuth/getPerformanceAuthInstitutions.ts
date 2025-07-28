@@ -41,14 +41,12 @@ const getPaginationOptions = (req: Request): PaginationOptions => {
 };
 
 type WhereConditions = {
-  [key: string]: unknown;
   [Op.or]?: Array<
     | {
         name?: { [Op.iLike]: string };
       }
     | Literal
   >;
-  [Op.and]?: unknown;
 };
 
 const whereInstitutionConditions = (req: Request): WhereConditions => {
