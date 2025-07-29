@@ -33,6 +33,7 @@ import { useGetAggregatorsQuery } from "../shared/api/aggregators";
 import { SkeletonIfLoading } from "../shared/components/Skeleton";
 import FetchError from "../shared/components/FetchError";
 import { AGGREGATORS_ERROR_TEXT } from "../shared/components/Forms/constants";
+import { createWidgetEnabledAggregatorToLabelMap } from "./utils";
 
 interface WidgetConfigurationProps {
   control: Control<FormValues, undefined>;
@@ -53,14 +54,7 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
 
   const aggregators = data?.aggregators;
 
-  const valueToLabelMap = aggregators
-    ?.filter((aggregator: { name: string }) =>
-      widgetEnabledAggregators.includes(aggregator.name),
-    )
-    .map((aggregator: { name: string; displayName: string }) => ({
-      value: aggregator.name,
-      label: aggregator.displayName,
-    }));
+  const valueToLabelMap = createWidgetEnabledAggregatorToLabelMap(aggregators);
 
   const isJobTypeError = checkboxes.some(({ name }) => errors[name]);
 
@@ -144,10 +138,10 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
                     label="Aggregator"
                     {...field}
                   >
-                    {valueToLabelMap &&
-                      valueToLabelMap.map(({ value, label }) => (
+                    {aggregators?.length &&
+                      widgetEnabledAggregators.map((value) => (
                         <MenuItem key={value} value={value}>
-                          {label}
+                          {valueToLabelMap?.[value]}
                         </MenuItem>
                       ))}
                   </TextField>

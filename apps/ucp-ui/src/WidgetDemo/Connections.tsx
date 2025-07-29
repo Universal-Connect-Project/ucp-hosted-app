@@ -14,7 +14,7 @@ import { useAppSelector } from "../shared/utils/redux";
 import { getConnections } from "../shared/reducers/demo";
 import styles from "./connections.module.css";
 import { useGetAggregatorsQuery } from "../shared/api/aggregators";
-import { widgetEnabledAggregators } from "./constants";
+import { createWidgetEnabledAggregatorToLabelMap } from "./utils";
 
 const Connections = () => {
   const connections = useAppSelector(getConnections);
@@ -22,17 +22,7 @@ const Connections = () => {
   const { data } = useGetAggregatorsQuery();
 
   const aggregators = data?.aggregators;
-  const valueToLabelMap: Record<string, string> | undefined = aggregators
-    ?.filter((aggregator: { name: string }) =>
-      widgetEnabledAggregators.includes(aggregator.name),
-    )
-    .reduce(
-      (acc, aggregator) => ({
-        ...acc,
-        [aggregator.name]: aggregator.displayName,
-      }),
-      {},
-    );
+  const valueToLabelMap = createWidgetEnabledAggregatorToLabelMap(aggregators);
 
   return (
     <Stack spacing={2}>
