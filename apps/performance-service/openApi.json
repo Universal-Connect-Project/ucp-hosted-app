@@ -109,6 +109,132 @@
         }
       }
     },
+    "/metrics/institutions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Get a list of institutions with performance metrics",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "example": 30,
+            "description": "Page to be returned in the paginated response."
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "example": 3,
+            "description": "The number of institutions to be returned in the paginated response."
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "example": "American"
+            },
+            "required": false,
+            "example": "American",
+            "description": "Search term for Institutions query"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "example": "createdAt:DESC",
+            "description": "Field to sort by. Use the field name followed by an optional colon and the sort direction: ASC (default) or DESC."
+          },
+          {
+            "name": "jobTypes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "transactions",
+                "transactions|accountOwner",
+                "accountNumber|transactions"
+              ]
+            },
+            "description": "A comma-separated list of job types. A combination of jobs can be achieved by passing a \"|\" separated list of job types. Defaults to no filtering by jobTypes."
+          },
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["1d", "1w", "30d", "180d", "1y"]
+            },
+            "description": "Time frame for the metrics (e.g., '30d'). Defaults to 30d."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "currentPage": 30,
+                    "pageSize": 3,
+                    "totalRecords": 29489,
+                    "totalPages": 9830,
+                    "aggregators": [
+                      {
+                        "id": 2,
+                        "name": "finicity",
+                        "displayName": "Finicity",
+                        "logo": "https://universalconnectproject.org/images/ucp-logo-icon.svg",
+                        "createdAt": "2024-10-09T17:01:07.593Z",
+                        "updatedAt": "2024-10-09T17:01:07.593Z"
+                      }
+                    ],
+                    "institutions": [
+                      {
+                        "id": "ed625b3a-cd81-4aa8-a6f6-2d8321ea47b0",
+                        "name": "All Data Testing",
+                        "logo": null,
+                        "performance": {
+                          "mx": {
+                            "avgSuccessRate": 0,
+                            "avgDuration": 133000
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/metrics/allPerformanceData": {
       "get": {
         "security": [
