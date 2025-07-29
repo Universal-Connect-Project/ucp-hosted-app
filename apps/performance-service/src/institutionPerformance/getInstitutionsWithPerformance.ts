@@ -83,6 +83,8 @@ export const getInstitutionsWithPerformance = async (
     req.query as unknown as QueryParams;
 
   try {
+    const aggregators = await getAggregators();
+
     const institutions = await getInstitutions({
       page,
       pageSize,
@@ -90,10 +92,8 @@ export const getInstitutionsWithPerformance = async (
     });
 
     if (!institutions.length) {
-      return res.send({ institutions: [], performanceResults: [] });
+      return res.send({ aggregators, institutions: [] });
     }
-
-    const aggregators = await getAggregators();
 
     const fluxQuery = `
       ${createSuccessRateQuery({
