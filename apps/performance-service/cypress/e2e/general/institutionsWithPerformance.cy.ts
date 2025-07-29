@@ -107,7 +107,9 @@ describe("institutions with performance metrics", () => {
           expect(
             response.body.institutions.some(({ performance }) =>
               Object.values(performance).some(
-                (value) => value.avgSuccessRate && value.avgDuration,
+                (value) =>
+                  (value.avgSuccessRate ?? false) &&
+                  (value.avgDuration ?? false),
               ),
             ),
           ).to.be.true;
