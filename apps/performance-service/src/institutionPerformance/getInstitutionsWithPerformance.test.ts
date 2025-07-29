@@ -66,7 +66,13 @@ describe("getInstitutionsWithPerformance", () => {
   it("returns an empty institutions list when no institutions are found", async () => {
     server.use(
       http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, () =>
-        HttpResponse.json({ institutions: [] }),
+        HttpResponse.json({
+          currentPage: 1,
+          pageSize: 10,
+          totalRecords: 0,
+          totalPages: 0,
+          institutions: [],
+        }),
       ),
     );
 
@@ -83,8 +89,20 @@ describe("getInstitutionsWithPerformance", () => {
 
     await getInstitutionsWithPerformance(req, res);
 
-    const { aggregators, institutions } = (res.send as jest.Mock).mock
-      .calls[0][0];
+    const {
+      aggregators,
+      currentPage,
+      pageSize,
+      totalRecords,
+      totalPages,
+      institutions,
+    } = (res.send as jest.Mock).mock.calls[0][0];
+
+    expect(aggregators).toEqual(testAggregators);
+    expect(currentPage).toEqual(1);
+    expect(pageSize).toEqual(10);
+    expect(totalRecords).toEqual(0);
+    expect(totalPages).toEqual(0);
 
     expect(aggregators).toEqual(testAggregators);
     expect(institutions).toEqual([]);
@@ -144,7 +162,21 @@ describe("getInstitutionsWithPerformance", () => {
     const getFirstArg = (callIndex: number) =>
       (res.send as jest.Mock).mock.calls[callIndex][0];
 
-    expect(getFirstArg(0).aggregators).toEqual(testAggregators);
+    const firstCallFirstArg = getFirstArg(0);
+
+    expect(firstCallFirstArg.aggregators).toEqual(testAggregators);
+    expect(firstCallFirstArg.currentPage).toEqual(
+      testInstitutionsResponse.currentPage,
+    );
+    expect(firstCallFirstArg.pageSize).toEqual(
+      testInstitutionsResponse.pageSize,
+    );
+    expect(firstCallFirstArg.totalRecords).toEqual(
+      testInstitutionsResponse.totalRecords,
+    );
+    expect(firstCallFirstArg.totalPages).toEqual(
+      testInstitutionsResponse.totalPages,
+    );
 
     const getPerformanceResults = (callIndex: number) =>
       getFirstArg(callIndex).institutions[0].performance;

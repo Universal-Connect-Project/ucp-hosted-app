@@ -1,3 +1,4 @@
+import { Aggregator } from "@repo/shared-utils";
 import { INSTITUTION_SERVICE_URL } from "../environment";
 import { getPerformanceServiceAccessToken } from "../utils/getPerformanceServiceAccessToken";
 
@@ -8,7 +9,12 @@ export interface Institution {
 }
 
 interface InstitutionsResponse {
+  currentPage: number;
   institutions: Institution[];
+  pageSize: number;
+  totalRecords: number;
+  totalPages: number;
+  aggregators: Aggregator[];
 }
 
 export const getInstitutions = async ({
@@ -19,7 +25,7 @@ export const getInstitutions = async ({
   page: string;
   pageSize: string;
   search?: string;
-}): Promise<Institution[]> => {
+}): Promise<InstitutionsResponse> => {
   const token = await getPerformanceServiceAccessToken();
 
   const url = new URL(
@@ -47,5 +53,5 @@ export const getInstitutions = async ({
     throw new Error(errorData.error);
   }
 
-  return ((await response.json()) as InstitutionsResponse).institutions;
+  return (await response.json()) as InstitutionsResponse;
 };

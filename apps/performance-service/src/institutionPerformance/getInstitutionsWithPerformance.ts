@@ -85,14 +85,23 @@ export const getInstitutionsWithPerformance = async (
   try {
     const aggregators = await getAggregators();
 
-    const institutions = await getInstitutions({
+    const institutionsResponse = await getInstitutions({
       page,
       pageSize,
       search,
     });
 
+    const paginationInfo = {
+      currentPage: institutionsResponse.currentPage,
+      pageSize: institutionsResponse.pageSize,
+      totalRecords: institutionsResponse.totalRecords,
+      totalPages: institutionsResponse.totalPages,
+    };
+
+    const institutions = institutionsResponse.institutions;
+
     if (!institutions.length) {
-      return res.send({ aggregators, institutions: [] });
+      return res.send({ aggregators, institutions: [], ...paginationInfo });
     }
 
     const fluxQuery = `
@@ -146,7 +155,11 @@ export const getInstitutionsWithPerformance = async (
       };
     });
 
-    res.send({ aggregators, institutions: institutionsWithPerformance });
+    res.send({
+      aggregators,
+      institutions: institutionsWithPerformance,
+      ...paginationInfo,
+    });
   } catch (error) {
     res.status(400).send({ error: "Internal Server Error" });
   }

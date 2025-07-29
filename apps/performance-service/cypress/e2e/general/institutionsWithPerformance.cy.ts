@@ -67,7 +67,7 @@ describe("institutions with performance metrics", () => {
       });
     });
 
-    it("returns an aggregators list and an institutions list with performance metrics", () => {
+    it("returns an aggregators list, an institutions list with performance metrics, and pagination data", () => {
       cy.request({
         url: "metrics/institutions",
         method: "GET",
@@ -88,6 +88,10 @@ describe("institutions with performance metrics", () => {
             aggregators: Array<{
               name: string;
             }>;
+            currentPage: number;
+            pageSize: number;
+            totalRecords: number;
+            totalPages: number;
             institutions: Array<{
               performance: Record<
                 string,
@@ -103,6 +107,11 @@ describe("institutions with performance metrics", () => {
 
           expect(response.body.institutions).to.be.an("array");
           expect(response.body.institutions).to.have.length.greaterThan(0);
+
+          expect(response.body.currentPage).to.eq(1);
+          expect(response.body.pageSize).to.eq(10);
+          expect(response.body.totalRecords).to.be.greaterThan(0);
+          expect(response.body.totalPages).to.be.greaterThan(0);
 
           expect(
             response.body.institutions.some(({ performance }) =>

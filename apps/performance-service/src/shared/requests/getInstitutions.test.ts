@@ -26,7 +26,7 @@ describe("getInstitutions", () => {
       pageSize,
     });
 
-    expect(institutions).toEqual(testInstitutionsResponse.institutions);
+    expect(institutions).toEqual(testInstitutionsResponse);
 
     expect(queryParams).toEqual({
       page,

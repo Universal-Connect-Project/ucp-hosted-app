@@ -1,4 +1,8 @@
 export const testInstitutionsResponse = {
+  currentPage: 1,
+  pageSize: 10,
+  totalRecords: 1,
+  totalPages: 1,
   institutions: [
     {
       id: "uniqueInstitutionIdForUnitTesting",
