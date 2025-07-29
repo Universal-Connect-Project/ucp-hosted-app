@@ -83,13 +83,11 @@ export const getInstitutionsWithPerformance = async (
     req.query as unknown as QueryParams;
 
   try {
-    const institutions = (
-      await getInstitutions({
-        page,
-        pageSize,
-        search,
-      })
-    ).institutions;
+    const institutions = await getInstitutions({
+      page,
+      pageSize,
+      search,
+    });
 
     if (!institutions.length) {
       return res.send({ institutions: [], performanceResults: [] });

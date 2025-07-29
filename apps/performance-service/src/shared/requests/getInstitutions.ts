@@ -19,7 +19,7 @@ export const getInstitutions = async ({
   page: string;
   pageSize: string;
   search?: string;
-}): Promise<InstitutionsResponse> => {
+}): Promise<Institution[]> => {
   const token = await getPerformanceServiceAccessToken();
 
   const url = new URL(
@@ -47,5 +47,5 @@ export const getInstitutions = async ({
     throw new Error(errorData.error);
   }
 
-  return (await response.json()) as InstitutionsResponse;
+  return ((await response.json()) as InstitutionsResponse).institutions;
 };
