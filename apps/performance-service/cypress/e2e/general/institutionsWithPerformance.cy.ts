@@ -1,8 +1,53 @@
+import {
+  JOB_TYPES_ERROR_TEXT,
+  TIME_FRAME_NOT_REQUIRED_ERROR_TEXT,
+} from "@repo/shared-utils";
 import { UCP_UI_USER_ACCESS_TOKEN } from "../../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
 
 describe("institutions with performance metrics", () => {
   describe("GET /metrics/institutions", () => {
+    it("fails with improper parameters", () => {
+      const validQs = {
+        page: 1,
+        pageSize: 10,
+        search: "all data testing",
+        timeFrame: "30d",
+      };
+
+      [
+        {
+          qs: { ...validQs, page: undefined },
+          error: '"page" is not allowed to be empty',
+        },
+        {
+          qs: { ...validQs, pageSize: undefined },
+          error: '"pageSize" is not allowed to be empty',
+        },
+        {
+          qs: { ...validQs, timeFrame: "junk" },
+          error: TIME_FRAME_NOT_REQUIRED_ERROR_TEXT,
+        },
+        {
+          qs: { ...validQs, jobTypes: "junk" },
+          error: JOB_TYPES_ERROR_TEXT,
+        },
+      ].forEach(({ qs, error }) => {
+        cy.request({
+          failOnStatusCode: false,
+          url: "metrics/institutions",
+          method: "GET",
+          qs,
+          headers: {
+            Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
+          },
+        }).then((response: Cypress.Response<{ error: string }>) => {
+          expect(response.status).to.eq(400);
+          expect(response.body.error).to.eq(error);
+        });
+      });
+    });
+
     it("fails on improper authorization", () => {
       cy.request({
         failOnStatusCode: false,
@@ -27,10 +72,12 @@ describe("institutions with performance metrics", () => {
         url: "metrics/institutions",
         method: "GET",
         qs: {
+          jobTypes:
+            "accountOwner,accountNumber,transactions,transactionHistory",
           page: 1,
           pageSize: 10,
           search: "all data testing",
-          timeFrame: "30d",
+          timeFrame: "180d",
         },
         headers: {
           Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
