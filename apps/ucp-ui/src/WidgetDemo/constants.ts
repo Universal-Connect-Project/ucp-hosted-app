@@ -30,5 +30,4 @@ export interface JobTypeCheckbox {
 export const checkboxes: JobTypeCheckbox[] = allJobTypes.map((jobType) => ({
   name: jobType as keyof FormValues,
   label: supportsJobTypeMap[jobType].displayName,
-  defaultValue: jobType === "accountNumber",
 }));

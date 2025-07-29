@@ -22,14 +22,17 @@ const Connections = () => {
   const { data } = useGetAggregatorsQuery();
 
   const aggregators = data?.aggregators;
-  const valueToLabelMap = aggregators
+  const valueToLabelMap: Record<string, string> | undefined = aggregators
     ?.filter((aggregator: { name: string }) =>
       widgetEnabledAggregators.includes(aggregator.name),
     )
-    .map((aggregator: { name: string; displayName: string }) => ({
-      value: aggregator.name,
-      label: aggregator.displayName,
-    }));
+    .reduce(
+      (acc, aggregator) => ({
+        ...acc,
+        [aggregator.name]: aggregator.displayName,
+      }),
+      {},
+    );
 
   return (
     <Stack spacing={2}>
@@ -48,11 +51,7 @@ const Connections = () => {
                 <TableCell>{connection.institution}</TableCell>
                 <TableCell>{connection.jobTypes.join(", ")}</TableCell>
                 <TableCell>
-                  {
-                    valueToLabelMap?.find(
-                      (item) => item.value === connection.aggregator,
-                    )?.label
-                  }
+                  {valueToLabelMap?.[connection.aggregator]}
                 </TableCell>
               </TableRow>
             ))}

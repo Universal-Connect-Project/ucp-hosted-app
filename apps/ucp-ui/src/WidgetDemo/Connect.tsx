@@ -30,9 +30,9 @@ const Connect: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const defaultValues = checkboxes.reduce(
-    (acc, { defaultValue, name }) => ({
+    (acc, { name }) => ({
       ...acc,
-      [name]: !!defaultValue,
+      [name]: false,
     }),
     {
       aggregator: "",
@@ -45,7 +45,6 @@ const Connect: React.FC = () => {
     handleSubmit,
     trigger,
     reset,
-    setValue,
   } = useForm<FormValues>({
     defaultValues,
     mode: "onTouched",
@@ -88,6 +87,7 @@ const Connect: React.FC = () => {
     const jobTypeDisplayNames = Object.entries(submittedValues || {})
       .filter(([key, value]) => key !== "aggregator" && value)
       .map(([key]) => supportsJobTypeMap[key as keyof FormValues].displayName);
+
     if (isConnectionSuccess) {
       const newConnection: Connection = {
         aggregator: submittedValues?.aggregator as string,
@@ -117,7 +117,6 @@ const Connect: React.FC = () => {
       errors={errors}
       trigger={trigger}
       onSubmit={handleSubmit(onSubmit)}
-      setValue={setValue}
     />
   );
 };

@@ -25,7 +25,6 @@ import {
   Controller,
   FieldErrors,
   UseFormTrigger,
-  UseFormSetValue,
 } from "react-hook-form";
 
 import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
@@ -40,7 +39,6 @@ interface WidgetConfigurationProps {
   trigger: UseFormTrigger<FormValues>;
   errors: FieldErrors<FormValues>;
   onSubmit: () => Promise<void> | void;
-  setValue: UseFormSetValue<FormValues>;
 }
 
 const formId = "demoForm";
@@ -50,7 +48,6 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
   trigger,
   errors,
   onSubmit,
-  setValue,
 }) => {
   const { data, isError, isLoading, refetch } = useGetAggregatorsQuery();
 
@@ -64,12 +61,6 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
       value: aggregator.name,
       label: aggregator.displayName,
     }));
-
-  React.useEffect(() => {
-    if (valueToLabelMap?.length) {
-      setValue("aggregator", valueToLabelMap[0].value);
-    }
-  }, [valueToLabelMap, setValue]);
 
   const isJobTypeError = checkboxes.some(({ name }) => errors[name]);
 
@@ -139,13 +130,15 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
               name="aggregator"
               control={control}
               rules={{ required: REQUIRED_ERROR_TEXT }}
-              render={({ field }) => (
+              render={({ field, fieldState: { error } }) => (
                 <SkeletonIfLoading
                   className={styles.skeleton}
                   isLoading={isLoading}
                 >
                   <TextField
                     disabled={isError}
+                    error={!!error}
+                    helperText={error?.message}
                     fullWidth
                     select={!!aggregators?.length}
                     label="Aggregator"
