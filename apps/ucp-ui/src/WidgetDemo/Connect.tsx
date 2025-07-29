@@ -4,7 +4,6 @@ import ConnectWidget from "./ConnectWidget";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import WidgetConfiguration from "./WidgetConfiguration";
 import {
-  widgetEnabledAggregators,
   INSTITUTION_SELECTED,
   MEMBER_CONNECTED,
   FormValues,
@@ -13,12 +12,6 @@ import {
 import { useAppDispatch } from "../shared/utils/redux";
 import { addConnection, Connection } from "../shared/reducers/demo";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
-import { useGetAggregatorsQuery } from "../shared/api/aggregators";
-import { Stack } from "@mui/material";
-import { AGGREGATORS_ERROR_TEXT } from "../shared/components/Forms/constants";
-import FetchError from "../shared/components/FetchError";
-import { SkeletonIfLoading } from "../shared/components/Skeleton";
-import styles from "./connect.module.css";
 
 interface IframeMessage {
   type: string;
@@ -36,25 +29,13 @@ const Connect: React.FC = () => {
   const [isConnectionSuccess, setIsConnectionSuccess] = useState(false);
   const dispatch = useAppDispatch();
 
-  const { data, isLoading, isError, refetch } = useGetAggregatorsQuery();
-  const aggregators = data?.aggregators;
-
-  const valueToLabelMap = aggregators
-    ?.filter((aggregator: { name: string }) =>
-      widgetEnabledAggregators.includes(aggregator.name),
-    )
-    .map((aggregator: { name: string; displayName: string }) => ({
-      value: aggregator.name,
-      label: aggregator.displayName,
-    }));
-
   const defaultValues = checkboxes.reduce(
     (acc, { defaultValue, name }) => ({
       ...acc,
       [name]: !!defaultValue,
     }),
     {
-      aggregator: "mx",
+      aggregator: "",
     },
   );
 
@@ -64,6 +45,7 @@ const Connect: React.FC = () => {
     handleSubmit,
     trigger,
     reset,
+    setValue,
   } = useForm<FormValues>({
     defaultValues,
     mode: "onTouched",
@@ -106,25 +88,16 @@ const Connect: React.FC = () => {
     const jobTypeDisplayNames = Object.entries(submittedValues || {})
       .filter(([key, value]) => key !== "aggregator" && value)
       .map(([key]) => supportsJobTypeMap[key as keyof FormValues].displayName);
-    const aggregatorDisplayName =
-      valueToLabelMap?.find((agg) => agg.value === submittedValues?.aggregator)
-        ?.label || submittedValues?.aggregator;
     if (isConnectionSuccess) {
       const newConnection: Connection = {
-        aggregator: aggregatorDisplayName as string,
+        aggregator: submittedValues?.aggregator as string,
         jobTypes: jobTypeDisplayNames,
         institution: institutionName,
       };
       dispatch(addConnection(newConnection));
       setIsConnectionSuccess(false);
     }
-  }, [
-    isConnectionSuccess,
-    institutionName,
-    dispatch,
-    submittedValues,
-    valueToLabelMap,
-  ]);
+  }, [isConnectionSuccess, institutionName, dispatch, submittedValues]);
 
   if (submittedValues) {
     return (
@@ -139,24 +112,13 @@ const Connect: React.FC = () => {
   }
 
   return (
-    <Stack>
-      {isError ? (
-        <FetchError
-          description={AGGREGATORS_ERROR_TEXT}
-          refetch={() => void refetch()}
-        />
-      ) : (
-        <SkeletonIfLoading className={styles.skeleton} isLoading={isLoading}>
-          <WidgetConfiguration
-            control={control}
-            errors={errors}
-            trigger={trigger}
-            onSubmit={handleSubmit(onSubmit)}
-            aggregators={valueToLabelMap}
-          />
-        </SkeletonIfLoading>
-      )}
-    </Stack>
+    <WidgetConfiguration
+      control={control}
+      errors={errors}
+      trigger={trigger}
+      onSubmit={handleSubmit(onSubmit)}
+      setValue={setValue}
+    />
   );
 };
 

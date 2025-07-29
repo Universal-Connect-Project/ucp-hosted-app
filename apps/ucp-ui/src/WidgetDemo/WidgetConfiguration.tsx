@@ -17,6 +17,7 @@ import {
   JOB_TYPE_ERROR_MESSAGE,
   checkboxes,
   FormValues,
+  widgetEnabledAggregators,
 } from "./constants";
 import styles from "./widgetConfiguration.module.css";
 import {
@@ -24,16 +25,22 @@ import {
   Controller,
   FieldErrors,
   UseFormTrigger,
+  UseFormSetValue,
 } from "react-hook-form";
 
 import { RequiredCheckboxGroupHeader } from "../shared/components/RequiredCheckboxGroupHeader";
+import { REQUIRED_ERROR_TEXT } from "../shared/constants/validation";
+import { useGetAggregatorsQuery } from "../shared/api/aggregators";
+import { SkeletonIfLoading } from "../shared/components/Skeleton";
+import FetchError from "../shared/components/FetchError";
+import { AGGREGATORS_ERROR_TEXT } from "../shared/components/Forms/constants";
 
 interface WidgetConfigurationProps {
   control: Control<FormValues, undefined>;
   trigger: UseFormTrigger<FormValues>;
   errors: FieldErrors<FormValues>;
   onSubmit: () => Promise<void> | void;
-  aggregators: { value: string; label: string }[] | undefined;
+  setValue: UseFormSetValue<FormValues>;
 }
 
 const formId = "demoForm";
@@ -43,8 +50,27 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
   trigger,
   errors,
   onSubmit,
-  aggregators,
+  setValue,
 }) => {
+  const { data, isError, isLoading, refetch } = useGetAggregatorsQuery();
+
+  const aggregators = data?.aggregators;
+
+  const valueToLabelMap = aggregators
+    ?.filter((aggregator: { name: string }) =>
+      widgetEnabledAggregators.includes(aggregator.name),
+    )
+    .map((aggregator: { name: string; displayName: string }) => ({
+      value: aggregator.name,
+      label: aggregator.displayName,
+    }));
+
+  React.useEffect(() => {
+    if (valueToLabelMap?.length) {
+      setValue("aggregator", valueToLabelMap[0].value);
+    }
+  }, [valueToLabelMap, setValue]);
+
   const isJobTypeError = checkboxes.some(({ name }) => errors[name]);
 
   const triggerJobTypesValidation = () =>
@@ -64,6 +90,12 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
         onSubmit={onSubmit}
         spacing={5}
       >
+        {isError && (
+          <FetchError
+            description={AGGREGATORS_ERROR_TEXT}
+            refetch={() => void refetch()}
+          />
+        )}
         <Typography variant="h5" fontWeight={700}>
           {CONFIGURATION_HEADER}
         </Typography>
@@ -106,19 +138,27 @@ const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
             <Controller
               name="aggregator"
               control={control}
+              rules={{ required: REQUIRED_ERROR_TEXT }}
               render={({ field }) => (
-                <TextField
-                  fullWidth
-                  select={!!aggregators?.length}
-                  label="Aggregator"
-                  {...field}
+                <SkeletonIfLoading
+                  className={styles.skeleton}
+                  isLoading={isLoading}
                 >
-                  {aggregators?.map((aggregator) => (
-                    <MenuItem key={aggregator.value} value={aggregator.value}>
-                      {aggregator.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  <TextField
+                    disabled={isError}
+                    fullWidth
+                    select={!!aggregators?.length}
+                    label="Aggregator"
+                    {...field}
+                  >
+                    {valueToLabelMap &&
+                      valueToLabelMap.map(({ value, label }) => (
+                        <MenuItem key={value} value={value}>
+                          {label}
+                        </MenuItem>
+                      ))}
+                  </TextField>
+                </SkeletonIfLoading>
               )}
             />
           </FormGroup>

@@ -12,3 +12,9 @@
 .button {
   align-self: flex-end;
 }
+.skeleton {
+  &:global(.MuiSkeleton-root) {
+    width: 100%;
+    max-width: none;
+  }
+}

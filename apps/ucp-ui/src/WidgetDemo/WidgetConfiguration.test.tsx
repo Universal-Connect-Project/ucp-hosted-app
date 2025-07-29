@@ -1,5 +1,10 @@
 import React from "react";
-import { render, screen, userEvent } from "../shared/test/testUtils";
+import {
+  render,
+  screen,
+  userEvent,
+  waitForLoad,
+} from "../shared/test/testUtils";
 import Connect from "./Connect";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
 import {
@@ -10,8 +15,9 @@ import {
 } from "./constants";
 
 describe("WidgetConfiguration", () => {
-  it("renders the initial configuration form", () => {
+  it("renders the initial configuration form", async () => {
     render(<Connect />);
+    await waitForLoad();
     expect(screen.getByText(CONFIGURATION_HEADER)).toBeInTheDocument();
     expect(
       screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),

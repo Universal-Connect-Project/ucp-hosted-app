@@ -79,7 +79,7 @@ describe("Connect", () => {
       const state = store.getState();
       expect(state.demo.connections).toHaveLength(1);
       expect(state.demo.connections[0]).toEqual({
-        aggregator: "MX",
+        aggregator: "mx",
         jobTypes: ["Account Number", "Account Owner"],
         institution: "Test Institution",
       });
