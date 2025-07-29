@@ -108,8 +108,8 @@ describe("institutions with performance metrics", () => {
             response.body.institutions.some(({ performance }) =>
               Object.values(performance).some(
                 (value) =>
-                  (value.avgSuccessRate ?? false) &&
-                  (value.avgDuration ?? false),
+                  typeof value.avgSuccessRate === "number" &&
+                  typeof value.avgDuration === "number",
               ),
             ),
           ).to.be.true;
