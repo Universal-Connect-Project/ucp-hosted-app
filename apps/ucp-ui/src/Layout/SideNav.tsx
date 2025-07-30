@@ -15,8 +15,8 @@ import UCPLogo from "../shared/components/UCPLogo";
 import {
   AccountBalanceOutlined,
   AccountCircle,
-  LightbulbOutlined,
   Logout,
+  PhoneIphoneOutlined,
   SettingsOutlined,
   TrendingUpOutlined,
 } from "@mui/icons-material";
@@ -76,7 +76,7 @@ const SideNav = ({
           {
             label: SIDE_NAV_DEMO_LINK_TEXT,
             matchPaths: [widgetDemoRoute.fullRoute],
-            Icon: LightbulbOutlined,
+            Icon: PhoneIphoneOutlined,
             path: widgetDemoRoute.fullRoute,
           },
         ]
