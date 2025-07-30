@@ -27,6 +27,9 @@ describe("Connect", () => {
   it("Selects an aggregator and loads the connect widget", async () => {
     render(<Connect />);
 
+    await userEvent.click(
+      screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
+    );
     await userEvent.click(await screen.findByRole("combobox"));
     await userEvent.click(
       await screen.findByRole("option", { name: "Sophtron" }),
@@ -48,6 +51,9 @@ describe("Connect", () => {
     const store = createStore();
 
     render(<Connect />, { store });
+    await userEvent.click(
+      screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
+    );
     await userEvent.click(
       screen.getByLabelText(supportsJobTypeMap.accountOwner.displayName),
     );

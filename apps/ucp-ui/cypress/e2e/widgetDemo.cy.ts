@@ -8,7 +8,10 @@ describe("Widget Demo", () => {
     cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
     cy.contains(WIDGET_DEMO_PAGE_TITLE).should("be.visible");
     cy.findByRole("tab", { name: "Connect" }).should("be.visible");
+    cy.findByLabelText("Account Number").click();
     cy.findByLabelText("Account Number").should("be.checked");
+    cy.findByRole("combobox", { name: "Aggregator" }).click();
+    cy.findByRole("option", { name: "MX" }).click();
     cy.findByRole("combobox", { name: "Aggregator" }).should("contain", "MX");
     cy.findByRole("button", { name: "Launch" }).click();
     cy.findByTestId("demo-component").should("be.visible");
