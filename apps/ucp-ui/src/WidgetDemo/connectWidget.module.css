@@ -1,0 +1,30 @@
+.iframeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.phoneDimensionsContainer {
+  width: 415px;
+  height: 852px;
+}
+
+.phoneContainer {
+  width: 375px;
+  height: 812px;
+  flex-shrink: 0;
+
+  border-radius: 40px;
+  background: var(--Neutral-100, #f8f9fb);
+  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.04);
+}
+.buttonContainer {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+.errorContent {
+  padding-top: 25px;
+  height: calc(100% - 65px);
+}

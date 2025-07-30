@@ -3,6 +3,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { api } from "./baseApi";
 import { tokenSlice } from "./shared/reducers/token";
 import { snackbarSlice } from "./shared/reducers/snackbar";
+import { demoSlice } from "./shared/reducers/demo";
 
 export const createStore = () =>
   configureStore({
@@ -10,6 +11,7 @@ export const createStore = () =>
       getDefaultMiddleware().concat(api.middleware),
     reducer: {
       [api.reducerPath]: api.reducer,
+      [demoSlice.reducerPath]: demoSlice.reducer,
       [snackbarSlice.reducerPath]: snackbarSlice.reducer,
       [tokenSlice.reducerPath]: tokenSlice.reducer,
     },
