@@ -186,6 +186,13 @@ const Institutions = () => {
     );
   };
 
+  const scrollToTopOfTable = () => {
+    scrollableTableRef.current?.scrollTo({
+      behavior: "smooth",
+      top: 0,
+    });
+  };
+
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
     newPage: number,
@@ -193,10 +200,8 @@ const Institutions = () => {
     handleChangeParams({
       page: newPage.toString(),
     });
-    scrollableTableRef.current?.scrollTo({
-      behavior: "smooth",
-      top: 0,
-    });
+
+    scrollToTopOfTable();
   };
 
   const handleChangePageSize = (
@@ -205,6 +210,8 @@ const Institutions = () => {
     handleChangeParams({
       pageSize: parseInt(event.target.value, 10).toString(),
     });
+
+    scrollToTopOfTable();
   };
 
   const createSortHandler = (id: string) => () => {
