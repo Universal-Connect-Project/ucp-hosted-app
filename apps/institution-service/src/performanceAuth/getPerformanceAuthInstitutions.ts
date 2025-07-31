@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
 import { literal, Op, OrderItem } from "sequelize";
-import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import { Literal } from "sequelize/types/utils";
 import db from "../database";
 import { Institution } from "../models/institution";
+import {
+  getPaginationOptions,
+  parseSort,
+  SortDirection,
+} from "../shared/utils/pagination";
 
 interface InstitutionDetail {
   id: string;
@@ -18,27 +22,6 @@ interface InstitutionsResponse {
   totalPages: number;
   institutions: InstitutionDetail[];
 }
-
-enum SortDirection {
-  ASC = "ASC",
-  DESC = "DESC",
-}
-type SortSequelize = { column: string; direction?: SortDirection };
-
-interface PaginationOptions {
-  page: number;
-  limit: number;
-  offset: number;
-}
-
-const getPaginationOptions = (req: Request): PaginationOptions => {
-  const page = parseInt(req.query.page as string, 10) || 1;
-  const limit =
-    parseInt(req.query.pageSize as string, 10) || DEFAULT_PAGINATION_PAGE_SIZE;
-  const offset = (page - 1) * limit;
-
-  return { page, limit, offset };
-};
 
 type WhereConditions = {
   [Op.or]?: Array<
@@ -75,17 +58,10 @@ export const getPerformanceAuthInstitutions = async (
   req: Request,
   res: Response,
 ) => {
-  const parseSort = (sortBy: string): SortSequelize => {
-    const [column, direction = SortDirection.ASC] = sortBy.split(":");
-    return { column, direction: direction.toUpperCase() as SortDirection };
-  };
-
   try {
     const { limit, offset, page } = getPaginationOptions(req);
 
-    const sortBy = req.query?.sortBy
-      ? parseSort(req.query.sortBy as string)
-      : parseSort("name:ASC");
+    const sortBy = parseSort((req.query?.sortBy as string) || "name:ASC");
 
     const order: OrderItem[] = [
       [sortBy.column, sortBy.direction as SortDirection],
