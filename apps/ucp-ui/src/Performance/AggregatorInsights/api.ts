@@ -21,7 +21,15 @@ interface AggregatorPerformanceByJobTypeParans {
   timeFrame: string;
 }
 
+interface InstitutionsWithPerformanceParams {
+  page: number;
+  pageSize: number;
+  search?: string;
+  timeFrame: string;
+}
+
 export const AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_URL = `${PERFORMANCE_SERVICE_BASE_URL}/metrics/aggregators`;
+export const INSTITUTIONS_WITH_PERFORMANCE_URL = `${PERFORMANCE_SERVICE_BASE_URL}/metrics/institutions`;
 
 export const aggregatorInsightsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -35,9 +43,21 @@ export const aggregatorInsightsApi = api.injectEndpoints({
       }),
       providesTags: [TagTypes.AGGREGATORS],
     }),
+    getInstitutionsWithPerformance: builder.query<
+      AggregatorPerformanceByJobTypeResponse,
+      InstitutionsWithPerformanceParams
+    >({
+      query: ({ page, pageSize, timeFrame, search }) => ({
+        params: { page, pageSize, timeFrame, search },
+        url: INSTITUTIONS_WITH_PERFORMANCE_URL,
+      }),
+      providesTags: [TagTypes.AGGREGATORS],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetAggregatorPerformanceByJobTypeQuery } =
-  aggregatorInsightsApi;
+export const {
+  useGetAggregatorPerformanceByJobTypeQuery,
+  useGetInstitutionsWithPerformanceQuery,
+} = aggregatorInsightsApi;
