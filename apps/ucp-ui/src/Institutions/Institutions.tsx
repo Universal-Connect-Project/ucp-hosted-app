@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FileDownload, InfoOutlined } from "@mui/icons-material";
 import {
   Alert,
@@ -83,6 +83,8 @@ const generateFakeInstitutionData = (pageSize: number) => {
 
 const Institutions = () => {
   const navigate = useNavigate();
+
+  const scrollableTableRef = useRef<HTMLDivElement | null>(null);
 
   const tableHeadCells = [
     {
@@ -184,6 +186,13 @@ const Institutions = () => {
     );
   };
 
+  const scrollToTopOfTable = () => {
+    scrollableTableRef.current?.scrollTo({
+      behavior: "smooth",
+      top: 0,
+    });
+  };
+
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
     newPage: number,
@@ -191,7 +200,8 @@ const Institutions = () => {
     handleChangeParams({
       page: newPage.toString(),
     });
-    window.scrollTo({ behavior: "smooth", top: 0 });
+
+    scrollToTopOfTable();
   };
 
   const handleChangePageSize = (
@@ -200,6 +210,8 @@ const Institutions = () => {
     handleChangeParams({
       pageSize: parseInt(event.target.value, 10).toString(),
     });
+
+    scrollToTopOfTable();
   };
 
   const createSortHandler = (id: string) => () => {
@@ -295,8 +307,11 @@ const Institutions = () => {
               institutionsParams={institutionsParams}
             />
             {shouldDisplayTable ? (
-              <TableContainer className={styles.table}>
-                <>
+              <div className={styles.tableWrapper}>
+                <TableContainer
+                  className={styles.table}
+                  ref={scrollableTableRef}
+                >
                   <Table stickyHeader>
                     <TableHead>
                       <TableRow>
@@ -447,38 +462,38 @@ const Institutions = () => {
                       )}
                     </TableBody>
                   </Table>
-                  <div className={styles.paginationContainer}>
-                    <TablePagination
-                      count={totalRecords}
-                      component="div"
-                      page={page - 1}
-                      onPageChange={() => {}}
-                      onRowsPerPageChange={handleChangePageSize}
-                      rowsPerPage={pageSize}
-                      size="small"
-                      slotProps={{
-                        actions: {
-                          nextButton: {
-                            style: { display: "none" },
-                          },
-                          previousButton: {
-                            style: { display: "none" },
-                          },
+                </TableContainer>
+                <div className={styles.paginationContainer}>
+                  <TablePagination
+                    count={totalRecords}
+                    component="div"
+                    page={totalRecords ? page - 1 : 0}
+                    onPageChange={() => {}}
+                    onRowsPerPageChange={handleChangePageSize}
+                    rowsPerPage={pageSize}
+                    size="small"
+                    slotProps={{
+                      actions: {
+                        nextButton: {
+                          style: { display: "none" },
                         },
-                      }}
-                    />
-                    <Pagination
-                      count={pages}
-                      onChange={handleChangePage}
-                      page={page}
-                      shape="circular"
-                      showFirstButton
-                      showLastButton
-                      size="small"
-                    />
-                  </div>
-                </>
-              </TableContainer>
+                        previousButton: {
+                          style: { display: "none" },
+                        },
+                      },
+                    }}
+                  />
+                  <Pagination
+                    count={pages}
+                    onChange={handleChangePage}
+                    page={page}
+                    shape="circular"
+                    showFirstButton
+                    showLastButton
+                    size="small"
+                  />
+                </div>
+              </div>
             ) : (
               <Paper className={styles.alertContainer} variant="outlined">
                 {isInstitutionsError && (
