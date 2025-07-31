@@ -57,3 +57,7 @@
   display: flex;
   justify-content: center;
 }
+.errorContent {
+  padding-top: 25px;
+  height: 787px;
+}

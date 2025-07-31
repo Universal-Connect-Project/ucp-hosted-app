@@ -10,15 +10,25 @@
   }
 }
 
+.tableWrapper {
+  background-color: var(--mui-palette-common-white);
+  border: solid 1px var(--mui-palette-divider);
+  border-radius: var(--mui-shape-borderRadius);
+  flex: 1;
+}
+
 .table {
   &:global(.MuiTableContainer-root) {
-    background-color: var(--mui-palette-common-white);
-    border: solid 1px var(--mui-palette-divider);
-    border-collapse: separate;
-    border-radius: var(--mui-shape-borderRadius);
-    flex: 1;
-    height: min-content;
-    width: unset;
+    border-radius: inherit;
+    max-height: 640px;
+  }
+
+  tbody {
+    tr:last-of-type {
+      td {
+        border-bottom: none;
+      }
+    }
   }
 }
 
@@ -69,10 +79,11 @@
 }
 
 .paginationContainer {
+  border-top: solid 1px var(--mui-palette-divider);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 16px;
+  padding: 16px;
 
   :global(.MuiToolbar-root) {
     padding-left: 0;

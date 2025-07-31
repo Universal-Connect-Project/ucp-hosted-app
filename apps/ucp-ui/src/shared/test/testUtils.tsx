@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider as ReduxProvider } from "react-redux";
 import { createStore } from "../../store";
@@ -89,3 +89,4 @@ export const expectSkeletonLoader = async () =>
 export * from "@testing-library/react";
 export { customRender as render };
 export { userEvent };
+export { fireEvent };

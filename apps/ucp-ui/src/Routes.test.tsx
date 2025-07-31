@@ -10,7 +10,7 @@ import {
   SIDE_NAV_WIDGET_MANAGEMENT_LINK_TEXT,
 } from "./Layout/constants";
 import { PERFORMANCE_PAGE_TITLE } from "./Performance/constants";
-import { WIDGET_DEMO_PAGE_TITLE } from "./Demo/constants";
+import { WIDGET_DEMO_PAGE_TITLE } from "./WidgetDemo/constants";
 import { setAccessToken } from "../src/shared/reducers/token";
 import { createFakeAccessToken } from "../src/shared/test/utils";
 import { createStore } from "../src/store";

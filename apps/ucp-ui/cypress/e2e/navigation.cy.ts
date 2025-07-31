@@ -15,7 +15,7 @@ import {
 import { INSTITUTIONS_PAGE_TITLE } from "../../src/Institutions/constants";
 import { AUTH0_ORIGIN } from "../shared/constants";
 import { PERFORMANCE_PAGE_TITLE } from "../../src/Performance/constants";
-import { WIDGET_DEMO_PAGE_TITLE } from "../../src/Demo/constants";
+import { WIDGET_DEMO_PAGE_TITLE } from "../../src/WidgetDemo/constants";
 
 describe("Navigation", () => {
   it("renders a generic error page", () => {

@@ -1,0 +1,11 @@
+.table {
+  &:global(.MuiTableContainer-root) {
+    background-color: var(--mui-palette-common-white);
+    border: solid 1px var(--mui-palette-divider);
+    border-collapse: separate;
+    border-radius: var(--mui-shape-borderRadius);
+    flex: 1;
+    height: min-content;
+    width: unset;
+  }
+}

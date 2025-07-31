@@ -32,7 +32,7 @@ import { PERFORMANCE_PAGE_TITLE } from "../Performance/constants";
 import { setAccessToken } from "../shared/reducers/token";
 import { createFakeAccessToken } from "../shared/test/utils";
 import { createStore } from "../store";
-import { WIDGET_DEMO_PAGE_TITLE } from "../Demo/constants";
+import { WIDGET_DEMO_PAGE_TITLE } from "../WidgetDemo/constants";
 
 const mockLogout = jest.fn();
 

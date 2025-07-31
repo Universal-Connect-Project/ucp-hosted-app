@@ -17,7 +17,7 @@ import {
 } from "./shared/constants/routes";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Performance from "./Performance/Performance";
-import DemoLandingPage from "./Demo/DemoLandingPage";
+import WidgetDemo from "./WidgetDemo/WidgetDemo";
 
 const Routes = () => {
   const router = createBrowserRouter([
@@ -45,7 +45,7 @@ const Routes = () => {
         },
         {
           path: widgetDemoRoute.childRoute,
-          element: <DemoLandingPage />,
+          element: <WidgetDemo />,
         },
       ],
       path: BASE_ROUTE,

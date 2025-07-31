@@ -1,4 +1,4 @@
-import { WIDGET_DEMO_PAGE_TITLE } from "../../src/Demo/constants";
+import { WIDGET_DEMO_PAGE_TITLE } from "../../src/WidgetDemo/constants";
 import { SIDE_NAV_DEMO_LINK_TEXT } from "../../src/Layout/constants";
 
 describe("Widget Demo", () => {
@@ -8,7 +8,10 @@ describe("Widget Demo", () => {
     cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
     cy.contains(WIDGET_DEMO_PAGE_TITLE).should("be.visible");
     cy.findByRole("tab", { name: "Connect" }).should("be.visible");
+    cy.findByLabelText("Account Number").click();
     cy.findByLabelText("Account Number").should("be.checked");
+    cy.findByRole("combobox", { name: "Aggregator" }).click();
+    cy.findByRole("option", { name: "MX" }).click();
     cy.findByRole("combobox", { name: "Aggregator" }).should("contain", "MX");
     cy.findByRole("button", { name: "Launch" }).click();
     cy.findByTestId("demo-component").should("be.visible");
@@ -30,5 +33,9 @@ describe("Widget Demo", () => {
     cy.findByRole("button", { name: "Reset" }).click();
     cy.findByTestId("demo-component").should("not.exist");
     cy.findByText("Configuration").should("be.visible");
+    cy.findByRole("tab", { name: "Connections" }).click();
+    cy.findByText("MX Bank").should("exist");
+    cy.findByText("Account Number").should("exist");
+    cy.findByText("MX").should("exist");
   });
 });

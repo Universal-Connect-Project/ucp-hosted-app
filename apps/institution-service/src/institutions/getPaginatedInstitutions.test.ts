@@ -554,7 +554,7 @@ describe("getPaginatedInstitutions", () => {
   });
 
   it("uses custom sort order when sortBy is provided", async () => {
-    const sortBy = "id";
+    const sortBy = "id:asc";
 
     const req = buildInstitutionRequest({
       sortBy,
