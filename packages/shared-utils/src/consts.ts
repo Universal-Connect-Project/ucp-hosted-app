@@ -1,6 +1,9 @@
 export const TIME_FRAME_ERROR_TEXT =
   '"timeFrame" must be one of [, 1d, 1w, 30d, 180d, 1y]';
 
+export const TIME_FRAME_NOT_REQUIRED_ERROR_TEXT =
+  '"timeFrame" must be one of [1d, 1w, 30d, 180d, 1y]';
+
 export const JOB_TYPES_ERROR_TEXT =
   '"jobTypes" contains invalid values. Valid values include: [accountNumber, accountOwner, transactions, transactionHistory] or any combination of these joined by |';
 

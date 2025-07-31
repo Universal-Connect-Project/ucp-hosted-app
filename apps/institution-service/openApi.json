@@ -1308,6 +1308,131 @@
           }
         }
       }
+    },
+    "/performanceAuth/aggregators": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Get aggregators with performance authorization",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "aggregators": [
+                      {
+                        "id": 98,
+                        "name": "mx",
+                        "displayName": "MX",
+                        "logo": "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-3aeb38da-26e4-3818-e0fa-673315ab7754_100x100.png",
+                        "createdAt": "2024-10-09T17:01:07.537Z",
+                        "updatedAt": "2024-10-09T17:01:07.537Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/performanceAuth/institutions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Get a paginated list of institutions with performance authorization",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "required": false,
+            "example": 30,
+            "description": "Page to be returned in the paginated response."
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "required": false,
+            "example": 3,
+            "description": "The number of institutions to be returned in the paginated response."
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "example": "American"
+            },
+            "required": false,
+            "example": "American",
+            "description": "Search term for Institutions query"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "example": "createdAt:DESC",
+            "description": "Field to sort by. Use the field name followed by an optional colon and the sort direction: ASC (default) or DESC."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "currentPage": 30,
+                      "pageSize": 3,
+                      "totalRecords": 29489,
+                      "totalPages": 9830,
+                      "institutions": [
+                        {
+                          "id": "94b05c68-bab7-4694-9695-5934d8adf722",
+                          "name": "Preferred Trust ",
+                          "logo": null
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Institution List"
+      }
     }
   }
 }
