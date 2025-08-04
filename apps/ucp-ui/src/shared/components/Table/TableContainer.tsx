@@ -7,20 +7,14 @@ import styles from "./tableContainer.module.css";
 
 interface TableContainerProps extends TableContainerOwnProps {
   children: React.ReactNode;
-  maxHeight: number;
 }
 
 export const TableContainer = React.forwardRef<
   HTMLDivElement,
   TableContainerProps
->(({ children, maxHeight, ...rest }, ref) => {
+>(({ children, ...rest }, ref) => {
   return (
-    <MuiTableContainer
-      ref={ref}
-      className={styles.tableContainer}
-      sx={{ height: maxHeight, maxHeight }}
-      {...rest}
-    >
+    <MuiTableContainer ref={ref} className={styles.tableContainer} {...rest}>
       {children}
     </MuiTableContainer>
   );

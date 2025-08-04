@@ -1,6 +1,7 @@
 .tableContainer {
   &:global(.MuiTableContainer-root) {
     border-radius: inherit;
+    max-height: calc(100% - 85px);
   }
 
   tbody {

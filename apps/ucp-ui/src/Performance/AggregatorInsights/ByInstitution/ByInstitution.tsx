@@ -1,5 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import {
+  Alert,
+  AlertTitle,
   Stack,
   Table,
   TableBody,
@@ -22,6 +24,8 @@ import JobTypesSelect, {
 } from "../../../shared/components/Forms/JobTypesSelect";
 import { JobTypesSelectFlexContainer } from "../../../shared/components/Forms/JobTypesSelectFlexContainer";
 import { Search } from "@mui/icons-material";
+import FetchError from "../../../shared/components/FetchError";
+import { TableAlertContainer } from "../../../shared/components/Table/TableAlertContainer";
 
 export const ByInstitution = () => {
   const [search, setSearch] = useState("");
@@ -41,7 +45,11 @@ export const ByInstitution = () => {
   };
 
   const debouncedSetDelayedSearch = useMemo(
-    () => debounce((value: string) => setDelayedSearch(value), 250),
+    () =>
+      debounce((value: string) => {
+        setDelayedSearch(value);
+        scrollToTopOfTable();
+      }, 250),
     [setDelayedSearch],
   );
 
@@ -50,7 +58,6 @@ export const ByInstitution = () => {
   }: React.ChangeEvent<HTMLInputElement>) => {
     setPage(1);
     setSearch(value);
-    scrollToTopOfTable();
     debouncedSetDelayedSearch(value);
   };
 
@@ -70,15 +77,20 @@ export const ByInstitution = () => {
     scrollToTopOfTable();
   };
 
-  const { data } = useGetInstitutionsWithPerformanceQuery({
-    jobTypes,
-    page,
-    pageSize,
-    search: delayedSearch,
-    timeFrame,
-  });
+  const { data, isError, isSuccess, refetch } =
+    useGetInstitutionsWithPerformanceQuery({
+      jobTypes,
+      page,
+      pageSize,
+      search: delayedSearch,
+      timeFrame,
+    });
 
-  const heightToMatchOtherTabs = 435;
+  const isInstitutionListEmpty = isSuccess && !data?.institutions?.length;
+
+  const shouldDisplayTable = !isError && !isInstitutionListEmpty;
+
+  const heightToMatchOtherTabs = 520;
 
   return (
     <>
@@ -98,41 +110,57 @@ export const ByInstitution = () => {
           value={search}
         />
       </Stack>
-      <TableWrapper>
-        <TableContainer
-          maxHeight={heightToMatchOtherTabs}
-          ref={scrollableTableRef}
-        >
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>Institution</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.institutions?.map((institution) => (
-                <TableRow key={institution.id}>
-                  <TableCell>
-                    <img
-                      src={institution.logo ?? DEFAULT_LOGO_URL}
-                      alt={institution.name}
-                      width={50}
-                    />
-                    {institution.name}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          totalRecords={data?.totalRecords}
-          page={page}
-          pages={data?.totalPages}
-          pageSize={pageSize}
-          handleChangePageSize={handleChangePageSize}
-          handleChangePage={handleChangePage}
-        />
+      <TableWrapper height={heightToMatchOtherTabs}>
+        {shouldDisplayTable ? (
+          <>
+            <TableContainer ref={scrollableTableRef}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Institution</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data?.institutions?.map((institution) => (
+                    <TableRow key={institution.id}>
+                      <TableCell>
+                        <img
+                          src={institution.logo ?? DEFAULT_LOGO_URL}
+                          alt={institution.name}
+                          width={50}
+                        />
+                        {institution.name}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              totalRecords={data?.totalRecords}
+              page={page}
+              pages={data?.totalPages}
+              pageSize={pageSize}
+              handleChangePageSize={handleChangePageSize}
+              handleChangePage={handleChangePage}
+            />
+          </>
+        ) : (
+          <TableAlertContainer>
+            {isError && (
+              <FetchError
+                description="Failed to fetch Institutions with Performance data."
+                refetch={() => void refetch()}
+              />
+            )}
+            {isInstitutionListEmpty && (
+              <Alert severity="info">
+                <AlertTitle>No Institutions found</AlertTitle>
+                Try editing your filters to see more Institutions.
+              </Alert>
+            )}
+          </TableAlertContainer>
+        )}
       </TableWrapper>
     </>
   );

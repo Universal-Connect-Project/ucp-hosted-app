@@ -21,6 +21,19 @@ interface AggregatorPerformanceByJobTypeParans {
   timeFrame: string;
 }
 
+interface InstitutionsWithPerformanceResponse {
+  aggregators: Aggregator[];
+  currentPage: number;
+  institutions: {
+    id: string;
+    name: string;
+    logo?: string;
+  }[];
+  pageSize: number;
+  totalRecords: number;
+  totalPages: number;
+}
+
 interface InstitutionsWithPerformanceParams {
   jobTypes: string[];
   page: number;
@@ -45,7 +58,7 @@ export const aggregatorInsightsApi = api.injectEndpoints({
       providesTags: [TagTypes.AGGREGATORS],
     }),
     getInstitutionsWithPerformance: builder.query<
-      AggregatorPerformanceByJobTypeResponse,
+      InstitutionsWithPerformanceResponse,
       InstitutionsWithPerformanceParams
     >({
       query: ({ jobTypes, page, pageSize, timeFrame, search }) => ({
