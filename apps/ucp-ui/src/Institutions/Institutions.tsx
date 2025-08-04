@@ -56,6 +56,7 @@ import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
 import UCPIdCell from "./UCPIdCell";
+import { TableWrapper } from "../shared/components/Table/TableWrapper";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -307,7 +308,7 @@ const Institutions = () => {
               institutionsParams={institutionsParams}
             />
             {shouldDisplayTable ? (
-              <div className={styles.tableWrapper}>
+              <TableWrapper className={styles.tableWrapper}>
                 <TableContainer
                   className={styles.table}
                   ref={scrollableTableRef}
@@ -493,7 +494,7 @@ const Institutions = () => {
                     size="small"
                   />
                 </div>
-              </div>
+              </TableWrapper>
             ) : (
               <Paper className={styles.alertContainer} variant="outlined">
                 {isInstitutionsError && (
