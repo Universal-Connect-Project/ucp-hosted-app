@@ -10,7 +10,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
   TableSortLabel,
@@ -56,6 +55,7 @@ import InstitutionFilters from "./InstitutionFilters";
 import UCPIdCell from "./UCPIdCell";
 import { TableWrapper } from "../shared/components/Table/TableWrapper";
 import { TablePagination } from "../shared/components/Table/TablePagination";
+import { TableContainer } from "../shared/components/Table/TableContainer";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -308,10 +308,7 @@ const Institutions = () => {
             />
             {shouldDisplayTable ? (
               <TableWrapper className={styles.tableWrapper}>
-                <TableContainer
-                  className={styles.table}
-                  ref={scrollableTableRef}
-                >
+                <TableContainer maxHeight={640} ref={scrollableTableRef}>
                   <Table stickyHeader>
                     <TableHead>
                       <TableRow>

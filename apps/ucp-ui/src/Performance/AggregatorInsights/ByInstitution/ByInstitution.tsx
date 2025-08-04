@@ -3,7 +3,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
 } from "@mui/material";
@@ -12,6 +11,7 @@ import { DEFAULT_LOGO_URL } from "../../../Institutions/Institution/constants";
 import { useSearchParams } from "react-router-dom";
 import { TableWrapper } from "../../../shared/components/Table/TableWrapper";
 import { TablePagination } from "../../../shared/components/Table/TablePagination";
+import { TableContainer } from "../../../shared/components/Table/TableContainer";
 
 export const ByInstitution = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -46,7 +46,7 @@ export const ByInstitution = () => {
 
   return (
     <TableWrapper>
-      <TableContainer>
+      <TableContainer maxHeight={520}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>

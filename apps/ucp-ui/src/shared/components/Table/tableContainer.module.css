@@ -1,0 +1,13 @@
+.tableContainer {
+  &:global(.MuiTableContainer-root) {
+    border-radius: inherit;
+  }
+
+  tbody {
+    tr:last-of-type {
+      td {
+        border-bottom: none;
+      }
+    }
+  }
+}
