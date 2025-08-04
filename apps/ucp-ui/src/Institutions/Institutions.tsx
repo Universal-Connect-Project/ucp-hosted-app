@@ -6,14 +6,12 @@ import {
   Avatar,
   Button,
   Chip,
-  Pagination,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Tooltip,
@@ -57,6 +55,7 @@ import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
 import UCPIdCell from "./UCPIdCell";
 import { TableWrapper } from "../shared/components/Table/TableWrapper";
+import { TablePagination } from "../shared/components/Table/TablePagination";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -464,36 +463,14 @@ const Institutions = () => {
                     </TableBody>
                   </Table>
                 </TableContainer>
-                <div className={styles.paginationContainer}>
-                  <TablePagination
-                    count={totalRecords}
-                    component="div"
-                    page={totalRecords ? page - 1 : 0}
-                    onPageChange={() => {}}
-                    onRowsPerPageChange={handleChangePageSize}
-                    rowsPerPage={pageSize}
-                    size="small"
-                    slotProps={{
-                      actions: {
-                        nextButton: {
-                          style: { display: "none" },
-                        },
-                        previousButton: {
-                          style: { display: "none" },
-                        },
-                      },
-                    }}
-                  />
-                  <Pagination
-                    count={pages}
-                    onChange={handleChangePage}
-                    page={page}
-                    shape="circular"
-                    showFirstButton
-                    showLastButton
-                    size="small"
-                  />
-                </div>
+                <TablePagination
+                  totalRecords={totalRecords}
+                  page={page}
+                  pages={pages}
+                  pageSize={pageSize}
+                  handleChangePageSize={handleChangePageSize}
+                  handleChangePage={handleChangePage}
+                />
               </TableWrapper>
             ) : (
               <Paper className={styles.alertContainer} variant="outlined">

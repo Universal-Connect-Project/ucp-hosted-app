@@ -1,17 +1,17 @@
 import React from "react";
 import {
-  Pagination,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
 } from "@mui/material";
 import { useGetInstitutionsWithPerformanceQuery } from "../api";
 import { DEFAULT_LOGO_URL } from "../../../Institutions/Institution/constants";
 import { useSearchParams } from "react-router-dom";
+import { TableWrapper } from "../../../shared/components/Table/TableWrapper";
+import { TablePagination } from "../../../shared/components/Table/TablePagination";
 
 export const ByInstitution = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,14 +38,14 @@ export const ByInstitution = () => {
   };
 
   const { data } = useGetInstitutionsWithPerformanceQuery({
-    page: 1,
-    pageSize: 100,
-    search: "Chase",
+    page,
+    pageSize,
+    // search: "Chase",
     timeFrame: "30d",
   });
 
   return (
-    <>
+    <TableWrapper>
       <TableContainer>
         <Table stickyHeader>
           <TableHead>
@@ -70,33 +70,13 @@ export const ByInstitution = () => {
         </Table>
       </TableContainer>
       <TablePagination
-        count={data?.totalRecords}
-        component="div"
-        page={page - 1}
-        onPageChange={() => {}}
-        onRowsPerPageChange={handleChangePageSize}
-        rowsPerPage={pageSize}
-        size="small"
-        slotProps={{
-          actions: {
-            nextButton: {
-              style: { display: "none" },
-            },
-            previousButton: {
-              style: { display: "none" },
-            },
-          },
-        }}
-      />
-      <Pagination
-        count={data?.totalPages}
-        onChange={handleChangePage}
+        totalRecords={data?.totalRecords}
         page={page}
-        shape="circular"
-        showFirstButton
-        showLastButton
-        size="small"
+        pages={data?.totalPages}
+        pageSize={pageSize}
+        handleChangePageSize={handleChangePageSize}
+        handleChangePage={handleChangePage}
       />
-    </>
+    </TableWrapper>
   );
 };
