@@ -138,7 +138,7 @@ export const getInstitutionsWithPerformance = async (
       return {
         ...institution,
         performance: performance.reduce<
-          Record<string, { avgSuccessRate: number; avgDuration: number }>
+          Record<string, { avgSuccessRate?: number; avgDuration?: number }>
         >((acc, curr) => {
           const { aggregatorId, avgSuccessRate, avgDuration } = curr as {
             aggregatorId: string;
@@ -148,8 +148,10 @@ export const getInstitutionsWithPerformance = async (
           return {
             ...acc,
             [aggregatorId]: {
-              avgSuccessRate,
-              avgDuration,
+              avgSuccessRate:
+                avgSuccessRate === undefined ? undefined : avgSuccessRate * 100,
+              avgDuration:
+                avgDuration === undefined ? undefined : avgDuration / 1000,
             },
           };
         }, {}),
