@@ -34,9 +34,10 @@ const createMetricQuery =
       ?.split(",")
       .map((jobType) => jobType.split("|").sort().join("|"));
 
-    const jobTypesFilter = formattedJobTypes?.length
-      ? `|> filter(fn: (r) => ${formattedJobTypes.map((type) => `r.jobTypes == string(v: "${type}")`).join(" or ")})`
-      : "";
+    const jobTypesFilter =
+      formattedJobTypes?.length && jobTypes
+        ? `|> filter(fn: (r) => ${formattedJobTypes.map((type) => `r.jobTypes == string(v: "${type}")`).join(" or ")})`
+        : "";
 
     return `
 ${resultVariableName} = from(bucket: "${BUCKET}")

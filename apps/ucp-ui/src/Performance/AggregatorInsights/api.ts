@@ -28,6 +28,10 @@ interface InstitutionsWithPerformanceResponse {
     id: string;
     name: string;
     logo?: string;
+    performance: Record<
+      string,
+      { avgSuccessRate?: number; avgDuration?: number }
+    >;
   }[];
   pageSize: number;
   totalRecords: number;

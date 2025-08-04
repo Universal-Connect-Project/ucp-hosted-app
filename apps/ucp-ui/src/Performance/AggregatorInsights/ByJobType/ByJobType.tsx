@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import styles from "./byJobType.module.css";
 import { allJobTypes } from "../../../shared/constants/jobTypes";
-import { TableRowWithPaddingCells, NoDataCell } from "./SharedComponents";
+import { TableRowWithPaddingCells } from "./SharedComponents";
 import JobTypePerformance from "./JobTypePerformance";
 import SectionHeaderRow from "./SectionHeaderRow";
 import JobTypeFilter, { useJobTypeFilter } from "./JobTypeFilter";
@@ -27,6 +27,7 @@ import {
   AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT,
   BY_JOB_TYPE_TABLE_TITLE,
 } from "./constants";
+import { NoDataCell } from "../../../shared/components/Table/NoDataCell";
 
 const loadingAggregator = {
   displayName: "Test name",

@@ -26,6 +26,9 @@ import { JobTypesSelectFlexContainer } from "../../../shared/components/Forms/Jo
 import { Search } from "@mui/icons-material";
 import FetchError from "../../../shared/components/FetchError";
 import { TableAlertContainer } from "../../../shared/components/Table/TableAlertContainer";
+import styles from "./byInstitution.module.css";
+import { NoDataCell } from "../../../shared/components/Table/NoDataCell";
+import { formatMaxTwoDecimals } from "../../../shared/utils/format";
 
 export const ByInstitution = () => {
   const [search, setSearch] = useState("");
@@ -77,7 +80,7 @@ export const ByInstitution = () => {
     scrollToTopOfTable();
   };
 
-  const { data, isError, isSuccess, refetch } =
+  const { data, isError, isFetching, isSuccess, refetch } =
     useGetInstitutionsWithPerformanceQuery({
       jobTypes,
       page,
@@ -85,6 +88,8 @@ export const ByInstitution = () => {
       search: delayedSearch,
       timeFrame,
     });
+
+  const aggregators = data?.aggregators;
 
   const isInstitutionListEmpty = isSuccess && !data?.institutions?.length;
 
@@ -118,19 +123,59 @@ export const ByInstitution = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Institution</TableCell>
+                    {aggregators?.map(({ displayName, logo }) => {
+                      return (
+                        <TableCell key={displayName}>
+                          <Stack
+                            direction="row"
+                            spacing={1}
+                            alignItems="center"
+                          >
+                            <img
+                              className={styles.aggregatorLogo}
+                              alt={displayName}
+                              src={logo ?? DEFAULT_LOGO_URL}
+                            />
+                            <div>{displayName}</div>
+                          </Stack>
+                        </TableCell>
+                      );
+                    })}
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {data?.institutions?.map((institution) => (
                     <TableRow key={institution.id}>
                       <TableCell>
-                        <img
-                          src={institution.logo ?? DEFAULT_LOGO_URL}
-                          alt={institution.name}
-                          width={50}
-                        />
-                        {institution.name}
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <img
+                            className={styles.institutionLogo}
+                            alt={institution.name}
+                            src={institution.logo ?? DEFAULT_LOGO_URL}
+                          />
+                          <div>{institution.name}</div>
+                        </Stack>
                       </TableCell>
+                      {aggregators?.map((aggregator) => {
+                        const performance =
+                          institution.performance[aggregator.name] || {};
+
+                        const { avgSuccessRate, avgDuration } = performance;
+
+                        const noData =
+                          avgDuration === undefined &&
+                          avgSuccessRate === undefined;
+
+                        return (
+                          <NoDataCell
+                            hasData={!noData}
+                            isLoading={isFetching}
+                            key={aggregator.name}
+                          >
+                            {`${formatMaxTwoDecimals(avgSuccessRate) || 0}% | ${avgDuration ? formatMaxTwoDecimals(avgDuration) + "s" : "–"}`}
+                          </NoDataCell>
+                        );
+                      })}
                     </TableRow>
                   ))}
                 </TableBody>
