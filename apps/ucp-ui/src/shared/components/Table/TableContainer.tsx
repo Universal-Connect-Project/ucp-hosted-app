@@ -18,7 +18,7 @@ export const TableContainer = React.forwardRef<
     <MuiTableContainer
       ref={ref}
       className={styles.tableContainer}
-      sx={{ maxHeight }}
+      sx={{ height: maxHeight, maxHeight }}
       {...rest}
     >
       {children}
