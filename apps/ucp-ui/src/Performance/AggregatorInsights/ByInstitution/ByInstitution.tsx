@@ -138,6 +138,7 @@ export const ByInstitution = () => {
           <JobTypesSelect onChange={handleJobTypesChange} value={jobTypes} />
         </JobTypesSelectFlexContainer>
         <TextField
+          autoComplete="off"
           label="Search Institutions"
           onChange={handleSearchChange}
           slotProps={{
