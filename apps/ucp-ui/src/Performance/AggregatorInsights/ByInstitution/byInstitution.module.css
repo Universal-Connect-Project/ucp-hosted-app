@@ -7,3 +7,10 @@
   width: 32px;
   height: 32px;
 }
+
+.institutionHeadCell {
+  &:global(.MuiTableCell-root) {
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+}

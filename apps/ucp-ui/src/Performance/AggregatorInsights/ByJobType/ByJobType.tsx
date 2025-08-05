@@ -7,6 +7,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  Typography,
 } from "@mui/material";
 import styles from "./byJobType.module.css";
 import { allJobTypes } from "../../../shared/constants/jobTypes";
@@ -95,7 +96,11 @@ const ByJobType = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRowWithPaddingCells>
-                  <TableCell>{BY_JOB_TYPE_TABLE_TITLE}</TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle1">
+                      {BY_JOB_TYPE_TABLE_TITLE}
+                    </Typography>
+                  </TableCell>
                   {aggregators?.map(({ displayName, id, logo }) => (
                     <TableCell key={id}>
                       <div className={styles.aggregatorCell}>
@@ -105,7 +110,9 @@ const ByJobType = () => {
                           </div>
                         </SkeletonIfLoading>
                         <TextSkeletonIfLoading isLoading={isFetching}>
-                          <div>{displayName}</div>
+                          <Typography variant="subtitle1">
+                            {displayName}
+                          </Typography>
                         </TextSkeletonIfLoading>
                       </div>
                     </TableCell>

@@ -9,6 +9,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import debounce from "lodash.debounce";
 import { useGetInstitutionsWithPerformanceQuery } from "../api";
@@ -122,7 +123,12 @@ export const ByInstitution = () => {
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Institution</TableCell>
+                    <TableCell className={styles.institutionHeadCell}>
+                      <Typography variant="subtitle1">Institution</Typography>
+                      <Typography color="textSecondary" variant="caption">
+                        Success Rate (%) | Time to Connect (s)
+                      </Typography>
+                    </TableCell>
                     {aggregators?.map(({ displayName, logo }) => {
                       return (
                         <TableCell key={displayName}>
@@ -136,7 +142,9 @@ export const ByInstitution = () => {
                               alt={displayName}
                               src={logo ?? DEFAULT_LOGO_URL}
                             />
-                            <div>{displayName}</div>
+                            <Typography variant="subtitle1">
+                              {displayName}
+                            </Typography>
                           </Stack>
                         </TableCell>
                       );
