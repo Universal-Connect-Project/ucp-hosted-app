@@ -59,14 +59,14 @@ async function loadInstitutionData() {
     where: {
       name: "sophtron",
       displayName: "Sophtron",
-      logo: "https://sophtron.com/Images/logo.png",
+      logo: "https://sophtron.com/_nuxt/img/Logo_Blue_1.f0ad5ae.png",
     },
   });
   const [finicityAggregator, _finicityCreated] = await Aggregator.findOrCreate({
     where: {
       name: "finicity",
       displayName: "Finicity",
-      logo: "https://universalconnectproject.org/images/ucp-logo-icon.svg",
+      logo: "https://cdn.brandfetch.io/idKLpTdlu8/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1751141641664",
     },
   });
 
