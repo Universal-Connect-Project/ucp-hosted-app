@@ -1,5 +1,6 @@
 import { ComboJobTypes } from "@repo/shared-utils";
 import {
+  clearInfluxData,
   seedInfluxTestDb,
   seedInfluxWithAllTimeFrameData,
   shuffleArray,
@@ -79,6 +80,10 @@ const expectAggregators = ({
 describe("getGraphMetrics", () => {
   beforeAll(async () => {
     await seedInfluxWithAllTimeFrameData();
+  });
+
+  afterAll(async () => {
+    await clearInfluxData();
   });
 
   describe("institution id options", () => {

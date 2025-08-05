@@ -1,6 +1,14 @@
 import { Point } from "@influxdata/influxdb-client";
-import { queryApi, writeApi } from "../../services/influxDb";
+import {
+  influxDBClient,
+  influxOrg,
+  queryApi,
+  writeApi,
+} from "../../services/influxDb";
 import { ComboJobTypes } from "@repo/shared-utils";
+import { DeleteAPI } from "@influxdata/influxdb-client-apis";
+
+const deleteApi = new DeleteAPI(influxDBClient);
 
 export const minutesAgo = (minutes: number): number =>
   Date.now() - minutes * 60 * 1000;
@@ -15,6 +23,26 @@ export const shuffleArray = (array: string[]): string[] => {
     [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
   }
   return newArray;
+};
+
+const testBucketName = "testBucket";
+
+export const clearInfluxData = async () => {
+  const start = "1970-01-01T00:00:00Z"; // Unix epoch
+  const stop = new Date().toISOString(); // Current time
+
+  try {
+    await deleteApi.postDelete({
+      org: influxOrg,
+      bucket: testBucketName,
+      body: {
+        start,
+        stop,
+      },
+    });
+  } catch (error) {
+    console.error("Error clearing bucket:", error);
+  }
 };
 
 export const testInstitutionId = "testInstitution";
@@ -55,7 +83,7 @@ export async function getLatestDataPoint(
   institutionId: string,
 ) {
   const fluxQuery = `
-    from(bucket: "testBucket")
+    from(bucket: "${testBucketName}")
       |> range(start: -5m)
       |> filter(fn: (r) => r._measurement == "${measurement}")
       |> filter(fn: (r) => r.institutionId == "${institutionId}")

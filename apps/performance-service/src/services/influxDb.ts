@@ -10,13 +10,15 @@ import {
 const url: string = process.env.INFLUX_URL || "http://localhost:8086";
 const token: string = process.env.INFLUX_TOKEN || "my-secret-token";
 
-const ORG = process.env.INFLUX_ORG || "ucp-org";
+export const influxOrg = process.env.INFLUX_ORG || "ucp-org";
 export const BUCKET =
   process.env.NODE_ENV === "test" ? "testBucket" : "performance";
 
 const client = new InfluxDB({ url, token });
-export const queryApi: QueryApi = client.getQueryApi(ORG);
-export const writeApi: WriteApi = client.getWriteApi(ORG, BUCKET);
+export const queryApi: QueryApi = client.getQueryApi(influxOrg);
+export const writeApi: WriteApi = client.getWriteApi(influxOrg, BUCKET);
+
+export const influxDBClient = client;
 
 async function writeData(data: {
   jobTypes: string;

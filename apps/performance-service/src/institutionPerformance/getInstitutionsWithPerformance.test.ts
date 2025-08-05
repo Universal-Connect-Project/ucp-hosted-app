@@ -6,7 +6,7 @@ import { testInstitutionsResponse } from "../shared/tests/testData/institutions"
 import { getInstitutionsWithPerformance } from "./getInstitutionsWithPerformance";
 import { Request, Response } from "express";
 import { testAggregators } from "../shared/tests/testData/aggregators";
-import { seedInfluxTestDb } from "../shared/tests/utils";
+import { clearInfluxData, seedInfluxTestDb } from "../shared/tests/utils";
 import { ComboJobTypes } from "@repo/shared-utils";
 
 describe("getInstitutionsWithPerformance", () => {
@@ -25,6 +25,10 @@ describe("getInstitutionsWithPerformance", () => {
     });
   });
 
+  afterAll(async () => {
+    await clearInfluxData();
+  });
+
   it("passes page and search parameters to the institutions request", async () => {
     let queryParams;
 
@@ -41,12 +45,14 @@ describe("getInstitutionsWithPerformance", () => {
     const page = "1";
     const pageSize = "10";
     const search = "test institution";
+    const sortBy = "name:asc";
 
     const req = {
       query: {
         page,
         pageSize,
         search,
+        sortBy,
         timeFrame: "30d",
       },
     } as unknown as Request;
@@ -60,6 +66,7 @@ describe("getInstitutionsWithPerformance", () => {
       page,
       pageSize,
       search,
+      sortBy,
     });
   });
 
