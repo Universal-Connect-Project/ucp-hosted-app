@@ -154,8 +154,8 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
 
     if (sortBy.column === "name") {
       order = [
-        ["createdAt", SortDirection.DESC],
         ["name", sortBy.direction as SortDirection],
+        ["createdAt", SortDirection.DESC],
       ];
     } else {
       order = [

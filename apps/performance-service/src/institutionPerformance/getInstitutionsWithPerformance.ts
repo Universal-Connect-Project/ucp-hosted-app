@@ -73,6 +73,7 @@ interface QueryParams {
   page: string;
   pageSize: string;
   search?: string;
+  sortBy: string;
   timeFrame: string;
 }
 
@@ -80,7 +81,7 @@ export const getInstitutionsWithPerformance = async (
   req: Request,
   res: Response,
 ) => {
-  const { jobTypes, page, pageSize, search, timeFrame } =
+  const { jobTypes, page, pageSize, search, sortBy, timeFrame } =
     req.query as unknown as QueryParams;
 
   try {
@@ -90,6 +91,7 @@ export const getInstitutionsWithPerformance = async (
       page,
       pageSize,
       search,
+      sortBy,
     });
 
     const paginationInfo = {

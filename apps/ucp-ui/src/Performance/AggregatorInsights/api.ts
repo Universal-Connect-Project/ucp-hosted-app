@@ -43,6 +43,7 @@ interface InstitutionsWithPerformanceParams {
   page: number;
   pageSize: number;
   search?: string;
+  sortBy: string;
   timeFrame: string;
 }
 
@@ -65,8 +66,15 @@ export const aggregatorInsightsApi = api.injectEndpoints({
       InstitutionsWithPerformanceResponse,
       InstitutionsWithPerformanceParams
     >({
-      query: ({ jobTypes, page, pageSize, timeFrame, search }) => ({
-        params: { jobTypes, page, pageSize, timeFrame, search },
+      query: ({ jobTypes, page, pageSize, sortBy, timeFrame, search }) => ({
+        params: {
+          jobTypes,
+          page,
+          pageSize,
+          sortBy,
+          timeFrame,
+          search,
+        },
         url: INSTITUTIONS_WITH_PERFORMANCE_URL,
       }),
       providesTags: [TagTypes.AGGREGATORS],

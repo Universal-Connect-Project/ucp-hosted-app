@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TableSortLabel,
   TextField,
   Typography,
 } from "@mui/material";
@@ -32,11 +33,20 @@ import { NoDataCell } from "../../../shared/components/Table/NoDataCell";
 import { formatMaxTwoDecimals } from "../../../shared/utils/format";
 
 export const ByInstitution = () => {
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [search, setSearch] = useState("");
   const [delayedSearch, setDelayedSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const scrollableTableRef = useRef<HTMLDivElement | null>(null);
+
+  const handleChangeSortDirection = () => {
+    if (sortOrder === "asc") {
+      setSortOrder("desc");
+    } else {
+      setSortOrder("asc");
+    }
+  };
 
   const { handleTimeFrameChange, timeFrame } = useTimeFrameSelect();
   const { jobTypes, handleJobTypesChange } = useJobTypesSelect();
@@ -87,6 +97,7 @@ export const ByInstitution = () => {
       page,
       pageSize,
       search: delayedSearch,
+      sortBy: `name:${sortOrder}`,
       timeFrame,
     });
 
@@ -124,10 +135,20 @@ export const ByInstitution = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell className={styles.institutionHeadCell}>
-                      <Typography variant="subtitle1">Institution</Typography>
-                      <Typography color="textSecondary" variant="caption">
-                        Success Rate (%) | Time to Connect (s)
-                      </Typography>
+                      <TableSortLabel
+                        active
+                        direction={sortOrder}
+                        onClick={handleChangeSortDirection}
+                      >
+                        <Stack>
+                          <Typography variant="subtitle1">
+                            Institution
+                          </Typography>
+                          <Typography color="textSecondary" variant="caption">
+                            Success Rate (%) | Time to Connect (s)
+                          </Typography>
+                        </Stack>
+                      </TableSortLabel>
                     </TableCell>
                     {aggregators?.map(({ displayName, logo }) => {
                       return (
