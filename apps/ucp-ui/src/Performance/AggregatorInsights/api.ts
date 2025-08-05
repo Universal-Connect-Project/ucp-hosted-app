@@ -21,18 +21,20 @@ interface AggregatorPerformanceByJobTypeParans {
   timeFrame: string;
 }
 
+export interface InstitutionWithPerformance {
+  id: string;
+  name: string;
+  logo?: string;
+  performance: Record<
+    string,
+    { avgSuccessRate?: number; avgDuration?: number }
+  >;
+}
+
 interface InstitutionsWithPerformanceResponse {
   aggregators: Aggregator[];
   currentPage: number;
-  institutions: {
-    id: string;
-    name: string;
-    logo?: string;
-    performance: Record<
-      string,
-      { avgSuccessRate?: number; avgDuration?: number }
-    >;
-  }[];
+  institutions: InstitutionWithPerformance[];
   pageSize: number;
   totalRecords: number;
   totalPages: number;

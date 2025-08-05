@@ -13,7 +13,10 @@ import {
   Typography,
 } from "@mui/material";
 import debounce from "lodash.debounce";
-import { useGetInstitutionsWithPerformanceQuery } from "../api";
+import {
+  InstitutionWithPerformance,
+  useGetInstitutionsWithPerformanceQuery,
+} from "../api";
 import { DEFAULT_LOGO_URL } from "../../../Institutions/Institution/constants";
 import { TableWrapper } from "../../../shared/components/Table/TableWrapper";
 import { TablePagination } from "../../../shared/components/Table/TablePagination";
@@ -31,6 +34,19 @@ import { TableAlertContainer } from "../../../shared/components/Table/TableAlert
 import styles from "./byInstitution.module.css";
 import { NoDataCell } from "../../../shared/components/Table/NoDataCell";
 import { formatMaxTwoDecimals } from "../../../shared/utils/format";
+import {
+  SkeletonIfLoading,
+  TextSkeletonIfLoading,
+} from "../../../shared/components/Skeleton";
+
+const generateFakeInstitutionData = (pageSize: number) => {
+  return new Array(pageSize).fill(0).map(() => ({
+    id: window.crypto.randomUUID(),
+    logo: undefined,
+    name: "Test that has to be quite long 1234566777",
+    performance: {},
+  })) as InstitutionWithPerformance[];
+};
 
 export const ByInstitution = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -100,6 +116,11 @@ export const ByInstitution = () => {
       sortBy: `name:${sortOrder}`,
       timeFrame,
     });
+
+  const institutions =
+    isFetching && !data
+      ? generateFakeInstitutionData(pageSize)
+      : data?.institutions;
 
   const aggregators = data?.aggregators;
 
@@ -173,16 +194,28 @@ export const ByInstitution = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data?.institutions?.map((institution) => (
+                  {institutions?.map((institution) => (
                     <TableRow key={institution.id}>
                       <TableCell>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <img
-                            className={styles.institutionLogo}
-                            alt={institution.name}
-                            src={institution.logo ?? DEFAULT_LOGO_URL}
-                          />
-                          <div>{institution.name}</div>
+                        <Stack
+                          alignItems="center"
+                          className={styles.institutionCell}
+                          direction="row"
+                          spacing={1}
+                        >
+                          <SkeletonIfLoading
+                            height="100%"
+                            isLoading={isFetching}
+                          >
+                            <img
+                              className={styles.institutionLogo}
+                              alt={institution.name}
+                              src={institution.logo ?? DEFAULT_LOGO_URL}
+                            />
+                          </SkeletonIfLoading>
+                          <TextSkeletonIfLoading isLoading={isFetching}>
+                            <div>{institution.name}</div>
+                          </TextSkeletonIfLoading>
                         </Stack>
                       </TableCell>
                       {aggregators?.map((aggregator) => {
