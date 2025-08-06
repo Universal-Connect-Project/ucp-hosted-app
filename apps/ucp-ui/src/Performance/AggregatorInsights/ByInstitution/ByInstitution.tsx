@@ -38,9 +38,7 @@ import {
   SkeletonIfLoading,
   TextSkeletonIfLoading,
 } from "../../../shared/components/Skeleton";
-import { institutionRoute } from "../../../shared/constants/routes";
-import { useNavigate } from "react-router";
-import classNames from "classnames";
+import { InstitutionTableRow } from "../../../shared/components/Table/Institution/InstitutionTableRow";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -52,8 +50,6 @@ const generateFakeInstitutionData = (pageSize: number) => {
 };
 
 export const ByInstitution = () => {
-  const navigate = useNavigate();
-
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [search, setSearch] = useState("");
   const [delayedSearch, setDelayedSearch] = useState("");
@@ -201,21 +197,10 @@ export const ByInstitution = () => {
                 </TableHead>
                 <TableBody>
                   {institutions?.map((institution) => (
-                    <TableRow
-                      className={classNames({
-                        [styles.tableRowHover]: !isFetching,
-                      })}
+                    <InstitutionTableRow
                       key={institution.id}
-                      hover={!isFetching}
-                      onClick={() => {
-                        if (!isFetching) {
-                          navigate(
-                            institutionRoute.createPath({
-                              institutionId: institution.id,
-                            }),
-                          );
-                        }
-                      }}
+                      isLoading={isFetching}
+                      id={institution.id}
                     >
                       <TableCell>
                         <Stack
@@ -259,7 +244,7 @@ export const ByInstitution = () => {
                           </NoDataCell>
                         );
                       })}
-                    </TableRow>
+                    </InstitutionTableRow>
                   ))}
                 </TableBody>
               </Table>

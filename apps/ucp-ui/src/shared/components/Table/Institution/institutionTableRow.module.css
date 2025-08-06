@@ -1,0 +1,7 @@
+.tableRow {
+  cursor: pointer;
+}
+
+.disablePointerEvents {
+  pointer-events: none;
+}

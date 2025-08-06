@@ -14,8 +14,7 @@ import {
   TableSortLabel,
   Tooltip,
 } from "@mui/material";
-import classNames from "classnames";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import debounce from "lodash.debounce";
 import FetchError from "../shared/components/FetchError";
 import PageContent from "../shared/components/PageContent";
@@ -25,7 +24,6 @@ import {
   TextSkeletonIfLoading,
 } from "../shared/components/Skeleton";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
-import { institutionRoute } from "../shared/constants/routes";
 import {
   AggregatorIntegration,
   useGetInstitutionPermissionsQuery,
@@ -56,6 +54,7 @@ import { TableWrapper } from "../shared/components/Table/TableWrapper";
 import { TablePagination } from "../shared/components/Table/TablePagination";
 import { TableContainer } from "../shared/components/Table/TableContainer";
 import { TableAlertContainer } from "../shared/components/Table/TableAlertContainer";
+import { InstitutionTableRow } from "../shared/components/Table/Institution/InstitutionTableRow";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -82,8 +81,6 @@ const generateFakeInstitutionData = (pageSize: number) => {
 };
 
 const Institutions = () => {
-  const navigate = useNavigate();
-
   const scrollableTableRef = useRef<HTMLDivElement | null>(null);
 
   const tableHeadCells = [
@@ -349,22 +346,11 @@ const Institutions = () => {
                       <TableBody>
                         {institutions?.map(
                           ({ aggregatorIntegrations, logo, name, id }) => (
-                            <TableRow
-                              className={classNames({
-                                [styles.tableRowHover]: !isInstitutionsLoading,
-                              })}
+                            <InstitutionTableRow
                               data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
-                              hover={!isInstitutionsLoading}
+                              id={id}
+                              isLoading={isInstitutionsLoading}
                               key={id}
-                              onClick={() => {
-                                if (!isInstitutionsLoading) {
-                                  navigate(
-                                    institutionRoute.createPath({
-                                      institutionId: id,
-                                    }),
-                                  );
-                                }
-                              }}
                             >
                               <TableCell>
                                 <div className={styles.institutionCell}>
@@ -459,7 +445,7 @@ const Institutions = () => {
                                   )}
                                 </div>
                               </TableCell>
-                            </TableRow>
+                            </InstitutionTableRow>
                           ),
                         )}
                       </TableBody>
