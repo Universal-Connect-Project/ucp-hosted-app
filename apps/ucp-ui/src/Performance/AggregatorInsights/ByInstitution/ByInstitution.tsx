@@ -38,6 +38,9 @@ import {
   SkeletonIfLoading,
   TextSkeletonIfLoading,
 } from "../../../shared/components/Skeleton";
+import { institutionRoute } from "../../../shared/constants/routes";
+import { useNavigate } from "react-router";
+import classNames from "classnames";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -49,6 +52,8 @@ const generateFakeInstitutionData = (pageSize: number) => {
 };
 
 export const ByInstitution = () => {
+  const navigate = useNavigate();
+
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [search, setSearch] = useState("");
   const [delayedSearch, setDelayedSearch] = useState("");
@@ -196,7 +201,22 @@ export const ByInstitution = () => {
                 </TableHead>
                 <TableBody>
                   {institutions?.map((institution) => (
-                    <TableRow key={institution.id}>
+                    <TableRow
+                      className={classNames({
+                        [styles.tableRowHover]: !isFetching,
+                      })}
+                      key={institution.id}
+                      hover={!isFetching}
+                      onClick={() => {
+                        if (!isFetching) {
+                          navigate(
+                            institutionRoute.createPath({
+                              institutionId: institution.id,
+                            }),
+                          );
+                        }
+                      }}
+                    >
                       <TableCell>
                         <Stack
                           alignItems="center"

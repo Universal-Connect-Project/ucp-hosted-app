@@ -356,13 +356,15 @@ const Institutions = () => {
                               data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
                               hover={!isInstitutionsLoading}
                               key={id}
-                              onClick={() =>
-                                navigate(
-                                  institutionRoute.createPath({
-                                    institutionId: id,
-                                  }),
-                                )
-                              }
+                              onClick={() => {
+                                if (!isInstitutionsLoading) {
+                                  navigate(
+                                    institutionRoute.createPath({
+                                      institutionId: id,
+                                    }),
+                                  );
+                                }
+                              }}
                             >
                               <TableCell>
                                 <div className={styles.institutionCell}>

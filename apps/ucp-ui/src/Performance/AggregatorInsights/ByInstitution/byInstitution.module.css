@@ -18,3 +18,7 @@
 .institutionCell {
   height: 32px;
 }
+
+.tableRowHover {
+  cursor: pointer;
+}
