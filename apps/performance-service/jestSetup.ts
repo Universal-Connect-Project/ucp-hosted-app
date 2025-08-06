@@ -12,4 +12,8 @@ beforeAll(async () => {
 
   server.listen();
 });
-afterAll(() => server.close());
+
+afterAll(async () => {
+  await clearInfluxData();
+  server.close();
+});
