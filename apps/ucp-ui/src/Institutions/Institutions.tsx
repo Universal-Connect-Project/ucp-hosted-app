@@ -309,7 +309,6 @@ const Institutions = () => {
             <TableWrapper className={styles.tableWrapper} height={640}>
               {shouldDisplayTable ? (
                 <>
-                  {" "}
                   <TableContainer ref={scrollableTableRef}>
                     <Table stickyHeader>
                       <TableHead>
