@@ -1,7 +1,7 @@
 import { Point } from "@influxdata/influxdb-client";
 import {
   influxDBClient,
-  influxOrg,
+  INFLUX_ORG,
   queryApi,
   writeApi,
 } from "../../services/influxDb";
@@ -33,7 +33,7 @@ export const clearInfluxData = async () => {
 
   try {
     await deleteApi.postDelete({
-      org: influxOrg,
+      org: INFLUX_ORG,
       bucket: testBucketName,
       body: {
         start,
