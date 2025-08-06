@@ -34,9 +34,10 @@ const createMetricQuery =
       ?.split(",")
       .map((jobType) => jobType.split("|").sort().join("|"));
 
-    const jobTypesFilter = formattedJobTypes?.length
-      ? `|> filter(fn: (r) => ${formattedJobTypes.map((type) => `r.jobTypes == string(v: "${type}")`).join(" or ")})`
-      : "";
+    const jobTypesFilter =
+      formattedJobTypes?.length && jobTypes
+        ? `|> filter(fn: (r) => ${formattedJobTypes.map((type) => `r.jobTypes == string(v: "${type}")`).join(" or ")})`
+        : "";
 
     return `
 ${resultVariableName} = from(bucket: "${BUCKET}")
@@ -72,6 +73,7 @@ interface QueryParams {
   page: string;
   pageSize: string;
   search?: string;
+  sortBy: string;
   timeFrame: string;
 }
 
@@ -79,7 +81,7 @@ export const getInstitutionsWithPerformance = async (
   req: Request,
   res: Response,
 ) => {
-  const { jobTypes, page, pageSize, search, timeFrame } =
+  const { jobTypes, page, pageSize, search, sortBy, timeFrame } =
     req.query as unknown as QueryParams;
 
   try {
@@ -89,6 +91,7 @@ export const getInstitutionsWithPerformance = async (
       page,
       pageSize,
       search,
+      sortBy,
     });
 
     const paginationInfo = {
@@ -137,7 +140,7 @@ export const getInstitutionsWithPerformance = async (
       return {
         ...institution,
         performance: performance.reduce<
-          Record<string, { avgSuccessRate: number; avgDuration: number }>
+          Record<string, { avgSuccessRate?: number; avgDuration?: number }>
         >((acc, curr) => {
           const { aggregatorId, avgSuccessRate, avgDuration } = curr as {
             aggregatorId: string;
@@ -147,8 +150,10 @@ export const getInstitutionsWithPerformance = async (
           return {
             ...acc,
             [aggregatorId]: {
-              avgSuccessRate,
-              avgDuration,
+              avgSuccessRate:
+                avgSuccessRate === undefined ? undefined : avgSuccessRate * 100,
+              avgDuration:
+                avgDuration === undefined ? undefined : avgDuration / 1000,
             },
           };
         }, {}),

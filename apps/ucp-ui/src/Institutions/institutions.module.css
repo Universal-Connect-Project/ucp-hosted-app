@@ -11,30 +11,7 @@
 }
 
 .tableWrapper {
-  background-color: var(--mui-palette-common-white);
-  border: solid 1px var(--mui-palette-divider);
-  border-radius: var(--mui-shape-borderRadius);
   flex: 1;
-}
-
-.table {
-  &:global(.MuiTableContainer-root) {
-    border-radius: inherit;
-    max-height: 640px;
-  }
-
-  tbody {
-    tr:last-of-type {
-      td {
-        border-bottom: none;
-      }
-    }
-  }
-}
-
-.alertContainer {
-  flex: 1;
-  padding: 32px 24px;
 }
 
 .filterTableContainer {
@@ -94,8 +71,4 @@
   align-items: center;
   display: flex;
   gap: 4px;
-}
-
-.tableRowHover {
-  cursor: pointer;
 }

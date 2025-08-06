@@ -1,0 +1,11 @@
+.paginationContainer {
+  border-top: solid 1px var(--mui-palette-divider);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+
+  :global(.MuiToolbar-root) {
+    padding-left: 0;
+  }
+}

@@ -47,7 +47,8 @@ export const validateInstitutionsWithPerformanceQueryParams =
         }),
       page: Joi.string().required(),
       pageSize: Joi.string().required(),
-      search: Joi.string(),
+      search: Joi.string().allow(""),
+      sortBy: Joi.string(),
       timeFrame: Joi.string()
         .required()
         .valid(...Object.keys(TimeFrameToAggregateWindowMap)),

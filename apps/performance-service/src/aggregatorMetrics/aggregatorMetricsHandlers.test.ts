@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 
 import {
   allJobTypeCombinations,
+  clearInfluxData,
   seedInfluxTestDb,
   seedInfluxWithAllTimeFrameData,
   TEST_DURATION_ONE_MONTH,
@@ -34,6 +35,10 @@ const findMxResult = (results: Results) => {
 describe("getAggregatorMetrics", () => {
   beforeAll(async () => {
     await seedInfluxWithAllTimeFrameData();
+  });
+
+  afterAll(async () => {
+    await clearInfluxData();
   });
 
   const expectedAggregatorMetricsResultsFormat = (results: Results) => {

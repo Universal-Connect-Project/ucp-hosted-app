@@ -6,8 +6,10 @@ import { testInstitutionsResponse } from "../shared/tests/testData/institutions"
 import { getInstitutionsWithPerformance } from "./getInstitutionsWithPerformance";
 import { Request, Response } from "express";
 import { testAggregators } from "../shared/tests/testData/aggregators";
-import { seedInfluxTestDb } from "../shared/tests/utils";
+import { clearInfluxData, seedInfluxTestDb } from "../shared/tests/utils";
 import { ComboJobTypes } from "@repo/shared-utils";
+
+const longDuration = 1000000000;
 
 describe("getInstitutionsWithPerformance", () => {
   beforeAll(async () => {
@@ -18,11 +20,15 @@ describe("getInstitutionsWithPerformance", () => {
     });
 
     await seedInfluxTestDb({
-      duration: 1000000000,
+      duration: longDuration,
       institutionId: testInstitutionsResponse.institutions[0].id,
       jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
       timestamp: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000),
     });
+  });
+
+  afterAll(async () => {
+    await clearInfluxData();
   });
 
   it("passes page and search parameters to the institutions request", async () => {
@@ -41,12 +47,14 @@ describe("getInstitutionsWithPerformance", () => {
     const page = "1";
     const pageSize = "10";
     const search = "test institution";
+    const sortBy = "name:asc";
 
     const req = {
       query: {
         page,
         pageSize,
         search,
+        sortBy,
         timeFrame: "30d",
       },
     } as unknown as Request;
@@ -60,6 +68,7 @@ describe("getInstitutionsWithPerformance", () => {
       page,
       pageSize,
       search,
+      sortBy,
     });
   });
 
@@ -108,7 +117,7 @@ describe("getInstitutionsWithPerformance", () => {
     expect(institutions).toEqual([]);
   });
 
-  it("filters by jobTypes and timeFrame", async () => {
+  it("filters by jobTypes and timeFrame, doesn't filter by job types if empty string, and multiplies the results", async () => {
     const res = {
       send: jest.fn(),
     } as unknown as Response;
@@ -127,6 +136,7 @@ describe("getInstitutionsWithPerformance", () => {
     await getInstitutionsWithPerformance(
       {
         query: {
+          jobTypes: "",
           page: "1",
           pageSize: "10",
           timeFrame: "90d",
@@ -182,10 +192,19 @@ describe("getInstitutionsWithPerformance", () => {
       getFirstArg(callIndex).institutions[0].performance;
 
     for (let i = 0; i < 3; i++) {
-      expect(getPerformanceResults(i)).not.toEqual(
+      const currentPerformanceResults = getPerformanceResults(i);
+
+      expect(currentPerformanceResults).not.toEqual(
         getPerformanceResults(i + 1),
       );
     }
+
+    const secondPerformanceResults = getPerformanceResults(1);
+
+    expect(secondPerformanceResults.mx.avgSuccessRate).toEqual(100);
+    expect(secondPerformanceResults.mx.avgDuration).toEqual(
+      longDuration / 1000,
+    );
   });
 
   it("responds with a 400 if there's an issue", async () => {

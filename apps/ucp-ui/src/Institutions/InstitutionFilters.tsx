@@ -93,8 +93,11 @@ const InstitutionFilters = ({
   return (
     <div className={styles.container}>
       <TextField
-        InputProps={{
-          endAdornment: <Search />,
+        autoComplete="off"
+        slotProps={{
+          input: {
+            endAdornment: <Search />,
+          },
         }}
         label={INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT}
         onChange={({ target: { value } }) => {

@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 
 import { ComboJobTypes } from "@repo/shared-utils";
-import { seedInfluxTestDb, wait } from "../shared/tests/utils";
+import { clearInfluxData, seedInfluxTestDb, wait } from "../shared/tests/utils";
 import {
   getAggregatorSuccessGraphData,
   getAggregatorDurationGraphData,
@@ -103,6 +103,10 @@ describe("getAggregatorSuccessGraphData", () => {
     });
 
     await wait(1500);
+  });
+
+  afterAll(async () => {
+    await clearInfluxData();
   });
 
   beforeEach(() => {

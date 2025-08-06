@@ -24,6 +24,7 @@ describe("getInstitutions", () => {
     const institutions = await getInstitutions({
       page,
       pageSize,
+      sortBy: "name:asc",
     });
 
     expect(institutions).toEqual(testInstitutionsResponse);
@@ -32,6 +33,7 @@ describe("getInstitutions", () => {
       page,
       pageSize,
       search: "",
+      sortBy: "name:asc",
     });
   });
 
@@ -43,7 +45,7 @@ describe("getInstitutions", () => {
     );
 
     await expect(
-      getInstitutions({ page: "1", pageSize: "10" }),
+      getInstitutions({ page: "1", pageSize: "10", sortBy: "name:asc" }),
     ).rejects.toThrow("Not Found");
   });
 });

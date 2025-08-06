@@ -1,0 +1,11 @@
+.relativeContainer {
+  flex: 1;
+  position: relative;
+}
+
+.absoluteContainer {
+  bottom: 0;
+  position: absolute;
+  max-width: 100%;
+  width: 100%;
+}

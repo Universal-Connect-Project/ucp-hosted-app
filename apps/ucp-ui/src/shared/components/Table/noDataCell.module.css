@@ -1,0 +1,5 @@
+.noData {
+  &:global(.MuiTableCell-root) {
+    color: var(--mui-palette-text-disabled);
+  }
+}

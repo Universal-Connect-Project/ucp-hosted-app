@@ -21,10 +21,12 @@ export const getInstitutions = async ({
   page,
   pageSize,
   search,
+  sortBy,
 }: {
   page: string;
   pageSize: string;
   search?: string;
+  sortBy: string;
 }): Promise<InstitutionsResponse> => {
   const token = await getPerformanceServiceAccessToken();
 
@@ -36,6 +38,7 @@ export const getInstitutions = async ({
     page,
     pageSize,
     search: search || "",
+    sortBy,
   }).toString();
 
   const response = await fetch(url, {

@@ -6,20 +6,15 @@ import {
   Avatar,
   Button,
   Chip,
-  Pagination,
-  Paper,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Tooltip,
 } from "@mui/material";
-import classNames from "classnames";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import debounce from "lodash.debounce";
 import FetchError from "../shared/components/FetchError";
 import PageContent from "../shared/components/PageContent";
@@ -29,7 +24,6 @@ import {
   TextSkeletonIfLoading,
 } from "../shared/components/Skeleton";
 import { supportsJobTypeMap } from "../shared/constants/jobTypes";
-import { institutionRoute } from "../shared/constants/routes";
 import {
   AggregatorIntegration,
   useGetInstitutionPermissionsQuery,
@@ -56,6 +50,11 @@ import styles from "./institutions.module.css";
 import { aggregatorIntegrationsSortByName } from "./utils";
 import InstitutionFilters from "./InstitutionFilters";
 import UCPIdCell from "./UCPIdCell";
+import { TableWrapper } from "../shared/components/Table/TableWrapper";
+import { TablePagination } from "../shared/components/Table/TablePagination";
+import { TableContainer } from "../shared/components/Table/TableContainer";
+import { TableAlertContainer } from "../shared/components/Table/TableAlertContainer";
+import { InstitutionTableRow } from "../shared/components/Table/Institution/InstitutionTableRow";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -82,8 +81,6 @@ const generateFakeInstitutionData = (pageSize: number) => {
 };
 
 const Institutions = () => {
-  const navigate = useNavigate();
-
   const scrollableTableRef = useRef<HTMLDivElement | null>(null);
 
   const tableHeadCells = [
@@ -306,210 +303,180 @@ const Institutions = () => {
               handleChangeParams={handleChangeParams}
               institutionsParams={institutionsParams}
             />
-            {shouldDisplayTable ? (
-              <div className={styles.tableWrapper}>
-                <TableContainer
-                  className={styles.table}
-                  ref={scrollableTableRef}
-                >
-                  <Table stickyHeader>
-                    <TableHead>
-                      <TableRow>
-                        {tableHeadCells.map(({ label, tooltip, sort }) => (
-                          <TableCell key={label}>
-                            <div className={styles.tableHeadCell}>
-                              {tooltip && (
-                                <Tooltip
-                                  data-testid={
-                                    INSTITUTIONS_AGGREGATOR_INFO_ICON
-                                  }
-                                  title={tooltip}
-                                >
-                                  <InfoOutlined fontSize="inherit" />
-                                </Tooltip>
-                              )}
-                              {sort ? (
-                                <TableSortLabel
-                                  active={sortByProp === sort}
-                                  direction={
-                                    sortByProp === sort
-                                      ? sortByOrder
-                                      : SortOrder.asc
-                                  }
-                                  onClick={createSortHandler(sort)}
-                                >
-                                  <div>{label}</div>
-                                </TableSortLabel>
-                              ) : (
-                                <div>{label}</div>
-                              )}
-                            </div>
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {institutions?.map(
-                        ({ aggregatorIntegrations, logo, name, id }) => (
-                          <TableRow
-                            className={classNames({
-                              [styles.tableRowHover]: !isInstitutionsLoading,
-                            })}
-                            data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
-                            hover={!isInstitutionsLoading}
-                            key={id}
-                            onClick={() =>
-                              navigate(
-                                institutionRoute.createPath({
-                                  institutionId: id,
-                                }),
-                              )
-                            }
-                          >
-                            <TableCell>
-                              <div className={styles.institutionCell}>
-                                <SkeletonIfLoading
-                                  height="100%"
-                                  isLoading={isInstitutionsLoading}
-                                >
-                                  <img
-                                    className={styles.institutionLogo}
-                                    src={logo ?? DEFAULT_LOGO_URL}
-                                  />
-                                </SkeletonIfLoading>
-                                <TextSkeletonIfLoading
-                                  isLoading={isInstitutionsLoading}
-                                >
-                                  <div>{name}</div>
-                                </TextSkeletonIfLoading>
-                              </div>
-                            </TableCell>
-                            <UCPIdCell
-                              id={id}
-                              isLoading={isInstitutionsLoading}
-                            />
-                            <TableCell>
-                              <div className={styles.aggregatorsCell}>
-                                {aggregatorIntegrations.length ? (
-                                  [...aggregatorIntegrations]
-                                    .sort(aggregatorIntegrationsSortByName)
-                                    .map((aggregatorIntegration) => {
-                                      const {
-                                        aggregator: { displayName },
-                                        isActive,
-                                      } = aggregatorIntegration;
-
-                                      if (
-                                        !isActive &&
-                                        !shouldShowInactiveIntegrations
-                                      ) {
-                                        return null;
-                                      }
-
-                                      const supportedTypes = Object.values(
-                                        supportsJobTypeMap,
-                                      ).filter(
-                                        ({ prop }) =>
-                                          aggregatorIntegration[prop],
-                                      );
-
-                                      const namesSupported = supportedTypes
-                                        .map(({ displayName }) => displayName)
-                                        .join(", ");
-                                      const numberSupported =
-                                        supportedTypes.length;
-
-                                      return (
-                                        <SkeletonIfLoading
-                                          className={styles.chipSkeleton}
-                                          isLoading={isInstitutionsLoading}
-                                          key={displayName}
-                                        >
-                                          <Tooltip
-                                            disableInteractive
-                                            title={
-                                              numberSupported
-                                                ? `Supported job types: ${namesSupported}`
-                                                : null
-                                            }
-                                          >
-                                            <Chip
-                                              avatar={
-                                                <Avatar
-                                                  className={styles.chipAvatar}
-                                                >
-                                                  {numberSupported}
-                                                </Avatar>
-                                              }
-                                              data-testid={
-                                                INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
-                                              }
-                                              disabled={!isActive}
-                                              label={displayName}
-                                              size="small"
-                                            />
-                                          </Tooltip>
-                                        </SkeletonIfLoading>
-                                      );
-                                    })
+            <TableWrapper className={styles.tableWrapper} height={640}>
+              {shouldDisplayTable ? (
+                <>
+                  <TableContainer ref={scrollableTableRef}>
+                    <Table stickyHeader>
+                      <TableHead>
+                        <TableRow>
+                          {tableHeadCells.map(({ label, tooltip, sort }) => (
+                            <TableCell key={label}>
+                              <div className={styles.tableHeadCell}>
+                                {tooltip && (
+                                  <Tooltip
+                                    data-testid={
+                                      INSTITUTIONS_AGGREGATOR_INFO_ICON
+                                    }
+                                    title={tooltip}
+                                  >
+                                    <InfoOutlined fontSize="inherit" />
+                                  </Tooltip>
+                                )}
+                                {sort ? (
+                                  <TableSortLabel
+                                    active={sortByProp === sort}
+                                    direction={
+                                      sortByProp === sort
+                                        ? sortByOrder
+                                        : SortOrder.asc
+                                    }
+                                    onClick={createSortHandler(sort)}
+                                  >
+                                    <div>{label}</div>
+                                  </TableSortLabel>
                                 ) : (
-                                  <Chip disabled label="None" size="small" />
+                                  <div>{label}</div>
                                 )}
                               </div>
                             </TableCell>
-                          </TableRow>
-                        ),
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <div className={styles.paginationContainer}>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {institutions?.map(
+                          ({ aggregatorIntegrations, logo, name, id }) => (
+                            <InstitutionTableRow
+                              data-testid={`${INSTITUTIONS_ROW_TEST_ID}-${id}`}
+                              id={id}
+                              isLoading={isInstitutionsLoading}
+                              key={id}
+                            >
+                              <TableCell>
+                                <div className={styles.institutionCell}>
+                                  <SkeletonIfLoading
+                                    height="100%"
+                                    isLoading={isInstitutionsLoading}
+                                  >
+                                    <img
+                                      className={styles.institutionLogo}
+                                      src={logo ?? DEFAULT_LOGO_URL}
+                                    />
+                                  </SkeletonIfLoading>
+                                  <TextSkeletonIfLoading
+                                    isLoading={isInstitutionsLoading}
+                                  >
+                                    <div>{name}</div>
+                                  </TextSkeletonIfLoading>
+                                </div>
+                              </TableCell>
+                              <UCPIdCell
+                                id={id}
+                                isLoading={isInstitutionsLoading}
+                              />
+                              <TableCell>
+                                <div className={styles.aggregatorsCell}>
+                                  {aggregatorIntegrations.length ? (
+                                    [...aggregatorIntegrations]
+                                      .sort(aggregatorIntegrationsSortByName)
+                                      .map((aggregatorIntegration) => {
+                                        const {
+                                          aggregator: { displayName },
+                                          isActive,
+                                        } = aggregatorIntegration;
+
+                                        if (
+                                          !isActive &&
+                                          !shouldShowInactiveIntegrations
+                                        ) {
+                                          return null;
+                                        }
+
+                                        const supportedTypes = Object.values(
+                                          supportsJobTypeMap,
+                                        ).filter(
+                                          ({ prop }) =>
+                                            aggregatorIntegration[prop],
+                                        );
+
+                                        const namesSupported = supportedTypes
+                                          .map(({ displayName }) => displayName)
+                                          .join(", ");
+                                        const numberSupported =
+                                          supportedTypes.length;
+
+                                        return (
+                                          <SkeletonIfLoading
+                                            className={styles.chipSkeleton}
+                                            isLoading={isInstitutionsLoading}
+                                            key={displayName}
+                                          >
+                                            <Tooltip
+                                              disableInteractive
+                                              title={
+                                                numberSupported
+                                                  ? `Supported job types: ${namesSupported}`
+                                                  : null
+                                              }
+                                            >
+                                              <Chip
+                                                avatar={
+                                                  <Avatar
+                                                    className={
+                                                      styles.chipAvatar
+                                                    }
+                                                  >
+                                                    {numberSupported}
+                                                  </Avatar>
+                                                }
+                                                data-testid={
+                                                  INSTITUTITIONS_ROW_AGGREGATOR_CHIP_TEST_ID
+                                                }
+                                                disabled={!isActive}
+                                                label={displayName}
+                                                size="small"
+                                              />
+                                            </Tooltip>
+                                          </SkeletonIfLoading>
+                                        );
+                                      })
+                                  ) : (
+                                    <Chip disabled label="None" size="small" />
+                                  )}
+                                </div>
+                              </TableCell>
+                            </InstitutionTableRow>
+                          ),
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                   <TablePagination
-                    count={totalRecords}
-                    component="div"
-                    page={totalRecords ? page - 1 : 0}
-                    onPageChange={() => {}}
-                    onRowsPerPageChange={handleChangePageSize}
-                    rowsPerPage={pageSize}
-                    size="small"
-                    slotProps={{
-                      actions: {
-                        nextButton: {
-                          style: { display: "none" },
-                        },
-                        previousButton: {
-                          style: { display: "none" },
-                        },
-                      },
-                    }}
-                  />
-                  <Pagination
-                    count={pages}
-                    onChange={handleChangePage}
+                    totalRecords={totalRecords}
                     page={page}
-                    shape="circular"
-                    showFirstButton
-                    showLastButton
-                    size="small"
+                    pages={pages}
+                    pageSize={pageSize}
+                    handleChangePageSize={handleChangePageSize}
+                    handleChangePage={handleChangePage}
                   />
-                </div>
-              </div>
-            ) : (
-              <Paper className={styles.alertContainer} variant="outlined">
-                {isInstitutionsError && (
-                  <FetchError
-                    description={INSTITUTIONS_ERROR_TEXT}
-                    refetch={() => void refetchInstitutions()}
-                  />
-                )}
-                {isInstitutionListEmpty && (
-                  <Alert severity="info">
-                    <AlertTitle>{INSTITUTIONS_EMPTY_RESULTS_TEXT}</AlertTitle>
-                    Try editing your filters to see more Institutions.
-                  </Alert>
-                )}
-              </Paper>
-            )}
+                </>
+              ) : (
+                <TableAlertContainer>
+                  {isInstitutionsError && (
+                    <FetchError
+                      description={INSTITUTIONS_ERROR_TEXT}
+                      refetch={() => void refetchInstitutions()}
+                    />
+                  )}
+                  {isInstitutionListEmpty && (
+                    <Alert severity="info">
+                      <AlertTitle>{INSTITUTIONS_EMPTY_RESULTS_TEXT}</AlertTitle>
+                      Try editing your filters to see more Institutions.
+                    </Alert>
+                  )}
+                </TableAlertContainer>
+              )}
+            </TableWrapper>
           </div>
         </div>
       </PageContent>
