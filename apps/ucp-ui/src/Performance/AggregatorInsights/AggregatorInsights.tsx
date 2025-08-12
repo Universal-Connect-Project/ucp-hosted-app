@@ -34,8 +34,8 @@ const AggregatorInsights = () => {
         </Box>
       </Stack>
       <div className={styles.tabContent}>
-        {tab === byJobTypeTabValue && <ByJobType />}
         {tab === byInstitutionTabValue && <ByInstitution />}
+        {tab === byJobTypeTabValue && <ByJobType />}
       </div>
     </div>
   );

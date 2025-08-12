@@ -21,7 +21,10 @@ import {
 import { INSTITUTION_SERVICE_CREATE_AGGREGATOR_INTEGRATION_URL } from "../../Institutions/ChangeAggregatorIntegration/api";
 import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../api/aggregators";
 import { aggregatorsResponse } from "../api/testData/aggregators";
-import { AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_URL } from "../../Performance/AggregatorInsights/api";
+import {
+  AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_URL,
+  INSTITUTIONS_WITH_PERFORMANCE_URL,
+} from "../../Performance/AggregatorInsights/api";
 import { aggregatorPerformanceByJobType } from "../../Performance/AggregatorInsights/testData/aggregatorPerformanceByJobType";
 import {
   AGGREGATOR_DURATION_GRAPH_URL,
@@ -36,6 +39,7 @@ import {
   INSTITUTION_DURATION_GRAPH_URL,
   INSTITUTION_SUCCESS_GRAPH_URL,
 } from "../../Institutions/Institution/api";
+import { institutionsWithPerformanceTestResponse } from "./testData/institutionsWithPerformance";
 
 export const handlers = [
   http.post(INSTITUTION_SERVICE_CREATE_INSTITUTION_URL, () =>
@@ -99,5 +103,8 @@ export const handlers = [
   ),
   http.get(INSTITUTION_DURATION_GRAPH_URL, () =>
     HttpResponse.json(durationGraphData),
+  ),
+  http.get(INSTITUTIONS_WITH_PERFORMANCE_URL, () =>
+    HttpResponse.json(institutionsWithPerformanceTestResponse),
   ),
 ];

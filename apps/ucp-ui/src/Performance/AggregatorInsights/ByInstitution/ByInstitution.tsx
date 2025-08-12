@@ -39,6 +39,7 @@ import {
   TextSkeletonIfLoading,
 } from "../../../shared/components/Skeleton";
 import { InstitutionTableRow } from "../../../shared/components/Table/Institution/InstitutionTableRow";
+import { BY_INSTITUTION_SEARCH_LABEL_TEXT } from "./constants";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -140,7 +141,7 @@ export const ByInstitution = () => {
         </JobTypesSelectFlexContainer>
         <TextField
           autoComplete="off"
-          label="Search Institutions"
+          label={BY_INSTITUTION_SEARCH_LABEL_TEXT}
           onChange={handleSearchChange}
           slotProps={{
             input: {
@@ -240,7 +241,7 @@ export const ByInstitution = () => {
                             isLoading={isFetching}
                             key={aggregator.name}
                           >
-                            {`${formatMaxTwoDecimals(avgSuccessRate) || 0}% | ${avgDuration ? formatMaxTwoDecimals(avgDuration) + "s" : "–"}`}
+                            {`${formatMaxTwoDecimals(avgSuccessRate as number) || 0}% | ${avgDuration ? formatMaxTwoDecimals(avgDuration) + "s" : "–"}`}
                           </NoDataCell>
                         );
                       })}
