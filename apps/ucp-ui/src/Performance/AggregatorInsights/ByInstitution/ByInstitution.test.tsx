@@ -14,6 +14,13 @@ import {
   BY_INSTITUTION_NAME_TABLE_HEADER_TEXT,
   BY_INSTITUTION_SEARCH_LABEL_TEXT,
 } from "./constants";
+import { supportsJobTypeMap } from "../../../shared/constants/jobTypes";
+import {
+  JOB_TYPES_LABEL_TEXT,
+  oneHundredEightyDaysOption,
+  thirtyDaysOption,
+  TIME_FRAME_LABEL_TEXT,
+} from "../../../shared/components/Forms/constants";
 
 const mockInstitutionsWithPerformanceResponseWithName = (name: string) => {
   return HttpResponse.json({
@@ -94,9 +101,11 @@ describe("<ByInstitution />", () => {
           );
         }
 
-        return mockInstitutionsWithPerformanceResponseWithName(
-          page1InstitutionName,
-        );
+        if (searchParams.get("page") === "1") {
+          return mockInstitutionsWithPerformanceResponseWithName(
+            page1InstitutionName,
+          );
+        }
       }),
     );
 
@@ -116,7 +125,69 @@ describe("<ByInstitution />", () => {
     await expectInstitutionName(page1WithSearchInstitutionName);
   });
 
-  it("timeFrame, and jobTypes", () => {});
+  it("filters by timeFrame, and jobTypes", async () => {
+    const oneHundredEightyDaysInstitutionName = "180 days institution";
+    const thirtyDaysInstitutionName = "30 days institution";
+    const oneHundredEightyDaysAndAccountOwnerInstitutionName =
+      "180 days and account owner institution";
+
+    server.use(
+      http.get(INSTITUTIONS_WITH_PERFORMANCE_URL, ({ request }) => {
+        const { searchParams } = new URL(request.url);
+
+        if (
+          searchParams.get("jobTypes") === "accountOwner" &&
+          searchParams.get("timeFrame") === oneHundredEightyDaysOption.value
+        ) {
+          return mockInstitutionsWithPerformanceResponseWithName(
+            oneHundredEightyDaysAndAccountOwnerInstitutionName,
+          );
+        }
+
+        if (
+          searchParams.get("timeFrame") === oneHundredEightyDaysOption.value
+        ) {
+          return mockInstitutionsWithPerformanceResponseWithName(
+            oneHundredEightyDaysInstitutionName,
+          );
+        }
+
+        if (searchParams.get("timeFrame") === thirtyDaysOption.value) {
+          return mockInstitutionsWithPerformanceResponseWithName(
+            thirtyDaysInstitutionName,
+          );
+        }
+      }),
+    );
+
+    render(<ByInstitution />);
+
+    await expectInstitutionName(thirtyDaysInstitutionName);
+
+    await userEvent.click(
+      screen.getByRole("combobox", { name: TIME_FRAME_LABEL_TEXT }),
+    );
+
+    await userEvent.click(
+      screen.getByRole("option", { name: oneHundredEightyDaysOption.label }),
+    );
+
+    await expectInstitutionName(oneHundredEightyDaysInstitutionName);
+
+    await userEvent.click(
+      screen.getByRole("combobox", { name: JOB_TYPES_LABEL_TEXT }),
+    );
+
+    await userEvent.click(
+      screen.getByRole("option", {
+        name: supportsJobTypeMap.accountOwner.displayName,
+      }),
+    );
+
+    await expectInstitutionName(
+      oneHundredEightyDaysAndAccountOwnerInstitutionName,
+    );
+  });
 
   it("paginates, changes page size, and goes back to page 1 when page size changes", () => {});
 
