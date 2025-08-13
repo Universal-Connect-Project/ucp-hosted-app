@@ -1,6 +1,7 @@
 import React from "react";
 import { ByInstitution } from "./ByInstitution";
 import {
+  expectSkeletonLoader,
   render,
   screen,
   userEvent,
@@ -189,9 +190,61 @@ describe("<ByInstitution />", () => {
     );
   });
 
-  it("paginates, changes page size, and goes back to page 1 when page size changes", () => {});
+  it("paginates, changes page size, and goes back to page 1 when page size changes", async () => {
+    const page1InstitutionName = "page 1 institution";
+    const page2InstitutionName = "page 2 institution";
+    const page1With50PageSizeInstitutionName =
+      "page 1 with 50 page size institution";
 
-  it("renders a loading skeleton when loading", () => {});
+    server.use(
+      http.get(INSTITUTIONS_WITH_PERFORMANCE_URL, ({ request }) => {
+        const { searchParams } = new URL(request.url);
+
+        if (searchParams.get("page") === "2") {
+          return mockInstitutionsWithPerformanceResponseWithName(
+            page2InstitutionName,
+          );
+        }
+
+        if (
+          searchParams.get("page") === "1" &&
+          searchParams.get("pageSize") === "50"
+        ) {
+          return mockInstitutionsWithPerformanceResponseWithName(
+            page1With50PageSizeInstitutionName,
+          );
+        }
+
+        if (searchParams.get("page") === "1") {
+          return mockInstitutionsWithPerformanceResponseWithName(
+            page1InstitutionName,
+          );
+        }
+      }),
+    );
+
+    render(<ByInstitution />);
+
+    await expectInstitutionName(page1InstitutionName);
+
+    await userEvent.click(screen.getByText("2"));
+
+    await expectInstitutionName(page2InstitutionName);
+
+    await userEvent.click(
+      screen.getByRole("combobox", { name: "Rows per page:" }),
+    );
+
+    await userEvent.click(screen.getByRole("option", { name: "50" }));
+
+    await expectInstitutionName(page1With50PageSizeInstitutionName);
+  });
+
+  it("renders a loading skeleton when loading", async () => {
+    render(<ByInstitution />);
+
+    await expectSkeletonLoader();
+  });
 
   it("renders an empty state when there are no institutions", () => {});
 
