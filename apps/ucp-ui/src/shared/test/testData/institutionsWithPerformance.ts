@@ -40,6 +40,6 @@ export const institutionsWithPerformanceTestResponse = {
   ],
   currentPage: 1,
   pageSize: 10,
-  totalRecords: 1,
-  totalPages: 1,
+  totalRecords: 50,
+  totalPages: 5,
 };
