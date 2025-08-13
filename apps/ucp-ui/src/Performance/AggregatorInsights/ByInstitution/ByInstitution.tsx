@@ -39,7 +39,10 @@ import {
   TextSkeletonIfLoading,
 } from "../../../shared/components/Skeleton";
 import { InstitutionTableRow } from "../../../shared/components/Table/Institution/InstitutionTableRow";
-import { BY_INSTITUTION_SEARCH_LABEL_TEXT } from "./constants";
+import {
+  BY_INSTITUTION_NAME_TABLE_HEADER_TEXT,
+  BY_INSTITUTION_SEARCH_LABEL_TEXT,
+} from "./constants";
 
 const generateFakeInstitutionData = (pageSize: number) => {
   return new Array(pageSize).fill(0).map(() => ({
@@ -166,7 +169,7 @@ export const ByInstitution = () => {
                       >
                         <Stack>
                           <Typography variant="subtitle1">
-                            Institution
+                            {BY_INSTITUTION_NAME_TABLE_HEADER_TEXT}
                           </Typography>
                           <Typography color="textSecondary" variant="caption">
                             Success Rate (%) | Time to Connect (s)
