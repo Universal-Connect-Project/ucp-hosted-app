@@ -12,6 +12,8 @@ import { http, HttpResponse } from "msw";
 import { INSTITUTIONS_WITH_PERFORMANCE_URL } from "../api";
 import { institutionsWithPerformanceTestResponse } from "../../../shared/test/testData/institutionsWithPerformance";
 import {
+  BY_INSTITUTION_INSTITUTIONS_EMPTY_RESULTS_TEXT,
+  BY_INSTITUTION_INSTITUTIONS_ERROR_TEXT,
   BY_INSTITUTION_NAME_TABLE_HEADER_TEXT,
   BY_INSTITUTION_SEARCH_LABEL_TEXT,
 } from "./constants";
@@ -22,6 +24,7 @@ import {
   thirtyDaysOption,
   TIME_FRAME_LABEL_TEXT,
 } from "../../../shared/components/Forms/constants";
+import { TRY_AGAIN_BUTTON_TEXT } from "../../../shared/components/constants";
 
 const mockInstitutionsWithPerformanceResponseWithName = (name: string) => {
   return HttpResponse.json({
@@ -246,7 +249,49 @@ describe("<ByInstitution />", () => {
     await expectSkeletonLoader();
   });
 
-  it("renders an empty state when there are no institutions", () => {});
+  it("renders an empty state when there are no institutions", async () => {
+    server.use(
+      http.get(INSTITUTIONS_WITH_PERFORMANCE_URL, () =>
+        HttpResponse.json({
+          ...institutionsWithPerformanceTestResponse,
+          institutions: [],
+        }),
+      ),
+    );
 
-  it("renders an error state and allows retry", () => {});
+    render(<ByInstitution />);
+
+    expect(
+      await screen.findByText(BY_INSTITUTION_INSTITUTIONS_EMPTY_RESULTS_TEXT),
+    ).toBeInTheDocument();
+  });
+
+  it("renders an error state and allows retry", async () => {
+    server.use(
+      http.get(
+        INSTITUTIONS_WITH_PERFORMANCE_URL,
+        () => new HttpResponse(null, { status: 500 }),
+      ),
+    );
+
+    render(<ByInstitution />);
+
+    expect(
+      await screen.findByText(BY_INSTITUTION_INSTITUTIONS_ERROR_TEXT),
+    ).toBeInTheDocument();
+
+    server.use(
+      http.get(INSTITUTIONS_WITH_PERFORMANCE_URL, () =>
+        HttpResponse.json(institutionsWithPerformanceTestResponse),
+      ),
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: TRY_AGAIN_BUTTON_TEXT }),
+    );
+
+    await expectInstitutionName(
+      institutionsWithPerformanceTestResponse.institutions[0].name,
+    );
+  });
 });

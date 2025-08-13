@@ -40,6 +40,8 @@ import {
 } from "../../../shared/components/Skeleton";
 import { InstitutionTableRow } from "../../../shared/components/Table/Institution/InstitutionTableRow";
 import {
+  BY_INSTITUTION_INSTITUTIONS_EMPTY_RESULTS_TEXT,
+  BY_INSTITUTION_INSTITUTIONS_ERROR_TEXT,
   BY_INSTITUTION_NAME_TABLE_HEADER_TEXT,
   BY_INSTITUTION_SEARCH_LABEL_TEXT,
 } from "./constants";
@@ -266,13 +268,15 @@ export const ByInstitution = () => {
           <TableAlertContainer>
             {isError && (
               <FetchError
-                description="Failed to fetch Institutions with Performance data."
+                description={BY_INSTITUTION_INSTITUTIONS_ERROR_TEXT}
                 refetch={() => void refetch()}
               />
             )}
             {isInstitutionListEmpty && (
               <Alert severity="info">
-                <AlertTitle>No Institutions found</AlertTitle>
+                <AlertTitle>
+                  {BY_INSTITUTION_INSTITUTIONS_EMPTY_RESULTS_TEXT}
+                </AlertTitle>
                 Try editing your filters to see more Institutions.
               </Alert>
             )}
