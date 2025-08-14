@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return, @typescript-eslint/unbound-method */
 import { http, HttpResponse } from "msw";
 import { server } from "../shared/tests/testServer";
@@ -9,21 +10,25 @@ import { testAggregators } from "../shared/tests/testData/aggregators";
 import { seedInfluxTestDb } from "../shared/tests/utils";
 import { ComboJobTypes } from "@repo/shared-utils";
 
-const longDuration = 1000000000;
+const accountNumberDuration = 1000000000;
+const transactionsDuration = 100;
+
+const oneDay = 24 * 60 * 60 * 1000;
 
 describe("getInstitutionsWithPerformance", () => {
   beforeEach(async () => {
     await seedInfluxTestDb({
-      duration: 100,
+      duration: transactionsDuration,
       institutionId: testInstitutionsResponse.institutions[0].id,
       jobTypes: [ComboJobTypes.TRANSACTIONS],
+      timestamp: new Date(Date.now() - 1 * oneDay),
     });
 
     await seedInfluxTestDb({
-      duration: longDuration,
+      duration: accountNumberDuration,
       institutionId: testInstitutionsResponse.institutions[0].id,
       jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
-      timestamp: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000),
+      timestamp: new Date(Date.now() - 50 * oneDay),
     });
   });
 
@@ -118,6 +123,18 @@ describe("getInstitutionsWithPerformance", () => {
       send: jest.fn(),
     } as unknown as Response;
 
+    const getMockCall = () => (res.send as jest.Mock).mock.calls[0][0];
+
+    const expectPerformance = (expectedPerformance: any) => {
+      const firstResult = getMockCall();
+
+      expect(firstResult.institutions[0].performance).toEqual(
+        expectedPerformance,
+      );
+    };
+
+    const resetSendMock = () => (res.send as jest.Mock).mockReset();
+
     await getInstitutionsWithPerformance(
       {
         query: {
@@ -128,6 +145,24 @@ describe("getInstitutionsWithPerformance", () => {
       } as unknown as Request,
       res,
     );
+
+    const firstResult = getMockCall();
+
+    expectPerformance({
+      mx: { avgSuccessRate: 100, avgDuration: transactionsDuration / 1000 },
+    });
+
+    expect(firstResult.aggregators).toEqual(testAggregators);
+    expect(firstResult.currentPage).toEqual(
+      testInstitutionsResponse.currentPage,
+    );
+    expect(firstResult.pageSize).toEqual(testInstitutionsResponse.pageSize);
+    expect(firstResult.totalRecords).toEqual(
+      testInstitutionsResponse.totalRecords,
+    );
+    expect(firstResult.totalPages).toEqual(testInstitutionsResponse.totalPages);
+
+    resetSendMock();
 
     await getInstitutionsWithPerformance(
       {
@@ -141,6 +176,15 @@ describe("getInstitutionsWithPerformance", () => {
       res,
     );
 
+    expectPerformance({
+      mx: {
+        avgDuration: (accountNumberDuration + transactionsDuration) / 2 / 1000,
+        avgSuccessRate: 100,
+      },
+    });
+
+    resetSendMock();
+
     await getInstitutionsWithPerformance(
       {
         query: {
@@ -152,6 +196,15 @@ describe("getInstitutionsWithPerformance", () => {
       } as unknown as Request,
       res,
     );
+
+    expectPerformance({
+      mx: {
+        avgDuration: transactionsDuration / 1000,
+        avgSuccessRate: 100,
+      },
+    });
+
+    resetSendMock();
 
     await getInstitutionsWithPerformance(
       {
@@ -165,44 +218,14 @@ describe("getInstitutionsWithPerformance", () => {
       res,
     );
 
-    const getFirstArg = (callIndex: number) =>
-      (res.send as jest.Mock).mock.calls[callIndex][0];
+    expectPerformance({
+      mx: {
+        avgDuration: accountNumberDuration / 1000,
+        avgSuccessRate: 100,
+      },
+    });
 
-    const firstCallFirstArg = getFirstArg(0);
-
-    expect(firstCallFirstArg.aggregators).toEqual(testAggregators);
-    expect(firstCallFirstArg.currentPage).toEqual(
-      testInstitutionsResponse.currentPage,
-    );
-    expect(firstCallFirstArg.pageSize).toEqual(
-      testInstitutionsResponse.pageSize,
-    );
-    expect(firstCallFirstArg.totalRecords).toEqual(
-      testInstitutionsResponse.totalRecords,
-    );
-    expect(firstCallFirstArg.totalPages).toEqual(
-      testInstitutionsResponse.totalPages,
-    );
-
-    const getPerformanceResults = (callIndex: number) =>
-      getFirstArg(callIndex).institutions[0].performance;
-
-    for (let i = 0; i < 3; i++) {
-      const currentPerformanceResults = getPerformanceResults(i);
-
-      console.log({ currentPerformanceResults });
-
-      expect(currentPerformanceResults).not.toEqual(
-        getPerformanceResults(i + 1),
-      );
-    }
-
-    const secondPerformanceResults = getPerformanceResults(1);
-
-    expect(secondPerformanceResults.mx.avgSuccessRate).toEqual(100);
-    expect(secondPerformanceResults.mx.avgDuration).toEqual(
-      longDuration / 1000,
-    );
+    resetSendMock();
   });
 
   it("responds with a 400 if there's an issue", async () => {
