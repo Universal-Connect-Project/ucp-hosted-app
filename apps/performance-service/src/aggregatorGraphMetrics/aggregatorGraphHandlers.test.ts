@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 
 import { ComboJobTypes } from "@repo/shared-utils";
-import { clearInfluxData, seedInfluxTestDb, wait } from "../shared/tests/utils";
+import { seedInfluxTestDb, wait } from "../shared/tests/utils";
 import {
   getAggregatorSuccessGraphData,
   getAggregatorDurationGraphData,
@@ -86,7 +86,7 @@ const expectNoResultsFromAggregator = ({
 };
 
 describe("getAggregatorSuccessGraphData", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await seedInfluxTestDb({
       aggregatorId: testAggregator.id,
       duration: testAggregator.duration,
@@ -103,13 +103,7 @@ describe("getAggregatorSuccessGraphData", () => {
     });
 
     await wait(1500);
-  });
 
-  afterAll(async () => {
-    await clearInfluxData();
-  });
-
-  beforeEach(() => {
     server.use(
       http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
         HttpResponse.json({
@@ -217,7 +211,7 @@ describe("getAggregatorSuccessGraphData", () => {
 });
 
 describe("getAggregatorDurationGraphData", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await seedInfluxTestDb({
       aggregatorId: testAggregator.id,
       duration: testAggregator.duration,
@@ -234,9 +228,7 @@ describe("getAggregatorDurationGraphData", () => {
     });
 
     await wait(1500);
-  });
 
-  beforeEach(() => {
     server.use(
       http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
         HttpResponse.json({

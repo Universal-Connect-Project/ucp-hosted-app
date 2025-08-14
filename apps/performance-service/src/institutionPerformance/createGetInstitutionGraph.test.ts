@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import {
-  clearInfluxData,
   seedInfluxWithAllTimeFrameData,
   testInstitutionId,
 } from "../shared/tests/utils";
@@ -10,12 +9,8 @@ import { createGetInstitutionGraph } from "./createGetInstitutionGraph";
 const testFunction = createGetInstitutionGraph("successRateMetrics");
 
 describe("getInstitutionSuccessGraph", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await seedInfluxWithAllTimeFrameData();
-  });
-
-  afterAll(async () => {
-    await clearInfluxData();
   });
 
   it("handles errors", async () => {

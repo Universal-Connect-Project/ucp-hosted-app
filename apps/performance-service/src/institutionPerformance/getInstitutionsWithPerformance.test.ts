@@ -6,13 +6,13 @@ import { testInstitutionsResponse } from "../shared/tests/testData/institutions"
 import { getInstitutionsWithPerformance } from "./getInstitutionsWithPerformance";
 import { Request, Response } from "express";
 import { testAggregators } from "../shared/tests/testData/aggregators";
-import { clearInfluxData, seedInfluxTestDb } from "../shared/tests/utils";
+import { seedInfluxTestDb } from "../shared/tests/utils";
 import { ComboJobTypes } from "@repo/shared-utils";
 
 const longDuration = 1000000000;
 
 describe("getInstitutionsWithPerformance", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await seedInfluxTestDb({
       duration: 100,
       institutionId: testInstitutionsResponse.institutions[0].id,
@@ -25,10 +25,6 @@ describe("getInstitutionsWithPerformance", () => {
       jobTypes: [ComboJobTypes.ACCOUNT_NUMBER],
       timestamp: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000),
     });
-  });
-
-  afterAll(async () => {
-    await clearInfluxData();
   });
 
   it("passes page and search parameters to the institutions request", async () => {

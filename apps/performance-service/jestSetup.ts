@@ -8,12 +8,13 @@ afterEach(async () => {
 });
 
 beforeAll(async () => {
-  await clearInfluxData();
-
   server.listen();
 });
 
-afterAll(async () => {
+beforeEach(async () => {
   await clearInfluxData();
+});
+
+afterAll(async () => {
   server.close();
 });

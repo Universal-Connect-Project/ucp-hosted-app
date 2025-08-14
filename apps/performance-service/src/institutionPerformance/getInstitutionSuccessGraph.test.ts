@@ -1,18 +1,13 @@
 import { Request, Response } from "express";
 import {
-  clearInfluxData,
   seedInfluxWithAllTimeFrameData,
   testInstitutionId,
 } from "../shared/tests/utils";
 import { getInstitutionSuccessGraph } from "./getInstitutionSuccessGraph";
 
 describe("getInstitutionSuccessGraph", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await seedInfluxWithAllTimeFrameData();
-  });
-
-  afterAll(async () => {
-    await clearInfluxData();
   });
 
   it("returns institution graph data", async () => {
