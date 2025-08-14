@@ -190,6 +190,8 @@ describe("getInstitutionsWithPerformance", () => {
     for (let i = 0; i < 3; i++) {
       const currentPerformanceResults = getPerformanceResults(i);
 
+      console.log({ currentPerformanceResults });
+
       expect(currentPerformanceResults).not.toEqual(
         getPerformanceResults(i + 1),
       );
