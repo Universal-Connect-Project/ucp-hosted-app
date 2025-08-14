@@ -63,7 +63,7 @@ describe("performance", () => {
 
     cy.findByRole("option", { name: oneHundredEightyDaysOption.label }).click();
 
-    cy.findAllByLabelText(JOB_TYPES_LABEL_TEXT).eq(1).click();
+    cy.findAllByLabelText(JOB_TYPES_LABEL_TEXT).eq(1).click({ force: true });
 
     cy.findByRole("option", {
       name: supportsJobTypeMap.accountNumber.displayName,
