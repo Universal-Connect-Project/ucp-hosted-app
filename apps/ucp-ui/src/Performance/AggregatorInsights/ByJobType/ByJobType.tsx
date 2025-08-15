@@ -7,10 +7,11 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  Typography,
 } from "@mui/material";
 import styles from "./byJobType.module.css";
 import { allJobTypes } from "../../../shared/constants/jobTypes";
-import { TableRowWithPaddingCells, NoDataCell } from "./SharedComponents";
+import { TableRowWithPaddingCells } from "./SharedComponents";
 import JobTypePerformance from "./JobTypePerformance";
 import SectionHeaderRow from "./SectionHeaderRow";
 import JobTypeFilter, { useJobTypeFilter } from "./JobTypeFilter";
@@ -27,6 +28,7 @@ import {
   AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_ERROR_TEXT,
   BY_JOB_TYPE_TABLE_TITLE,
 } from "./constants";
+import { NoDataCell } from "../../../shared/components/Table/NoDataCell";
 
 const loadingAggregator = {
   displayName: "Test name",
@@ -94,7 +96,11 @@ const ByJobType = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRowWithPaddingCells>
-                  <TableCell>{BY_JOB_TYPE_TABLE_TITLE}</TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle1">
+                      {BY_JOB_TYPE_TABLE_TITLE}
+                    </Typography>
+                  </TableCell>
                   {aggregators?.map(({ displayName, id, logo }) => (
                     <TableCell key={id}>
                       <div className={styles.aggregatorCell}>
@@ -104,7 +110,9 @@ const ByJobType = () => {
                           </div>
                         </SkeletonIfLoading>
                         <TextSkeletonIfLoading isLoading={isFetching}>
-                          <div>{displayName}</div>
+                          <Typography variant="subtitle1">
+                            {displayName}
+                          </Typography>
                         </TextSkeletonIfLoading>
                       </div>
                     </TableCell>

@@ -1,12 +1,13 @@
 import React from "react";
 import { Aggregator } from "../api";
-import { TableRowWithPaddingCells, NoDataCell } from "./SharedComponents";
+import { TableRowWithPaddingCells } from "./SharedComponents";
 import classNames from "classnames";
 import styles from "./jobTypePerformance.module.css";
 import { supportsJobTypeMap } from "../../../shared/constants/jobTypes";
 import { TableCell } from "@mui/material";
 import { formatMaxTwoDecimals } from "../../../shared/utils/format";
 import { JOB_TYPE_PERFORMANCE_TEST_ID } from "./constants";
+import { NoDataCell } from "../../../shared/components/Table/NoDataCell";
 
 const JobTypePerformance = ({
   aggregators,

@@ -32,7 +32,7 @@ const findMxResult = (results: Results) => {
 };
 
 describe("getAggregatorMetrics", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await seedInfluxWithAllTimeFrameData();
   });
 

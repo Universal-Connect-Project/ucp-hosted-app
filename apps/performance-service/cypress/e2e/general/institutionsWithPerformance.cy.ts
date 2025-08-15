@@ -13,6 +13,7 @@ describe("institutions with performance metrics", () => {
         pageSize: 10,
         search: "all data testing",
         timeFrame: "30d",
+        sortBy: "name:asc",
       };
 
       [
@@ -77,6 +78,7 @@ describe("institutions with performance metrics", () => {
           page: 1,
           pageSize: 10,
           search: "all data testing",
+          sortBy: "name:asc",
           timeFrame: "180d",
         },
         headers: {

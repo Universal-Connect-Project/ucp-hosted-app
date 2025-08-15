@@ -6,6 +6,10 @@ import {
 } from "../../src/shared/components/Forms/constants";
 import { oneHundredEightyDaysOption } from "../../src/shared/components/Forms/constants";
 import { supportsJobTypeMap } from "../../src/shared/constants/jobTypes";
+import { BY_JOB_TYPE_TAB_TEXT } from "../../src/Performance/AggregatorInsights/constants";
+import { BY_INSTITUTION_SEARCH_LABEL_TEXT } from "../../src/Performance/AggregatorInsights/ByInstitution/constants";
+
+const percentAndDurationDataRegex = /^\d+(?:\.\d+)?%\s*\|\s*\d+(?:\.\d+)?s$/;
 
 describe("performance", () => {
   it("shows the performance charts and filters", () => {
@@ -27,7 +31,7 @@ describe("performance", () => {
 
     cy.findByRole("option", { name: oneHundredEightyDaysOption.label }).click();
 
-    cy.findByLabelText(JOB_TYPES_LABEL_TEXT).click();
+    cy.findAllByLabelText(JOB_TYPES_LABEL_TEXT).eq(0).click();
 
     cy.findByRole("option", {
       name: supportsJobTypeMap.transactions.displayName,
@@ -40,11 +44,45 @@ describe("performance", () => {
     cy.get(".MuiMarkElement-root").should("have.length.at.least", 2);
   });
 
+  it("shows an institutions table with performance data and filters by the search term", () => {
+    cy.loginWithoutWidgetRole();
+    cy.visit("/");
+
+    navigateToPerformance();
+
+    cy.findByLabelText(BY_INSTITUTION_SEARCH_LABEL_TEXT).type(
+      "All data testing",
+    );
+
+    cy.findAllByText(percentAndDurationDataRegex).should(
+      "have.length.at.least",
+      1,
+    );
+
+    cy.findAllByLabelText(TIME_FRAME_LABEL_TEXT).eq(1).click();
+
+    cy.findByRole("option", { name: oneHundredEightyDaysOption.label }).click();
+
+    cy.findAllByLabelText(JOB_TYPES_LABEL_TEXT).eq(1).click({ force: true });
+
+    cy.findByRole("option", {
+      name: supportsJobTypeMap.accountNumber.displayName,
+    })
+      .click()
+      .type("{esc}");
+
+    cy.waitForLoad();
+
+    cy.findAllByText(percentAndDurationDataRegex).should("have.length", 0);
+  });
+
   it("shows aggregators and performance data by job type and filters", () => {
     cy.loginWithoutWidgetRole();
     cy.visit("/");
 
     navigateToPerformance();
+
+    cy.findByText(BY_JOB_TYPE_TAB_TEXT).click();
 
     cy.findAllByText("MX").should("have.length", 3);
 
@@ -53,9 +91,6 @@ describe("performance", () => {
 
     const durationDataRegex = /^\d+(?:\.\d+)?s$/;
     cy.findAllByText(durationDataRegex).should("have.length.at.least", 1);
-
-    const percentAndDurationDataRegex =
-      /^\d+(?:\.\d+)?%\s*\|\s*\d+(?:\.\d+)?s$/;
 
     cy.findAllByText(percentAndDurationDataRegex).should(
       "have.length.at.least",

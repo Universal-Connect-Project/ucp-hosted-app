@@ -1,8 +1,15 @@
 import { Request, Response } from "express";
-import { testInstitutionId } from "../shared/tests/utils";
+import {
+  seedInfluxWithAllTimeFrameData,
+  testInstitutionId,
+} from "../shared/tests/utils";
 import { getInstitutionSuccessGraph } from "./getInstitutionSuccessGraph";
 
 describe("getInstitutionSuccessGraph", () => {
+  beforeEach(async () => {
+    await seedInfluxWithAllTimeFrameData();
+  });
+
   it("returns institution graph data", async () => {
     const req = {
       params: {

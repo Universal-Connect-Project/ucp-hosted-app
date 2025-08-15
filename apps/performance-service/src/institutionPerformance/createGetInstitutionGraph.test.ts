@@ -1,11 +1,18 @@
 import { Request, Response } from "express";
-import { testInstitutionId } from "../shared/tests/utils";
+import {
+  seedInfluxWithAllTimeFrameData,
+  testInstitutionId,
+} from "../shared/tests/utils";
 import * as graphInfluxQueries from "../shared/utils/graphInfluxQueries";
 import { createGetInstitutionGraph } from "./createGetInstitutionGraph";
 
 const testFunction = createGetInstitutionGraph("successRateMetrics");
 
 describe("getInstitutionSuccessGraph", () => {
+  beforeEach(async () => {
+    await seedInfluxWithAllTimeFrameData();
+  });
+
   it("handles errors", async () => {
     const testError = "test error";
 

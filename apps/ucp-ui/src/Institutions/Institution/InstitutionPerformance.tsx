@@ -9,13 +9,13 @@ import AggregatorSelect, {
 import JobTypesSelect, {
   useJobTypesSelect,
 } from "../../shared/components/Forms/JobTypesSelect";
-import jobTypesStyles from "../../shared/styles/performanceJobTypeFilter.module.css";
 import {
   useGetInstitutionDurationGraphDataQuery,
   useGetInstitutionSuccessGraphDataQuery,
 } from "./api";
 import { SuccessRateTrendsChart } from "../../shared/components/SuccessRateTrendsChart";
 import { DurationTrendsChart } from "../../shared/components/DurationTrendsChart";
+import { JobTypesSelectFlexContainer } from "../../shared/components/Forms/JobTypesSelectFlexContainer";
 
 export const InstitutionPerformance = ({
   institutionId,
@@ -65,15 +65,9 @@ export const InstitutionPerformance = ({
           onChange={handleAggregatorsChange}
           value={aggregators}
         />
-        <div className={jobTypesStyles.jobTypeSelectRelativeContainer}>
-          <div className={jobTypesStyles.jobTypeSelectAbsoluteContainer}>
-            <JobTypesSelect
-              className={jobTypesStyles.jobTypeSelect}
-              onChange={handleJobTypesChange}
-              value={jobTypes}
-            />
-          </div>
-        </div>
+        <JobTypesSelectFlexContainer>
+          <JobTypesSelect onChange={handleJobTypesChange} value={jobTypes} />
+        </JobTypesSelectFlexContainer>
       </Stack>
       <Stack direction="row" spacing={3}>
         <SuccessRateTrendsChart

@@ -77,7 +77,7 @@ const expectAggregators = ({
 };
 
 describe("getGraphMetrics", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await seedInfluxWithAllTimeFrameData();
   });
 
@@ -401,7 +401,7 @@ describe("getGraphMetrics", () => {
     const aggId1 = "testAgg1";
     const aggId2 = "testAgg2";
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       await seedInfluxTestDb({
         duration: 1000,
         aggregatorId: aggId1,
@@ -412,9 +412,7 @@ describe("getGraphMetrics", () => {
       });
 
       await wait(1500);
-    });
 
-    beforeEach(() => {
       server.use(
         http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
           HttpResponse.json({
