@@ -14,6 +14,7 @@ import {
   INSTITUTIONS_FILTER_SEARCH_LABEL_TEXT,
 } from "./constants";
 import { INSTITUTION_SERVICE_AGGREGATORS_URL } from "../shared/api/aggregators";
+import { SortOrder } from "./Institution/constants";
 
 const { aggregators } = aggregatorsResponse;
 
@@ -142,7 +143,7 @@ describe("<InstitutionFilters />", () => {
         {},
       ),
       supportsOauth: "false",
-      sortBy: "createdAt:desc",
+      sortBy: `name:${SortOrder.asc}`,
     };
     const expectedAggregatorNames = [];
 

@@ -348,29 +348,15 @@ describe("<Institutions />", () => {
     ).toBeInTheDocument();
   });
 
-  it("initially shows no arrows, then shows up arrow when the first column is clicked, and then down arrow when it's clicked again", async () => {
+  it("shows down arrow when the first column is clicked, and then up arrow when it's clicked again", async () => {
     const { container } = render(<Institutions />);
 
     await waitForLoad();
 
     expect(
       container.querySelector(
-        `${INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS} ${INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN}`,
-      ),
-    ).not.toBeInTheDocument();
-
-    expect(
-      container.querySelector(
         `${INSTITUTIONS_TABLE_ROW_ACTIVE_CLASS} ${INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP}`,
       ),
-    ).not.toBeInTheDocument();
-
-    await userEvent.click(
-      screen.getByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE),
-    );
-
-    expect(
-      container.querySelector(INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP),
     ).toBeInTheDocument();
 
     await userEvent.click(
@@ -379,6 +365,14 @@ describe("<Institutions />", () => {
 
     expect(
       container.querySelector(INSTITUTIONS_TABLE_SORT_ARROW_CLASS_DOWN),
+    ).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByText(INSTITUTIONS_TABLE_INSTITUTION_HEADER_TITLE),
+    );
+
+    expect(
+      container.querySelector(INSTITUTIONS_TABLE_SORT_ARROW_CLASS_UP),
     ).toBeInTheDocument();
   });
 
@@ -429,7 +423,7 @@ describe("<Institutions />", () => {
     expect(
       within(
         screen.getAllByTestId(new RegExp(INSTITUTIONS_ROW_TEST_ID))[0],
-      ).getByText(testSortList[0].id),
+      ).getByText(testSortList[1].id),
     ).toBeInTheDocument();
 
     await userEvent.click(
@@ -441,7 +435,7 @@ describe("<Institutions />", () => {
     expect(
       within(
         screen.getAllByTestId(new RegExp(INSTITUTIONS_ROW_TEST_ID))[0],
-      ).getByText(testSortList[1].id),
+      ).getByText(testSortList[0].id),
     ).toBeInTheDocument();
   });
 });
