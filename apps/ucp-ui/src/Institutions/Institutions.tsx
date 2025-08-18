@@ -130,7 +130,7 @@ const Institutions = () => {
   const search = searchParams.get("search") || "";
 
   const [sortBy, setSortBy] = useState(
-    searchParams.get("sortBy") || `createdAt:${SortOrder.desc}`,
+    searchParams.get("sortBy") || `name:${SortOrder.asc}`,
   );
   const sortByProp = sortBy.split(":")[0];
   const sortByOrder = sortBy.split(":")[1] as SortOrder;
