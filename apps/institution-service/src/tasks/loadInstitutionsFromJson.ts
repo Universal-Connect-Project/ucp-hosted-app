@@ -19,6 +19,7 @@ export interface CachedInstitution {
   sophtron?: InstitutionAggregator;
   finicity?: InstitutionAggregator;
   akoya?: InstitutionAggregator;
+  plaid?: InstitutionAggregator;
 }
 
 export interface InstitutionAggregator {
@@ -67,6 +68,20 @@ async function loadInstitutionData() {
       name: "finicity",
       displayName: "Finicity",
       logo: "https://cdn.brandfetch.io/idKLpTdlu8/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1751141641664",
+    },
+  });
+  const [akoyaAggregator, _akoyaCreated] = await Aggregator.findOrCreate({
+    where: {
+      name: "akoya",
+      displayName: "Akoya",
+      logo: "https://cdn.brandfetch.io/idwKHUTdZK/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1668071436139",
+    },
+  });
+  const [plaidAggregator, _plaidCreated] = await Aggregator.findOrCreate({
+    where: {
+      name: "plaid",
+      displayName: "Plaid",
+      logo: "https://cdn.brandfetch.io/idly0-MZ4j/w/399/h/399/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1668516050085",
     },
   });
 
@@ -131,6 +146,40 @@ async function loadInstitutionData() {
         supportsRewards: finicity.supportsRewards,
         supportsBalance: finicity.supportsBalance,
         supports_aggregation: finicity.supports_aggregation,
+      } as AggregatorIntegration);
+    }
+
+    if (institution?.akoya?.id) {
+      const akoya = institution.akoya;
+      aggregatorList.push({
+        isActive: false,
+        aggregatorId: akoyaAggregator?.id,
+        aggregator_institution_id: akoya.id,
+        institution_id: institution.id,
+        supports_oauth: akoya.supports_oauth,
+        supports_identification: akoya.supports_identification,
+        supports_verification: akoya.supports_verification,
+        supports_history: akoya.supports_history,
+        supportsRewards: akoya.supportsRewards,
+        supportsBalance: akoya.supportsBalance,
+        supports_aggregation: akoya.supports_aggregation,
+      } as AggregatorIntegration);
+    }
+
+    if (institution?.plaid?.id) {
+      const plaid = institution.plaid;
+      aggregatorList.push({
+        isActive: false,
+        aggregatorId: plaidAggregator?.id,
+        aggregator_institution_id: plaid.id,
+        institution_id: institution.id,
+        supports_oauth: plaid.supports_oauth,
+        supports_identification: plaid.supports_identification,
+        supports_verification: plaid.supports_verification,
+        supports_history: plaid.supports_history,
+        supportsRewards: plaid.supportsRewards,
+        supportsBalance: plaid.supportsBalance,
+        supports_aggregation: plaid.supports_aggregation,
       } as AggregatorIntegration);
     }
   });
