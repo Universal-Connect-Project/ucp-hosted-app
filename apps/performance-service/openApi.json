@@ -784,6 +784,11 @@
                   "recordDuration": {
                     "type": "boolean",
                     "default": true
+                  },
+                  "shouldRecordResult": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether to record performance metrics for this connection"
                   }
                 }
               }
@@ -804,6 +809,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "recordDuration": true,
+                      "shouldRecordResult": true,
                       "clientId": "54321",
                       "jobTypes": ["transactions"],
                       "startedAt": "2024-09-10T16:07:46.038Z"
@@ -851,6 +857,22 @@
             "description": "Connection ID from assigned aggregator"
           }
         ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "shouldRecordResult": {
+                    "type": "boolean",
+                    "description": "Whether to record performance metrics for this connection. Only updates if value is true."
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Updated",
@@ -865,6 +887,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "recordDuration": true,
+                      "shouldRecordResult": true,
                       "clientId": "54321",
                       "jobTypes": ["transactions"],
                       "userInteractionTime": 0,
@@ -915,6 +938,22 @@
             "description": "Connection ID from assigned aggregator"
           }
         ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "shouldRecordResult": {
+                    "type": "boolean",
+                    "description": "Whether to record performance metrics for this connection. Only updates if value is true."
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Updated",
@@ -929,6 +968,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "recordDuration": true,
+                      "shouldRecordResult": true,
                       "clientId": "54321",
                       "jobTypes": ["transactions"],
                       "userInteractionTime": 140,
@@ -993,6 +1033,7 @@
                       "institutionId": "13213-12312-123",
                       "aggregatorId": "mx",
                       "recordDuration": true,
+                      "shouldRecordResult": true,
                       "clientId": "54321",
                       "jobTypes": ["transactions"],
                       "userInteractionTime": 140,
