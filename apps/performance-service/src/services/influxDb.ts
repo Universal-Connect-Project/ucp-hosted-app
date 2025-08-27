@@ -62,6 +62,10 @@ async function writeData(data: {
 export const recordPerformanceMetric = async (
   event: EventObject,
 ): Promise<boolean> => {
+  if (!event.successAt && !event.failureDetected) {
+    return true; // Delete the performance object without recording the data
+  }
+
   const jobTypesKey = [...event.jobTypes].sort().join("|");
 
   const totalDuration = event?.successAt

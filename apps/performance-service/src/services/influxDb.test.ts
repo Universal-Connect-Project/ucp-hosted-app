@@ -16,6 +16,7 @@ describe("recordPerformanceMetric", () => {
     successAt: 1700000005000,
     userInteractionTime: 2000,
     recordDuration: true,
+    failureDetected: true,
   };
 
   it("records correct duration and success metrics on successful event", async () => {
@@ -114,6 +115,7 @@ describe("recordPerformanceMetric", () => {
       ...event,
       institutionId: testInstitutionId,
       successAt: undefined,
+      failureDetected: true,
     });
     expect(result).toBe(true);
 
@@ -139,6 +141,33 @@ describe("recordPerformanceMetric", () => {
         jobTypes: "jobA|jobB",
       }),
     );
+
+    const durationDataPoint = await getLatestDataPoint(
+      "durationMetrics",
+      testInstitutionId,
+    );
+    expect(durationDataPoint).toBeNull();
+  });
+
+  it("should return true without recording metrics when successAt is undefined and failureDetected is false", async () => {
+    const testInstitutionId = `testNoRecord-${crypto.randomUUID()}`;
+
+    const result = await recordPerformanceMetric({
+      ...event,
+      institutionId: testInstitutionId,
+      successAt: undefined,
+      failureDetected: false,
+    });
+
+    expect(result).toBe(true);
+
+    await wait(2000);
+
+    const successDataPoint = await getLatestDataPoint(
+      "successRateMetrics",
+      testInstitutionId,
+    );
+    expect(successDataPoint).toBeNull();
 
     const durationDataPoint = await getLatestDataPoint(
       "durationMetrics",
