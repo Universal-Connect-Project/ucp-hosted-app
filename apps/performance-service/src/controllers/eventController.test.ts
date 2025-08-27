@@ -541,8 +541,7 @@ describe("eventController", () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message:
-          "Connection was not paused. But failure detected status updated.",
+        message: "Connection was not paused. But shouldRecordResult updated.",
         event: expect.objectContaining({
           shouldRecordResult: true,
         }),

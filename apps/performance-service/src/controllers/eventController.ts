@@ -160,7 +160,7 @@ export const updateConnectionResume = withClientAccess(
         let message = "Connection was not paused. Nothing changed.";
         if (shouldRecordResult && !eventObj.shouldRecordResult) {
           message =
-            "Connection was not paused. But failure detected status updated.";
+            "Connection was not paused. But shouldRecordResult updated.";
           eventObj.shouldRecordResult = shouldRecordResult;
           await setEvent(connectionId, eventObj);
         }
