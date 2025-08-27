@@ -16,7 +16,7 @@ describe("recordPerformanceMetric", () => {
     successAt: 1700000005000,
     userInteractionTime: 2000,
     recordDuration: true,
-    failureDetected: true,
+    recordFailure: true,
   };
 
   it("records correct duration and success metrics on successful event", async () => {
@@ -115,7 +115,7 @@ describe("recordPerformanceMetric", () => {
       ...event,
       institutionId: testInstitutionId,
       successAt: undefined,
-      failureDetected: true,
+      recordFailure: true,
     });
     expect(result).toBe(true);
 
@@ -149,14 +149,14 @@ describe("recordPerformanceMetric", () => {
     expect(durationDataPoint).toBeNull();
   });
 
-  it("should return true without recording metrics when successAt is undefined and failureDetected is false", async () => {
+  it("should return true without recording metrics when successAt is undefined and recordFailure is false", async () => {
     const testInstitutionId = `testNoRecord-${crypto.randomUUID()}`;
 
     const result = await recordPerformanceMetric({
       ...event,
       institutionId: testInstitutionId,
       successAt: undefined,
-      failureDetected: false,
+      recordFailure: false,
     });
 
     expect(result).toBe(true);

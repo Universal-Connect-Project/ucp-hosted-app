@@ -62,7 +62,7 @@ async function writeData(data: {
 export const recordPerformanceMetric = async (
   event: EventObject,
 ): Promise<boolean> => {
-  if (!event.successAt && !event.failureDetected) {
+  if (!event.successAt && !event.recordFailure) {
     return true; // Delete the performance object without recording the data
   }
 

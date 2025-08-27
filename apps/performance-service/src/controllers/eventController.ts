@@ -8,7 +8,7 @@ interface CreateStartRequest {
   institutionId: string;
   aggregatorId: string;
   recordDuration?: boolean;
-  failureDetected?: boolean;
+  recordFailure?: boolean;
 }
 
 export interface EventObject {
@@ -20,7 +20,7 @@ export interface EventObject {
   startedAt: number;
   userInteractionTime: number;
   pausedAt: number | null | undefined;
-  failureDetected: boolean;
+  recordFailure: boolean;
   successAt?: number;
   recordDuration: boolean;
 }
@@ -64,7 +64,7 @@ export const createStartEvent = async (req: Request, res: Response) => {
       institutionId,
       aggregatorId,
       recordDuration = true,
-      failureDetected = true,
+      recordFailure = true,
     } = req.body as CreateStartRequest;
     const eventBody = {
       connectionId,
@@ -74,7 +74,7 @@ export const createStartEvent = async (req: Request, res: Response) => {
       jobTypes,
       startedAt: Date.now(),
       recordDuration,
-      failureDetected,
+      recordFailure,
     };
     const eventObj = (await getEvent(connectionId)) as EventObject;
     if (eventObj) {
@@ -100,16 +100,16 @@ export const updateConnectionPause = withClientAccess(
     try {
       const dateNow = Date.now();
       const { connectionId } = req.params;
-      const { failureDetected = true } = req.body as {
-        failureDetected?: boolean;
+      const { recordFailure = true } = req.body as {
+        recordFailure?: boolean;
       };
       const eventObj = (await getEvent(connectionId)) as EventObject;
       if (eventObj.pausedAt) {
         let message = "Connection process was already paused. Nothing changed.";
-        if (failureDetected && !eventObj.failureDetected) {
+        if (recordFailure && !eventObj.recordFailure) {
           message =
             "Connection process was already paused. But failure detected status updated.";
-          eventObj.failureDetected = failureDetected;
+          eventObj.recordFailure = recordFailure;
           await setEvent(connectionId, eventObj);
         }
         res.status(200).json({
@@ -119,8 +119,8 @@ export const updateConnectionPause = withClientAccess(
       } else {
         eventObj.pausedAt = dateNow;
         eventObj.userInteractionTime = eventObj.userInteractionTime ?? 0;
-        if (failureDetected) {
-          eventObj.failureDetected = failureDetected;
+        if (recordFailure) {
+          eventObj.recordFailure = recordFailure;
         }
         await setEvent(connectionId, eventObj);
         res.status(200).json({
@@ -139,16 +139,16 @@ export const updateConnectionResume = withClientAccess(
     try {
       const dateNow = Date.now();
       const { connectionId } = req.params;
-      const { failureDetected = true } = req.body as {
-        failureDetected?: boolean;
+      const { recordFailure = true } = req.body as {
+        recordFailure?: boolean;
       };
       const eventObj = (await getEvent(connectionId)) as EventObject;
       if (eventObj?.pausedAt) {
         const pauseDurationMilliseconds = dateNow - eventObj.pausedAt;
         eventObj.userInteractionTime += pauseDurationMilliseconds;
         eventObj.pausedAt = null;
-        if (failureDetected) {
-          eventObj.failureDetected = failureDetected;
+        if (recordFailure) {
+          eventObj.recordFailure = recordFailure;
         }
 
         await setEvent(connectionId, eventObj);
@@ -158,10 +158,10 @@ export const updateConnectionResume = withClientAccess(
         });
       } else {
         let message = "Connection was not paused. Nothing changed.";
-        if (failureDetected && !eventObj.failureDetected) {
+        if (recordFailure && !eventObj.recordFailure) {
           message =
             "Connection was not paused. But failure detected status updated.";
-          eventObj.failureDetected = failureDetected;
+          eventObj.recordFailure = recordFailure;
           await setEvent(connectionId, eventObj);
         }
         res.status(200).json({
