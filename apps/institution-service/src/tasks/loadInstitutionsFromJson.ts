@@ -135,7 +135,7 @@ async function loadInstitutionData() {
     if (institution?.finicity?.id) {
       const finicity = institution.finicity;
       aggregatorList.push({
-        isActive: false,
+        isActive: finicity.isActive ?? true,
         aggregatorId: finicityAggregator?.id,
         aggregator_institution_id: finicity.id,
         institution_id: institution.id,
@@ -152,7 +152,7 @@ async function loadInstitutionData() {
     if (institution?.akoya?.id) {
       const akoya = institution.akoya;
       aggregatorList.push({
-        isActive: false,
+        isActive: akoya.isActive ?? true,
         aggregatorId: akoyaAggregator?.id,
         aggregator_institution_id: akoya.id,
         institution_id: institution.id,
@@ -169,7 +169,7 @@ async function loadInstitutionData() {
     if (institution?.plaid?.id) {
       const plaid = institution.plaid;
       aggregatorList.push({
-        isActive: false,
+        isActive: plaid.isActive ?? true,
         aggregatorId: plaidAggregator?.id,
         aggregator_institution_id: plaid.id,
         institution_id: institution.id,
