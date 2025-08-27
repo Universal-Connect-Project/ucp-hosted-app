@@ -18,6 +18,7 @@ export const createTestScenarioEvents = async (
       successAt: 1700000010000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -29,6 +30,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -41,6 +43,7 @@ export const createTestScenarioEvents = async (
       successAt: 1700000030000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -53,6 +56,7 @@ export const createTestScenarioEvents = async (
       successAt: 1700000020000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -65,6 +69,7 @@ export const createTestScenarioEvents = async (
       successAt: 1700000010000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -76,6 +81,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -87,6 +93,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -98,6 +105,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -109,6 +117,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -121,6 +130,7 @@ export const createTestScenarioEvents = async (
       successAt: 1700000030000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -133,6 +143,7 @@ export const createTestScenarioEvents = async (
       successAt: 1700000010000,
       userInteractionTime: 5000,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -145,6 +156,7 @@ export const createTestScenarioEvents = async (
       successAt: 1700000010000,
       userInteractionTime: 5000,
       recordDuration: true,
+      shouldRecordResult: true,
     },
     {
       connectionId: "MBR-123",
@@ -156,6 +168,7 @@ export const createTestScenarioEvents = async (
       startedAt: 1700000000000,
       userInteractionTime: 0,
       recordDuration: true,
+      shouldRecordResult: true,
     },
   ];
 

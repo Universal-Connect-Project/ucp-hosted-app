@@ -68,7 +68,7 @@ describe("eventController", () => {
         clientId,
         startedAt: expect.any(Number),
         recordDuration: true,
-        recordFailure: true,
+        shouldRecordResult: true,
       });
 
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
@@ -111,7 +111,7 @@ describe("eventController", () => {
         clientId,
         startedAt: expect.any(Number),
         recordDuration: false,
-        recordFailure: true,
+        shouldRecordResult: true,
       });
 
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
@@ -163,7 +163,7 @@ describe("eventController", () => {
         connectionId,
         expect.objectContaining({
           startedAt: expect.any(Number),
-          recordFailure: true,
+          shouldRecordResult: true,
         }),
       );
     });
@@ -213,7 +213,7 @@ describe("eventController", () => {
       const expectedUpdatedBody = expect.objectContaining({
         pausedAt: expect.any(Number),
         userInteractionTime: 0,
-        recordFailure: true,
+        shouldRecordResult: true,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -226,7 +226,7 @@ describe("eventController", () => {
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
     });
 
-    it("should update recordFailure status even when already paused", async () => {
+    it("should update shouldRecordResult status even when already paused", async () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
@@ -234,21 +234,21 @@ describe("eventController", () => {
 
       const req = {
         ...mockRequest,
-        body: { recordFailure: false },
+        body: { shouldRecordResult: false },
       } as unknown as Request;
 
       await createStartEvent(req, preCheckMockResponse);
 
       const pauseReq = {
         ...mockRequest,
-        body: { recordFailure: false },
+        body: { shouldRecordResult: false },
       } as unknown as Request;
 
       await updateConnectionPause(pauseReq, preCheckMockResponse);
 
       const updateReq = {
         ...mockRequest,
-        body: { recordFailure: true },
+        body: { shouldRecordResult: true },
       } as unknown as Request;
 
       await updateConnectionPause(updateReq, res);
@@ -259,12 +259,12 @@ describe("eventController", () => {
         message:
           "Connection process was already paused. But failure detected status updated.",
         event: expect.objectContaining({
-          recordFailure: true,
+          shouldRecordResult: true,
         }),
       });
     });
 
-    it("should not update recordFailure from true to false when already paused", async () => {
+    it("should not update shouldRecordResult from true to false when already paused", async () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
@@ -275,7 +275,7 @@ describe("eventController", () => {
 
       const updateReq = {
         ...mockRequest,
-        body: { recordFailure: false },
+        body: { shouldRecordResult: false },
       } as unknown as Request;
 
       await updateConnectionPause(updateReq, res);
@@ -285,7 +285,7 @@ describe("eventController", () => {
       expect(res.json).toHaveBeenCalledWith({
         message: "Connection process was already paused. Nothing changed.",
         event: expect.objectContaining({
-          recordFailure: true,
+          shouldRecordResult: true,
         }),
       });
     });
@@ -331,7 +331,7 @@ describe("eventController", () => {
         event: expect.objectContaining({
           pausedAt: pausedAtAlreadyTime,
           userInteractionTime: 0,
-          recordFailure: true,
+          shouldRecordResult: true,
         }),
       });
     });
@@ -354,7 +354,7 @@ describe("eventController", () => {
       const expectedUpdatedBody = expect.objectContaining({
         pausedAt: expect.any(Number),
         userInteractionTime,
-        recordFailure: true,
+        shouldRecordResult: true,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -417,7 +417,7 @@ describe("eventController", () => {
       const expectedUpdatedBody = expect.objectContaining({
         pausedAt: null,
         userInteractionTime: expect.any(Number),
-        recordFailure: true,
+        shouldRecordResult: true,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -434,7 +434,7 @@ describe("eventController", () => {
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
     });
 
-    it("should update recordFailure to true when resuming", async () => {
+    it("should update shouldRecordResult to true when resuming", async () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
@@ -443,7 +443,7 @@ describe("eventController", () => {
       const req = {
         ...mockRequest,
         body: {
-          recordFailure: false,
+          shouldRecordResult: false,
         },
       } as unknown as Request;
 
@@ -452,14 +452,14 @@ describe("eventController", () => {
 
       const updateReq = {
         ...mockRequest,
-        body: { recordFailure: true },
+        body: { shouldRecordResult: true },
       } as unknown as Request;
 
       await updateConnectionResume(updateReq, res);
 
       const expectedUpdatedBody = expect.objectContaining({
         pausedAt: null,
-        recordFailure: true,
+        shouldRecordResult: true,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -472,7 +472,7 @@ describe("eventController", () => {
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
     });
 
-    it("should not update recordFailure from true to false when resuming", async () => {
+    it("should not update shouldRecordResult from true to false when resuming", async () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
@@ -483,14 +483,14 @@ describe("eventController", () => {
 
       const updateReq = {
         ...mockRequest,
-        body: { recordFailure: false },
+        body: { shouldRecordResult: false },
       } as unknown as Request;
 
       await updateConnectionResume(updateReq, res);
 
       const expectedUpdatedBody = expect.objectContaining({
         pausedAt: null,
-        recordFailure: true,
+        shouldRecordResult: true,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -503,7 +503,7 @@ describe("eventController", () => {
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
     });
 
-    it("should update recordFailure status even when not paused", async () => {
+    it("should update shouldRecordResult status even when not paused", async () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
@@ -512,7 +512,7 @@ describe("eventController", () => {
       const req = {
         ...mockRequest,
         body: {
-          recordFailure: false,
+          shouldRecordResult: false,
         },
       } as unknown as Request;
 
@@ -520,7 +520,7 @@ describe("eventController", () => {
 
       const updateReq = {
         ...mockRequest,
-        body: { recordFailure: true },
+        body: { shouldRecordResult: true },
       } as unknown as Request;
 
       await updateConnectionResume(updateReq, res);
@@ -531,12 +531,12 @@ describe("eventController", () => {
         message:
           "Connection was not paused. But failure detected status updated.",
         event: expect.objectContaining({
-          recordFailure: true,
+          shouldRecordResult: true,
         }),
       });
     });
 
-    it("should not update recordFailure from true to false when not paused", async () => {
+    it("should not update shouldRecordResult from true to false when not paused", async () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
@@ -546,7 +546,7 @@ describe("eventController", () => {
 
       const updateReq = {
         ...mockRequest,
-        body: { recordFailure: false },
+        body: { shouldRecordResult: false },
       } as unknown as Request;
 
       await updateConnectionResume(updateReq, res);
@@ -556,7 +556,7 @@ describe("eventController", () => {
       expect(res.json).toHaveBeenCalledWith({
         message: "Connection was not paused. Nothing changed.",
         event: expect.objectContaining({
-          recordFailure: true,
+          shouldRecordResult: true,
         }),
       });
     });
@@ -574,7 +574,7 @@ describe("eventController", () => {
       const expectedBody = expect.objectContaining({
         connectionId,
         startedAt: expect.any(Number),
-        recordFailure: true,
+        shouldRecordResult: true,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
