@@ -100,7 +100,7 @@ export const updateConnectionPause = withClientAccess(
     try {
       const dateNow = Date.now();
       const { connectionId } = req.params;
-      const { shouldRecordResult = true } = req.body as {
+      const { shouldRecordResult } = req.body as {
         shouldRecordResult?: boolean;
       };
       const eventObj = (await getEvent(connectionId)) as EventObject;
@@ -108,7 +108,7 @@ export const updateConnectionPause = withClientAccess(
         let message = "Connection process was already paused. Nothing changed.";
         if (shouldRecordResult && !eventObj.shouldRecordResult) {
           message =
-            "Connection process was already paused. But failure detected status updated.";
+            "Connection process was already paused. But shouldRecordResult updated.";
           eventObj.shouldRecordResult = shouldRecordResult;
           await setEvent(connectionId, eventObj);
         }
@@ -139,7 +139,7 @@ export const updateConnectionResume = withClientAccess(
     try {
       const dateNow = Date.now();
       const { connectionId } = req.params;
-      const { shouldRecordResult = true } = req.body as {
+      const { shouldRecordResult } = req.body as {
         shouldRecordResult?: boolean;
       };
       const eventObj = (await getEvent(connectionId)) as EventObject;

@@ -241,10 +241,16 @@ describe("eventController", () => {
 
       const pauseReq = {
         ...mockRequest,
-        body: { shouldRecordResult: false },
       } as unknown as Request;
 
       await updateConnectionPause(pauseReq, preCheckMockResponse);
+      // Confirm that shouldRecordResult doesn't default to true
+      await expectRedisEventToEqual(
+        connectionId,
+        expect.objectContaining({
+          shouldRecordResult: false,
+        }),
+      );
 
       const updateReq = {
         ...mockRequest,
@@ -257,7 +263,7 @@ describe("eventController", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message:
-          "Connection process was already paused. But failure detected status updated.",
+          "Connection process was already paused. But shouldRecordResult updated.",
         event: expect.objectContaining({
           shouldRecordResult: true,
         }),
@@ -403,7 +409,14 @@ describe("eventController", () => {
 
       const threeMinutes = 180000;
 
-      await createStartEvent(mockRequest, preCheckMockResponse);
+      const req = {
+        ...mockRequest,
+        body: {
+          shouldRecordResult: false,
+        },
+      } as unknown as Request;
+
+      await createStartEvent(req, preCheckMockResponse);
       await updateConnectionPause(mockRequest, preCheckMockResponse);
       jest.advanceTimersByTime(threeMinutes);
 
@@ -417,7 +430,7 @@ describe("eventController", () => {
       const expectedUpdatedBody = expect.objectContaining({
         pausedAt: null,
         userInteractionTime: expect.any(Number),
-        shouldRecordResult: true,
+        shouldRecordResult: false, // Confirm that shouldRecordResult doesn't default to true on pause and resume events
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
