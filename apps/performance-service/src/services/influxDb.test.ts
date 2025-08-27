@@ -149,13 +149,12 @@ describe("recordPerformanceMetric", () => {
     expect(durationDataPoint).toBeNull();
   });
 
-  it("should return true without recording metrics when successAt is undefined and shouldRecordResult is false", async () => {
+  it("should return true without recording metrics when shouldRecordResult is false", async () => {
     const testInstitutionId = `testNoRecord-${crypto.randomUUID()}`;
 
     const result = await recordPerformanceMetric({
       ...event,
       institutionId: testInstitutionId,
-      successAt: undefined,
       shouldRecordResult: false,
     });
 
