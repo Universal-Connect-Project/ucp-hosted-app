@@ -91,7 +91,6 @@ interface PerformanceData {
   connectionId: string;
   jobTypes: string;
   institutionId: string;
-  clientId: string;
   aggregatorId: string;
   durationMetric?: {
     jobDuration: number;
@@ -108,7 +107,6 @@ interface InfluxQueryResult {
   _value: number;
   jobTypes: string;
   institutionId: string;
-  clientId: string;
   aggregatorId: string;
   connectionId: string;
 }
@@ -155,7 +153,6 @@ export const getPerformanceDataByConnectionId = async (
       connectionId,
       jobTypes: successResult.jobTypes,
       institutionId: successResult.institutionId,
-      clientId: successResult.clientId,
       aggregatorId: successResult.aggregatorId,
       successMetric: {
         isSuccess: successResult._value === 1,

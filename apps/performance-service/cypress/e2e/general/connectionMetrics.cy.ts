@@ -39,9 +39,6 @@ describe("/events/:connectionId/performance", () => {
         aggregatorId: "test1",
       });
 
-      expect(response.body).to.have.property("clientId").that.is.a("string").and
-        .not.empty;
-
       expect(response.body).to.have.nested.property(
         "successMetric.isSuccess",
         true,

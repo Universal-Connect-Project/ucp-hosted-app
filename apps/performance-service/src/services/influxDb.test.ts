@@ -225,7 +225,6 @@ describe("getPerformanceDataByConnectionId", () => {
       connectionId,
       jobTypes: "identity|transactions",
       institutionId: "test_inst_123",
-      clientId: "test_client_456",
       aggregatorId: "test_agg_789",
       durationMetric: {
         jobDuration: 5000,
@@ -260,7 +259,6 @@ describe("getPerformanceDataByConnectionId", () => {
       connectionId: connectionId2,
       jobTypes: "accounts",
       institutionId: "test_inst_456",
-      clientId: "test_client_789",
       aggregatorId: "test_agg_123",
       successMetric: {
         isSuccess: false,

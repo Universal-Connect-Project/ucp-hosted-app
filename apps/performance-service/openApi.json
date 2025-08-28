@@ -1095,7 +1095,6 @@
                   "connectionId": "MBR-1231",
                   "jobTypes": "transactions",
                   "institutionId": "5e498f60-3496-4299-96ed-f8eb328ae8af",
-                  "clientId": "U1S5r5EQ9bPqXD5ai6769u9oi63BD1S2",
                   "aggregatorId": "mx",
                   "successMetric": {
                     "isSuccess": true,
