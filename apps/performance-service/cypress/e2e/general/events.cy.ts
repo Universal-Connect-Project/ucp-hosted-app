@@ -102,7 +102,7 @@ describe("connection event endpoints", () => {
 
   describe("/events/:connectionId/connectionResume", () => {
     it("gets success status when requested with the proper permission", () => {
-      unpauseConnectionEventRequest(connectionId).then((response) => {
+      unpauseConnectionEventRequest({ connectionId }).then((response) => {
         expect(response.status).to.eq(200);
       });
     });

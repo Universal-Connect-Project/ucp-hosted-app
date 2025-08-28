@@ -1064,6 +1064,92 @@
           }
         }
       }
+    },
+    "/metrics/connection/{connectionId}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get performance data for a single connection",
+        "description": "Retrieves performance metrics including success and duration data for a specific connection",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the connection to fetch performance data for",
+            "example": "MBR-1231"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "connectionId": "MBR-1231",
+                  "jobTypes": "transactions",
+                  "institutionId": "5e498f60-3496-4299-96ed-f8eb328ae8af",
+                  "clientId": "U1S5r5EQ9bPqXD5ai6769u9oi63BD1S2",
+                  "aggregatorId": "mx",
+                  "successMetric": {
+                    "isSuccess": true,
+                    "timestamp": "2025-08-27T20:19:48.58953425Z"
+                  },
+                  "durationMetric": {
+                    "jobDuration": 1000000,
+                    "timestamp": "2025-08-27T20:19:48.589841791Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Invalid connection ID format"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Connection not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Connection not found"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -10,6 +10,7 @@ import performanceRoutingEndpoints from "./performanceRouting/performanceRouting
 import aggregatorGraphEndpoints from "./aggregatorGraphMetrics/aggregatorGraphEndpoints";
 import aggregatorMetricsEndpoints from "./aggregatorMetrics/aggregatorMetricsEndpoints";
 import institutionPerformanceEndpoints from "./institutionPerformance/institutionPerformanceEndpoints";
+import connectionMetricsEndpoints from "./connectionMetrics/connectionMetricsEndpoints";
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use(aggregatorGraphEndpoints);
 app.use(performanceRoutingEndpoints);
 app.use(aggregatorMetricsEndpoints);
 app.use(institutionPerformanceEndpoints);
+app.use(connectionMetricsEndpoints);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(

@@ -11,6 +11,7 @@ interface ConnectionStartRequestBody {
   institutionId: string;
   aggregatorId: string;
   recordDuration?: boolean;
+  shouldRecordResult?: boolean;
 }
 
 export const testInstitutionId = "testInstitutionId";
@@ -51,10 +52,15 @@ export const pauseConnectionEventRequest = (connectionId: string) => {
   });
 };
 
-export const unpauseConnectionEventRequest = (
-  connectionId: string,
-  failOnStatusCode: boolean = true,
-) => {
+export const unpauseConnectionEventRequest = ({
+  connectionId,
+  failOnStatusCode = true,
+  shouldRecordResult,
+}: {
+  connectionId: string;
+  failOnStatusCode?: boolean;
+  shouldRecordResult?: boolean;
+}) => {
   return cy.request({
     url: `events/${connectionId}/connectionResume`,
     method: "PUT",
@@ -62,6 +68,7 @@ export const unpauseConnectionEventRequest = (
     headers: {
       Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
     },
+    body: { shouldRecordResult },
   });
 };
 
@@ -71,6 +78,20 @@ export const markSuccessfulEventRequest = (connectionId: string) => {
     method: "PUT",
     headers: {
       Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
+    },
+  });
+};
+
+export const getConnectionPerformanceData = (
+  connectionId: string,
+  failOnStatusCode: boolean = true,
+) => {
+  return cy.request({
+    url: `metrics/connection/${connectionId}`,
+    method: "GET",
+    failOnStatusCode,
+    headers: {
+      Authorization: createAuthorizationHeader(UCP_UI_USER_ACCESS_TOKEN),
     },
   });
 };

@@ -56,7 +56,7 @@ describe("writing and reading influxDb", () => {
       if (testDataPoint.pauseDuration) {
         pauseConnectionEventRequest(connectionId);
         cy.wait(testDataPoint.pauseDuration);
-        unpauseConnectionEventRequest(connectionId);
+        unpauseConnectionEventRequest({ connectionId });
       }
 
       if (testDataPoint.successDuration) {

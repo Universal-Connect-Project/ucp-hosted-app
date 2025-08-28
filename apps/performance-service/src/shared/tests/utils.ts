@@ -114,6 +114,7 @@ interface SeedInfluxTestDbParams {
   institutionId?: string;
   clientId?: string;
   aggregatorId?: string;
+  connectionId?: string;
   duration?: number | undefined;
   timestamp?: Date;
   success?: boolean;
@@ -125,6 +126,7 @@ export const seedInfluxTestDb = async ({
   institutionId = testInstitutionId,
   clientId = "testClient",
   aggregatorId = "mx",
+  connectionId = "testConnection",
   duration,
   timestamp = new Date(),
   success = true,
@@ -138,6 +140,7 @@ export const seedInfluxTestDb = async ({
       .tag("institutionId", institutionId)
       .tag("clientId", clientId)
       .tag("aggregatorId", aggregatorId)
+      .tag("connectionId", connectionId)
       .intField("jobDuration", duration)
       .timestamp(timestamp);
 
@@ -149,6 +152,7 @@ export const seedInfluxTestDb = async ({
     .tag("institutionId", institutionId)
     .tag("clientId", clientId)
     .tag("aggregatorId", aggregatorId)
+    .tag("connectionId", connectionId)
     .intField("isSuccess", success ? 1 : 0)
     .timestamp(timestamp);
 
