@@ -24,6 +24,7 @@ const startEventSchema = Joi.object({
   institutionId: Joi.string().required(),
   aggregatorId: Joi.string().required(),
   recordDuration: Joi.boolean().optional(),
+  shouldRecordResult: Joi.boolean().optional(),
 });
 
 export const validateStartEventRequest =

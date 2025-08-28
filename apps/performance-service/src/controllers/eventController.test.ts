@@ -38,6 +38,11 @@ const expectRedisEventToEqual = async (
 };
 
 describe("eventController", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useRealTimers();
+  });
+
   describe("createStartEvent", () => {
     it("should add the event to redis and return the event response with recordDuration defaulting to true", async () => {
       const clientId = "testClientId";
@@ -68,6 +73,7 @@ describe("eventController", () => {
         clientId,
         startedAt: expect.any(Number),
         recordDuration: true,
+        shouldRecordResult: true,
       });
 
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
@@ -110,6 +116,7 @@ describe("eventController", () => {
         clientId,
         startedAt: expect.any(Number),
         recordDuration: false,
+        shouldRecordResult: true,
       });
 
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
@@ -161,6 +168,7 @@ describe("eventController", () => {
         connectionId,
         expect.objectContaining({
           startedAt: expect.any(Number),
+          shouldRecordResult: true,
         }),
       );
     });
@@ -210,6 +218,7 @@ describe("eventController", () => {
       const expectedUpdatedBody = expect.objectContaining({
         pausedAt: expect.any(Number),
         userInteractionTime: 0,
+        shouldRecordResult: true,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -220,6 +229,76 @@ describe("eventController", () => {
       });
 
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
+    });
+
+    it("should update shouldRecordResult status even when already paused", async () => {
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req = {
+        ...mockRequest,
+        body: { shouldRecordResult: false },
+      } as unknown as Request;
+
+      await createStartEvent(req, preCheckMockResponse);
+
+      const pauseReq = {
+        ...mockRequest,
+      } as unknown as Request;
+
+      await updateConnectionPause(pauseReq, preCheckMockResponse);
+      // Confirm that shouldRecordResult doesn't default to true
+      await expectRedisEventToEqual(
+        connectionId,
+        expect.objectContaining({
+          shouldRecordResult: false,
+        }),
+      );
+
+      const updateReq = {
+        ...mockRequest,
+        body: { shouldRecordResult: true },
+      } as unknown as Request;
+
+      await updateConnectionPause(updateReq, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message:
+          "Connection process was already paused. But shouldRecordResult updated.",
+        event: expect.objectContaining({
+          shouldRecordResult: true,
+        }),
+      });
+    });
+
+    it("should not update shouldRecordResult from true to false when already paused", async () => {
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await createStartEvent(mockRequest, preCheckMockResponse);
+      await updateConnectionPause(mockRequest, preCheckMockResponse);
+
+      const updateReq = {
+        ...mockRequest,
+        body: { shouldRecordResult: false },
+      } as unknown as Request;
+
+      await updateConnectionPause(updateReq, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Connection process was already paused. Nothing changed.",
+        event: expect.objectContaining({
+          shouldRecordResult: true,
+        }),
+      });
     });
 
     it("should return 400 status and error message when an error is thrown", async () => {
@@ -263,6 +342,7 @@ describe("eventController", () => {
         event: expect.objectContaining({
           pausedAt: pausedAtAlreadyTime,
           userInteractionTime: 0,
+          shouldRecordResult: true,
         }),
       });
     });
@@ -285,6 +365,7 @@ describe("eventController", () => {
       const expectedUpdatedBody = expect.objectContaining({
         pausedAt: expect.any(Number),
         userInteractionTime,
+        shouldRecordResult: true,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -326,6 +407,7 @@ describe("eventController", () => {
     });
 
     it("should add userInteractionTime and nullify pausedAt and update the redis event", async () => {
+      jest.useFakeTimers();
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
@@ -333,7 +415,14 @@ describe("eventController", () => {
 
       const threeMinutes = 180000;
 
-      await createStartEvent(mockRequest, preCheckMockResponse);
+      const req = {
+        ...mockRequest,
+        body: {
+          shouldRecordResult: false,
+        },
+      } as unknown as Request;
+
+      await createStartEvent(req, preCheckMockResponse);
       await updateConnectionPause(mockRequest, preCheckMockResponse);
       jest.advanceTimersByTime(threeMinutes);
 
@@ -347,6 +436,7 @@ describe("eventController", () => {
       const expectedUpdatedBody = expect.objectContaining({
         pausedAt: null,
         userInteractionTime: expect.any(Number),
+        shouldRecordResult: false, // Confirm that shouldRecordResult doesn't default to true on pause and resume events
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -363,6 +453,132 @@ describe("eventController", () => {
       await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
     });
 
+    it("should update shouldRecordResult to true when resuming", async () => {
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req = {
+        ...mockRequest,
+        body: {
+          shouldRecordResult: false,
+        },
+      } as unknown as Request;
+
+      await createStartEvent(req, preCheckMockResponse);
+      await updateConnectionPause(mockRequest, preCheckMockResponse);
+
+      const updateReq = {
+        ...mockRequest,
+        body: { shouldRecordResult: true },
+      } as unknown as Request;
+
+      await updateConnectionResume(updateReq, res);
+
+      const expectedUpdatedBody = expect.objectContaining({
+        pausedAt: null,
+        shouldRecordResult: true,
+      });
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Connection process resumed duration tracking.",
+        event: expectedUpdatedBody,
+      });
+
+      await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
+    });
+
+    it("should not update shouldRecordResult from true to false when resuming", async () => {
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await createStartEvent(mockRequest, preCheckMockResponse);
+      await updateConnectionPause(mockRequest, preCheckMockResponse);
+
+      const updateReq = {
+        ...mockRequest,
+        body: { shouldRecordResult: false },
+      } as unknown as Request;
+
+      await updateConnectionResume(updateReq, res);
+
+      const expectedUpdatedBody = expect.objectContaining({
+        pausedAt: null,
+        shouldRecordResult: true,
+      });
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Connection process resumed duration tracking.",
+        event: expectedUpdatedBody,
+      });
+
+      await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
+    });
+
+    it("should update shouldRecordResult status even when not paused", async () => {
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req = {
+        ...mockRequest,
+        body: {
+          shouldRecordResult: false,
+        },
+      } as unknown as Request;
+
+      await createStartEvent(req, preCheckMockResponse);
+
+      const updateReq = {
+        ...mockRequest,
+        body: { shouldRecordResult: true },
+      } as unknown as Request;
+
+      await updateConnectionResume(updateReq, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Connection was not paused. But shouldRecordResult updated.",
+        event: expect.objectContaining({
+          shouldRecordResult: true,
+        }),
+      });
+    });
+
+    it("should not update shouldRecordResult from true to false when not paused", async () => {
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await createStartEvent(mockRequest, preCheckMockResponse);
+
+      const updateReq = {
+        ...mockRequest,
+        body: { shouldRecordResult: false },
+      } as unknown as Request;
+
+      await updateConnectionResume(updateReq, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Connection was not paused. Nothing changed.",
+        event: expect.objectContaining({
+          shouldRecordResult: true,
+        }),
+      });
+    });
+
     it("should do nothing when the connection was not paused", async () => {
       const res = {
         json: jest.fn(),
@@ -376,6 +592,7 @@ describe("eventController", () => {
       const expectedBody = expect.objectContaining({
         connectionId,
         startedAt: expect.any(Number),
+        shouldRecordResult: true,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method

@@ -8,6 +8,7 @@ interface CreateStartRequest {
   institutionId: string;
   aggregatorId: string;
   recordDuration?: boolean;
+  shouldRecordResult?: boolean;
 }
 
 export interface EventObject {
@@ -19,6 +20,7 @@ export interface EventObject {
   startedAt: number;
   userInteractionTime: number;
   pausedAt: number | null | undefined;
+  shouldRecordResult: boolean;
   successAt?: number;
   recordDuration: boolean;
 }
@@ -62,6 +64,7 @@ export const createStartEvent = async (req: Request, res: Response) => {
       institutionId,
       aggregatorId,
       recordDuration = true,
+      shouldRecordResult = true,
     } = req.body as CreateStartRequest;
     const eventBody = {
       connectionId,
@@ -71,6 +74,7 @@ export const createStartEvent = async (req: Request, res: Response) => {
       jobTypes,
       startedAt: Date.now(),
       recordDuration,
+      shouldRecordResult,
     };
     const eventObj = (await getEvent(connectionId)) as EventObject;
     if (eventObj) {
@@ -96,15 +100,28 @@ export const updateConnectionPause = withClientAccess(
     try {
       const dateNow = Date.now();
       const { connectionId } = req.params;
+      const { shouldRecordResult } = req.body as {
+        shouldRecordResult?: boolean;
+      };
       const eventObj = (await getEvent(connectionId)) as EventObject;
       if (eventObj.pausedAt) {
+        let message = "Connection process was already paused. Nothing changed.";
+        if (shouldRecordResult && !eventObj.shouldRecordResult) {
+          message =
+            "Connection process was already paused. But shouldRecordResult updated.";
+          eventObj.shouldRecordResult = shouldRecordResult;
+          await setEvent(connectionId, eventObj);
+        }
         res.status(200).json({
-          message: "Connection process was already paused. Nothing changed.",
+          message,
           event: eventObj,
         });
       } else {
         eventObj.pausedAt = dateNow;
         eventObj.userInteractionTime = eventObj.userInteractionTime ?? 0;
+        if (shouldRecordResult) {
+          eventObj.shouldRecordResult = shouldRecordResult;
+        }
         await setEvent(connectionId, eventObj);
         res.status(200).json({
           message: "Connection process paused duration tracking.",
@@ -122,11 +139,17 @@ export const updateConnectionResume = withClientAccess(
     try {
       const dateNow = Date.now();
       const { connectionId } = req.params;
+      const { shouldRecordResult } = req.body as {
+        shouldRecordResult?: boolean;
+      };
       const eventObj = (await getEvent(connectionId)) as EventObject;
       if (eventObj?.pausedAt) {
         const pauseDurationMilliseconds = dateNow - eventObj.pausedAt;
         eventObj.userInteractionTime += pauseDurationMilliseconds;
         eventObj.pausedAt = null;
+        if (shouldRecordResult) {
+          eventObj.shouldRecordResult = shouldRecordResult;
+        }
 
         await setEvent(connectionId, eventObj);
         res.status(200).json({
@@ -134,8 +157,15 @@ export const updateConnectionResume = withClientAccess(
           event: eventObj,
         });
       } else {
+        let message = "Connection was not paused. Nothing changed.";
+        if (shouldRecordResult && !eventObj.shouldRecordResult) {
+          message =
+            "Connection was not paused. But shouldRecordResult updated.";
+          eventObj.shouldRecordResult = shouldRecordResult;
+          await setEvent(connectionId, eventObj);
+        }
         res.status(200).json({
-          message: "Connection was not paused. Nothing changed.",
+          message,
           event: eventObj,
         });
       }

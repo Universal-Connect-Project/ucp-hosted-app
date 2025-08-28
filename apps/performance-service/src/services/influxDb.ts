@@ -28,6 +28,7 @@ async function writeData(data: {
   isSuccess: boolean;
   jobDuration: number;
   recordDuration: boolean;
+  connectionId: string;
 }): Promise<boolean> {
   try {
     if (data.isSuccess && data.recordDuration) {
@@ -36,6 +37,7 @@ async function writeData(data: {
         .tag("institutionId", data.institutionId)
         .tag("clientId", data.clientId)
         .tag("aggregatorId", data.aggregatorId)
+        .tag("connectionId", data.connectionId)
         .intField("jobDuration", data.jobDuration);
 
       writeApi.writePoint(durationPoint);
@@ -46,6 +48,7 @@ async function writeData(data: {
       .tag("institutionId", data.institutionId)
       .tag("clientId", data.clientId)
       .tag("aggregatorId", data.aggregatorId)
+      .tag("connectionId", data.connectionId)
       .intField("isSuccess", data.isSuccess ? 1 : 0);
 
     writeApi.writePoint(successRatePoint);
@@ -62,6 +65,10 @@ async function writeData(data: {
 export const recordPerformanceMetric = async (
   event: EventObject,
 ): Promise<boolean> => {
+  if (!event.shouldRecordResult) {
+    return true; // Delete the performance object without recording the data
+  }
+
   const jobTypesKey = [...event.jobTypes].sort().join("|");
 
   const totalDuration = event?.successAt
@@ -76,5 +83,93 @@ export const recordPerformanceMetric = async (
     isSuccess: !!event.successAt,
     jobDuration: totalDuration,
     recordDuration: event.recordDuration,
+    connectionId: event.connectionId,
   });
+};
+
+interface PerformanceData {
+  connectionId: string;
+  jobTypes: string;
+  institutionId: string;
+  aggregatorId: string;
+  durationMetric?: {
+    jobDuration: number;
+    timestamp: string;
+  };
+  successMetric: {
+    isSuccess: boolean;
+    timestamp: string;
+  };
+}
+
+interface InfluxQueryResult {
+  _time: string;
+  _value: number;
+  jobTypes: string;
+  institutionId: string;
+  aggregatorId: string;
+  connectionId: string;
+}
+
+export const getPerformanceDataByConnectionId = async (
+  connectionId: string,
+): Promise<PerformanceData | null> => {
+  try {
+    const successQuery = `
+      from(bucket: "${BUCKET}")
+      |> range(start: -30d)
+      |> filter(fn: (r) => r._measurement == "successRateMetrics")
+      |> filter(fn: (r) => r.connectionId == "${connectionId}")
+      |> last()
+    `;
+
+    const successResults =
+      await queryApi.collectRows<InfluxQueryResult>(successQuery);
+
+    if (successResults.length === 0) {
+      return null;
+    }
+
+    const durationQuery = `
+      from(bucket: "${BUCKET}")
+      |> range(start: -30d)
+      |> filter(fn: (r) => r._measurement == "durationMetrics")
+      |> filter(fn: (r) => r.connectionId == "${connectionId}")
+      |> last()
+    `;
+
+    const durationResults =
+      await queryApi.collectRows<InfluxQueryResult>(durationQuery);
+
+    if (successResults.length === 0) {
+      return null;
+    }
+
+    const successResult = successResults[0];
+    const durationResult =
+      durationResults.length > 0 ? durationResults[0] : null;
+
+    const performanceData: PerformanceData = {
+      connectionId,
+      jobTypes: successResult.jobTypes,
+      institutionId: successResult.institutionId,
+      aggregatorId: successResult.aggregatorId,
+      successMetric: {
+        isSuccess: successResult._value === 1,
+        timestamp: successResult._time,
+      },
+    };
+
+    if (durationResult) {
+      performanceData.durationMetric = {
+        jobDuration: durationResult._value,
+        timestamp: durationResult._time,
+      };
+    }
+
+    return performanceData;
+  } catch (error) {
+    console.error("Error querying InfluxDB:", error);
+    throw error;
+  }
 };
