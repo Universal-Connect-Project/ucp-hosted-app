@@ -63,7 +63,6 @@ describe("getConnectionPerformanceData", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       aggregatorId: "mx",
-      clientId: "client_456",
       connectionId: "test1",
       institutionId: "testInstitution",
       jobTypes: "accountNumber",
