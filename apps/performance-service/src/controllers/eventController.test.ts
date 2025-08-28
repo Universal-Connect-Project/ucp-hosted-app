@@ -38,6 +38,11 @@ const expectRedisEventToEqual = async (
 };
 
 describe("eventController", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useRealTimers();
+  });
+
   describe("createStartEvent", () => {
     it("should add the event to redis and return the event response with recordDuration defaulting to true", async () => {
       const clientId = "testClientId";
@@ -402,6 +407,7 @@ describe("eventController", () => {
     });
 
     it("should add userInteractionTime and nullify pausedAt and update the redis event", async () => {
+      jest.useFakeTimers();
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),

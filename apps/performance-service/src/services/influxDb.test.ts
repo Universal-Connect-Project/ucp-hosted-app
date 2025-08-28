@@ -1,8 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { EventObject } from "../controllers/eventController";
-import { getLatestDataPoint, wait } from "../shared/tests/utils";
-import { recordPerformanceMetric } from "./influxDb";
-import { writeApi } from "./influxDb";
+import {
+  getLatestDataPoint,
+  wait,
+  seedInfluxTestDb,
+} from "../shared/tests/utils";
+import {
+  recordPerformanceMetric,
+  getPerformanceDataByConnectionId,
+} from "./influxDb";
+import { writeApi, queryApi } from "./influxDb";
 
 describe("recordPerformanceMetric", () => {
   const event: EventObject = {
@@ -188,5 +195,111 @@ describe("recordPerformanceMetric", () => {
       "Error writing to InfluxDB:",
       expect.any(Error),
     );
+  });
+});
+
+describe("getPerformanceDataByConnectionId", () => {
+  const connectionId = `test-connection-${crypto.randomUUID()}`;
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("should return performance data with both duration and success metrics", async () => {
+    await seedInfluxTestDb({
+      jobTypes: ["transactions", "identity"],
+      institutionId: "test_inst_123",
+      clientId: "test_client_456",
+      aggregatorId: "test_agg_789",
+      connectionId,
+      duration: 5000,
+      success: true,
+      flush: true,
+    });
+
+    await wait(2000); // Wait for data to be written
+
+    const result = await getPerformanceDataByConnectionId(connectionId);
+
+    expect(result).toEqual({
+      connectionId,
+      jobTypes: "identity|transactions",
+      institutionId: "test_inst_123",
+      aggregatorId: "test_agg_789",
+      durationMetric: {
+        jobDuration: 5000,
+        timestamp: expect.any(String),
+      },
+      successMetric: {
+        isSuccess: true,
+        timestamp: expect.any(String),
+      },
+    });
+  });
+
+  it("should return performance data with only success metrics when no duration data exists", async () => {
+    const connectionId2 = `test-connection-no-duration-${crypto.randomUUID()}`;
+
+    await seedInfluxTestDb({
+      jobTypes: ["accounts"],
+      institutionId: "test_inst_456",
+      clientId: "test_client_789",
+      aggregatorId: "test_agg_123",
+      connectionId: connectionId2,
+      duration: undefined,
+      success: false,
+      flush: true,
+    });
+
+    await wait(2000);
+
+    const result = await getPerformanceDataByConnectionId(connectionId2);
+
+    expect(result).toEqual({
+      connectionId: connectionId2,
+      jobTypes: "accounts",
+      institutionId: "test_inst_456",
+      aggregatorId: "test_agg_123",
+      successMetric: {
+        isSuccess: false,
+        timestamp: expect.any(String),
+      },
+    });
+
+    expect(result?.durationMetric).toBeUndefined();
+  });
+
+  it("should return null when no data exists for the connection ID", async () => {
+    const nonExistentConnectionId = `non-existent-${crypto.randomUUID()}`;
+
+    const result = await getPerformanceDataByConnectionId(
+      nonExistentConnectionId,
+    );
+
+    expect(result).toBeNull();
+  });
+
+  it("should throw an error and log when InfluxDB query fails", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+
+    const queryRowsSpy = jest
+      .spyOn(queryApi, "collectRows")
+      .mockImplementation(() => {
+        throw new Error("InfluxDB query error");
+      });
+
+    try {
+      await expect(
+        getPerformanceDataByConnectionId("error-connection"),
+      ).rejects.toThrow("InfluxDB query error");
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Error querying InfluxDB:",
+        expect.any(Error),
+      );
+    } finally {
+      queryRowsSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    }
   });
 });
