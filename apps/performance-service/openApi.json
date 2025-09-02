@@ -1096,6 +1096,7 @@
                   "jobTypes": "transactions",
                   "institutionId": "5e498f60-3496-4299-96ed-f8eb328ae8af",
                   "aggregatorId": "mx",
+                  "isProcessed": true,
                   "successMetric": {
                     "isSuccess": true,
                     "timestamp": "2025-08-27T20:19:48.58953425Z"
