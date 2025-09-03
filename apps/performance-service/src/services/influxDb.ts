@@ -94,6 +94,7 @@ interface PerformanceData {
   institutionId: string;
   aggregatorId: string;
   isProcessed: boolean;
+  shouldRecordResult?: boolean;
   durationMetric?: {
     jobDuration: number;
     timestamp: string;
@@ -128,6 +129,7 @@ export const getPerformanceDataByConnectionId = async (
         institutionId: redisEvent.institutionId,
         aggregatorId: redisEvent.aggregatorId,
         isProcessed: false,
+        shouldRecordResult: redisEvent.shouldRecordResult,
         successMetric: {
           isSuccess: !!redisEvent.successAt,
           timestamp: redisEvent.successAt
