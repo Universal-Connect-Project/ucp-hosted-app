@@ -340,6 +340,7 @@ describe("getPerformanceDataByConnectionId", () => {
         jobDuration: successAt - startedAt - userInteractionTime,
         timestamp: new Date(successAt).toISOString(),
       },
+      shouldRecordResult: true,
       successMetric: {
         isSuccess: true,
         timestamp: new Date(successAt).toISOString(),
@@ -376,6 +377,7 @@ describe("getPerformanceDataByConnectionId", () => {
       institutionId: "testInstitutionId",
       aggregatorId: "testAggId",
       isProcessed: false,
+      shouldRecordResult: true,
       successMetric: {
         isSuccess: true,
         timestamp: new Date(successAt).toISOString(),
@@ -412,6 +414,7 @@ describe("getPerformanceDataByConnectionId", () => {
       institutionId: "testInstitutionId",
       aggregatorId: "testAggId",
       isProcessed: false,
+      shouldRecordResult: true,
       successMetric: {
         isSuccess: false,
         timestamp: new Date(startedAt).toISOString(),
