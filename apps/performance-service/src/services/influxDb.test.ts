@@ -10,6 +10,7 @@ import {
   getPerformanceDataByConnectionId,
 } from "./influxDb";
 import { writeApi, queryApi } from "./influxDb";
+import { setEvent } from "./storageClient/redis";
 
 describe("recordPerformanceMetric", () => {
   const event: EventObject = {
@@ -226,6 +227,7 @@ describe("getPerformanceDataByConnectionId", () => {
       jobTypes: "identity|transactions",
       institutionId: "test_inst_123",
       aggregatorId: "test_agg_789",
+      isProcessed: true,
       durationMetric: {
         jobDuration: 5000,
         timestamp: expect.any(String),
@@ -260,6 +262,7 @@ describe("getPerformanceDataByConnectionId", () => {
       jobTypes: "accounts",
       institutionId: "test_inst_456",
       aggregatorId: "test_agg_123",
+      isProcessed: true,
       successMetric: {
         isSuccess: false,
         timestamp: expect.any(String),
@@ -301,5 +304,120 @@ describe("getPerformanceDataByConnectionId", () => {
       queryRowsSpy.mockRestore();
       consoleErrorSpy.mockRestore();
     }
+  });
+
+  it("should return performance data from Redis when event exists and is not processed", async () => {
+    const connectionId = `redis-connection-${crypto.randomUUID()}`;
+    const startedAt = Date.now() - 10000;
+    const successAt = Date.now();
+    const userInteractionTime = 2000;
+
+    const mockRedisEvent = {
+      connectionId,
+      jobTypes: ["transactions", "accountNumber"],
+      institutionId: "testInstitutionId123",
+      aggregatorId: "testAggId456",
+      clientId: "testClientId789",
+      startedAt,
+      userInteractionTime,
+      pausedAt: null,
+      shouldRecordResult: true,
+      successAt,
+      recordDuration: true,
+    };
+
+    await setEvent(connectionId, mockRedisEvent);
+
+    const result = await getPerformanceDataByConnectionId(connectionId);
+
+    expect(result).toEqual({
+      connectionId,
+      jobTypes: "accountNumber|transactions",
+      institutionId: "testInstitutionId123",
+      aggregatorId: "testAggId456",
+      isProcessed: false,
+      durationMetric: {
+        jobDuration: successAt - startedAt - userInteractionTime,
+        timestamp: new Date(successAt).toISOString(),
+      },
+      successMetric: {
+        isSuccess: true,
+        timestamp: new Date(successAt).toISOString(),
+      },
+    });
+  });
+
+  it("should return performance data from Redis without duration when recordDuration is false", async () => {
+    const connectionId = `redis-connection-no-duration-${crypto.randomUUID()}`;
+    const startedAt = Date.now() - 5000;
+    const successAt = Date.now();
+
+    const mockRedisEvent = {
+      connectionId,
+      jobTypes: ["accountOwner"],
+      institutionId: "testInstitutionId",
+      aggregatorId: "testAggId",
+      clientId: "testClientId",
+      startedAt,
+      userInteractionTime: 0,
+      pausedAt: null,
+      shouldRecordResult: true,
+      successAt,
+      recordDuration: false,
+    };
+
+    await setEvent(connectionId, mockRedisEvent);
+
+    const result = await getPerformanceDataByConnectionId(connectionId);
+
+    expect(result).toEqual({
+      connectionId,
+      jobTypes: "accountOwner",
+      institutionId: "testInstitutionId",
+      aggregatorId: "testAggId",
+      isProcessed: false,
+      successMetric: {
+        isSuccess: true,
+        timestamp: new Date(successAt).toISOString(),
+      },
+    });
+
+    expect(result?.durationMetric).toBeUndefined();
+  });
+
+  it("should return performance data from Redis for ongoing event without success", async () => {
+    const connectionId = `redis-connection-ongoing-${crypto.randomUUID()}`;
+    const startedAt = Date.now() - 3000;
+
+    const mockRedisEvent = {
+      connectionId,
+      jobTypes: ["transactions"],
+      institutionId: "testInstitutionId",
+      aggregatorId: "testAggId",
+      clientId: "testClientId",
+      startedAt,
+      userInteractionTime: 1000,
+      pausedAt: null,
+      shouldRecordResult: true,
+      recordDuration: true,
+    };
+
+    await setEvent(connectionId, mockRedisEvent);
+
+    const result = await getPerformanceDataByConnectionId(connectionId);
+
+    expect(result).toEqual({
+      connectionId,
+      jobTypes: "transactions",
+      institutionId: "testInstitutionId",
+      aggregatorId: "testAggId",
+      isProcessed: false,
+      successMetric: {
+        isSuccess: false,
+        timestamp: new Date(startedAt).toISOString(),
+      },
+    });
+
+    expect(result?.durationMetric).toBeUndefined();
   });
 });

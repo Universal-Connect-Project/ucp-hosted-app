@@ -65,6 +65,7 @@ describe("getConnectionPerformanceData", () => {
       aggregatorId: "mx",
       connectionId: "test1",
       institutionId: "testInstitution",
+      isProcessed: true,
       jobTypes: "accountNumber",
       successMetric: {
         isSuccess: false,

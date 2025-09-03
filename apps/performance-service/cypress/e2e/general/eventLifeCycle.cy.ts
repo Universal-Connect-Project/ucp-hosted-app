@@ -30,6 +30,19 @@ describe("connection event life cycle", () => {
         expect(response.status).to.eq(200);
       });
 
+      // getConnectionPerformanceData before it's processed to prove the redis event is recorded and returned
+      // before it's processed in InfluxDb
+      getConnectionPerformanceData(connectionId).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.exist;
+        expect(response.body).to.have.property("connectionId", connectionId);
+        expect(response.body).to.have.nested.property(
+          "successMetric.isSuccess",
+          true,
+        );
+        expect(response.body).to.have.property("isProcessed", false);
+      });
+
       cy.wait(5000); // 5 seconds for Redis processing poller to process and cleanup the event
 
       unpauseConnectionEventRequest({
@@ -42,7 +55,7 @@ describe("connection event life cycle", () => {
         });
       });
 
-      getConnectionPerformanceData(connectionId, false).then((response) => {
+      getConnectionPerformanceData(connectionId).then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.exist;
         expect(response.body).to.have.property("connectionId", connectionId);
@@ -50,6 +63,7 @@ describe("connection event life cycle", () => {
           "successMetric.isSuccess",
           true,
         );
+        expect(response.body).to.have.property("isProcessed", true);
       });
     },
   );
@@ -124,6 +138,7 @@ describe("start, pause, resume with shouldRecordResult as true", () => {
         "successMetric.isSuccess",
         false,
       );
+      expect(response.body).to.have.property("isProcessed", true);
     });
   });
 });

@@ -1,4 +1,5 @@
 import { EventObject } from "../controllers/eventController";
+import { getEvent } from "./storageClient/redis";
 
 import {
   InfluxDB,
@@ -92,6 +93,7 @@ interface PerformanceData {
   jobTypes: string;
   institutionId: string;
   aggregatorId: string;
+  isProcessed: boolean;
   durationMetric?: {
     jobDuration: number;
     timestamp: string;
@@ -115,6 +117,39 @@ export const getPerformanceDataByConnectionId = async (
   connectionId: string,
 ): Promise<PerformanceData | null> => {
   try {
+    const redisEvent = (await getEvent(connectionId)) as EventObject;
+
+    if (redisEvent) {
+      const jobTypesKey = [...redisEvent.jobTypes].sort().join("|");
+
+      const performanceData: PerformanceData = {
+        connectionId,
+        jobTypes: jobTypesKey,
+        institutionId: redisEvent.institutionId,
+        aggregatorId: redisEvent.aggregatorId,
+        isProcessed: false,
+        successMetric: {
+          isSuccess: !!redisEvent.successAt,
+          timestamp: redisEvent.successAt
+            ? new Date(redisEvent.successAt).toISOString()
+            : new Date(redisEvent.startedAt).toISOString(),
+        },
+      };
+
+      if (redisEvent.successAt && redisEvent.recordDuration) {
+        const totalDuration =
+          redisEvent.successAt -
+          redisEvent.startedAt -
+          (redisEvent.userInteractionTime || 0);
+        performanceData.durationMetric = {
+          jobDuration: totalDuration,
+          timestamp: new Date(redisEvent.successAt).toISOString(),
+        };
+      }
+
+      return performanceData;
+    }
+
     const successQuery = `
       from(bucket: "${BUCKET}")
       |> range(start: -30d)
@@ -154,6 +189,7 @@ export const getPerformanceDataByConnectionId = async (
       jobTypes: successResult.jobTypes,
       institutionId: successResult.institutionId,
       aggregatorId: successResult.aggregatorId,
+      isProcessed: true,
       successMetric: {
         isSuccess: successResult._value === 1,
         timestamp: successResult._time,
