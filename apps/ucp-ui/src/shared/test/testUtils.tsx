@@ -62,6 +62,7 @@ const customRender = (
   } = {},
 ) =>
   render(ui, {
+    // eslint-disable-next-line react/display-name
     wrapper: (props) => (
       <AllTheProviders
         initialRoute={initialRoute}

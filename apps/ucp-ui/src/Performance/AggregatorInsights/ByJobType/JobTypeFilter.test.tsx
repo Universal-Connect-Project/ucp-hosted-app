@@ -32,7 +32,7 @@ const TestComponent = () => {
 
 const getCurrentFilteredJobTypeCombinations = () =>
   JSON.parse(
-    screen.getByTestId(filteredJobTypeCombinationsTestId).textContent as string,
+    screen.getByTestId(filteredJobTypeCombinationsTestId).textContent,
   ) as string[];
 
 describe("<JobTypeFilter />", () => {

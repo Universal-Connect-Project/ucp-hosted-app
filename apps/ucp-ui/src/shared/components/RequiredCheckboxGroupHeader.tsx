@@ -9,7 +9,7 @@ interface RequiredCheckboxGroupHeaderProps {
 
 export const RequiredCheckboxGroupHeader: React.FC<
   RequiredCheckboxGroupHeaderProps
-> = ({ title, error, errorMessage }) => {
+> = ({ title, error, errorMessage }: RequiredCheckboxGroupHeaderProps) => {
   return (
     <div>
       <Typography color={error ? "error" : "textPrimary"} variant="body1">

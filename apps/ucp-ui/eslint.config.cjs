@@ -42,7 +42,7 @@ module.exports = defineConfig([
         "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended-type-checked",
         "plugin:react-hooks/recommended",
-        "plugin:react/jsx-runtime",
+        // "plugin:react/jsx-runtime",
         "prettier",
       ),
     ),

@@ -10,10 +10,7 @@ interface PhoneContainerProps {
 /**
  * A component that displays a phone-like container with an iframe.
  */
-const PhoneContainer: React.FC<PhoneContainerProps> = ({
-  isLoading,
-  children,
-}) => {
+const PhoneContainer = ({ isLoading, children }: PhoneContainerProps) => {
   return (
     <div>
       <div className={styles.phone}>
