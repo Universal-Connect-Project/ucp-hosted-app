@@ -7,7 +7,7 @@ module.exports = {
   preset: "ts-jest",
   setupFiles: ["<rootDir>/jest.polyfills.js"],
   setupFilesAfterEnv: ["<rootDir>/jestSetup.js"],
-  testEnvironment: "jsdom",
+  testEnvironment: "jest-fixed-jsdom",
   testEnvironmentOptions: {
     customExportConditions: [""],
   },

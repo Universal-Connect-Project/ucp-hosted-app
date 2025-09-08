@@ -33,7 +33,7 @@ const SectionHeaderSwitch = ({
         render={({ field: { ref, value, ...fieldProps } }) => (
           <Switch
             checked={value as boolean}
-            inputProps={{ id: label }}
+            slotProps={{ input: { id: label } }}
             {...fieldProps}
           />
         )}

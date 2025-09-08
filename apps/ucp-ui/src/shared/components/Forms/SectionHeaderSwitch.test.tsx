@@ -28,7 +28,7 @@ describe("<SectionHeaderSwitch />", () => {
   it("changes the value on click", async () => {
     render(<TestComponent />);
 
-    expect(screen.getByLabelText(label)).toBeChecked();
+    expect(await screen.findByLabelText(label)).toBeChecked();
 
     await userEvent.click(screen.getByLabelText(label));
 
