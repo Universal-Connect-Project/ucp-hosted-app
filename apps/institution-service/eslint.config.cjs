@@ -51,6 +51,8 @@ module.exports = defineConfig([
     },
   },
   globalIgnores([
+    "**/migrations/**",
+    "**/seeders/**",
     "**/eslint.config.cjs",
     "**/cypress.config.ts",
     "**/jest.config.cjs",

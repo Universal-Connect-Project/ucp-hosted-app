@@ -62,7 +62,7 @@ export const updateAggregatorIntegration = async (
       message: "AggregatorIntegration updated successfully",
       aggregatorIntegration,
     });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({
       error: "An error occurred while updating the AggregatorIntegration",
     });
@@ -110,7 +110,7 @@ export const deleteAggregatorIntegration = async (
 
     await aggregatorIntegration.destroy();
     res.status(204).json({});
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({ error: "System Error" });
   }
 };

@@ -18,7 +18,7 @@ export const deleteInstitution = async (req: Request, res: Response) => {
     });
 
     res.status(204).json({});
-  } catch (error) {
+  } catch (_error) {
     return res
       .status(500)
       .json({ error: "An error occurred while deleting the institution" });

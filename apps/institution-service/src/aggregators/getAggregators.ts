@@ -13,7 +13,7 @@ export const getAggregators = async (req: Request, res: Response) => {
     res.status(200).json({
       aggregators,
     });
-  } catch (error) {
+  } catch (_error) {
     res
       .status(500)
       .json({ error: "An error occurred while fetching aggregators." });

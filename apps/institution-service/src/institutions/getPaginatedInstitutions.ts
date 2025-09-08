@@ -217,7 +217,7 @@ export const getPaginatedInstitutions = async (req: Request, res: Response) => {
       totalPages: Math.ceil(count / limit),
       institutions: rows,
     } as unknown as PaginatedInstitutionsResponse);
-  } catch (error) {
+  } catch (_error) {
     return res
       .status(500)
       .json({ error: "An error occurred while fetching institutions." });

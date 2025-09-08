@@ -4,7 +4,7 @@ import { Dialect, Sequelize } from "sequelize";
 
 const env = process.env.NODE_ENV || "development";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-require-imports
 const config: { [key: string]: string } = require(
   path.join(__dirname, "../config/config.json"),
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

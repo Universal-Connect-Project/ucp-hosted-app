@@ -413,7 +413,9 @@ describe("/institutions", () => {
               integration.supports_history &&
               integration.aggregator.name === "mx",
           );
-          expect(hasExpectedAttributes && searchValidated).to.be.true;
+
+          expect(hasExpectedAttributes).to.eq(true);
+          expect(searchValidated).to.eq(true);
         });
       },
     );
@@ -433,7 +435,7 @@ describe("/institutions", () => {
       expect(response.status).to.eq(200);
       expect(
         checkIsSorted(institutionResponse.institutions, "createdAt", "desc"),
-      ).to.be.true;
+      ).to.eq(true);
     });
   });
 
@@ -449,8 +451,9 @@ describe("/institutions", () => {
         response.body as unknown as PaginatedInstitutionsResponse;
 
       expect(response.status).to.eq(200);
-      expect(checkIsSorted(institutionResponse.institutions, "id", "desc")).to
-        .be.true;
+      expect(
+        checkIsSorted(institutionResponse.institutions, "id", "desc"),
+      ).to.eq(true);
     });
   });
 
