@@ -25,7 +25,6 @@ describe("/events/:connectionId/performance", () => {
 
     getConnectionPerformanceData(uniqueConnectionId).then((response) => {
       expect(response.status).to.eq(200);
-      expect(response.body).to.exist;
       expect(response.body).to.have.property(
         "connectionId",
         uniqueConnectionId,

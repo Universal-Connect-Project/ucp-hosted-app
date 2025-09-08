@@ -123,7 +123,7 @@ describe("institutions with performance metrics", () => {
                   typeof value.avgDuration === "number",
               ),
             ),
-          ).to.be.true;
+          ).to.eq(true);
         },
       );
     });
