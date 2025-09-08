@@ -25,7 +25,7 @@ export const createClient = async (
   const userClientID = await getUserClientId(userId);
 
   if (userClientID && userClientID.length > 0) {
-    return Promise.reject("User already has a client");
+    throw new Error("User already has a client");
   }
 
   const newClient: Client = await parseResponse<Client>(
@@ -61,7 +61,7 @@ export const getClient = async (userToken: string): Promise<Client> => {
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
   if (!clientId) {
-    return Promise.reject("Not Found");
+    throw new Error("Not Found");
   }
 
   return await parseResponse<Client>(
@@ -87,7 +87,7 @@ export const deleteClient = async (
   const clientId = await getUserClientId(userId);
 
   if (!clientId) {
-    return Promise.reject("Not Found");
+    throw new Error("Not Found");
   }
 
   await parseResponse(
@@ -119,7 +119,7 @@ export const rotateClientSecret = async (
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
   if (!clientId) {
-    return Promise.reject("Not Found");
+    throw new Error("Not Found");
   }
 
   return await parseResponse<Client>(
