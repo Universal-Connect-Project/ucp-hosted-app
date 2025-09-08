@@ -25,7 +25,8 @@ export const createClient = async (
   const userClientID = await getUserClientId(userId);
 
   if (userClientID && userClientID.length > 0) {
-    throw new Error("User already has a client");
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+    return Promise.reject("User already has a client");
   }
 
   const newClient: Client = await parseResponse<Client>(
@@ -61,7 +62,8 @@ export const getClient = async (userToken: string): Promise<Client> => {
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
   if (!clientId) {
-    throw new Error("Not Found");
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+    return Promise.reject("Not Found");
   }
 
   return await parseResponse<Client>(
@@ -87,7 +89,8 @@ export const deleteClient = async (
   const clientId = await getUserClientId(userId);
 
   if (!clientId) {
-    throw new Error("Not Found");
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+    return Promise.reject("Not Found");
   }
 
   await parseResponse(
@@ -119,7 +122,8 @@ export const rotateClientSecret = async (
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
   if (!clientId) {
-    throw new Error("Not Found");
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+    return Promise.reject("Not Found");
   }
 
   return await parseResponse<Client>(
