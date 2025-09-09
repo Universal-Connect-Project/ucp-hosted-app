@@ -51,7 +51,7 @@ describe("Client API", () => {
     getTokens();
   });
 
-  it.only("fails with unauthorized if there is no access token", () => {
+  it("fails with unauthorized if there is no access token", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
