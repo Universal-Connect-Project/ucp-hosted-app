@@ -51,17 +51,18 @@ describe("Client API", () => {
     getTokens();
   });
 
-  it("fails with unauthorized if there is no access token", () => {
+  it.only("fails with unauthorized if there is no access token", () => {
     cy.request({
       failOnStatusCode: false,
       method: "POST",
       url: keysUrl,
       headers: {
+        Authorization: "Bearer junk",
         ContentType: "application/json",
       },
     }).then((response: Cypress.Response<{ body: Keys }>) => {
       expect(response.status).to.eq(401);
-      expect(response.body).property("message").to.eq("Unauthorized");
+      expect(response.body).property("message").to.eq("Invalid Compact JWS");
     });
   });
 

@@ -13,13 +13,6 @@ import {
 const clientsRouterV1 = express.Router();
 
 export const clientsRoutes = (app: Application): void => {
-  app.use("/v1/clients", clientsRouterV1);
-
-  clientsRouterV1.post(
-    "/keys",
-    [validateUIAudience, requiredScopes(UiClientPermissions.CREATE_KEYS)],
-    clientsCreate as RequestHandler,
-  );
   clientsRouterV1.get(
     "/keys",
     [validateUIAudience, requiredScopes(UiClientPermissions.READ_KEYS)],
@@ -35,4 +28,11 @@ export const clientsRoutes = (app: Application): void => {
     [validateUIAudience, requiredScopes(UiClientPermissions.ROTATE_KEYS)],
     clientsRotateSecrets as RequestHandler,
   );
+  clientsRouterV1.post(
+    "/keys",
+    [validateUIAudience, requiredScopes(UiClientPermissions.CREATE_KEYS)],
+    clientsCreate as RequestHandler,
+  );
+
+  app.use("/v1/clients", clientsRouterV1);
 };
