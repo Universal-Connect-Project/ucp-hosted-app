@@ -1,5 +1,5 @@
-import { PORT } from "shared/const";
-import { CachedInstitution } from "tasks/loadInstitutionsFromJson";
+import { PORT } from "../../../src/shared/const";
+import { CachedInstitution } from "../../../src/tasks/loadInstitutionsFromJson";
 import { WIDGET_ACCESS_TOKEN } from "../../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
 

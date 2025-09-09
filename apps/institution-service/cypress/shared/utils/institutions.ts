@@ -1,9 +1,9 @@
-import { PORT } from "shared/const";
+import { PORT } from "../../../src/shared/const";
 import { SUPER_USER_ACCESS_TOKEN_ENV } from "../constants/accessTokens";
 import { createAuthorizationHeader } from "./authorization";
 import { getAggregators } from "./aggregator";
-import { testInstitution } from "test/testData/institutions";
-import { Aggregator } from "models/aggregator";
+import { testInstitution } from "../../../src/test/testData/institutions";
+import { Aggregator } from "../../../src/models/aggregator";
 import { createTestAggregatorIntegration } from "./aggregatorIntegration";
 
 export const getInstitutionsWithFiltersRequest = ({

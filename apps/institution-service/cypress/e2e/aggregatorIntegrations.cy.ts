@@ -1,11 +1,14 @@
 import { UUID } from "crypto";
-import { Institution } from "models/institution";
-import { PORT } from "shared/const";
+import { Institution } from "../../src/models/institution";
+import { PORT } from "../../src/shared/const";
 import {
   mxAggregatorId,
   sophtronAggregatorId,
-} from "test/testData/aggregators";
-import { InstitutionAttrs, testInstitution } from "test/testData/institutions";
+} from "../../src/test/testData/aggregators";
+import {
+  InstitutionAttrs,
+  testInstitution,
+} from "../../src/test/testData/institutions";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,

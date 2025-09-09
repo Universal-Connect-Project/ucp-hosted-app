@@ -4,7 +4,7 @@ import { getPaginatedInstitutions } from "./getPaginatedInstitutions";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
 import { seedInstitutionId } from "../test/testData/institutions";
 import { Institution } from "../models/institution";
-import { checkIsSorted } from "../test/utils";
+import { checkIsSorted } from "../test/checkIsSorted";
 import { PaginatedInstitutionsResponse } from "./consts";
 
 const buildInstitutionRequest = ({

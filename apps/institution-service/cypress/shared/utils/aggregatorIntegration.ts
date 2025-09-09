@@ -1,4 +1,4 @@
-import { PORT } from "shared/const";
+import { PORT } from "../../../src/shared/const";
 import { createAuthorizationHeader } from "./authorization";
 import { SUPER_USER_ACCESS_TOKEN_ENV } from "../constants/accessTokens";
 

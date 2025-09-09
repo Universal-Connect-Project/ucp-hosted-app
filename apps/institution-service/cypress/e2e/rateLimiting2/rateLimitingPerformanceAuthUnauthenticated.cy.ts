@@ -1,4 +1,4 @@
-import { PORT } from "shared/const";
+import { PORT } from "../../../src/shared/const";
 import { PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV } from "../../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
 

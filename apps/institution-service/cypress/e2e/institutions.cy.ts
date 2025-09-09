@@ -1,9 +1,9 @@
 import { Institution } from "../../src/models/institution";
-import { checkIsSorted } from "../../src/test/utils";
+import { checkIsSorted } from "../../src/test/checkIsSorted";
 import {
   InstitutionDetail,
   PaginatedInstitutionsResponse,
-} from "institutions/consts";
+} from "../../src/institutions/consts";
 import { DEFAULT_PAGINATION_PAGE_SIZE, PORT } from "../../src/shared/const";
 import { testInstitution } from "../../src/test/testData/institutions";
 import {
@@ -21,7 +21,7 @@ import {
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
-import { mxAggregatorId } from "test/testData/aggregators";
+import { mxAggregatorId } from "../../src/test/testData/aggregators";
 
 const institutionAttributes = [
   "id",
