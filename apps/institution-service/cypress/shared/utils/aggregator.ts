@@ -1,4 +1,4 @@
-import { Aggregator } from "models/aggregator";
+import { Aggregator } from "../../../src/models/aggregator";
 import { USER_ACCESS_TOKEN_ENV } from "../constants/accessTokens";
 import { createAuthorizationHeader } from "./authorization";
 

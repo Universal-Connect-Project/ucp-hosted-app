@@ -144,7 +144,7 @@ export const createValidateUserCanActOnAggregatorIntegration =
       }
 
       return true;
-    } catch (err) {
+    } catch (_err) {
       return ActOnAggregatorIntegrationValidationErrorReason.GenericError;
     }
   };

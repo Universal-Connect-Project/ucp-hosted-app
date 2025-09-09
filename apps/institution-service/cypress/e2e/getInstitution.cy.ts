@@ -3,8 +3,8 @@ import {
   InstitutionDetail,
   InstitutionPermissions,
   InstitutionResponse,
-} from "institutions/consts";
-import { PORT } from "shared/const";
+} from "../../src/institutions/consts";
+import { PORT } from "../../src/shared/const";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
@@ -15,7 +15,7 @@ import { runTokenInvalidCheck } from "../support/utils";
 import {
   mxAggregatorId,
   sophtronAggregatorId,
-} from "test/testData/aggregators";
+} from "../../src/test/testData/aggregators";
 import {
   createTestInstitutionAndAddIntegration,
   createTestInstitutionWithAllAggregators,

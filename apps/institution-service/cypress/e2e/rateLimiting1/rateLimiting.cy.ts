@@ -1,4 +1,4 @@
-import { PORT } from "shared/const";
+import { PORT } from "../../../src/shared/const";
 
 describe("General rate limiting", () => {
   it("tests the default rate limiting middleware by sending 101 requests in less than a minute", () => {

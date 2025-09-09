@@ -1,4 +1,4 @@
-import { PORT } from "shared/const";
+import { PORT } from "../../../src/shared/const";
 import { PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV } from "../../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
 
@@ -7,6 +7,9 @@ describe("Rate limit performance auth unauthenticated", () => {
     for (let i = 0; i < 100; i++) {
       cy.request({
         failOnStatusCode: false,
+        headers: {
+          Authorization: "Bearer junk",
+        },
         method: "GET",
         url: `http://localhost:${PORT}/performanceAuth/aggregators`,
       }).then((response) => {

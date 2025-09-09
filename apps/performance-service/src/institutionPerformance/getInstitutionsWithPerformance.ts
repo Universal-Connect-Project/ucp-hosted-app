@@ -165,7 +165,7 @@ export const getInstitutionsWithPerformance = async (
       institutions: institutionsWithPerformance,
       ...paginationInfo,
     });
-  } catch (error) {
+  } catch (_error) {
     res.status(400).send({ error: "Internal Server Error" });
   }
 };

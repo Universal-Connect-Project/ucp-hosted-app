@@ -8,8 +8,9 @@
     "test:watch": "jest --watch"
   },
   "devDependencies": {
-    "typescript": "^5.5.4",
-    "@types/express": "^4.17.21"
+    "typescript": "^5.8.3",
+    "@types/express": "^4.17.21",
+    "ts-jest": "^29.4.1"
   },
   "dependencies": {
     "@repo/shared-utils": "*",

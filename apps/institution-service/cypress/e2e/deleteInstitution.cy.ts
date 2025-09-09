@@ -1,4 +1,4 @@
-import { Institution } from "models/institution";
+import { Institution } from "../../src/models/institution";
 import {
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
@@ -9,8 +9,8 @@ import {
   USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
-import { PORT } from "shared/const";
-import { mxAggregatorId } from "test/testData/aggregators";
+import { PORT } from "../../src/shared/const";
+import { mxAggregatorId } from "../../src/test/testData/aggregators";
 import {
   createTestInstitution,
   deleteInstitution,

@@ -1,4 +1,4 @@
-import { PORT } from "shared/const";
+import { PORT } from "../../src/shared/const";
 import {
   PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,

@@ -44,12 +44,12 @@ interface WidgetConfigurationProps {
 
 const formId = "demoForm";
 
-const WidgetConfiguration: React.FC<WidgetConfigurationProps> = ({
+const WidgetConfiguration = ({
   control,
   trigger,
   errors,
   onSubmit,
-}) => {
+}: WidgetConfigurationProps) => {
   const { data, isError, isLoading, refetch } = useGetAggregatorsQuery();
 
   const aggregators = data?.aggregators;

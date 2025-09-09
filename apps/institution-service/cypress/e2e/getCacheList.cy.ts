@@ -2,12 +2,12 @@ import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import { USER_ACCESS_TOKEN_ENV } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { JwtPayload } from "jsonwebtoken";
-import { CachedInstitution } from "tasks/loadInstitutionsFromJson";
+import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
 import {
   runInvalidPermissionCheck,
   runTokenInvalidCheck,
 } from "../support/utils";
-import { PORT } from "shared/const";
+import { PORT } from "../../src/shared/const";
 
 const keysUrl = `http://localhost:8089/v1/clients/keys`;
 

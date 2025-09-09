@@ -57,11 +57,12 @@ describe("Client API", () => {
       method: "POST",
       url: keysUrl,
       headers: {
+        Authorization: "Bearer junk",
         ContentType: "application/json",
       },
     }).then((response: Cypress.Response<{ body: Keys }>) => {
       expect(response.status).to.eq(401);
-      expect(response.body).property("message").to.eq("Unauthorized");
+      expect(response.body).property("message").to.eq("Invalid Compact JWS");
     });
   });
 

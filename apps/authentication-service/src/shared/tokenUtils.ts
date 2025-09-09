@@ -38,7 +38,7 @@ export const getIsTokenExpired = (
   try {
     const { exp } = decode(token, { json: true }) as JwtPayload;
     return !exp || Date.now() >= exp * 1000;
-  } catch (Error) {
+  } catch (_error) {
     return true;
   }
 };

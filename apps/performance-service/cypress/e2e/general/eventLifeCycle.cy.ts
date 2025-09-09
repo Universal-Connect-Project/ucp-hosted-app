@@ -34,7 +34,6 @@ describe("connection event life cycle", () => {
       // before it's processed in InfluxDb
       getConnectionPerformanceData(connectionId).then((response) => {
         expect(response.status).to.eq(200);
-        expect(response.body).to.exist;
         expect(response.body).to.have.property("connectionId", connectionId);
         expect(response.body).to.have.nested.property(
           "successMetric.isSuccess",
@@ -57,7 +56,6 @@ describe("connection event life cycle", () => {
 
       getConnectionPerformanceData(connectionId).then((response) => {
         expect(response.status).to.eq(200);
-        expect(response.body).to.exist;
         expect(response.body).to.have.property("connectionId", connectionId);
         expect(response.body).to.have.nested.property(
           "successMetric.isSuccess",
@@ -100,7 +98,6 @@ describe("start, pause, resume, success. shouldRecordResult is false", () => {
 
     getConnectionPerformanceData(connectionId, false).then((response) => {
       expect(response.status).to.eq(404);
-      expect(response.body).to.exist;
       expect(response.body).to.have.property(
         "error",
         "No performance data found for the specified connection ID",
@@ -132,7 +129,6 @@ describe("start, pause, resume with shouldRecordResult as true", () => {
 
     getConnectionPerformanceData(connectionId).then((response) => {
       expect(response.status).to.eq(200);
-      expect(response.body).to.exist;
       expect(response.body).to.have.property("connectionId", connectionId);
       expect(response.body).to.have.nested.property(
         "successMetric.isSuccess",

@@ -87,7 +87,7 @@ export const getPerformanceAuthInstitutions = async (
       totalPages: Math.ceil(count / limit),
       institutions: rows,
     } as unknown as InstitutionsResponse);
-  } catch (error) {
+  } catch (_error) {
     return res
       .status(500)
       .json({ error: "An error occurred while fetching institutions." });

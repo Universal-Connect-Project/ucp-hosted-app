@@ -31,7 +31,7 @@ export const updateInstitution = async (req: Request, res: Response) => {
     return res
       .status(200)
       .json({ message: "Institution updated successfully", institution });
-  } catch (error) {
+  } catch (_error) {
     return res
       .status(500)
       .json({ error: "An error occurred while updating the institution" });
