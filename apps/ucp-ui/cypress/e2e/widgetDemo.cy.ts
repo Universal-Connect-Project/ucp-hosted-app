@@ -21,8 +21,8 @@ describe("Widget Demo", () => {
       .within(() => {
         cy.findByText("Select your institution").should("exist");
         cy.findByText("MX Bank").click();
-        cy.findByLabelText("Username").type("mxuser");
-        cy.findByLabelText("Password").type("correct");
+        cy.findByLabelText(/Username/).type("mxuser");
+        cy.findByLabelText(/Password/).type("correct");
         cy.findByText("Continue").click();
         cy.wait(12000); // Wait for the connection to process
         cy.findByText("You have successfully connected to MX Bank.").should(
