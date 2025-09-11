@@ -1065,6 +1065,112 @@
         }
       }
     },
+    "/events/{connectionId}/updateDuration": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Update the duration overwrite value for a connection event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "connectionId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Connection ID from assigned aggregator"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "durationOverwrite": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Duration in milliseconds to override the calculated duration"
+                  }
+                },
+                "required": ["durationOverwrite"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "Event duration overwrite updated successfully.",
+                    "event": {
+                      "connectionId": "MBR-123-455-123",
+                      "institutionId": "13213-12312-123",
+                      "aggregatorId": "mx",
+                      "recordDuration": true,
+                      "shouldRecordResult": true,
+                      "clientId": "54321",
+                      "jobTypes": ["transactions"],
+                      "userInteractionTime": 140,
+                      "pausedAt": null,
+                      "startedAt": "2024-09-10T16:07:46.038Z",
+                      "successAt": "2024-09-10T16:08:46.038Z",
+                      "durationOverwrite": 5000
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidDuration": {
+                    "summary": "Invalid duration value",
+                    "value": {
+                      "error": "durationOverwrite must be a non-negative number"
+                    }
+                  },
+                  "missingField": {
+                    "summary": "Missing required field",
+                    "value": {
+                      "error": "\"durationOverwrite\" is required"
+                    }
+                  },
+                  "connectionNotFound": {
+                    "summary": "Connection not found",
+                    "value": {
+                      "error": "Connection event not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/metrics/connection/{connectionId}": {
       "get": {
         "security": [
