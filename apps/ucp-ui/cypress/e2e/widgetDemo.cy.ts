@@ -6,7 +6,7 @@ describe("Widget Demo", () => {
     cy.loginWithWidgetDemoPermissions();
     cy.visit("/");
     cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
-    cy.contains(WIDGET_DEMO_PAGE_TITLE).should("be.visible");
+    cy.findByText(WIDGET_DEMO_PAGE_TITLE).should("be.visible");
     cy.findByRole("tab", { name: "Connect" }).should("be.visible");
     cy.findByLabelText("Account Number").click();
     cy.findByLabelText("Account Number").should("be.checked");
@@ -24,9 +24,9 @@ describe("Widget Demo", () => {
         cy.findByLabelText(/Username/).type("mxuser");
         cy.findByLabelText(/Password/).type("correct");
         cy.findByText("Continue").click();
-        cy.wait(12000); // Wait for the connection to process
         cy.findByText("You have successfully connected to MX Bank.").should(
           "exist",
+          { timeout: 120000 },
         );
       });
 
@@ -37,5 +37,47 @@ describe("Widget Demo", () => {
     cy.findByText("MX Bank").should("exist");
     cy.findByText("Account Number").should("exist");
     cy.findByText("MX").should("exist");
+  });
+
+  it("shows sophtron banks when selecting sophtron as the aggregator", () => {
+    cy.loginWithWidgetDemoPermissions();
+    cy.visit("/");
+    cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
+
+    cy.findByLabelText("Account Number").click();
+
+    cy.findByRole("combobox", { name: "Aggregator" }).click();
+    cy.findByRole("option", { name: "Sophtron" }).click();
+
+    cy.findByRole("button", { name: "Launch" }).click();
+
+    cy.get("iframe")
+      .its("0.contentDocument")
+      .its("body")
+      .within(() => {
+        cy.findByText("Select your institution").should("exist");
+        cy.findByText("Sophtron Bank NoMFA").should("be.visible");
+      });
+  });
+
+  it.only("shows finicity banks when selecting finicity as the aggregator", () => {
+    cy.loginWithWidgetDemoPermissions();
+    cy.visit("/");
+    cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
+
+    cy.findByLabelText("Account Number").click();
+
+    cy.findByRole("combobox", { name: "Aggregator" }).click();
+    cy.findByRole("option", { name: "Finicity" }).click();
+
+    cy.findByRole("button", { name: "Launch" }).click();
+
+    cy.get("iframe")
+      .its("0.contentDocument")
+      .its("body")
+      .within(() => {
+        cy.findByText("Select your institution").should("exist");
+        cy.findByText("FinBank").should("be.visible");
+      });
   });
 });

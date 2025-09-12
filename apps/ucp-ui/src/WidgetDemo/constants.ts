@@ -11,7 +11,7 @@ export const CONFIGURATION_HEADER = "Configuration";
 export const JOB_TYPE_ERROR_MESSAGE = "Please select at least one job type.";
 export const INSTITUTION_SELECTED = "connect/selectedInstitution";
 export const MEMBER_CONNECTED = "connect/memberConnected";
-export const widgetEnabledAggregators = ["mx", "sophtron"];
+export const widgetEnabledAggregators = ["finicity", "mx", "sophtron"];
 
 export interface FormValues {
   accountNumber: boolean;
