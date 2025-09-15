@@ -108,14 +108,14 @@ describe("connection event life cycle", () => {
         expect(response.status).to.eq(200);
       });
 
-      cy.wait(2000); // total of 6 seconds have elapsed since the event was started but only 2 since the latest update
+      cy.wait(2000); // total of 6 seconds (more than the 5 sec threshold) have elapsed since the event was started but only 2 since the latest update
 
       getConnectionPerformanceData(connectionId).then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property("isProcessed", false);
       });
 
-      cy.wait(3000); // 5 seconds since the latest update so the event should have been processed
+      cy.wait(5000); // > 5 seconds since the latest update so the event should have been processed
 
       getConnectionPerformanceData(connectionId).then((response) => {
         expect(response.status).to.eq(200);
