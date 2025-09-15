@@ -109,7 +109,6 @@ describe("connection event life cycle", () => {
 
       getConnectionPerformanceData(connectionId).then((response) => {
         expect(response.status).to.eq(200);
-        expect(response.body).to.exist;
         expect(response.body).to.have.property("connectionId", connectionId);
         expect(response.body).to.have.nested.property(
           "successMetric.isSuccess",
