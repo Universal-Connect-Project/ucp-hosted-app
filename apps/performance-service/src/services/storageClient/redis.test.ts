@@ -66,15 +66,20 @@ describe("redis", () => {
   });
 
   describe("setEvent", () => {
-    it("calls set on the client with event subdirectory", async () => {
-      const testValue = { test: "test" };
+    it("calls set on the client with event subdirectory and updates 'updatedAt'", async () => {
+      const mockTimestamp = 1234567890;
+      const dateNowSpy = jest.spyOn(Date, "now").mockReturnValue(mockTimestamp);
+
+      const testValue = { test: "test" } as unknown as EventObject;
       await setEvent("test", testValue);
 
       expect(mockSet).toHaveBeenCalledWith(
         `${EVENT_SUBDIRECTORY}:test`,
-        JSON.stringify(testValue),
+        JSON.stringify({ ...testValue, updatedAt: mockTimestamp }),
         {},
       );
+
+      dateNowSpy.mockRestore();
     });
   });
 
@@ -82,7 +87,7 @@ describe("redis", () => {
     it("calls get on the client with event subdirectory", async () => {
       const testValue = { a: "b" };
 
-      await setEvent("test", testValue);
+      await setEvent("test", testValue as unknown as EventObject);
       const value = await getEvent("test");
 
       expect(value).toEqual(testValue);
@@ -116,9 +121,58 @@ describe("redis", () => {
       expect(consoleSpy).toHaveBeenCalledWith("Nothing to process.");
     });
 
-    it("processes events that have existed longer than the processing threshold", async () => {
+    it("processes events that have existed longer than the processing threshold (based on updatedAt)", async () => {
       const connectionEventId = "MBR-123";
+      const oldTimestamp = minutesAgo(processingTimeLimitMins + 5);
+
+      const dateNowSpy = jest.spyOn(Date, "now").mockReturnValue(oldTimestamp);
+
       await setEvent(connectionEventId, {
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
+        startedAt: minutesAgo(processingTimeLimitMins + 3),
+        successAt: minutesAgo(processingTimeLimitMins + 1),
+      } as EventObject);
+
+      dateNowSpy.mockRestore();
+
+      await processEvents();
+
+      expect(mockGet).toHaveBeenCalledWith(
+        `${EVENT_SUBDIRECTORY}:${connectionEventId}`,
+      );
+      expect(mockDel).toHaveBeenCalledWith(
+        `${EVENT_SUBDIRECTORY}:${connectionEventId}`,
+      );
+    });
+
+    it("does not process events that have existed less than the processing threshold (based on updatedAt)", async () => {
+      const connectionEventId = "MBR-123";
+      const recentTimestamp = minutesAgo(processingTimeLimitMins - 3);
+
+      const dateNowSpy = jest
+        .spyOn(Date, "now")
+        .mockReturnValue(recentTimestamp);
+
+      await setEvent(connectionEventId, {
+        jobTypes: [ComboJobTypes.TRANSACTIONS],
+        startedAt: minutesAgo(processingTimeLimitMins + 1),
+        successAt: minutesAgo(processingTimeLimitMins - 2),
+      } as EventObject);
+
+      dateNowSpy.mockRestore();
+
+      await processEvents();
+
+      expect(mockGet).toHaveBeenCalledWith(
+        `${EVENT_SUBDIRECTORY}:${connectionEventId}`,
+      );
+      expect(mockDel).not.toHaveBeenCalled();
+    });
+
+    it("falls back to startedAt when updatedAt is not present", async () => {
+      const connectionEventId = "MBR-123";
+
+      await set(`${EVENT_SUBDIRECTORY}:${connectionEventId}`, {
         jobTypes: [ComboJobTypes.TRANSACTIONS],
         startedAt: minutesAgo(processingTimeLimitMins + 5),
         successAt: minutesAgo(processingTimeLimitMins + 1),
@@ -132,22 +186,6 @@ describe("redis", () => {
       expect(mockDel).toHaveBeenCalledWith(
         `${EVENT_SUBDIRECTORY}:${connectionEventId}`,
       );
-    });
-
-    it("does not processes events that have existed less than the processing threshold", async () => {
-      const connectionEventId = "MBR-123";
-      await setEvent(connectionEventId, {
-        jobTypes: [ComboJobTypes.TRANSACTIONS],
-        startedAt: minutesAgo(processingTimeLimitMins - 3),
-        successAt: minutesAgo(processingTimeLimitMins - 2),
-      } as EventObject);
-
-      await processEvents();
-
-      expect(mockGet).toHaveBeenCalledWith(
-        `${EVENT_SUBDIRECTORY}:${connectionEventId}`,
-      );
-      expect(mockDel).not.toHaveBeenCalled();
     });
   });
 });
