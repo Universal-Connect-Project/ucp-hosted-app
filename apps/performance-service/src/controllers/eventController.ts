@@ -23,7 +23,7 @@ export interface EventObject {
   shouldRecordResult: boolean;
   successAt?: number;
   recordDuration: boolean;
-  durationOverwrite?: number;
+  additionalDuration?: number;
 }
 
 export interface DecodedToken {
@@ -176,20 +176,20 @@ export const updateConnectionResume = withClientAccess(
   },
 );
 
-export const updateEventDuration = withClientAccess(
+export const updateAdditionalDuration = withClientAccess(
   async (req: Request, res: Response) => {
     try {
       const { connectionId } = req.params;
-      const { durationOverwrite } = req.body as {
-        durationOverwrite: number;
+      const { additionalDuration } = req.body as {
+        additionalDuration: number;
       };
       const eventObj = (await getEvent(connectionId)) as EventObject;
 
-      const updatedObj = { ...eventObj, durationOverwrite };
+      const updatedObj = { ...eventObj, additionalDuration };
       await setEvent(connectionId, updatedObj);
 
       res.status(200).json({
-        message: "Event duration overwrite updated successfully.",
+        message: "Connection's additionalDuration updated successfully.",
         event: updatedObj,
       });
     } catch (error) {

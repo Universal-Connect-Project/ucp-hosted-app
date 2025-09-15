@@ -153,9 +153,9 @@ describe("validateUpdateDurationRequest middleware", () => {
     jest.clearAllMocks();
   });
 
-  it("calls next() for valid durationOverwrite", () => {
+  it("calls next() for valid additionalDuration", () => {
     const req = mockReq({
-      durationOverwrite: 5000,
+      additionalDuration: 5000,
     }) as Request;
     const res = mockRes();
 
@@ -165,9 +165,9 @@ describe("validateUpdateDurationRequest middleware", () => {
     expect((res.status as jest.Mock).mock.calls.length).toBe(0);
   });
 
-  it("calls next() for valid durationOverwrite of zero", () => {
+  it("calls next() for valid additionalDuration of zero", () => {
     const req = mockReq({
-      durationOverwrite: 0,
+      additionalDuration: 0,
     }) as Request;
     const res = mockRes();
 
@@ -177,7 +177,7 @@ describe("validateUpdateDurationRequest middleware", () => {
     expect((res.status as jest.Mock).mock.calls.length).toBe(0);
   });
 
-  it("returns 400 for missing durationOverwrite", () => {
+  it("returns 400 for missing additionalDuration", () => {
     const req = mockReq({}) as Request;
     const res = mockRes();
 
@@ -186,15 +186,15 @@ describe("validateUpdateDurationRequest middleware", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        error: expect.stringContaining("durationOverwrite"),
+        error: expect.stringContaining("additionalDuration"),
       }),
     );
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("returns 400 for negative durationOverwrite", () => {
+  it("returns 400 for negative additionalDuration", () => {
     const req = mockReq({
-      durationOverwrite: -100,
+      additionalDuration: -100,
     }) as Request;
     const res = mockRes();
 
@@ -203,15 +203,15 @@ describe("validateUpdateDurationRequest middleware", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        error: expect.stringContaining("durationOverwrite"),
+        error: expect.stringContaining("additionalDuration"),
       }),
     );
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("returns 400 for non-numeric durationOverwrite", () => {
+  it("returns 400 for non-numeric additionalDuration", () => {
     const req = mockReq({
-      durationOverwrite: "invalid",
+      additionalDuration: "invalid",
     }) as Request;
     const res = mockRes();
 
@@ -220,15 +220,15 @@ describe("validateUpdateDurationRequest middleware", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        error: expect.stringContaining("durationOverwrite"),
+        error: expect.stringContaining("additionalDuration"),
       }),
     );
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("returns 400 for null durationOverwrite", () => {
+  it("returns 400 for null additionalDuration", () => {
     const req = mockReq({
-      durationOverwrite: null,
+      additionalDuration: null,
     }) as Request;
     const res = mockRes();
 
@@ -237,7 +237,7 @@ describe("validateUpdateDurationRequest middleware", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        error: expect.stringContaining("durationOverwrite"),
+        error: expect.stringContaining("additionalDuration"),
       }),
     );
     expect(next).not.toHaveBeenCalled();

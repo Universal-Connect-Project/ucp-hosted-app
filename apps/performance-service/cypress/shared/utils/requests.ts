@@ -82,6 +82,23 @@ export const markSuccessfulEventRequest = (connectionId: string) => {
   });
 };
 
+export const updateAdditionalDurationRequest = ({
+  connectionId,
+  additionalDuration,
+}: {
+  connectionId: string;
+  additionalDuration: number;
+}) => {
+  return cy.request({
+    url: `events/${connectionId}/updateDuration`,
+    method: "PUT",
+    headers: {
+      Authorization: createAuthorizationHeader(WIDGET_ACCESS_TOKEN),
+    },
+    body: { additionalDuration },
+  });
+};
+
 export const getConnectionPerformanceData = (
   connectionId: string,
   failOnStatusCode: boolean = true,

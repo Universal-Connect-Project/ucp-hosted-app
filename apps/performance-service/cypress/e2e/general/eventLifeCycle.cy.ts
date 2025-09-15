@@ -5,6 +5,7 @@ import {
   pauseConnectionEventRequest,
   startConnectionEventRequest,
   unpauseConnectionEventRequest,
+  updateAdditionalDurationRequest,
 } from "../../shared/utils/requests";
 
 describe("connection event life cycle", () => {
@@ -60,6 +61,66 @@ describe("connection event life cycle", () => {
         expect(response.body).to.have.nested.property(
           "successMetric.isSuccess",
           true,
+        );
+        expect(response.body).to.have.property("isProcessed", true);
+      });
+    },
+  );
+
+  it.only(
+    "creates an event, pauses it, unpauses it, and marks it successfull then " +
+      "adds additional duration which gets included in the total duration",
+    () => {
+      startConnectionEventRequest({ connectionId }).then((response) => {
+        expect(response.status).to.eq(201);
+      });
+
+      pauseConnectionEventRequest(connectionId).then((response) => {
+        expect(response.status).to.eq(200);
+      });
+
+      unpauseConnectionEventRequest({ connectionId }).then((response) => {
+        expect(response.status).to.eq(200);
+      });
+
+      markSuccessfulEventRequest(connectionId).then((response) => {
+        expect(response.status).to.eq(200);
+      });
+
+      let duration;
+
+      getConnectionPerformanceData(connectionId).then((response) => {
+        expect(response.status).to.eq(200);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+        duration = response.body.durationMetric.jobDuration;
+        expect(duration).to.be.lte(4000);
+        expect(response.body).to.have.property("isProcessed", false);
+      });
+
+      const additionalDuration = 5000;
+      updateAdditionalDurationRequest({
+        connectionId,
+        additionalDuration,
+      }).then((response) => {
+        expect(response.status).to.eq(200);
+      });
+
+      cy.wait(5000); // 5 seconds for Redis processing poller to process and cleanup the event
+
+      getConnectionPerformanceData(connectionId).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.exist;
+        expect(response.body).to.have.property("connectionId", connectionId);
+        expect(response.body).to.have.nested.property(
+          "successMetric.isSuccess",
+          true,
+        );
+        expect(response.body).to.have.nested.property(
+          "durationMetric.jobDuration",
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        expect(response.body.durationMetric.jobDuration).to.eq(
+          duration + additionalDuration,
         );
         expect(response.body).to.have.property("isProcessed", true);
       });

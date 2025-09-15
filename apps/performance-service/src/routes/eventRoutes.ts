@@ -6,7 +6,7 @@ import {
   createStartEvent,
   updateConnectionPause,
   updateConnectionResume,
-  updateEventDuration,
+  updateAdditionalDuration,
   updateSuccessEvent,
 } from "../controllers/eventController";
 import {
@@ -32,7 +32,7 @@ export const validateStartEventRequest =
   createRequestBodySchemaValidator(startEventSchema);
 
 const updateDurationSchema = Joi.object({
-  durationOverwrite: Joi.number().min(0).required(),
+  additionalDuration: Joi.number().min(0).required(),
 });
 
 export const validateUpdateDurationRequest =
@@ -70,7 +70,7 @@ router.put(
   "/:connectionId/updateDuration",
   [validateWidgetAudience, validateConnectionId, validateUpdateDurationRequest],
   requiredScopes(WidgetHostPermissions.WRITE_WIDGET_ENDPOINTS),
-  updateEventDuration as RequestHandler,
+  updateAdditionalDuration as RequestHandler,
 );
 
 export default router;

@@ -1072,7 +1072,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "Update the duration overwrite value for a connection event",
+        "description": "Sets the additionalDuration value for a connection event which gets added to the total duration recorded for an event",
         "parameters": [
           {
             "in": "path",
@@ -1091,13 +1091,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "durationOverwrite": {
+                  "additionalDuration": {
                     "type": "number",
                     "minimum": 0,
                     "description": "Duration in milliseconds to override the calculated duration"
                   }
                 },
-                "required": ["durationOverwrite"]
+                "required": ["additionalDuration"]
               }
             }
           }
@@ -1110,7 +1110,7 @@
                 "schema": {
                   "type": "object",
                   "example": {
-                    "message": "Event duration overwrite updated successfully.",
+                    "message": "Connection's additionalDuration updated successfully.",
                     "event": {
                       "connectionId": "MBR-123-455-123",
                       "institutionId": "13213-12312-123",
@@ -1123,7 +1123,7 @@
                       "pausedAt": null,
                       "startedAt": "2024-09-10T16:07:46.038Z",
                       "successAt": "2024-09-10T16:08:46.038Z",
-                      "durationOverwrite": 5000
+                      "additionalDuration": 5000
                     }
                   }
                 }
@@ -1146,13 +1146,13 @@
                   "invalidDuration": {
                     "summary": "Invalid duration value",
                     "value": {
-                      "error": "durationOverwrite must be a non-negative number"
+                      "error": "additionalDuration must be a non-negative number"
                     }
                   },
                   "missingField": {
                     "summary": "Missing required field",
                     "value": {
-                      "error": "\"durationOverwrite\" is required"
+                      "error": "\"additionalDuration\" is required"
                     }
                   },
                   "connectionNotFound": {

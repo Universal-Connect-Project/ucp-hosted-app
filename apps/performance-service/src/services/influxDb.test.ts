@@ -79,9 +79,10 @@ describe("recordPerformanceMetric", () => {
 
   it("records correct duration (using overwrite) and success metrics on successful event", async () => {
     const institutionId = `testMetrics-${crypto.randomUUID()}`;
+    const additionalDuration = 7777;
     const result = await recordPerformanceMetric({
       ...event,
-      durationOverwrite: 7777,
+      additionalDuration,
       institutionId,
     });
     expect(result).toBe(true);
@@ -120,7 +121,11 @@ describe("recordPerformanceMetric", () => {
         _start: expect.any(String),
         _stop: expect.any(String),
         _time: expect.any(String),
-        _value: 7777,
+        _value:
+          event.successAt! -
+          event.startedAt -
+          event.userInteractionTime +
+          additionalDuration,
         _field: "jobDuration",
         _measurement: "durationMetrics",
         aggregatorId: "agg_789",
@@ -402,11 +407,12 @@ describe("getPerformanceDataByConnectionId", () => {
     });
   });
 
-  it("should return performance data with duration overwritten from Redis when event exists with durationOverride and is not processed", async () => {
+  it("should return performance data with additional duration from Redis when event exists with additionalDuration and is not processed", async () => {
     const connectionId = `redis-connection-${crypto.randomUUID()}`;
     const startedAt = Date.now() - 10000;
     const successAt = Date.now();
     const userInteractionTime = 2000;
+    const additionalDuration = 9999;
 
     const mockRedisEvent = {
       connectionId,
@@ -420,7 +426,7 @@ describe("getPerformanceDataByConnectionId", () => {
       shouldRecordResult: true,
       successAt,
       recordDuration: true,
-      durationOverwrite: 9999,
+      additionalDuration,
     };
 
     await setEvent(connectionId, mockRedisEvent);
@@ -434,7 +440,8 @@ describe("getPerformanceDataByConnectionId", () => {
       aggregatorId: "testAggId456",
       isProcessed: false,
       durationMetric: {
-        jobDuration: 9999,
+        jobDuration:
+          successAt - startedAt - userInteractionTime + additionalDuration,
         timestamp: new Date(successAt).toISOString(),
       },
       shouldRecordResult: true,

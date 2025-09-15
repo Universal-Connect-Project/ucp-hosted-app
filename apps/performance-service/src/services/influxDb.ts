@@ -67,10 +67,12 @@ const getTotalDuration = (event: EventObject): number => {
   if (!event.successAt) {
     return 0;
   }
-  if (event.durationOverwrite) {
-    return event.durationOverwrite;
-  }
-  return event.successAt - event.startedAt - (event.userInteractionTime || 0);
+  return (
+    event.successAt -
+    event.startedAt -
+    (event.userInteractionTime || 0) +
+    (event.additionalDuration || 0)
+  );
 };
 
 export const recordPerformanceMetric = async (

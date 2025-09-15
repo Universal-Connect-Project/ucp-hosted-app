@@ -5,7 +5,7 @@ import {
   createStartEvent,
   updateConnectionPause,
   updateConnectionResume,
-  updateEventDuration,
+  updateAdditionalDuration,
   updateSuccessEvent,
 } from "./eventController";
 
@@ -721,7 +721,7 @@ describe("eventController", () => {
     });
   });
 
-  describe("updateEventDuration", () => {
+  describe("updateAdditionalDuration", () => {
     it("should return 400 without proper client access", async () => {
       await createStartEvent(mockRequest, preCheckMockResponse);
 
@@ -733,7 +733,7 @@ describe("eventController", () => {
           authorization: createFakeAccessToken("differentClientId"),
         },
         body: {
-          durationOverwrite: 5000,
+          additionalDuration: 5000,
         },
       } as unknown as Request;
 
@@ -742,7 +742,7 @@ describe("eventController", () => {
         status: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      await updateEventDuration(req, res);
+      await updateAdditionalDuration(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
@@ -751,7 +751,7 @@ describe("eventController", () => {
       });
     });
 
-    it("should update durationOverwrite and update redis", async () => {
+    it("should update additionalDuration and update redis", async () => {
       const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
@@ -760,22 +760,22 @@ describe("eventController", () => {
       const req = {
         ...mockRequest,
         body: {
-          durationOverwrite: 5000,
+          additionalDuration: 5000,
         },
       } as unknown as Request;
 
       await createStartEvent(mockRequest, preCheckMockResponse);
 
-      await updateEventDuration(req, res);
+      await updateAdditionalDuration(req, res);
 
       const expectedUpdatedBody = expect.objectContaining({
-        durationOverwrite: 5000,
+        additionalDuration: 5000,
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Event duration overwrite updated successfully.",
+        message: "Connection's additionalDuration updated successfully.",
         event: expectedUpdatedBody,
       });
 
@@ -791,7 +791,7 @@ describe("eventController", () => {
       const req = {
         ...mockRequest,
         body: {
-          durationOverwrite: 5000,
+          additionalDuration: 5000,
         },
       } as unknown as Request;
 
@@ -802,7 +802,7 @@ describe("eventController", () => {
 
       await createStartEvent(mockRequest, preCheckMockResponse);
 
-      await updateEventDuration(req, res);
+      await updateAdditionalDuration(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);
