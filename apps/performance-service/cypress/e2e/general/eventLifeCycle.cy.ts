@@ -90,7 +90,7 @@ describe("connection event life cycle", () => {
 
       let duration;
 
-      cy.wait(4000);
+      cy.wait(2000);
 
       getConnectionPerformanceData(connectionId).then((response) => {
         expect(response.status).to.eq(200);
@@ -108,7 +108,7 @@ describe("connection event life cycle", () => {
         expect(response.status).to.eq(200);
       });
 
-      cy.wait(2000); // total of 6 seconds (more than the 5 sec threshold) have elapsed since the event was started but only 2 since the latest update
+      cy.wait(2000); // total of 4 seconds (more than the 3 sec threshold) have elapsed since the event was started but only 2 since the latest update
 
       getConnectionPerformanceData(connectionId).then((response) => {
         expect(response.status).to.eq(200);
