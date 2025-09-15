@@ -1094,7 +1094,7 @@
                   "additionalDuration": {
                     "type": "number",
                     "minimum": 0,
-                    "description": "Duration in milliseconds to override the calculated duration"
+                    "description": "Duration in milliseconds to add to the calculated duration"
                   }
                 },
                 "required": ["additionalDuration"]
