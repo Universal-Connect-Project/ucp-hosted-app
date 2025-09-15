@@ -67,7 +67,7 @@ describe("connection event life cycle", () => {
     },
   );
 
-  it.only(
+  it(
     "creates an event, pauses it, unpauses it, and marks it successfull then " +
       "adds additional duration which gets included in the total duration",
     () => {

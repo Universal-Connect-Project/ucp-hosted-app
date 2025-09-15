@@ -77,7 +77,7 @@ describe("recordPerformanceMetric", () => {
     );
   });
 
-  it("records correct duration (using overwrite) and success metrics on successful event", async () => {
+  it("records correct duration (using additionalDuration) and success metrics on successful event", async () => {
     const institutionId = `testMetrics-${crypto.randomUUID()}`;
     const additionalDuration = 7777;
     const result = await recordPerformanceMetric({
