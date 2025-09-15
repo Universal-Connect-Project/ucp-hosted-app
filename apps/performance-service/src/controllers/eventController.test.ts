@@ -5,6 +5,7 @@ import {
   createStartEvent,
   updateConnectionPause,
   updateConnectionResume,
+  updateAdditionalDuration,
   updateSuccessEvent,
 } from "./eventController";
 
@@ -713,6 +714,95 @@ describe("eventController", () => {
       await createStartEvent(mockRequest, preCheckMockResponse);
 
       await updateSuccessEvent(mockRequest, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: new Error(errorMessage) });
+    });
+  });
+
+  describe("updateAdditionalDuration", () => {
+    it("should return 400 without proper client access", async () => {
+      await createStartEvent(mockRequest, preCheckMockResponse);
+
+      const req = {
+        params: {
+          connectionId,
+        },
+        headers: {
+          authorization: createFakeAccessToken("differentClientId"),
+        },
+        body: {
+          additionalDuration: 5000,
+        },
+      } as unknown as Request;
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      await updateAdditionalDuration(req, res);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Unauthorized attempt to modify a connection event",
+      });
+    });
+
+    it("should update additionalDuration and update redis", async () => {
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      const req = {
+        ...mockRequest,
+        body: {
+          additionalDuration: 5000,
+        },
+      } as unknown as Request;
+
+      await createStartEvent(mockRequest, preCheckMockResponse);
+
+      await updateAdditionalDuration(req, res);
+
+      const expectedUpdatedBody = expect.objectContaining({
+        additionalDuration: 5000,
+      });
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Connection's additionalDuration updated successfully.",
+        event: expectedUpdatedBody,
+      });
+
+      await expectRedisEventToEqual(connectionId, expectedUpdatedBody);
+    });
+
+    it("should return 400 status and error message when an error is thrown", async () => {
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const req = {
+        ...mockRequest,
+        body: {
+          additionalDuration: 5000,
+        },
+      } as unknown as Request;
+
+      const errorMessage = "Test error";
+      jest.spyOn(res, "status").mockImplementationOnce(() => {
+        throw new Error(errorMessage);
+      });
+
+      await createStartEvent(mockRequest, preCheckMockResponse);
+
+      await updateAdditionalDuration(req, res);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(400);

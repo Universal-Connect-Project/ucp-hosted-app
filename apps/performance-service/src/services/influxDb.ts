@@ -63,6 +63,18 @@ async function writeData(data: {
   }
 }
 
+const getTotalDuration = (event: EventObject): number => {
+  if (!event.successAt) {
+    return 0;
+  }
+  return (
+    event.successAt -
+    event.startedAt -
+    (event.userInteractionTime || 0) +
+    (event.additionalDuration || 0)
+  );
+};
+
 export const recordPerformanceMetric = async (
   event: EventObject,
 ): Promise<boolean> => {
@@ -72,9 +84,7 @@ export const recordPerformanceMetric = async (
 
   const jobTypesKey = [...event.jobTypes].sort().join("|");
 
-  const totalDuration = event?.successAt
-    ? event.successAt - event.startedAt - (event.userInteractionTime || 0)
-    : 0;
+  const totalDuration = getTotalDuration(event);
 
   return await writeData({
     jobTypes: jobTypesKey,
@@ -139,10 +149,7 @@ export const getPerformanceDataByConnectionId = async (
       };
 
       if (redisEvent.successAt && redisEvent.recordDuration) {
-        const totalDuration =
-          redisEvent.successAt -
-          redisEvent.startedAt -
-          (redisEvent.userInteractionTime || 0);
+        const totalDuration = getTotalDuration(redisEvent);
         performanceData.durationMetric = {
           jobDuration: totalDuration,
           timestamp: new Date(redisEvent.successAt).toISOString(),

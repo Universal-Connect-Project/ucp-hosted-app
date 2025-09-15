@@ -77,6 +77,65 @@ describe("recordPerformanceMetric", () => {
     );
   });
 
+  it("records correct duration (using additionalDuration) and success metrics on successful event", async () => {
+    const institutionId = `testMetrics-${crypto.randomUUID()}`;
+    const additionalDuration = 7777;
+    const result = await recordPerformanceMetric({
+      ...event,
+      additionalDuration,
+      institutionId,
+    });
+    expect(result).toBe(true);
+
+    await wait(2000);
+
+    const successDataPoint = await getLatestDataPoint(
+      "successRateMetrics",
+      institutionId,
+    );
+    expect(successDataPoint).toEqual(
+      expect.objectContaining({
+        result: "_result",
+        table: 0,
+        _start: expect.any(String),
+        _stop: expect.any(String),
+        _time: expect.any(String),
+        _value: 1,
+        _field: "isSuccess",
+        _measurement: "successRateMetrics",
+        aggregatorId: "agg_789",
+        clientId: "client_456",
+        institutionId,
+        jobTypes: "jobA|jobB",
+      }),
+    );
+
+    const durationDataPoint = await getLatestDataPoint(
+      "durationMetrics",
+      institutionId,
+    );
+    expect(durationDataPoint).toEqual(
+      expect.objectContaining({
+        result: "_result",
+        table: 0,
+        _start: expect.any(String),
+        _stop: expect.any(String),
+        _time: expect.any(String),
+        _value:
+          event.successAt! -
+          event.startedAt -
+          event.userInteractionTime +
+          additionalDuration,
+        _field: "jobDuration",
+        _measurement: "durationMetrics",
+        aggregatorId: "agg_789",
+        clientId: "client_456",
+        institutionId,
+        jobTypes: "jobA|jobB",
+      }),
+    );
+  });
+
   it("Records success metrics on successful event but not duration when recordDuration is false", async () => {
     const institutionId = `testMetrics-${crypto.randomUUID()}`;
     const result = await recordPerformanceMetric({
@@ -338,6 +397,51 @@ describe("getPerformanceDataByConnectionId", () => {
       isProcessed: false,
       durationMetric: {
         jobDuration: successAt - startedAt - userInteractionTime,
+        timestamp: new Date(successAt).toISOString(),
+      },
+      shouldRecordResult: true,
+      successMetric: {
+        isSuccess: true,
+        timestamp: new Date(successAt).toISOString(),
+      },
+    });
+  });
+
+  it("should return performance data with additional duration from Redis when event exists with additionalDuration and is not processed", async () => {
+    const connectionId = `redis-connection-${crypto.randomUUID()}`;
+    const startedAt = Date.now() - 10000;
+    const successAt = Date.now();
+    const userInteractionTime = 2000;
+    const additionalDuration = 9999;
+
+    const mockRedisEvent = {
+      connectionId,
+      jobTypes: ["transactions", "accountNumber"],
+      institutionId: "testInstitutionId123",
+      aggregatorId: "testAggId456",
+      clientId: "testClientId789",
+      startedAt,
+      userInteractionTime,
+      pausedAt: null,
+      shouldRecordResult: true,
+      successAt,
+      recordDuration: true,
+      additionalDuration,
+    };
+
+    await setEvent(connectionId, mockRedisEvent);
+
+    const result = await getPerformanceDataByConnectionId(connectionId);
+
+    expect(result).toEqual({
+      connectionId,
+      jobTypes: "accountNumber|transactions",
+      institutionId: "testInstitutionId123",
+      aggregatorId: "testAggId456",
+      isProcessed: false,
+      durationMetric: {
+        jobDuration:
+          successAt - startedAt - userInteractionTime + additionalDuration,
         timestamp: new Date(successAt).toISOString(),
       },
       shouldRecordResult: true,

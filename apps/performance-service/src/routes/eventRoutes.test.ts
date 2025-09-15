@@ -1,5 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/unbound-method */
 import { ComboJobTypes } from "@repo/shared-utils";
-import { validateStartEventRequest } from "./eventRoutes";
+import {
+  validateStartEventRequest,
+  validateUpdateDurationRequest,
+} from "./eventRoutes";
 import { Request, Response, NextFunction } from "express";
 
 describe("validateStartEventRequest middleware", () => {
@@ -69,11 +74,9 @@ describe("validateStartEventRequest middleware", () => {
 
     validateStartEventRequest(req, res, next);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         error: expect.stringContaining("jobTypes"),
       }),
     );
@@ -90,11 +93,9 @@ describe("validateStartEventRequest middleware", () => {
 
     validateStartEventRequest(req, res, next);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         error: expect.stringContaining("jobTypes"),
       }),
     );
@@ -110,11 +111,9 @@ describe("validateStartEventRequest middleware", () => {
 
     validateStartEventRequest(req, res, next);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         error: expect.stringContaining("institutionId"),
       }),
     );
@@ -130,12 +129,115 @@ describe("validateStartEventRequest middleware", () => {
 
     validateStartEventRequest(req, res, next);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         error: expect.stringContaining("aggregatorId"),
+      }),
+    );
+    expect(next).not.toHaveBeenCalled();
+  });
+});
+
+describe("validateUpdateDurationRequest middleware", () => {
+  const mockReq = (body: unknown): Partial<Request> => ({ body });
+  const mockRes = () => {
+    const res: Partial<Response> = {};
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    return res as Response;
+  };
+  const next: NextFunction = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("calls next() for valid additionalDuration", () => {
+    const req = mockReq({
+      additionalDuration: 5000,
+    }) as Request;
+    const res = mockRes();
+
+    validateUpdateDurationRequest(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect((res.status as jest.Mock).mock.calls.length).toBe(0);
+  });
+
+  it("calls next() for valid additionalDuration of zero", () => {
+    const req = mockReq({
+      additionalDuration: 0,
+    }) as Request;
+    const res = mockRes();
+
+    validateUpdateDurationRequest(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect((res.status as jest.Mock).mock.calls.length).toBe(0);
+  });
+
+  it("returns 400 for missing additionalDuration", () => {
+    const req = mockReq({}) as Request;
+    const res = mockRes();
+
+    validateUpdateDurationRequest(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: expect.stringContaining("additionalDuration"),
+      }),
+    );
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 for negative additionalDuration", () => {
+    const req = mockReq({
+      additionalDuration: -100,
+    }) as Request;
+    const res = mockRes();
+
+    validateUpdateDurationRequest(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: expect.stringContaining("additionalDuration"),
+      }),
+    );
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 for non-numeric additionalDuration", () => {
+    const req = mockReq({
+      additionalDuration: "invalid",
+    }) as Request;
+    const res = mockRes();
+
+    validateUpdateDurationRequest(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: expect.stringContaining("additionalDuration"),
+      }),
+    );
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 for null additionalDuration", () => {
+    const req = mockReq({
+      additionalDuration: null,
+    }) as Request;
+    const res = mockRes();
+
+    validateUpdateDurationRequest(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: expect.stringContaining("additionalDuration"),
       }),
     );
     expect(next).not.toHaveBeenCalled();

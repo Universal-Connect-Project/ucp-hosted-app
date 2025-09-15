@@ -1065,6 +1065,112 @@
         }
       }
     },
+    "/events/{connectionId}/updateDuration": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Sets the additionalDuration value for a connection event which gets added to the total duration recorded for an event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "connectionId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Connection ID from assigned aggregator"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "additionalDuration": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Duration in milliseconds to add to the calculated duration"
+                  }
+                },
+                "required": ["additionalDuration"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "Connection's additionalDuration updated successfully.",
+                    "event": {
+                      "connectionId": "MBR-123-455-123",
+                      "institutionId": "13213-12312-123",
+                      "aggregatorId": "mx",
+                      "recordDuration": true,
+                      "shouldRecordResult": true,
+                      "clientId": "54321",
+                      "jobTypes": ["transactions"],
+                      "userInteractionTime": 140,
+                      "pausedAt": null,
+                      "startedAt": "2024-09-10T16:07:46.038Z",
+                      "successAt": "2024-09-10T16:08:46.038Z",
+                      "additionalDuration": 5000
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidDuration": {
+                    "summary": "Invalid duration value",
+                    "value": {
+                      "error": "additionalDuration must be a non-negative number"
+                    }
+                  },
+                  "missingField": {
+                    "summary": "Missing required field",
+                    "value": {
+                      "error": "\"additionalDuration\" is required"
+                    }
+                  },
+                  "connectionNotFound": {
+                    "summary": "Connection not found",
+                    "value": {
+                      "error": "Connection event not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/metrics/connection/{connectionId}": {
       "get": {
         "security": [
