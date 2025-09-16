@@ -37,7 +37,8 @@ export const del = async (key: string) => {
   }
 };
 
-export const setEvent = async (key: string, value: object) => {
+export const setEvent = async (key: string, value: EventObject) => {
+  value.updatedAt = Date.now();
   await set(`${EVENT_SUBDIRECTORY}:${key}`, value);
 };
 
@@ -67,7 +68,7 @@ export const processEvents = async () => {
     const data = (await get(key)) as EventObject;
     if (data == null) continue;
 
-    const ageSeconds = (now - data.startedAt) / 1000;
+    const ageSeconds = (now - (data.updatedAt || data.startedAt)) / 1000;
 
     if (ageSeconds >= Number(process.env.EVENT_PROCESSING_TIME_LIMIT_SECONDS)) {
       console.log(`Processing key "${key}" (age: ${ageSeconds}s)`);

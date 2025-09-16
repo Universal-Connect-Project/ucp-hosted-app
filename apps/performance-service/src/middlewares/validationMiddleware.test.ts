@@ -1,3 +1,4 @@
+import { EventObject } from "../controllers/eventController";
 import { setEvent } from "../services/storageClient/redis";
 import { validateConnectionId } from "./validationMiddleware";
 import { Request, Response, NextFunction } from "express";
@@ -31,7 +32,7 @@ describe("validateConnectionId Middleware", () => {
   it("should call next if connectionId exists", async () => {
     const connectionId = "validConnectionId";
     req.params = { connectionId };
-    await setEvent(connectionId, {});
+    await setEvent(connectionId, {} as unknown as EventObject);
 
     await validateConnectionId(req as Request, res as Response, next);
 

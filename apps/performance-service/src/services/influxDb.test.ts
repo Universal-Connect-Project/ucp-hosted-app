@@ -124,7 +124,7 @@ describe("recordPerformanceMetric", () => {
         _value:
           event.successAt! -
           event.startedAt -
-          event.userInteractionTime +
+          event.userInteractionTime! +
           additionalDuration,
         _field: "jobDuration",
         _measurement: "durationMetrics",

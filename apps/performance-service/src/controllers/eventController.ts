@@ -18,12 +18,13 @@ export interface EventObject {
   aggregatorId: string;
   clientId: string;
   startedAt: number;
-  userInteractionTime: number;
-  pausedAt: number | null | undefined;
-  shouldRecordResult: boolean;
+  userInteractionTime?: number;
+  pausedAt?: number | null | undefined;
+  shouldRecordResult?: boolean;
   successAt?: number;
   recordDuration: boolean;
   additionalDuration?: number;
+  updatedAt?: number;
 }
 
 export interface DecodedToken {
@@ -146,7 +147,8 @@ export const updateConnectionResume = withClientAccess(
       const eventObj = (await getEvent(connectionId)) as EventObject;
       if (eventObj?.pausedAt) {
         const pauseDurationMilliseconds = dateNow - eventObj.pausedAt;
-        eventObj.userInteractionTime += pauseDurationMilliseconds;
+        eventObj.userInteractionTime =
+          (eventObj.userInteractionTime ?? 0) + pauseDurationMilliseconds;
         eventObj.pausedAt = null;
         if (shouldRecordResult) {
           eventObj.shouldRecordResult = shouldRecordResult;
