@@ -79,14 +79,6 @@ describe("getAggregatorMetrics", () => {
         send: jest.fn(),
       } as unknown as Response;
 
-      server.use(
-        http.get(INSTITUTION_SERVICE_AGGREGATORS_URL, () =>
-          HttpResponse.json({
-            aggregators: testAggregators,
-          }),
-        ),
-      );
-
       await getAggregatorMetrics(req, res);
 
       const results = (res.send as jest.Mock).mock.calls[0][0] as Results;
