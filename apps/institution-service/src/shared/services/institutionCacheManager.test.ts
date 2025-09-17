@@ -3,6 +3,7 @@ import {
   clearInstitutionCache,
   getInstitutionCacheStatus,
 } from "./institutionCacheManager";
+import { Institution } from "../../models/institution";
 
 describe("InstitutionCacheManager", () => {
   beforeEach(() => {
@@ -171,6 +172,52 @@ describe("InstitutionCacheManager", () => {
       expect(statusAfterRefresh.timestamp).toBe(startTime + 300000); // Should be fresh cache
 
       jest.useRealTimers();
+    });
+  });
+
+  describe("Concurrent request handling", () => {
+    it("should handle multiple concurrent requests without race conditions", async () => {
+      clearInstitutionCache();
+      expect(getInstitutionCacheStatus().exists).toBe(false);
+
+      // Make 5 concurrent requests when cache is empty
+      const promises = Array.from({ length: 5 }, () =>
+        getCachedInstitutionList(),
+      );
+
+      const results = await Promise.all(promises);
+
+      // All results should be identical (same data)
+      expect(
+        results.every(
+          (result) => JSON.stringify(result) === JSON.stringify(results[0]),
+        ),
+      ).toBe(true);
+
+      // Cache should exist after concurrent requests
+      const cacheStatus = getInstitutionCacheStatus();
+      expect(cacheStatus.exists).toBe(true);
+      expect(cacheStatus.valid).toBe(true);
+
+      // Verify all results contain actual data
+      expect(Array.isArray(results[0])).toBe(true);
+    });
+
+    it("should only execute one database query for multiple concurrent requests", async () => {
+      clearInstitutionCache();
+
+      const fetchSpy = jest.spyOn(Institution, "findAll");
+
+      // Make 3 concurrent requests when cache is empty
+      const promises = Array.from({ length: 3 }, () =>
+        getCachedInstitutionList(),
+      );
+
+      await Promise.all(promises);
+
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+      fetchSpy.mockRestore();
     });
   });
 });

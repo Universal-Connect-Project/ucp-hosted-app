@@ -9,6 +9,7 @@ interface CachedInstitutionData {
 }
 
 let cache: CachedInstitutionData | null = null;
+let fetchPromise: Promise<CachedInstitution[]> | null = null;
 const CACHE_TTL_MS = 300 * 1000; // 5 minutes in milliseconds
 
 const isCacheValid = (): boolean => {
@@ -60,18 +61,29 @@ export const getCachedInstitutionList = async (): Promise<
     return cache!.data;
   }
 
-  const freshData = await fetchInstitutionsFromDatabase();
+  if (fetchPromise) {
+    return fetchPromise;
+  }
 
-  cache = {
-    data: freshData,
-    timestamp: Date.now(),
-  };
+  fetchPromise = fetchInstitutionsFromDatabase();
 
-  return freshData;
+  try {
+    const freshData = await fetchPromise;
+
+    cache = {
+      data: freshData,
+      timestamp: Date.now(),
+    };
+
+    return freshData;
+  } finally {
+    fetchPromise = null;
+  }
 };
 
 export const clearInstitutionCache = (): void => {
   cache = null;
+  fetchPromise = null;
 };
 
 // Get cache status for debugging/testing
