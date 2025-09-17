@@ -51,9 +51,11 @@ const createMetricQuery =
   }) =>
   ({
     aggregators,
+    shouldGroupByJobType,
     timeFrame,
   }: {
     aggregators: Aggregator[];
+    shouldGroupByJobType: boolean;
     timeFrame: TimeFrame;
   }) => `
 ${resultVariableName} = from(bucket: "${BUCKET}")
@@ -62,7 +64,7 @@ ${resultVariableName} = from(bucket: "${BUCKET}")
     .map(({ name }) => `r.aggregatorId == string(v: "${name}")`)
     .join(" or ")})
   |> filter(fn: (r) => r._measurement == "${measurement}")
-  |> group(columns: ["aggregatorId", "jobTypes"])
+  |> group(columns: ["aggregatorId"${shouldGroupByJobType ? ', "jobTypes"' : ""}])
   |> mean()
   |> set(key: "_field", value: "${value}")
 `;
@@ -87,10 +89,12 @@ const queryInfluxAggregatorJobTypeAverages = async (
     ${createSuccessRateQuery({
       aggregators,
       timeFrame,
+      shouldGroupByJobType: true,
     })}
 
     ${createDurationQuery({
       aggregators,
+      shouldGroupByJobType: true,
       timeFrame,
     })}
 
@@ -113,11 +117,13 @@ const queryInfluxAggregatorAverages = async (
   const fluxQuery = `
     ${createSuccessRateQuery({
       aggregators,
+      shouldGroupByJobType: false,
       timeFrame,
     })}
 
    ${createDurationQuery({
      aggregators,
+     shouldGroupByJobType: false,
      timeFrame,
    })}
 
