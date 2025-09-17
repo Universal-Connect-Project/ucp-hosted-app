@@ -4,8 +4,13 @@ import { Request, Response } from "express";
 import { Institution } from "../models/institution";
 import { cachedInstitutionFromSeed } from "../test/testData/institutions";
 import { getInstitutionCachedList } from "./getInstitutionCacheList";
+import { clearInstitutionCache } from "../shared/services/institutionCacheManager";
 
 describe("getInstitutionCachedList", () => {
+  beforeEach(() => {
+    clearInstitutionCache();
+  });
+
   it("returns all institutions in the cached format, doesn't return aggregator connections that aren't active, and filters out institutions that don't have any aggregator connections", async () => {
     const req = {} as Request;
     const res = {

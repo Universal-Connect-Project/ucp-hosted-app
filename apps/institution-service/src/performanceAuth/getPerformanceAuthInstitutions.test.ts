@@ -128,8 +128,11 @@ describe("getPerformanceAuthInstitutions", () => {
 
     const institutions = firstCall?.institutions as InstitutionDetail[];
 
+    expect(institutions.length).toBeGreaterThan(1);
     for (let i = 0; i < institutions.length - 1; i++) {
-      expect(institutions[i].name <= institutions[i + 1].name).toBeTruthy();
+      expect(
+        institutions[i].name.localeCompare(institutions[i + 1].name),
+      ).toBeLessThanOrEqual(0);
     }
   });
 });
