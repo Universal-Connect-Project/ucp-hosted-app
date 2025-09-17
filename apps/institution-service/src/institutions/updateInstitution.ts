@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { validate } from "uuid";
 import { Institution } from "../models/institution";
-import { clearInstitutionCache } from "../services/institutionCacheManager";
+import { clearInstitutionCache } from "../shared/services/institutionCacheManager";
 
 interface updateInstitutionParams {
   name: string;

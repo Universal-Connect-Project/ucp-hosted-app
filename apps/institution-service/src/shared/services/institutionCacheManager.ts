@@ -1,7 +1,7 @@
-import { Aggregator } from "../models/aggregator";
-import { Institution } from "../models/institution";
-import { transformInstitutionToCachedInstitution } from "./institutionService";
-import { CachedInstitution } from "../tasks/loadInstitutionsFromJson";
+import { Aggregator } from "../../models/aggregator";
+import { Institution } from "../../models/institution";
+import { transformInstitutionToCachedInstitution } from "../../services/institutionService";
+import { CachedInstitution } from "../../tasks/loadInstitutionsFromJson";
 
 interface CachedInstitutionData {
   data: CachedInstitution[];

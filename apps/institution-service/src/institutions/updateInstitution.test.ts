@@ -11,7 +11,7 @@ import { Model } from "sequelize";
 import {
   getCachedInstitutionList,
   getInstitutionCacheStatus,
-} from "../services/institutionCacheManager";
+} from "../shared/services/institutionCacheManager";
 
 const createNewInstitution = async () => {
   return await Institution.create(testInstitution);

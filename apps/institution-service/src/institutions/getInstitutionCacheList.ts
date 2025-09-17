@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getCachedInstitutionList } from "../services/institutionCacheManager";
+import { getCachedInstitutionList } from "../shared/services/institutionCacheManager";
 
 export const getInstitutionCachedList = async (req: Request, res: Response) => {
   try {

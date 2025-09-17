@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { Institution } from "../models/institution";
 import { cachedInstitutionFromSeed } from "../test/testData/institutions";
 import { getInstitutionCachedList } from "./getInstitutionCacheList";
-import { clearInstitutionCache } from "../services/institutionCacheManager";
+import { clearInstitutionCache } from "../shared/services/institutionCacheManager";
 
 describe("getInstitutionCachedList", () => {
   beforeEach(() => {
