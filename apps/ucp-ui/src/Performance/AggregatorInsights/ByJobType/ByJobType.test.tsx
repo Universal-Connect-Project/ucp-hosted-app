@@ -173,5 +173,8 @@ describe("<ByJobType />", () => {
     expect(
       await screen.findByTestId(`averageSuccessRate-${secondAggregator.id}`),
     ).toHaveTextContent(NO_DATA_CELL_TEXT);
+    expect(
+      await screen.findByTestId(`averageDuration-${secondAggregator.id}`),
+    ).toHaveTextContent(NO_DATA_CELL_TEXT);
   });
 });
