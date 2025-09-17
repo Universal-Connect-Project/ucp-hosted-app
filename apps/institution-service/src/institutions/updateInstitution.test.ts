@@ -8,6 +8,10 @@ import {
   testInstitution,
 } from "../test/testData/institutions";
 import { Model } from "sequelize";
+import {
+  getCachedInstitutionList,
+  getInstitutionCacheStatus,
+} from "../services/institutionCacheManager";
 
 const createNewInstitution = async () => {
   return await Institution.create(testInstitution);
@@ -107,5 +111,72 @@ describe("updateInstitution", () => {
     expect(res.json).toHaveBeenCalledWith({
       error: "An error occurred while updating the institution",
     });
+  });
+
+  it("clears the institution cache when updating an institution", async () => {
+    await getCachedInstitutionList();
+
+    const cacheStatusBefore = getInstitutionCacheStatus();
+    expect(cacheStatusBefore.exists).toBe(true);
+    expect(cacheStatusBefore.valid).toBe(true);
+
+    const institution = await createNewInstitution();
+    const existingInstitutionId = institution.id;
+
+    const updateBody = {
+      name: "Updated Name for Cache Test",
+      keywords: ["updated", "cache"],
+      logo: "updatedLogo",
+      url: "updatedUrl",
+      is_test_bank: false,
+      routing_numbers: ["987654321"],
+    };
+
+    const req = {
+      params: { id: existingInstitutionId },
+      body: updateBody,
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await updateInstitution(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+
+    const cacheStatusAfter = getInstitutionCacheStatus();
+    expect(cacheStatusAfter.exists).toBe(false);
+  });
+
+  it("does not clear cache when update fails", async () => {
+    await getCachedInstitutionList();
+
+    const cacheStatusBefore = getInstitutionCacheStatus();
+    expect(cacheStatusBefore.exists).toBe(true);
+    expect(cacheStatusBefore.valid).toBe(true);
+
+    const req = {
+      params: { id: seedInstitutionId },
+      body: {},
+    } as unknown as Request;
+
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    jest.spyOn(Institution, "findByPk").mockResolvedValue({
+      update: jest.fn().mockRejectedValue(new Error("Update failed")),
+    } as unknown as Model);
+
+    await updateInstitution(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+
+    const cacheStatusAfter = getInstitutionCacheStatus();
+    expect(cacheStatusAfter.exists).toBe(true);
+    expect(cacheStatusAfter.valid).toBe(true);
   });
 });
