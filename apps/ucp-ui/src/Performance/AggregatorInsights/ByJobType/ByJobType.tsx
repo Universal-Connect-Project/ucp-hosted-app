@@ -45,16 +45,19 @@ const loadingAggregators = new Array(4).fill(0).map((current, index) => ({
 const OverallPerformanceCell = ({
   appendText,
   isLoading,
+  testId,
   value,
 }: {
   appendText: string;
   isLoading: boolean;
-  value: number | null;
+  testId: string;
+  value: number | null | undefined;
 }) => {
-  const noData = value === null;
+  const noData = value === null || value === undefined;
 
   return (
     <NoDataCell
+      data-testid={testId}
       hasData={!noData}
       isLoading={isLoading}
     >{`${formatMaxTwoDecimals(value || 0)}${appendText}`}</NoDataCell>
@@ -127,6 +130,7 @@ const ByJobType = () => {
                       appendText="%"
                       key={id}
                       isLoading={isFetching}
+                      testId={`averageSuccessRate-${id}`}
                       value={avgSuccessRate}
                     />
                   ))}
@@ -138,6 +142,7 @@ const ByJobType = () => {
                       appendText="s"
                       key={id}
                       isLoading={isFetching}
+                      testId={`averageDuration-${id}`}
                       value={avgDuration}
                     />
                   ))}

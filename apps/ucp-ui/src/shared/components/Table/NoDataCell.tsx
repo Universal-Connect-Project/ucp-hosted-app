@@ -11,6 +11,7 @@ export const NoDataCell = ({
   className,
   hasData,
   isLoading,
+  ...rest
 }: {
   children: ReactNode;
   className?: string;
@@ -22,6 +23,7 @@ export const NoDataCell = ({
       className={classNames(className, {
         [styles.noData]: !hasData,
       })}
+      {...rest}
     >
       <TextSkeletonIfLoading isLoading={isLoading}>
         <div>{!hasData ? NO_DATA_CELL_TEXT : children}</div>

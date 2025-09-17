@@ -24,6 +24,7 @@ import {
   supportsJobTypeMap,
 } from "../../../shared/constants/jobTypes";
 import { TRY_AGAIN_BUTTON_TEXT } from "../../../shared/components/constants";
+import { NO_DATA_CELL_TEXT } from "../../../shared/components/Table/noDataCellConstants";
 
 describe("<ByJobType />", () => {
   it("renders an error state and allow retry", async () => {
@@ -128,13 +129,16 @@ describe("<ByJobType />", () => {
     ).toHaveLength(1 + allJobTypes.length);
   });
 
-  it("renders data for a single job type, a combo job type, and overall performance", async () => {
+  it("renders data for a single job type, a combo job type, and overall performance. renders no data for aggregators without data", async () => {
+    const firstAggregator = aggregatorPerformanceByJobType.aggregators[0];
+    const secondAggregator = aggregatorPerformanceByJobType.aggregators[1];
+
     server.use(
       http.get(AGGREGATOR_PERFORMANCE_BY_JOB_TYPE_URL, () =>
         HttpResponse.json({
           aggregators: [
             {
-              ...aggregatorPerformanceByJobType.aggregators[0],
+              ...firstAggregator,
               avgDuration: 95,
               avgSuccessRate: 96,
               jobTypes: {
@@ -148,6 +152,12 @@ describe("<ByJobType />", () => {
                 },
               },
             },
+            {
+              ...secondAggregator,
+              avgDuration: undefined,
+              avgSuccessRate: undefined,
+              jobTypes: {},
+            },
           ],
         }),
       ),
@@ -159,5 +169,9 @@ describe("<ByJobType />", () => {
     expect(await screen.findByText("98% | 97s")).toBeInTheDocument();
     expect(await screen.findByText("95s")).toBeInTheDocument();
     expect(await screen.findByText("96%")).toBeInTheDocument();
+
+    expect(
+      await screen.findByTestId(`averageSuccessRate-${secondAggregator.id}`),
+    ).toHaveTextContent(NO_DATA_CELL_TEXT);
   });
 });
