@@ -128,7 +128,7 @@ describe("updateInstitution", () => {
       keywords: ["updated", "cache"],
       logo: "updatedLogo",
       url: "updatedUrl",
-      is_test_bank: false,
+      is_test_bank: true,
       routing_numbers: ["987654321"],
     };
 
