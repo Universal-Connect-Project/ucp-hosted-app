@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { validate } from "uuid";
 import { Institution } from "../models/institution";
-import { clearInstitutionCache } from "../shared/services/institutionCacheManager";
 
 interface updateInstitutionParams {
   name: string;
@@ -28,8 +27,6 @@ export const updateInstitution = async (req: Request, res: Response) => {
     }
 
     await institution.update(updateData);
-
-    clearInstitutionCache();
 
     return res
       .status(200)

@@ -10,7 +10,7 @@ interface CachedInstitutionData {
 
 let cache: CachedInstitutionData | null = null;
 let fetchPromise: Promise<CachedInstitution[]> | null = null;
-const CACHE_TTL_MS = 300 * 1000; // 5 minutes in milliseconds
+export const CACHE_TTL_MS = 30 * 1000; // 30 seconds in milliseconds
 
 const isCacheValid = (): boolean => {
   if (!cache) {

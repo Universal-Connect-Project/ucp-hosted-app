@@ -2,6 +2,7 @@ import {
   getCachedInstitutionList,
   clearInstitutionCache,
   getInstitutionCacheStatus,
+  CACHE_TTL_MS,
 } from "./institutionCacheManager";
 import { Institution } from "../../models/institution";
 
@@ -52,21 +53,21 @@ describe("InstitutionCacheManager", () => {
       expect(status1.valid).toBe(true);
       expect(status1.timestamp).toBe(mockTime);
 
-      // Advance time beyond 5 minutes
-      jest.advanceTimersByTime(300001);
+      // Advance time beyond TTL
+      jest.advanceTimersByTime(CACHE_TTL_MS + 1);
 
       // Cache should now be invalid but still exist
       const statusExpired = getInstitutionCacheStatus();
       expect(statusExpired.exists).toBe(true);
       expect(statusExpired.valid).toBe(false);
-      expect(statusExpired.age).toBe(300001);
+      expect(statusExpired.age).toBe(CACHE_TTL_MS + 1);
 
       // Second call should refresh the cache
       await getCachedInstitutionList();
       const status2 = getInstitutionCacheStatus();
       expect(status2.exists).toBe(true);
       expect(status2.valid).toBe(true);
-      expect(status2.timestamp).toBe(mockTime + 300001); // Should be fresh
+      expect(status2.timestamp).toBe(mockTime + CACHE_TTL_MS + 1); // Should be fresh
 
       jest.useRealTimers();
     });
@@ -132,27 +133,27 @@ describe("InstitutionCacheManager", () => {
       await getCachedInstitutionList();
 
       // Advance time beyond TTL
-      jest.advanceTimersByTime(300001);
+      jest.advanceTimersByTime(CACHE_TTL_MS + 1);
 
       const status = getInstitutionCacheStatus();
       expect(status.exists).toBe(true);
       expect(status.valid).toBe(false);
-      expect(status.age).toBe(300001);
+      expect(status.age).toBe(CACHE_TTL_MS + 1);
 
       jest.useRealTimers();
     });
   });
 
   describe("Cache TTL behavior", () => {
-    it("should respect 5-minute (300 second) TTL", async () => {
+    it(`should respect ${CACHE_TTL_MS / 1000}-second TTL`, async () => {
       jest.useFakeTimers();
       const startTime = 1000000;
       jest.setSystemTime(startTime);
 
       await getCachedInstitutionList();
 
-      // Test just under 5 minutes - should use cache
-      jest.advanceTimersByTime(299000);
+      // Test just under TTL - should use cache
+      jest.advanceTimersByTime(CACHE_TTL_MS - 1000);
       const statusBeforeExpiry = getInstitutionCacheStatus();
       expect(statusBeforeExpiry.valid).toBe(true);
 
@@ -161,15 +162,15 @@ describe("InstitutionCacheManager", () => {
       expect(statusAfterCall1.valid).toBe(true);
       expect(statusAfterCall1.timestamp).toBe(startTime); // Should still be original cache
 
-      // Test exactly 5 minutes - should refresh
-      jest.advanceTimersByTime(1000); // Total: 300000ms (5 minutes)
+      // Test exactly at TTL - should refresh
+      jest.advanceTimersByTime(1000); // Total: CACHE_TTL_MS
       const statusAtExpiry = getInstitutionCacheStatus();
       expect(statusAtExpiry.valid).toBe(false);
 
       await getCachedInstitutionList();
       const statusAfterRefresh = getInstitutionCacheStatus();
       expect(statusAfterRefresh.valid).toBe(true);
-      expect(statusAfterRefresh.timestamp).toBe(startTime + 300000); // Should be fresh cache
+      expect(statusAfterRefresh.timestamp).toBe(startTime + CACHE_TTL_MS); // Should be fresh cache
 
       jest.useRealTimers();
     });
