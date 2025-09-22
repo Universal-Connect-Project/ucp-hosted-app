@@ -1210,6 +1210,7 @@
                   },
                   "durationMetric": {
                     "jobDuration": 1000000,
+                    "additionalDuration": 2500,
                     "timestamp": "2025-08-27T20:19:48.589841791Z"
                   }
                 }
