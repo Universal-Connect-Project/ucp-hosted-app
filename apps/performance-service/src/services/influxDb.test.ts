@@ -398,6 +398,7 @@ describe("getPerformanceDataByConnectionId", () => {
       durationMetric: {
         jobDuration: successAt - startedAt - userInteractionTime,
         timestamp: new Date(successAt).toISOString(),
+        additionalDuration: undefined,
       },
       shouldRecordResult: true,
       successMetric: {
@@ -442,6 +443,7 @@ describe("getPerformanceDataByConnectionId", () => {
       durationMetric: {
         jobDuration:
           successAt - startedAt - userInteractionTime + additionalDuration,
+        additionalDuration,
         timestamp: new Date(successAt).toISOString(),
       },
       shouldRecordResult: true,
