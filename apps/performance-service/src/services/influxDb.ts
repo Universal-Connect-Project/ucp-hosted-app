@@ -108,6 +108,7 @@ interface PerformanceData {
   durationMetric?: {
     jobDuration: number;
     timestamp: string;
+    additionalDuration?: number;
   };
   successMetric: {
     isSuccess: boolean;
@@ -152,6 +153,7 @@ export const getPerformanceDataByConnectionId = async (
         const totalDuration = getTotalDuration(redisEvent);
         performanceData.durationMetric = {
           jobDuration: totalDuration,
+          additionalDuration: redisEvent.additionalDuration,
           timestamp: new Date(redisEvent.successAt).toISOString(),
         };
       }
