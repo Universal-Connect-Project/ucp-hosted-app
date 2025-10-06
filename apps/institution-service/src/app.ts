@@ -1,5 +1,6 @@
 import "./dotEnv";
 import cors from "cors";
+import { CronJob } from "cron";
 import express, { NextFunction, Request, Response } from "express";
 import logger from "morgan";
 import sequelize from "./database";
@@ -25,6 +26,20 @@ sequelize
   .catch((error) => {
     console.error("Error syncing database:", error);
   });
+
+CronJob.from({
+  cronTime: "0 38 9 * * *",
+  // cronTime: "0 0 0 * * *",
+  onTick: () => {
+    try {
+      console.log("running cron job");
+    } catch (error) {
+      console.error("Database connection error:", error);
+    }
+  },
+  start: true,
+  timeZone: "America/Denver",
+});
 
 const app = express();
 
