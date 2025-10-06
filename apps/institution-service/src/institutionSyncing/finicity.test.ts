@@ -1,5 +1,6 @@
 import * as config from "../shared/environment";
 import {
+  mapFinicityInstitution,
   FETCH_FINICITY_ACCESS_TOKEN_URL,
   FETCH_FINICITY_INSTITUTIONS_URL,
   fetchFinicityInstitutions,
@@ -11,6 +12,7 @@ import {
   finicityInstitutionsPage1,
   finicityInstitutionsPage2,
 } from "../test/testData/finicityInstitutions";
+import { Aggregator } from "../models/aggregator";
 
 describe("finicity institutions", () => {
   describe("fetchFinicityInstitutions", () => {
@@ -19,11 +21,22 @@ describe("finicity institutions", () => {
         jest.spyOn(config, "getConfig").mockReturnValue(fakeEnvironment);
       });
 
-      it("fetches institutions from Finicity and stitches the pages together", async () => {
-        expect(await fetchFinicityInstitutions()).toEqual([
-          ...finicityInstitutionsPage1.institutions,
-          ...finicityInstitutionsPage2.institutions,
-        ]);
+      it("fetches institutions from Finicity, maps them, and stitches the pages together", async () => {
+        const finicityAggregatorId = (
+          await Aggregator.findOne({
+            where: { name: "finicity" },
+            raw: true,
+          })
+        )?.id as number;
+
+        expect(finicityAggregatorId).toBeDefined();
+
+        expect(await fetchFinicityInstitutions()).toEqual(
+          [
+            ...finicityInstitutionsPage1.institutions,
+            ...finicityInstitutionsPage2.institutions,
+          ].map(mapFinicityInstitution),
+        );
       });
 
       it("throws an error if fetching an access token fails", async () => {

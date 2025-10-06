@@ -1,4 +1,5 @@
 import { getConfig } from "../shared/environment";
+import { AggregatorInstitution } from "./const";
 
 export const FETCH_FINICITY_ACCESS_TOKEN_URL =
   "https://api.finicity.com/aggregation/v2/partners/authentication";
@@ -41,7 +42,9 @@ interface FinicityInstitution {
   aha: boolean;
   id: number;
   name: string;
+  oauthEnabled: boolean;
   transAgg: boolean;
+  urlHomeApp: string;
 }
 
 interface FinicityInstitutionsResponse {
@@ -87,6 +90,19 @@ const fetchInstitutionPage = async ({
   return data;
 };
 
+export const mapFinicityInstitution = (
+  institution: FinicityInstitution,
+): AggregatorInstitution => ({
+  aggregatorInstitutionId: institution.id.toString(),
+  supportsOAuth: institution.oauthEnabled,
+  supportsIdentification: institution.accountOwner,
+  supportsVerification: institution.ach,
+  supportsAggregation: institution.transAgg,
+  supportsHistory: institution.aha,
+  supportsRewards: false,
+  supportsBalance: false,
+});
+
 export const fetchFinicityInstitutions = async () => {
   const token = await fetchAccessToken();
 
@@ -104,5 +120,5 @@ export const fetchFinicityInstitutions = async () => {
     institutions.push(...currentPageInstitutions);
   }
 
-  return institutions;
+  return institutions.map(mapFinicityInstitution);
 };
