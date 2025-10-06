@@ -1,8 +1,8 @@
 import { Op } from "sequelize";
-import { Aggregator } from "../models/aggregator";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { fetchFinicityInstitutions } from "./finicity";
 import { AggregatorInstitution } from "./const";
+import { getAggregatorByName } from "../shared/aggregators/getAggregatorIdByName";
 
 const markMissingAggregatorInstitutionsInactive = async (
   aggregatorId: number,
@@ -74,12 +74,8 @@ export const syncInstitutions = async () => {
         );
       }
 
-      const aggregatorId = (
-        await Aggregator.findOne({
-          where: { name: aggregatorName },
-          raw: true,
-        })
-      )?.id as number;
+      const aggregatorId = (await getAggregatorByName(aggregatorName))
+        ?.id as number;
 
       const aggregatorInstitutionIds = aggregatorInstitutions.map(
         ({ aggregatorInstitutionId }) => aggregatorInstitutionId,
