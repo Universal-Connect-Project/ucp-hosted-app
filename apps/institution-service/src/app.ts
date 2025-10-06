@@ -16,6 +16,7 @@ import {
   PERFORMANCE_AUTH_ROUTE,
 } from "./shared/consts/routes";
 import { useRateLimiting } from "./useRateLimiting";
+import { syncInstitutions } from "./institutionSyncing/syncInstitutions";
 
 sequelize
   .authenticate()
@@ -28,13 +29,12 @@ sequelize
   });
 
 CronJob.from({
-  cronTime: "0 38 9 * * *",
-  // cronTime: "0 0 0 * * *",
-  onTick: () => {
+  cronTime: "0 0 0 * * *",
+  onTick: async () => {
     try {
-      console.log("running cron job");
+      await syncInstitutions();
     } catch (error) {
-      console.error("Database connection error:", error);
+      console.error("Failed to sync institutions:", error);
     }
   },
   start: true,

@@ -2,8 +2,6 @@ import { http, HttpResponse } from "msw";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorIdByName";
-import * as config from "../shared/environment";
-import { fakeEnvironment } from "../test/testData/environment";
 import { finicityInstitutionsPage1 } from "../test/testData/finicityInstitutions";
 import { server } from "../test/testServer";
 import {
@@ -25,8 +23,6 @@ describe("syncInstitutions", () => {
     );
 
     beforeEach(async () => {
-      jest.spyOn(config, "getConfig").mockReturnValue(fakeEnvironment);
-
       testInstitutionWithMissingAggregatorInstitution =
         await Institution.create({
           name: "Test Bank",
@@ -93,9 +89,7 @@ describe("syncInstitutions", () => {
     it("doesn't update finicity aggregator integrations unless there are at least 5000 finicity aggregator institutions", async () => {
       await syncInstitutions();
 
-      await testInstitutionWithMissingAggregatorInstitution.reload();
       await missingAggregatorIntegration.reload();
-      await testInstitutionWithExistingAggregatorInstitution.reload();
       await existingAggregatorIntegration.reload();
 
       expect(missingAggregatorIntegration.isActive).toBe(true);
@@ -126,9 +120,7 @@ describe("syncInstitutions", () => {
 
       await syncInstitutions();
 
-      await testInstitutionWithMissingAggregatorInstitution.reload();
       await missingAggregatorIntegration.reload();
-      await testInstitutionWithExistingAggregatorInstitution.reload();
       await existingAggregatorIntegration.reload();
 
       const afterCount = await AggregatorIntegration.count();
