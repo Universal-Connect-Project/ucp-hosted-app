@@ -26,28 +26,35 @@ describe("aggregator institution syncing", () => {
     });
   });
 
-  describe.only("with new institution", () => {
+  describe("with new institution", () => {
     interface TestProps {
       aggregatorInstitutionId: number;
-      institutionId?: string;
       aggregatorIntegrationId?: number;
+      institutionId?: string;
       isAggregatorIntegrationActive?: boolean;
+      shouldStartAsActive: boolean;
     }
 
     const existingAggregatorInstitutionTestProps: TestProps = {
       aggregatorInstitutionId: 10,
+      shouldStartAsActive: false,
+    };
+
+    const missingAggregatorInstitutionTestProps: TestProps = {
+      aggregatorInstitutionId: 134115151515252,
+      shouldStartAsActive: true,
     };
 
     const prepAggregatorIntegration = (testProps: TestProps) => {
-      createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
+      return createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
         (response: Cypress.Response<{ institution: Institution }>) => {
           testProps.institutionId = response.body.institution.id;
 
-          createTestAggregatorIntegration(testProps.institutionId, {
+          return createTestAggregatorIntegration(testProps.institutionId, {
             aggregatorId: finicityAggregatorId,
             aggregatorInstitutionId:
               testProps.aggregatorInstitutionId.toString(),
-            isActive: false,
+            isActive: testProps.shouldStartAsActive,
           }).then(
             (
               response: Cypress.Response<{
@@ -65,13 +72,20 @@ describe("aggregator institution syncing", () => {
     };
 
     beforeEach(() => {
-      prepAggregatorIntegration(existingAggregatorInstitutionTestProps);
+      prepAggregatorIntegration(existingAggregatorInstitutionTestProps).then(
+        () => {
+          prepAggregatorIntegration(missingAggregatorInstitutionTestProps);
+        },
+      );
     });
 
     it("allows a super admin to sync institutions, waits for completion, and updates an aggregator institution from inactive to active if existing, and active to inactive if it no longer exists", () => {
       expect(
         existingAggregatorInstitutionTestProps.isAggregatorIntegrationActive,
       ).to.eq(false);
+      expect(
+        missingAggregatorInstitutionTestProps.isAggregatorIntegrationActive,
+      ).to.eq(true);
 
       syncAggregatorInstitutions({
         shouldWaitForCompletion: true,
@@ -87,23 +101,40 @@ describe("aggregator institution syncing", () => {
           const markedAsActive = institution.aggregatorIntegrations[0].isActive;
 
           expect(markedAsActive).to.eq(true);
+
+          getInstitution({
+            institutionId: missingAggregatorInstitutionTestProps.institutionId,
+          }).then(
+            (response: Cypress.Response<{ institution: Institution }>) => {
+              const institution = response.body.institution;
+
+              const markedAsActive =
+                institution.aggregatorIntegrations[0].isActive;
+
+              expect(markedAsActive).to.eq(false);
+            },
+          );
         });
       });
     });
 
     const cleanupAggregatorIntegration = (testProps: TestProps) => {
-      deleteAggregatorIntegration({
+      return deleteAggregatorIntegration({
         aggregatorIntegrationId: testProps.aggregatorIntegrationId,
         token: SUPER_USER_ACCESS_TOKEN_ENV,
       }).then(() => {
-        deleteInstitution({
+        return deleteInstitution({
           institutionId: testProps.institutionId,
         });
       });
     };
 
     afterEach(() => {
-      cleanupAggregatorIntegration(existingAggregatorInstitutionTestProps);
+      cleanupAggregatorIntegration(existingAggregatorInstitutionTestProps).then(
+        () => {
+          cleanupAggregatorIntegration(missingAggregatorInstitutionTestProps);
+        },
+      );
     });
   });
 
