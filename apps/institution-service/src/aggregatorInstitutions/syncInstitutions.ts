@@ -63,6 +63,8 @@ export const syncInstitutions = async (
     res?.status(202).send({ message: "Institution sync started." });
   }
 
+  const aggregatorErrors = [];
+
   const institutionFetchers = [
     {
       aggregatorName: "finicity",
@@ -111,12 +113,31 @@ export const syncInstitutions = async (
         `Finished syncing aggregator institutions for ${aggregatorName}.`,
       );
     } catch (error) {
-      console.error("Error fetching institutions:", error);
+      console.error(
+        `Error fetching institutions for aggregator ${aggregatorName}:`,
+        error,
+      );
+
+      aggregatorErrors.push(aggregatorName);
     }
   }
 
   if (req?.body?.shouldWaitForCompletion) {
-    res?.status(200).send({ message: "Institution sync completed." });
+    if (aggregatorErrors.length) {
+      console.error(
+        "Errors occurred during institution sync:",
+        aggregatorErrors,
+      );
+      res?.status(500).send({
+        message: "Institution sync completed with errors.",
+        errors: aggregatorErrors.map(
+          (aggregatorName) =>
+            `Failed to fetch institutions from ${aggregatorName}`,
+        ),
+      });
+    } else {
+      res?.status(200).send({ message: "Institution sync completed." });
+    }
   }
 
   console.log("Finished syncing aggregator institutions.");

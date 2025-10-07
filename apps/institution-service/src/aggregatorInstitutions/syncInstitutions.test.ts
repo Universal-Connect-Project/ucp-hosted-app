@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { http, HttpResponse } from "msw";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
@@ -9,6 +10,7 @@ import {
   mapFinicityInstitution,
 } from "./finicity";
 import { syncInstitutions } from "./syncInstitutions";
+import { Request, Response } from "express";
 
 describe("syncInstitutions", () => {
   describe("finicity institutions", () => {
@@ -86,7 +88,7 @@ describe("syncInstitutions", () => {
       await testInstitutionWithMissingAggregatorInstitution.destroy();
     });
 
-    it("doesn't update finicity aggregator integrations unless there are at least 5000 finicity aggregator institutions", async () => {
+    it("runs without a request or response", async () => {
       await syncInstitutions();
 
       await missingAggregatorIntegration.reload();
@@ -96,7 +98,56 @@ describe("syncInstitutions", () => {
       expect(existingAggregatorIntegration.isActive).toBe(false);
     });
 
-    it("fetches institutions from finicity, marks missing ones inactive, and updates existing ones and marks them as active if there are at least 5000 aggregator institutions", async () => {
+    it("fails if any aggregator fails", async () => {
+      server.use(
+        http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
+          return new HttpResponse(null, { status: 500 });
+        }),
+      );
+
+      const req = {
+        body: { shouldWaitForCompletion: true },
+      } as Request;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+      } as unknown as Response;
+
+      await syncInstitutions(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith({
+        message: "Institution sync completed with errors.",
+        errors: ["Failed to fetch institutions from finicity"],
+      });
+    });
+
+    it("doesn't update finicity aggregator integrations unless there are at least 5000 finicity aggregator institutions, and responds with a 202 by default", async () => {
+      const req = {
+        body: {},
+      } as Request;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+      } as unknown as Response;
+
+      await syncInstitutions(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(202);
+      expect(res.send).toHaveBeenCalledWith({
+        message: "Institution sync started.",
+      });
+
+      await missingAggregatorIntegration.reload();
+      await existingAggregatorIntegration.reload();
+
+      expect(missingAggregatorIntegration.isActive).toBe(true);
+      expect(existingAggregatorIntegration.isActive).toBe(false);
+    });
+
+    it("fetches institutions from finicity, marks missing ones inactive, and updates existing ones and marks them as active if there are at least 5000 aggregator institutions, responds with a 200 if shouldWaitForCompletion", async () => {
       server.use(
         http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
           return HttpResponse.json({
@@ -118,7 +169,21 @@ describe("syncInstitutions", () => {
       expect(missingAggregatorIntegration.isActive).toBe(true);
       expect(existingAggregatorIntegration.isActive).toBe(false);
 
-      await syncInstitutions();
+      const req = {
+        body: { shouldWaitForCompletion: true },
+      } as Request;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+      } as unknown as Response;
+
+      await syncInstitutions(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.send).toHaveBeenCalledWith({
+        message: "Institution sync completed.",
+      });
 
       await missingAggregatorIntegration.reload();
       await existingAggregatorIntegration.reload();
