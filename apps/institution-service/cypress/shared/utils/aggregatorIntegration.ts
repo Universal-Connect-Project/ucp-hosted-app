@@ -21,7 +21,15 @@ export const deleteAggregatorIntegration = ({
 
 export const createTestAggregatorIntegration = (
   institutionId: string,
-  { aggregatorId, ...aggregatorIntegrationProps }: { aggregatorId: number },
+  {
+    aggregatorId,
+    aggregatorInstitutionId,
+    isActive,
+  }: {
+    aggregatorId: number;
+    aggregatorInstitutionId?: string;
+    isActive?: boolean;
+  },
 ) => {
   return cy.request({
     url: `http://localhost:${PORT}/aggregatorIntegrations`,
@@ -32,9 +40,9 @@ export const createTestAggregatorIntegration = (
     body: {
       institution_id: institutionId,
       aggregatorId,
-      aggregator_institution_id: "test_cypress",
+      aggregator_institution_id: aggregatorInstitutionId || "testCypress",
       supports_oauth: true,
-      ...aggregatorIntegrationProps,
+      isActive,
     },
   });
 };
