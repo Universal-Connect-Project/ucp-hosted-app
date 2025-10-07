@@ -2,7 +2,7 @@
 import { http, HttpResponse } from "msw";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
-import { getAggregatorByName } from "../shared/aggregators/getAggregatorIdByName";
+import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { finicityInstitutionsPage1 } from "../test/testData/finicityInstitutions";
 import { server } from "../test/testServer";
 import {

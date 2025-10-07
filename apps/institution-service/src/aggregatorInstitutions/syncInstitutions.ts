@@ -2,7 +2,7 @@ import { Op } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { fetchFinicityInstitutions } from "./finicity";
 import { AggregatorInstitution } from "./const";
-import { getAggregatorByName } from "../shared/aggregators/getAggregatorIdByName";
+import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { Request, Response } from "express";
 
 const markMissingAggregatorInstitutionsInactive = async (
