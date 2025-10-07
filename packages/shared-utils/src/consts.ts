@@ -56,6 +56,7 @@ export const UiUserPermissions = {
   DELETE_AGGREGATOR_INTEGRATION: "delete:aggregatorIntegration",
   DELETE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR:
     "delete:aggregatorIntegration:aggregator",
+  SYNC_AGGREGATOR_INSTITUTIONS: "sync:aggregatorInstitutions",
   WIDGET_DEMO: "widget:demo",
 };
 

@@ -7,7 +7,7 @@ import {
 import {
   FETCH_FINICITY_ACCESS_TOKEN_URL,
   FETCH_FINICITY_INSTITUTIONS_URL,
-} from "../institutionSyncing/finicity";
+} from "../aggregatorInstitutions/finicity";
 
 export const handlers = [
   http.post(FETCH_FINICITY_ACCESS_TOKEN_URL, () =>

@@ -3,6 +3,7 @@ import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { fetchFinicityInstitutions } from "./finicity";
 import { AggregatorInstitution } from "./const";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorIdByName";
+import { Request, Response } from "express";
 
 const markMissingAggregatorInstitutionsInactive = async (
   aggregatorId: number,
@@ -48,7 +49,20 @@ const updateExistingAggregatorIntegration = async (
   );
 };
 
-export const syncInstitutions = async () => {
+interface SyncInstitutionsRequest extends Request {
+  body: {
+    shouldWaitForCompletion?: boolean;
+  };
+}
+
+export const syncInstitutions = async (
+  req?: SyncInstitutionsRequest,
+  res?: Response,
+) => {
+  if (!req?.body?.shouldWaitForCompletion) {
+    res?.status(202).send({ message: "Institution sync started." });
+  }
+
   const institutionFetchers = [
     {
       aggregatorName: "finicity",
@@ -92,8 +106,18 @@ export const syncInstitutions = async () => {
           aggregatorInstitution,
         );
       }
+
+      console.log(
+        `Finished syncing aggregator institutions for ${aggregatorName}.`,
+      );
     } catch (error) {
       console.error("Error fetching institutions:", error);
     }
   }
+
+  if (req?.body?.shouldWaitForCompletion) {
+    res?.status(200).send({ message: "Institution sync completed." });
+  }
+
+  console.log("Finished syncing aggregator institutions.");
 };

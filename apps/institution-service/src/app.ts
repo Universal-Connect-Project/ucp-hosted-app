@@ -9,14 +9,16 @@ import aggregatorIntegrationRoutes from "./routes/aggregatorIntegrationRoutes";
 import aggregatorRoutes from "./aggregators/aggregatorEndpoints";
 import institutionRoutes from "./institutions/institutionEndpoints";
 import permissionsRoutes from "./routes/permissionRoutes";
+import aggregatorInstitutionRoutes from "./aggregatorInstitutions/aggregatorInstitutionRoutes";
 import { PORT } from "./shared/const";
 import performanceAuthEndpoints from "./performanceAuth/performanceAuthEndpoints";
 import {
+  AGGREGATOR_INSTITUTIONS_ROUTE,
   INSTITUTIONS_ROUTE,
   PERFORMANCE_AUTH_ROUTE,
 } from "./shared/consts/routes";
 import { useRateLimiting } from "./useRateLimiting";
-import { syncInstitutions } from "./institutionSyncing/syncInstitutions";
+import { syncInstitutions } from "./aggregatorInstitutions/syncInstitutions";
 
 sequelize
   .authenticate()
@@ -78,6 +80,7 @@ app.use("/permissions", permissionsRoutes);
 app.use("/aggregatorIntegrations", aggregatorIntegrationRoutes);
 app.use("/aggregators", aggregatorRoutes);
 app.use(PERFORMANCE_AUTH_ROUTE, performanceAuthEndpoints);
+app.use(AGGREGATOR_INSTITUTIONS_ROUTE, aggregatorInstitutionRoutes);
 
 app.listen(process.env.PORT || PORT, () => {
   console.info(

@@ -1,6 +1,7 @@
 import { Application, Request } from "express";
 import rateLimit from "express-rate-limit";
 import {
+  AGGREGATOR_INSTITUTIONS_SYNC_ROUTE,
   CACHE_LIST_ROUTE,
   PERFORMANCE_AUTH_ROUTE,
 } from "./shared/consts/routes";
@@ -50,10 +51,16 @@ const performanceAuthBeforeAuthLimiter = createLimiter({
   skipSuccessfulRequests: true,
 });
 
+const institutionSyncingLimiter = createLimiter({
+  requestLimit: 1,
+  timeIntervalInMinutes: 1,
+});
+
 export const useRateLimiting = (app: Application) => {
   if (getShouldUseRateLimiting()) {
     app.use(defaultLimiter);
     app.use(CACHE_LIST_ROUTE, cacheListLimiter);
     app.use(PERFORMANCE_AUTH_ROUTE, performanceAuthBeforeAuthLimiter);
+    app.use(AGGREGATOR_INSTITUTIONS_SYNC_ROUTE, institutionSyncingLimiter);
   }
 };
