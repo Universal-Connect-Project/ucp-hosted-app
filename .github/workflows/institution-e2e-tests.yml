@@ -84,6 +84,15 @@ jobs:
 
           echo AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }} >> ${ENV_FILE_PATH}
 
+      - name: "Create institution env file"
+        run: |
+          ENV_FILE_PATH=./apps/institution-service/env/secretStaging.env
+          touch ${ENV_FILE_PATH}
+
+          echo FINICITY_APP_KEY=${{ secrets.FINICITY_APP_KEY }} >> ${ENV_FILE_PATH}
+          echo FINICITY_PARTNER_ID=${{ secrets.FINICITY_PARTNER_ID }} >> ${ENV_FILE_PATH}
+          echo FINICITY_SECRET=${{ secrets.FINICITY_SECRET }} >> ${ENV_FILE_PATH}
+
       - name: Seed Influx with Performance Data
         run: npm run test:seedInfluxPerformance --workspace apps/performance-service
 
