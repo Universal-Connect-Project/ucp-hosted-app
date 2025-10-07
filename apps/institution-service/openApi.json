@@ -1066,6 +1066,20 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "Institution sync completed with errors.",
+                    "errors": ["Failed to fetch institutions from finicity"]
+                  }
+                }
+              }
+            }
           }
         }
       }
