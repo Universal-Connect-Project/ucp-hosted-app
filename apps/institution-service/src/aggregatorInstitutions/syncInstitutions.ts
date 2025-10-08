@@ -28,25 +28,28 @@ const updateExistingAggregatorIntegration = async (
   aggregatorId: number,
   aggregatorInstitution: AggregatorInstitution,
 ) => {
-  await AggregatorIntegration.update(
-    {
-      isActive: true,
-      supports_oauth: aggregatorInstitution.supportsOAuth,
-      supports_identification: aggregatorInstitution.supportsIdentification,
-      supports_verification: aggregatorInstitution.supportsVerification,
-      supports_history: aggregatorInstitution.supportsHistory,
-      supportsRewards: aggregatorInstitution.supportsRewards,
-      supportsBalance: aggregatorInstitution.supportsBalance,
-      supports_aggregation: aggregatorInstitution.supportsAggregation,
+  const matchingAggregatorIntegrations = await AggregatorIntegration.findAll({
+    where: {
+      aggregatorId,
+      aggregator_institution_id: aggregatorInstitution.aggregatorInstitutionId,
     },
-    {
-      where: {
-        aggregatorId,
-        aggregator_institution_id:
-          aggregatorInstitution.aggregatorInstitutionId,
-      },
-    },
-  );
+  });
+
+  for (const integration of matchingAggregatorIntegrations) {
+    integration.isActive = true;
+    integration.supports_oauth = aggregatorInstitution.supportsOAuth;
+    integration.supports_identification =
+      aggregatorInstitution.supportsIdentification;
+    integration.supports_verification =
+      aggregatorInstitution.supportsVerification;
+    integration.supports_history = aggregatorInstitution.supportsHistory;
+    integration.supportsRewards = aggregatorInstitution.supportsRewards;
+    integration.supportsBalance = aggregatorInstitution.supportsBalance;
+    integration.supports_aggregation =
+      aggregatorInstitution.supportsAggregation;
+
+    await integration.save();
+  }
 };
 
 interface SyncInstitutionsRequest extends Request {
