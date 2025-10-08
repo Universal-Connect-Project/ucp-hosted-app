@@ -29,6 +29,7 @@
     "@repo/backend-utils": "*",
     "@repo/shared-utils": "*",
     "cors": "^2.8.5",
+    "cron": "^4.3.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-oauth2-jwt-bearer": "^1.6.0",

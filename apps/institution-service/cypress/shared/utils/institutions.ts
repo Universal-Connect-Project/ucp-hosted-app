@@ -44,6 +44,21 @@ export const getInstitutionsWithFiltersRequest = ({
   });
 };
 
+export const getInstitution = ({
+  institutionId,
+}: {
+  institutionId: string;
+}) => {
+  return cy.request({
+    url: `http://localhost:${PORT}/institutions/${institutionId}`,
+    method: "GET",
+    headers: {
+      Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+    },
+    failOnStatusCode: false,
+  });
+};
+
 export const deleteInstitution = ({
   institutionId,
 }: {

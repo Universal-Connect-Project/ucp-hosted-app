@@ -16,7 +16,7 @@ describe("useRateLimiting", () => {
     } as unknown as Application;
 
     useRateLimiting(app);
-    expect(app.use).toHaveBeenCalledTimes(3);
+    expect(app.use).toHaveBeenCalledTimes(4);
   });
 
   it("should not apply rate limiting if DISABLE_RATE_LIMITING is true", () => {
