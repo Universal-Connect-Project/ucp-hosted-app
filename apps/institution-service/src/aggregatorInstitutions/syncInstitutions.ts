@@ -9,19 +9,35 @@ const markMissingAggregatorInstitutionsInactive = async (
   aggregatorId: number,
   activeAggregatorInstitutionIds: string[],
 ) => {
-  await AggregatorIntegration.update(
-    {
-      isActive: false,
-    },
-    {
+  const aggregatorIntegrationsIdsToDeactivate =
+    await AggregatorIntegration.findAll({
       where: {
         aggregatorId,
         aggregator_institution_id: {
           [Op.notIn]: activeAggregatorInstitutionIds,
         },
+        isActive: true,
       },
-    },
+      attributes: ["id"],
+      raw: true,
+    });
+
+  console.log(
+    `Marking ${aggregatorIntegrationsIdsToDeactivate.length} missing aggregator institutions as inactive for aggregator ID ${aggregatorId}.`,
   );
+
+  for (const integration of aggregatorIntegrationsIdsToDeactivate) {
+    await AggregatorIntegration.update(
+      {
+        isActive: false,
+      },
+      {
+        where: {
+          id: integration.id,
+        },
+      },
+    );
+  }
 };
 
 const updateExistingAggregatorIntegration = async (
