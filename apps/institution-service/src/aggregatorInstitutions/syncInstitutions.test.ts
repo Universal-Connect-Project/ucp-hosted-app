@@ -77,7 +77,7 @@ describe("syncInstitutions", () => {
         supports_verification:
           !firstFinicityAggregatorInstitution.supportsVerification,
         supportsRewards: true,
-        supportsBalance: true,
+        supportsBalance: !firstFinicityAggregatorInstitution.supportsBalance,
       });
     });
 
@@ -208,7 +208,9 @@ describe("syncInstitutions", () => {
         firstFinicityAggregatorInstitution.supportsVerification,
       );
       expect(existingAggregatorIntegration.supportsRewards).toBe(false);
-      expect(existingAggregatorIntegration.supportsBalance).toBe(false);
+      expect(existingAggregatorIntegration.supportsBalance).toBe(
+        firstFinicityAggregatorInstitution.supportsBalance,
+      );
 
       expect(missingAggregatorIntegration.isActive).toBe(false);
       expect(existingAggregatorIntegration.isActive).toBe(true);

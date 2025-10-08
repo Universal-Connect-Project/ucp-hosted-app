@@ -40,6 +40,7 @@ interface FinicityInstitution {
   accountOwner: boolean;
   ach: boolean;
   aha: boolean;
+  availBalance: boolean;
   id: number;
   name: string;
   oauthEnabled: boolean;
@@ -100,7 +101,7 @@ export const mapFinicityInstitution = (
   supportsAggregation: institution.transAgg,
   supportsHistory: institution.aha,
   supportsRewards: false,
-  supportsBalance: false,
+  supportsBalance: institution.availBalance,
 });
 
 export const fetchFinicityInstitutions = async () => {
