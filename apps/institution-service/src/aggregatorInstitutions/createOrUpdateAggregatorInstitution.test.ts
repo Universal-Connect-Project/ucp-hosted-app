@@ -1,15 +1,14 @@
+import { AggregatorInstitution } from "../models/aggregatorInstitution";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
-import { AggregatorInstitution } from "./aggregatorInstitution";
+import { createOrUpdateAggregatorInstitution } from "./createOrUpdateAggregatorInstitution";
 
-describe("aggregatorInstitution model", () => {
+describe("createOrUpdateAggregatorInstitution", () => {
   let requiredBody: AggregatorInstitution;
   let finicityAggregatorId: number;
-  let mxAggregatorId: number;
   let id: string;
 
   beforeEach(async () => {
     finicityAggregatorId = (await getAggregatorByName("finicity"))?.id;
-    mxAggregatorId = (await getAggregatorByName("mx"))?.id;
 
     id = crypto.randomUUID();
 
@@ -28,9 +27,9 @@ describe("aggregatorInstitution model", () => {
     } as AggregatorInstitution;
   });
 
-  it("creates an aggregatorInstitution", async () => {
+  it("creates a new institution if it does not exist", async () => {
     const createdAggregatorInstitution =
-      await AggregatorInstitution.create(requiredBody);
+      await createOrUpdateAggregatorInstitution(requiredBody);
 
     expect(createdAggregatorInstitution.aggregatorId).toBe(
       finicityAggregatorId,
@@ -47,37 +46,40 @@ describe("aggregatorInstitution model", () => {
     await createdAggregatorInstitution.destroy();
   });
 
-  it("fails if anything is missing", async () => {
-    for (const key of Object.keys(requiredBody)) {
-      const bodyToTest = { ...requiredBody };
+  it("updates an existing institution if it does exist", async () => {
+    const createdAggregatorInstitution =
+      await createOrUpdateAggregatorInstitution(requiredBody);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-      delete (bodyToTest as any)[key];
+    const updatedAtBefore = createdAggregatorInstitution.updatedAt;
 
-      await expect(
-        AggregatorInstitution.create(bodyToTest as AggregatorInstitution),
-      ).rejects.toThrow();
-    }
-  });
+    const newName = "Updated Institution";
 
-  it("fails if id is not unique per aggregatorId, but works if a different aggregatorId is used", async () => {
-    const finicityAggregatorInstitution =
-      await AggregatorInstitution.create(requiredBody);
-
-    await expect(AggregatorInstitution.create(requiredBody)).rejects.toThrow();
-
-    const mxAggregatorInstitution = await AggregatorInstitution.create({
+    await createOrUpdateAggregatorInstitution({
       ...requiredBody,
-      aggregatorId: mxAggregatorId,
-    });
+      name: newName,
+    } as AggregatorInstitution);
 
-    await finicityAggregatorInstitution.destroy();
-    await mxAggregatorInstitution.destroy();
+    await createdAggregatorInstitution.reload();
+
+    expect(createdAggregatorInstitution.name).toBe(newName);
+
+    expect(createdAggregatorInstitution.updatedAt).not.toEqual(updatedAtBefore);
+
+    await createdAggregatorInstitution.destroy();
   });
 
-  it("fails if the aggregator id is invalid", async () => {
-    await expect(
-      AggregatorInstitution.create({ ...requiredBody, aggregatorId: 5000 }),
-    ).rejects.toThrow();
+  it("doesn't update the updatedAt timestamp if nothing changes", async () => {
+    const createdAggregatorInstitution =
+      await createOrUpdateAggregatorInstitution(requiredBody);
+
+    const updatedAtBefore = createdAggregatorInstitution.updatedAt;
+
+    await createOrUpdateAggregatorInstitution(requiredBody);
+
+    await createdAggregatorInstitution.reload();
+
+    expect(createdAggregatorInstitution.updatedAt).toEqual(updatedAtBefore);
+
+    await createdAggregatorInstitution.destroy();
   });
 });

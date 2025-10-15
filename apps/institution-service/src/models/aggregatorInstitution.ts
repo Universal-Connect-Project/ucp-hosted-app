@@ -17,6 +17,7 @@ export class AggregatorInstitution extends Model<
   InferCreationAttributes<AggregatorInstitution>
 > {
   declare id: string;
+  declare name: string;
   declare supportsOAuth: boolean;
   declare supportsAccountOwner: boolean;
   declare supportsAccountNumber: boolean;
@@ -24,6 +25,7 @@ export class AggregatorInstitution extends Model<
   declare supportsTransactionHistory: boolean;
   declare supportsRewards: boolean;
   declare supportsBalance: boolean;
+  declare url: string;
 
   declare aggregatorId: ForeignKey<Aggregator["id"]>;
 
@@ -40,11 +42,6 @@ export class AggregatorInstitution extends Model<
 
 AggregatorInstitution.init(
   {
-    id: {
-      allowNull: false,
-      primaryKey: true,
-      type: DataTypes.STRING,
-    },
     aggregatorId: {
       allowNull: false,
       primaryKey: true,
@@ -52,7 +49,16 @@ AggregatorInstitution.init(
     },
     createdAt: {
       type: DataTypes.DATE,
-      defaultValue: new Date(),
+      defaultValue: DataTypes.NOW,
+    },
+    id: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.STRING,
+    },
+    name: {
+      allowNull: false,
+      type: DataTypes.STRING,
     },
     supportsAccountOwner: {
       allowNull: false,
@@ -82,7 +88,11 @@ AggregatorInstitution.init(
       allowNull: false,
       type: DataTypes.BOOLEAN,
     },
-    updatedAt: { type: DataTypes.DATE, defaultValue: new Date() },
+    url: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
+    updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   },
   {
     tableName: "aggregatorInstitutions",

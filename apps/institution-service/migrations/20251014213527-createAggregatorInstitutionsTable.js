@@ -18,6 +18,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.STRING,
       },
+      name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       supportsAccountNumber: {
         type: Sequelize.BOOLEAN,
       },
@@ -38,6 +42,10 @@ module.exports = {
       },
       supportsTransactionHistory: {
         type: Sequelize.BOOLEAN,
+      },
+      url: {
+        allowNull: false,
+        type: Sequelize.STRING,
       },
       createdAt: {
         type: Sequelize.DATE,
