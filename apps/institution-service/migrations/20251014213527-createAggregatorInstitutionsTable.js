@@ -18,7 +18,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.STRING,
       },
-      supportsAccountNumbers: {
+      supportsAccountNumber: {
         type: Sequelize.BOOLEAN,
       },
       supportsAccountOwner: {

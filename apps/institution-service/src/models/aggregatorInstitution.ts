@@ -16,7 +16,7 @@ export class AggregatorInstitution extends Model<
   InferAttributes<AggregatorInstitution>,
   InferCreationAttributes<AggregatorInstitution>
 > {
-  declare id: number;
+  declare id: string;
   declare supportsOAuth: boolean;
   declare supportsAccountOwner: boolean;
   declare supportsAccountNumber: boolean;
@@ -41,26 +41,46 @@ export class AggregatorInstitution extends Model<
 AggregatorInstitution.init(
   {
     id: {
+      allowNull: false,
       primaryKey: true,
       type: DataTypes.STRING,
     },
     aggregatorId: {
+      allowNull: false,
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    createdAt: { type: DataTypes.DATE, defaultValue: new Date() },
-    supportsAccountOwner: { type: DataTypes.BOOLEAN, defaultValue: false },
-    supportsAccountNumber: { type: DataTypes.BOOLEAN, defaultValue: false },
-    supportsBalance: { type: DataTypes.BOOLEAN, defaultValue: false },
-    supportsOAuth: { type: DataTypes.BOOLEAN, defaultValue: false },
-    supportsRewards: { type: DataTypes.BOOLEAN, defaultValue: false },
-    supportsTransactions: {
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: new Date(),
+    },
+    supportsAccountOwner: {
+      allowNull: false,
       type: DataTypes.BOOLEAN,
-      defaultValue: true,
+    },
+    supportsAccountNumber: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
+    },
+    supportsBalance: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
+    },
+    supportsOAuth: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
+    },
+    supportsRewards: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
+    },
+    supportsTransactions: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
     },
     supportsTransactionHistory: {
+      allowNull: false,
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
     updatedAt: { type: DataTypes.DATE, defaultValue: new Date() },
   },
