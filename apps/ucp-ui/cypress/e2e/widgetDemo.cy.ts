@@ -60,7 +60,7 @@ describe("Widget Demo", () => {
       });
   });
 
-  it.only("shows finicity banks when selecting finicity as the aggregator", () => {
+  it("shows finicity banks when selecting finicity as the aggregator", () => {
     cy.loginWithWidgetDemoPermissions();
     cy.visit("/");
     cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
@@ -78,6 +78,27 @@ describe("Widget Demo", () => {
       .within(() => {
         cy.findByText("Select your institution").should("exist");
         cy.findByText("FinBank").should("be.visible");
+      });
+  });
+
+  it("shows plaid banks when selecting plaid as the aggregator", () => {
+    cy.loginWithWidgetDemoPermissions();
+    cy.visit("/");
+    cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
+
+    cy.findByLabelText("Account Number").click();
+
+    cy.findByRole("combobox", { name: "Aggregator" }).click();
+    cy.findByRole("option", { name: "Plaid" }).click();
+
+    cy.findByRole("button", { name: "Launch" }).click();
+
+    cy.get("iframe")
+      .its("0.contentDocument")
+      .its("body")
+      .within(() => {
+        cy.findByText("Select your institution").should("exist");
+        cy.findByText("Plaid Bank").should("be.visible");
       });
   });
 });
