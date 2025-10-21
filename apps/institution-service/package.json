@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Insitution service",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "jest --runInBand",
+    "test:watch": "jest --runInBand --watch",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "db:generateMigration": "npx sequelize-cli migration:generate",
