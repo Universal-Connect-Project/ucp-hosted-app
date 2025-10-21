@@ -13,8 +13,6 @@ export const createOrUpdateAggregatorInstitution = async (
   });
 
   if (!created) {
-    console.log("about to update stuff");
-
     institution.name = aggregatorInstitution.name;
     institution.supportsOAuth = aggregatorInstitution.supportsOAuth;
     institution.supportsAccountNumber =
