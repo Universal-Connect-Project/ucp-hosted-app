@@ -69,13 +69,14 @@ describe("syncInstitutions", () => {
           firstFinicityAggregatorInstitution.aggregatorInstitutionId,
         isActive: false,
         supports_aggregation:
-          !firstFinicityAggregatorInstitution.supportsAggregation,
-        supports_history: !firstFinicityAggregatorInstitution.supportsHistory,
+          !firstFinicityAggregatorInstitution.supportsTransactions,
+        supports_history:
+          !firstFinicityAggregatorInstitution.supportsTransactionHistory,
         supports_identification:
-          !firstFinicityAggregatorInstitution.supportsIdentification,
+          !firstFinicityAggregatorInstitution.supportsAccountOwner,
         supports_oauth: !firstFinicityAggregatorInstitution.supportsOAuth,
         supports_verification:
-          !firstFinicityAggregatorInstitution.supportsVerification,
+          !firstFinicityAggregatorInstitution.supportsAccountNumber,
         supportsRewards: true,
         supportsBalance: !firstFinicityAggregatorInstitution.supportsBalance,
       });
@@ -193,19 +194,19 @@ describe("syncInstitutions", () => {
       expect(afterCount).toEqual(beforeCount);
 
       expect(existingAggregatorIntegration.supports_aggregation).toBe(
-        firstFinicityAggregatorInstitution.supportsAggregation,
+        firstFinicityAggregatorInstitution.supportsTransactions,
       );
       expect(existingAggregatorIntegration.supports_history).toBe(
-        firstFinicityAggregatorInstitution.supportsHistory,
+        firstFinicityAggregatorInstitution.supportsTransactionHistory,
       );
       expect(existingAggregatorIntegration.supports_identification).toBe(
-        firstFinicityAggregatorInstitution.supportsIdentification,
+        firstFinicityAggregatorInstitution.supportsAccountOwner,
       );
       expect(existingAggregatorIntegration.supports_oauth).toBe(
         firstFinicityAggregatorInstitution.supportsOAuth,
       );
       expect(existingAggregatorIntegration.supports_verification).toBe(
-        firstFinicityAggregatorInstitution.supportsVerification,
+        firstFinicityAggregatorInstitution.supportsAccountNumber,
       );
       expect(existingAggregatorIntegration.supportsRewards).toBe(false);
       expect(existingAggregatorIntegration.supportsBalance).toBe(

@@ -1,9 +1,10 @@
+import { CreationAttributes } from "sequelize";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { createOrUpdateAggregatorInstitution } from "./createOrUpdateAggregatorInstitution";
 
 describe("createOrUpdateAggregatorInstitution", () => {
-  let requiredBody: AggregatorInstitution;
+  let requiredBody: CreationAttributes<AggregatorInstitution>;
   let finicityAggregatorId: number;
   let id: string;
 
@@ -24,7 +25,7 @@ describe("createOrUpdateAggregatorInstitution", () => {
       supportsTransactions: true,
       supportsTransactionHistory: true,
       url: "https://www.testinstitution.com",
-    } as AggregatorInstitution;
+    } as CreationAttributes<AggregatorInstitution>;
   });
 
   it("creates a new institution if it does not exist", async () => {

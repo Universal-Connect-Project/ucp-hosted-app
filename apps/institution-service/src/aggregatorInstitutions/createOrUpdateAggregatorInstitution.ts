@@ -1,7 +1,8 @@
+import { CreationAttributes } from "sequelize";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
 
 export const createOrUpdateAggregatorInstitution = async (
-  aggregatorInstitution: AggregatorInstitution,
+  aggregatorInstitution: CreationAttributes<AggregatorInstitution>,
 ) => {
   const [institution, created] = await AggregatorInstitution.findOrCreate({
     where: {

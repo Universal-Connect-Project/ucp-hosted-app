@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
-import { fetchFinicityInstitutions } from "./finicity";
+import { syncFinicityInstitutions } from "./finicity";
 import { AggregatorInstitution } from "./const";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { Request, Response } from "express";
@@ -87,7 +87,7 @@ export const syncInstitutions = async (
   const institutionFetchers = [
     {
       aggregatorName: "finicity",
-      fetcher: fetchFinicityInstitutions,
+      fetcher: syncFinicityInstitutions,
       minimumInstitutionCount: 5000,
     },
   ];

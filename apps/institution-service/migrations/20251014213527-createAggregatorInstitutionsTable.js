@@ -13,6 +13,10 @@ module.exports = {
         },
         type: Sequelize.INTEGER,
       },
+      deletedAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
       id: {
         allowNull: false,
         primaryKey: true,

@@ -1,5 +1,7 @@
+import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { getConfig } from "../shared/environment";
-import { AggregatorInstitution } from "./const";
+import { createOrUpdateAggregatorInstitution } from "./createOrUpdateAggregatorInstitution";
+import { removeMissingAggregatorInstitutions } from "./utils";
 
 export const FETCH_FINICITY_ACCESS_TOKEN_URL =
   "https://api.finicity.com/aggregation/v2/partners/authentication";
@@ -60,10 +62,25 @@ const pageSize = 1000;
 export const FETCH_FINICITY_INSTITUTIONS_URL =
   "https://api.finicity.com/institution/v2/institutions";
 
-const fetchInstitutionPage = async ({
+export const mapFinicityInstitution = (institution: FinicityInstitution) => ({
+  aggregatorInstitutionId: institution.id.toString(),
+  name: institution.name,
+  supportsAccountOwner: institution.accountOwner,
+  supportsAccountNumber: institution.ach,
+  supportsBalance: institution.availBalance,
+  supportsOAuth: institution.oauthEnabled,
+  supportsRewards: false,
+  supportsTransactions: institution.transAgg,
+  supportsTransactionHistory: institution.aha,
+  url: institution.urlHomeApp,
+});
+
+const fetchAndStoreInstitutionPage = async ({
+  aggregatorId,
   page,
   token,
 }: {
+  aggregatorId: number;
   page: number;
   token: string;
 }) => {
@@ -87,39 +104,62 @@ const fetchInstitutionPage = async ({
     );
   }
 
-  const data = (await response.json()) as FinicityInstitutionsResponse;
-  return data;
-};
+  const { found, institutions } =
+    (await response.json()) as FinicityInstitutionsResponse;
 
-export const mapFinicityInstitution = (
-  institution: FinicityInstitution,
-): AggregatorInstitution => ({
-  aggregatorInstitutionId: institution.id.toString(),
-  supportsOAuth: institution.oauthEnabled,
-  supportsIdentification: institution.accountOwner,
-  supportsVerification: institution.ach,
-  supportsAggregation: institution.transAgg,
-  supportsHistory: institution.aha,
-  supportsRewards: false,
-  supportsBalance: institution.availBalance,
-});
-
-export const fetchFinicityInstitutions = async () => {
-  const token = await fetchAccessToken();
-
-  const page1 = await fetchInstitutionPage({ page: 1, token });
-  const { found, institutions: page1Institutions } = page1;
-
-  const institutions = [...page1Institutions];
-
-  const numberOfPages = Math.ceil(found / pageSize);
-
-  for (let page = 2; page < numberOfPages + 1; page++) {
-    const { institutions: currentPageInstitutions } =
-      await fetchInstitutionPage({ page, token });
-
-    institutions.push(...currentPageInstitutions);
+  for (const institution of institutions) {
+    await createOrUpdateAggregatorInstitution({
+      aggregatorId,
+      id: institution.id.toString(),
+      name: institution.name,
+      supportsAccountOwner: institution.accountOwner,
+      supportsAccountNumber: institution.ach,
+      supportsBalance: institution.availBalance,
+      supportsOAuth: institution.oauthEnabled,
+      supportsRewards: false,
+      supportsTransactions: institution.transAgg,
+      supportsTransactionHistory: institution.aha,
+      url: institution.urlHomeApp,
+    });
   }
 
-  return institutions.map(mapFinicityInstitution);
+  const aggregatorInstitutionIds = institutions.map((inst) =>
+    inst.id.toString(),
+  );
+
+  return { aggregatorInstitutionIds, totalInstitutionsCount: found };
+};
+
+export const syncFinicityInstitutions = async () => {
+  const token = await fetchAccessToken();
+
+  const aggregatorId = (await getAggregatorByName("finicity")).id;
+
+  const firstPage = await fetchAndStoreInstitutionPage({
+    aggregatorId,
+    page: 1,
+    token,
+  });
+
+  const { totalInstitutionsCount } = firstPage;
+
+  const allAggregatorInstitutionIds = [...firstPage.aggregatorInstitutionIds];
+
+  const numberOfPages = Math.ceil(totalInstitutionsCount / pageSize);
+
+  for (let page = 2; page < numberOfPages + 1; page++) {
+    const { aggregatorInstitutionIds } = await fetchAndStoreInstitutionPage({
+      aggregatorId,
+      page,
+      token,
+    });
+
+    allAggregatorInstitutionIds.push(...aggregatorInstitutionIds);
+  }
+
+  await removeMissingAggregatorInstitutions({
+    aggregatorId,
+    aggregatorInstitutionIds: allAggregatorInstitutionIds,
+    minimumValidInstitutionCount: 5000,
+  });
 };

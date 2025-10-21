@@ -97,6 +97,7 @@ AggregatorInstitution.init(
   {
     tableName: "aggregatorInstitutions",
     modelName: "AggregatorInstitution",
+    paranoid: true,
     sequelize,
     indexes: [
       {

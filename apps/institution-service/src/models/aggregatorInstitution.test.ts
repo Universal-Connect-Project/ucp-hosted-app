@@ -28,7 +28,7 @@ describe("aggregatorInstitution model", () => {
     } as AggregatorInstitution;
   });
 
-  it("creates an aggregatorInstitution", async () => {
+  it("creates an aggregatorInstitution and soft deletes it", async () => {
     const createdAggregatorInstitution =
       await AggregatorInstitution.create(requiredBody);
 
@@ -45,6 +45,17 @@ describe("aggregatorInstitution model", () => {
     expect(createdAggregatorInstitution.supportsTransactionHistory).toBe(true);
 
     await createdAggregatorInstitution.destroy();
+
+    expect(
+      await AggregatorInstitution.findOne({ where: { id: id } }),
+    ).toBeNull();
+
+    expect(
+      await AggregatorInstitution.findOne({
+        where: { id: id },
+        paranoid: false,
+      }),
+    ).not.toBeNull();
   });
 
   it("fails if anything is missing", async () => {
