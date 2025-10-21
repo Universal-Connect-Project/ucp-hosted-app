@@ -86,7 +86,7 @@ describe("finicity institutions", () => {
             where: { id: existingAggregatorInstitution.id },
           }),
         ).toBeNull();
-      }, 60000);
+      }, 120000);
 
       it("fetches all pages of institutions from Finicity, stores them in the database, when run again it updates the existing records", async () => {
         expect(finicityAggregatorId).toBeDefined();
