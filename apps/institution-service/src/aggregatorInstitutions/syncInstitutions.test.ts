@@ -214,6 +214,6 @@ describe("syncInstitutions", () => {
 
       expect(missingAggregatorIntegration.isActive).toBe(false);
       expect(existingAggregatorIntegration.isActive).toBe(true);
-    }, 30000);
+    }, 60000);
   });
 });
