@@ -27,7 +27,7 @@ describe("finicity institutions", () => {
         finicityAggregatorId = (await getAggregatorByName("finicity"))?.id;
       });
 
-      afterAll(async () => {
+      afterEach(async () => {
         await AggregatorInstitution.destroy({ force: true, truncate: true });
       });
 
@@ -55,7 +55,7 @@ describe("finicity institutions", () => {
             if (start === "2") {
               return HttpResponse.json({
                 ...finicityInstitutionsPage2,
-                institutions: new Array(5000).fill(null).map((_, index) => ({
+                institutions: new Array(21).fill(null).map((_, index) => ({
                   accountOwner: true,
                   ach: false,
                   aha: true,
@@ -86,7 +86,7 @@ describe("finicity institutions", () => {
             where: { id: existingAggregatorInstitution.id },
           }),
         ).toBeNull();
-      }, 120000);
+      }, 20000);
 
       it("fetches all pages of institutions from Finicity, stores them in the database, when run again it updates the existing records", async () => {
         expect(finicityAggregatorId).toBeDefined();

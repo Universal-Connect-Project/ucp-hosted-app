@@ -89,9 +89,27 @@ describe("syncInstitutions", () => {
       await testInstitutionWithExistingAggregatorInstitution.destroy();
       await missingAggregatorIntegration.destroy();
       await testInstitutionWithMissingAggregatorInstitution.destroy();
+
+      await AggregatorInstitution.destroy({ force: true, truncate: true });
     });
 
     it("runs without a request or response", async () => {
+      server.use(
+        http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
+          return HttpResponse.json({
+            ...finicityInstitutionsPage1,
+            found: 5,
+            institutions: [
+              ...finicityInstitutionsPage1.institutions,
+              ...new Array(20).fill(0).map((_, index) => ({
+                ...finicityInstitutionsPage1.institutions[0],
+                id: 1999999 + index,
+              })),
+            ],
+          });
+        }),
+      );
+
       expect(missingAggregatorIntegration.isActive).toBe(true);
       expect(existingAggregatorIntegration.isActive).toBe(false);
 
@@ -155,7 +173,7 @@ describe("syncInstitutions", () => {
             found: 5,
             institutions: [
               ...finicityInstitutionsPage1.institutions,
-              ...new Array(5000).fill(0).map((_, index) => ({
+              ...new Array(20).fill(0).map((_, index) => ({
                 ...finicityInstitutionsPage1.institutions[0],
                 id: 1999999 + index,
               })),
@@ -214,6 +232,6 @@ describe("syncInstitutions", () => {
 
       expect(missingAggregatorIntegration.isActive).toBe(false);
       expect(existingAggregatorIntegration.isActive).toBe(true);
-    }, 120000);
+    }, 20000);
   });
 });

@@ -22,6 +22,7 @@ const sequelize = process.env.DATABASE_URL
   : new Sequelize(config.database, config.username, config.password, {
       dialect: config.dialect as Dialect | undefined,
       host: config.host,
+      logging: process.env.NODE_ENV === "test" ? false : console.log,
       port: config.port as unknown as number,
     });
 
