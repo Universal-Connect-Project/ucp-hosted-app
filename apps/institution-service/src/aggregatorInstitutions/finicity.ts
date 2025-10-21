@@ -63,7 +63,7 @@ export const FETCH_FINICITY_INSTITUTIONS_URL =
   "https://api.finicity.com/institution/v2/institutions";
 
 export const mapFinicityInstitution = (institution: FinicityInstitution) => ({
-  aggregatorInstitutionId: institution.id.toString(),
+  id: institution.id.toString(),
   name: institution.name,
   supportsAccountOwner: institution.accountOwner,
   supportsAccountNumber: institution.ach,

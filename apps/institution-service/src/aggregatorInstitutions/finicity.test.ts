@@ -27,6 +27,10 @@ describe("finicity institutions", () => {
         finicityAggregatorId = (await getAggregatorByName("finicity"))?.id;
       });
 
+      afterAll(async () => {
+        await AggregatorInstitution.destroy({ force: true, truncate: true });
+      });
+
       it("removes existing aggregatorInstitutions if they aren't in the updated finicity list", async () => {
         const existingAggregatorInstitution =
           await AggregatorInstitution.create({

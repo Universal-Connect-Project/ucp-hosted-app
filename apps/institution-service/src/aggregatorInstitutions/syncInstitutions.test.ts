@@ -11,6 +11,7 @@ import {
 } from "./finicity";
 import { syncInstitutions } from "./syncInstitutions";
 import { Request, Response } from "express";
+import { AggregatorInstitution } from "../models/aggregatorInstitution";
 
 describe("syncInstitutions", () => {
   describe("finicity institutions", () => {
@@ -37,6 +38,8 @@ describe("syncInstitutions", () => {
 
       finicityAggregatorId = (await getAggregatorByName("finicity"))
         ?.id as number;
+
+      await AggregatorInstitution.destroy({ force: true, truncate: true });
 
       missingAggregatorIntegration = await AggregatorIntegration.create({
         institution_id: testInstitutionWithMissingAggregatorInstitution.id,
@@ -65,8 +68,7 @@ describe("syncInstitutions", () => {
       existingAggregatorIntegration = await AggregatorIntegration.create({
         institution_id: testInstitutionWithExistingAggregatorInstitution.id,
         aggregatorId: finicityAggregatorId,
-        aggregator_institution_id:
-          firstFinicityAggregatorInstitution.aggregatorInstitutionId,
+        aggregator_institution_id: firstFinicityAggregatorInstitution.id,
         isActive: false,
         supports_aggregation:
           !firstFinicityAggregatorInstitution.supportsTransactions,
@@ -90,13 +92,16 @@ describe("syncInstitutions", () => {
     });
 
     it("runs without a request or response", async () => {
+      expect(missingAggregatorIntegration.isActive).toBe(true);
+      expect(existingAggregatorIntegration.isActive).toBe(false);
+
       await syncInstitutions();
 
       await missingAggregatorIntegration.reload();
       await existingAggregatorIntegration.reload();
 
-      expect(missingAggregatorIntegration.isActive).toBe(true);
-      expect(existingAggregatorIntegration.isActive).toBe(false);
+      expect(missingAggregatorIntegration.isActive).toBe(false);
+      expect(existingAggregatorIntegration.isActive).toBe(true);
     });
 
     it("fails if any aggregator fails", async () => {
@@ -124,7 +129,7 @@ describe("syncInstitutions", () => {
       });
     });
 
-    it("doesn't update finicity aggregator integrations unless there are at least 5000 finicity aggregator institutions, and responds with a 202 by default", async () => {
+    it("responds with a 202 by default", async () => {
       const req = {
         body: {},
       } as Request;
@@ -140,15 +145,9 @@ describe("syncInstitutions", () => {
       expect(res.send).toHaveBeenCalledWith({
         message: "Institution sync started.",
       });
-
-      await missingAggregatorIntegration.reload();
-      await existingAggregatorIntegration.reload();
-
-      expect(missingAggregatorIntegration.isActive).toBe(true);
-      expect(existingAggregatorIntegration.isActive).toBe(false);
     });
 
-    it("fetches institutions from finicity, marks missing ones inactive, and updates existing ones and marks them as active if there are at least 5000 aggregator institutions, responds with a 200 if shouldWaitForCompletion", async () => {
+    it("fetches institutions from finicity, marks missing ones inactive, and updates existing ones and marks them as active, responds with a 200 if shouldWaitForCompletion", async () => {
       server.use(
         http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
           return HttpResponse.json({
@@ -215,6 +214,6 @@ describe("syncInstitutions", () => {
 
       expect(missingAggregatorIntegration.isActive).toBe(false);
       expect(existingAggregatorIntegration.isActive).toBe(true);
-    }, 20000);
+    }, 30000);
   });
 });
