@@ -28,6 +28,19 @@ describe("aggregatorInstitution model", () => {
     } as AggregatorInstitution;
   });
 
+  it("truncates urls that are too long", async () => {
+    const longUrl = "a".repeat(300);
+
+    const createdAggregatorInstitution = await AggregatorInstitution.create({
+      ...body,
+      url: longUrl,
+    });
+
+    expect(createdAggregatorInstitution.url).toEqual("a".repeat(255));
+
+    await createdAggregatorInstitution.destroy({ force: true });
+  });
+
   it("includes the aggregator", async () => {
     const createdAggregatorInstitution =
       await AggregatorInstitution.create(body);
