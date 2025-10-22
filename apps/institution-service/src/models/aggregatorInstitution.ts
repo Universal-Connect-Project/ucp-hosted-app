@@ -18,14 +18,14 @@ export class AggregatorInstitution extends Model<
 > {
   declare id: string;
   declare name: string;
-  declare supportsOAuth: boolean;
-  declare supportsAccountOwner: boolean;
-  declare supportsAccountNumber: boolean;
-  declare supportsTransactions: boolean;
-  declare supportsTransactionHistory: boolean;
-  declare supportsRewards: boolean;
-  declare supportsBalance: boolean;
-  declare url: string;
+  declare supportsOAuth?: boolean;
+  declare supportsAccountOwner?: boolean;
+  declare supportsAccountNumber?: boolean;
+  declare supportsTransactions?: boolean;
+  declare supportsTransactionHistory?: boolean;
+  declare supportsRewards?: boolean;
+  declare supportsBalance?: boolean;
+  declare url?: string;
 
   declare aggregatorId: ForeignKey<Aggregator["id"]>;
 
@@ -61,35 +61,35 @@ AggregatorInstitution.init(
       type: DataTypes.STRING,
     },
     supportsAccountOwner: {
-      allowNull: false,
+      defaultValue: false,
       type: DataTypes.BOOLEAN,
     },
     supportsAccountNumber: {
-      allowNull: false,
+      defaultValue: false,
       type: DataTypes.BOOLEAN,
     },
     supportsBalance: {
-      allowNull: false,
+      defaultValue: false,
       type: DataTypes.BOOLEAN,
     },
     supportsOAuth: {
-      allowNull: false,
+      defaultValue: false,
       type: DataTypes.BOOLEAN,
     },
     supportsRewards: {
-      allowNull: false,
+      defaultValue: false,
       type: DataTypes.BOOLEAN,
     },
     supportsTransactions: {
-      allowNull: false,
+      defaultValue: false,
       type: DataTypes.BOOLEAN,
     },
     supportsTransactionHistory: {
-      allowNull: false,
+      defaultValue: false,
       type: DataTypes.BOOLEAN,
     },
     url: {
-      allowNull: false,
+      allowNull: true,
       type: DataTypes.STRING,
     },
     updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },

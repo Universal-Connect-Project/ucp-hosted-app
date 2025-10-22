@@ -27,28 +27,35 @@ module.exports = {
         type: Sequelize.STRING,
       },
       supportsAccountNumber: {
+        defaultValue: false,
         type: Sequelize.BOOLEAN,
       },
       supportsAccountOwner: {
+        defaultValue: false,
         type: Sequelize.BOOLEAN,
       },
       supportsBalance: {
+        defaultValue: false,
         type: Sequelize.BOOLEAN,
       },
       supportsOAuth: {
+        defaultValue: false,
         type: Sequelize.BOOLEAN,
       },
       supportsRewards: {
+        defaultValue: false,
         type: Sequelize.BOOLEAN,
       },
       supportsTransactions: {
+        defaultValue: false,
         type: Sequelize.BOOLEAN,
       },
       supportsTransactionHistory: {
+        defaultValue: false,
         type: Sequelize.BOOLEAN,
       },
       url: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING,
       },
       createdAt: {

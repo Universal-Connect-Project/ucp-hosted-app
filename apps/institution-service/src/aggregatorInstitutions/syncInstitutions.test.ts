@@ -143,7 +143,7 @@ describe("syncInstitutions", () => {
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send).toHaveBeenCalledWith({
         message: "Institution sync completed with errors.",
-        errors: ["Failed to fetch institutions from finicity"],
+        errors: ["Failed to sync institutions for finicity"],
       });
     });
 

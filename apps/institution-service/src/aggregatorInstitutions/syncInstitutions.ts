@@ -124,7 +124,7 @@ export const syncInstitutions = async (
       );
     } catch (error) {
       console.error(
-        `Error fetching institutions for aggregator ${aggregatorName}:`,
+        `Error syncing institutions for aggregator ${aggregatorName}:`,
         error,
       );
 
@@ -142,7 +142,7 @@ export const syncInstitutions = async (
         message: "Institution sync completed with errors.",
         errors: aggregatorErrors.map(
           (aggregatorName) =>
-            `Failed to fetch institutions from ${aggregatorName}`,
+            `Failed to sync institutions for ${aggregatorName}`,
         ),
       });
     } else {

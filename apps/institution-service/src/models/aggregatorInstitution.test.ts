@@ -2,7 +2,7 @@ import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { AggregatorInstitution } from "./aggregatorInstitution";
 
 describe("aggregatorInstitution model", () => {
-  let requiredBody: AggregatorInstitution;
+  let body: AggregatorInstitution;
   let finicityAggregatorId: number;
   let mxAggregatorId: number;
   let id: string;
@@ -13,7 +13,7 @@ describe("aggregatorInstitution model", () => {
 
     id = crypto.randomUUID();
 
-    requiredBody = {
+    body = {
       aggregatorId: finicityAggregatorId,
       id: id,
       name: "Test Institution",
@@ -30,7 +30,7 @@ describe("aggregatorInstitution model", () => {
 
   it("creates an aggregatorInstitution and soft deletes it", async () => {
     const createdAggregatorInstitution =
-      await AggregatorInstitution.create(requiredBody);
+      await AggregatorInstitution.create(body);
 
     expect(createdAggregatorInstitution.aggregatorId).toBe(
       finicityAggregatorId,
@@ -58,9 +58,30 @@ describe("aggregatorInstitution model", () => {
     ).not.toBeNull();
   });
 
-  it("fails if anything is missing", async () => {
-    for (const key of Object.keys(requiredBody)) {
-      const bodyToTest = { ...requiredBody };
+  it("defaults the boolean values to false and allows the url to be null", async () => {
+    const createdAggregatorInstitution = await AggregatorInstitution.create({
+      aggregatorId: finicityAggregatorId,
+      id: id,
+      name: "Test Institution",
+    });
+
+    expect(createdAggregatorInstitution.supportsAccountNumber).toBe(false);
+    expect(createdAggregatorInstitution.supportsAccountOwner).toBe(false);
+    expect(createdAggregatorInstitution.supportsBalance).toBe(false);
+    expect(createdAggregatorInstitution.supportsOAuth).toBe(false);
+    expect(createdAggregatorInstitution.supportsRewards).toBe(false);
+    expect(createdAggregatorInstitution.supportsTransactions).toBe(false);
+    expect(createdAggregatorInstitution.supportsTransactionHistory).toBe(false);
+    expect(createdAggregatorInstitution.url).toBeNull();
+
+    await createdAggregatorInstitution.destroy({ force: true });
+  });
+
+  it("fails if anything that is required is missing", async () => {
+    const requiredKeys = ["aggregatorId", "id", "name"];
+
+    for (const key of requiredKeys) {
+      const bodyToTest = { ...body };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
       delete (bodyToTest as any)[key];
@@ -73,12 +94,12 @@ describe("aggregatorInstitution model", () => {
 
   it("fails if id is not unique per aggregatorId, but works if a different aggregatorId is used", async () => {
     const finicityAggregatorInstitution =
-      await AggregatorInstitution.create(requiredBody);
+      await AggregatorInstitution.create(body);
 
-    await expect(AggregatorInstitution.create(requiredBody)).rejects.toThrow();
+    await expect(AggregatorInstitution.create(body)).rejects.toThrow();
 
     const mxAggregatorInstitution = await AggregatorInstitution.create({
-      ...requiredBody,
+      ...body,
       aggregatorId: mxAggregatorId,
     });
 
@@ -88,7 +109,7 @@ describe("aggregatorInstitution model", () => {
 
   it("fails if the aggregator id is invalid", async () => {
     await expect(
-      AggregatorInstitution.create({ ...requiredBody, aggregatorId: 5000 }),
+      AggregatorInstitution.create({ ...body, aggregatorId: 5000 }),
     ).rejects.toThrow();
   });
 });
