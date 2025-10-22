@@ -96,6 +96,17 @@ AggregatorInstitution.init(
   },
   {
     tableName: "aggregatorInstitutions",
+    hooks: {
+      beforeValidate: (aggregatorInstitution) => {
+        if (
+          aggregatorInstitution.url &&
+          aggregatorInstitution.url.length > 255
+        ) {
+          aggregatorInstitution.url =
+            aggregatorInstitution.url?.slice(0, 255) || null;
+        }
+      },
+    },
     modelName: "AggregatorInstitution",
     paranoid: true,
     sequelize,
