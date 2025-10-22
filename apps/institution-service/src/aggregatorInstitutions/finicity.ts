@@ -110,16 +110,7 @@ const fetchAndStoreInstitutionPage = async ({
   for (const institution of institutions) {
     await createOrUpdateAggregatorInstitution({
       aggregatorId,
-      id: institution.id.toString(),
-      name: institution.name,
-      supportsAccountOwner: institution.accountOwner,
-      supportsAccountNumber: institution.ach,
-      supportsBalance: institution.availBalance,
-      supportsOAuth: institution.oauthEnabled,
-      supportsRewards: false,
-      supportsTransactions: institution.transAgg,
-      supportsTransactionHistory: institution.aha,
-      url: institution.urlHomeApp,
+      ...mapFinicityInstitution(institution),
     });
   }
 
