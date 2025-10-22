@@ -18,14 +18,14 @@ export class AggregatorInstitution extends Model<
 > {
   declare id: string;
   declare name: string;
-  declare supportsOAuth?: boolean;
-  declare supportsAccountOwner?: boolean;
-  declare supportsAccountNumber?: boolean;
-  declare supportsTransactions?: boolean;
-  declare supportsTransactionHistory?: boolean;
-  declare supportsRewards?: boolean;
-  declare supportsBalance?: boolean;
-  declare url?: string;
+  declare supportsOAuth: CreationOptional<boolean>;
+  declare supportsAccountOwner: CreationOptional<boolean>;
+  declare supportsAccountNumber: CreationOptional<boolean>;
+  declare supportsTransactions: CreationOptional<boolean>;
+  declare supportsTransactionHistory: CreationOptional<boolean>;
+  declare supportsRewards: CreationOptional<boolean>;
+  declare supportsBalance: CreationOptional<boolean>;
+  declare url: CreationOptional<string | null>;
 
   declare aggregatorId: ForeignKey<Aggregator["id"]>;
 

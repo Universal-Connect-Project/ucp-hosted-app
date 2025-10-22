@@ -28,6 +28,21 @@ describe("aggregatorInstitution model", () => {
     } as AggregatorInstitution;
   });
 
+  it("includes the aggregator", async () => {
+    const createdAggregatorInstitution =
+      await AggregatorInstitution.create(body);
+
+    const foundAggregatorInstitution = await AggregatorInstitution.findOne({
+      where: { id: id },
+      include: ["aggregator"],
+    });
+
+    expect(foundAggregatorInstitution?.aggregator).toBeDefined();
+    expect(foundAggregatorInstitution?.aggregator?.name).toBe("finicity");
+
+    await createdAggregatorInstitution.destroy({ force: true });
+  });
+
   it("creates an aggregatorInstitution and soft deletes it", async () => {
     const createdAggregatorInstitution =
       await AggregatorInstitution.create(body);

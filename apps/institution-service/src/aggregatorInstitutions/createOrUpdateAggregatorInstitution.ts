@@ -14,18 +14,18 @@ export const createOrUpdateAggregatorInstitution = async (
 
   if (!created) {
     institution.name = aggregatorInstitution.name;
-    institution.supportsOAuth = aggregatorInstitution.supportsOAuth;
+    institution.supportsOAuth = !!aggregatorInstitution.supportsOAuth;
     institution.supportsAccountNumber =
-      aggregatorInstitution.supportsAccountNumber;
+      !!aggregatorInstitution.supportsAccountNumber;
     institution.supportsAccountOwner =
-      aggregatorInstitution.supportsAccountOwner;
-    institution.supportsBalance = aggregatorInstitution.supportsBalance;
-    institution.supportsRewards = aggregatorInstitution.supportsRewards;
+      !!aggregatorInstitution.supportsAccountOwner;
+    institution.supportsBalance = !!aggregatorInstitution.supportsBalance;
+    institution.supportsRewards = !!aggregatorInstitution.supportsRewards;
     institution.supportsTransactions =
-      aggregatorInstitution.supportsTransactions;
+      !!aggregatorInstitution.supportsTransactions;
     institution.supportsTransactionHistory =
-      aggregatorInstitution.supportsTransactionHistory;
-    institution.url = aggregatorInstitution.url;
+      !!aggregatorInstitution.supportsTransactionHistory;
+    institution.url = aggregatorInstitution.url || null;
 
     await institution.save();
   }
