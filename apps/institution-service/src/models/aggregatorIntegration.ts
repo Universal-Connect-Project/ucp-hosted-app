@@ -69,8 +69,8 @@ AggregatorIntegration.init(
     supports_history: { type: DataTypes.BOOLEAN, defaultValue: false },
     supportsRewards: { type: DataTypes.BOOLEAN, defaultValue: false },
     supportsBalance: { type: DataTypes.BOOLEAN, defaultValue: false },
-    createdAt: { type: DataTypes.DATE, defaultValue: new Date() },
-    updatedAt: { type: DataTypes.DATE, defaultValue: new Date() },
+    createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+    updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   },
   {
     tableName: "aggregatorIntegrations",

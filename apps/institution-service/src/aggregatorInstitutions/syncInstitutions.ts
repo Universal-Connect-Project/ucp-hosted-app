@@ -1,14 +1,21 @@
 import { Op } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
-import { fetchFinicityInstitutions } from "./finicity";
-import { AggregatorInstitution } from "./const";
+import { syncFinicityInstitutions } from "./finicity";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { Request, Response } from "express";
+import { AggregatorInstitution } from "../models/aggregatorInstitution";
 
 const markMissingAggregatorInstitutionsInactive = async (
   aggregatorId: number,
-  activeAggregatorInstitutionIds: string[],
 ) => {
+  const activeAggregatorInstitutionIds = (
+    await AggregatorInstitution.findAll({
+      where: { aggregatorId },
+      attributes: ["id"],
+      raw: true,
+    })
+  ).map((inst) => inst.id);
+
   const aggregatorIntegrationsIdsToDeactivate =
     await AggregatorIntegration.findAll({
       where: {
@@ -40,31 +47,41 @@ const markMissingAggregatorInstitutionsInactive = async (
   }
 };
 
-const updateExistingAggregatorIntegration = async (
+export const updateExistingAggregatorIntegrations = async (
   aggregatorId: number,
-  aggregatorInstitution: AggregatorInstitution,
 ) => {
-  const matchingAggregatorIntegrations = await AggregatorIntegration.findAll({
-    where: {
-      aggregatorId,
-      aggregator_institution_id: aggregatorInstitution.aggregatorInstitutionId,
-    },
+  const aggregatorInstitutions = await AggregatorInstitution.findAll({
+    where: { aggregatorId },
   });
 
-  for (const integration of matchingAggregatorIntegrations) {
-    integration.isActive = true;
-    integration.supports_oauth = aggregatorInstitution.supportsOAuth;
-    integration.supports_identification =
-      aggregatorInstitution.supportsIdentification;
-    integration.supports_verification =
-      aggregatorInstitution.supportsVerification;
-    integration.supports_history = aggregatorInstitution.supportsHistory;
-    integration.supportsRewards = aggregatorInstitution.supportsRewards;
-    integration.supportsBalance = aggregatorInstitution.supportsBalance;
-    integration.supports_aggregation =
-      aggregatorInstitution.supportsAggregation;
+  console.log(
+    `Found ${aggregatorInstitutions.length} aggregator institutions to update integrations for aggregator ID ${aggregatorId}.`,
+  );
 
-    await integration.save();
+  for (const aggregatorInstitution of aggregatorInstitutions) {
+    const matchingAggregatorIntegrations = await AggregatorIntegration.findAll({
+      where: {
+        aggregatorId,
+        aggregator_institution_id: aggregatorInstitution.id,
+      },
+    });
+
+    for (const integration of matchingAggregatorIntegrations) {
+      integration.isActive = true;
+      integration.supports_oauth = aggregatorInstitution.supportsOAuth;
+      integration.supports_identification =
+        aggregatorInstitution.supportsAccountOwner;
+      integration.supports_verification =
+        aggregatorInstitution.supportsAccountNumber;
+      integration.supports_history =
+        aggregatorInstitution.supportsTransactionHistory;
+      integration.supportsRewards = aggregatorInstitution.supportsRewards;
+      integration.supportsBalance = aggregatorInstitution.supportsBalance;
+      integration.supports_aggregation =
+        aggregatorInstitution.supportsTransactions;
+
+      await integration.save();
+    }
   }
 };
 
@@ -87,53 +104,27 @@ export const syncInstitutions = async (
   const institutionFetchers = [
     {
       aggregatorName: "finicity",
-      fetcher: fetchFinicityInstitutions,
-      minimumInstitutionCount: 5000,
+      syncInstitutions: syncFinicityInstitutions,
     },
   ];
 
-  for (const {
-    aggregatorName,
-    fetcher,
-    minimumInstitutionCount,
-  } of institutionFetchers) {
+  for (const { aggregatorName, syncInstitutions } of institutionFetchers) {
     try {
-      const aggregatorInstitutions = await fetcher();
-      console.log(
-        `Fetched ${aggregatorInstitutions.length} institutions from ${aggregatorName}.`,
-      );
-
-      if (aggregatorInstitutions.length < minimumInstitutionCount) {
-        throw new Error(
-          `Fetched institution count ${aggregatorInstitutions.length} is below the expected minimum of ${minimumInstitutionCount} for ${aggregatorName}. Skipping updates.`,
-        );
-      }
+      await syncInstitutions();
 
       const aggregatorId = (await getAggregatorByName(aggregatorName))
         ?.id as number;
 
-      const aggregatorInstitutionIds = aggregatorInstitutions.map(
-        ({ aggregatorInstitutionId }) => aggregatorInstitutionId,
-      );
+      await markMissingAggregatorInstitutionsInactive(aggregatorId);
 
-      await markMissingAggregatorInstitutionsInactive(
-        aggregatorId,
-        aggregatorInstitutionIds,
-      );
-
-      for (const aggregatorInstitution of aggregatorInstitutions) {
-        await updateExistingAggregatorIntegration(
-          aggregatorId,
-          aggregatorInstitution,
-        );
-      }
+      await updateExistingAggregatorIntegrations(aggregatorId);
 
       console.log(
         `Finished syncing aggregator institutions for ${aggregatorName}.`,
       );
     } catch (error) {
       console.error(
-        `Error fetching institutions for aggregator ${aggregatorName}:`,
+        `Error syncing institutions for aggregator ${aggregatorName}:`,
         error,
       );
 
@@ -151,7 +142,7 @@ export const syncInstitutions = async (
         message: "Institution sync completed with errors.",
         errors: aggregatorErrors.map(
           (aggregatorName) =>
-            `Failed to fetch institutions from ${aggregatorName}`,
+            `Failed to sync institutions for ${aggregatorName}`,
         ),
       });
     } else {

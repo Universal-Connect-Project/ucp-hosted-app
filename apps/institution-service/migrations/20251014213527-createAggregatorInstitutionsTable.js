@@ -1,0 +1,77 @@
+"use strict";
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("aggregatorInstitutions", {
+      aggregatorId: {
+        allowNull: false,
+        primaryKey: true,
+        references: {
+          model: "aggregators",
+          key: "id",
+        },
+        type: Sequelize.INTEGER,
+      },
+      deletedAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.STRING,
+      },
+      name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      supportsAccountNumber: {
+        defaultValue: false,
+        type: Sequelize.BOOLEAN,
+      },
+      supportsAccountOwner: {
+        defaultValue: false,
+        type: Sequelize.BOOLEAN,
+      },
+      supportsBalance: {
+        defaultValue: false,
+        type: Sequelize.BOOLEAN,
+      },
+      supportsOAuth: {
+        defaultValue: false,
+        type: Sequelize.BOOLEAN,
+      },
+      supportsRewards: {
+        defaultValue: false,
+        type: Sequelize.BOOLEAN,
+      },
+      supportsTransactions: {
+        defaultValue: false,
+        type: Sequelize.BOOLEAN,
+      },
+      supportsTransactionHistory: {
+        defaultValue: false,
+        type: Sequelize.BOOLEAN,
+      },
+      url: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        defaultValue: Sequelize.NOW,
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        defaultValue: Sequelize.NOW,
+      },
+    });
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("aggregatorInstitutions");
+  },
+};

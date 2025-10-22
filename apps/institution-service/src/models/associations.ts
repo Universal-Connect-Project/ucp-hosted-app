@@ -1,4 +1,5 @@
 import { Aggregator } from "./aggregator";
+import { AggregatorInstitution } from "./aggregatorInstitution";
 import { AggregatorIntegration } from "./aggregatorIntegration";
 import { Institution } from "./institution";
 import { WidgetPreferences } from "./widgetPreferences";
@@ -35,6 +36,11 @@ export const defineAssociations = () => {
   });
 
   AggregatorIntegration.belongsTo(Aggregator, {
+    foreignKey: "aggregatorId",
+    as: "aggregator",
+  });
+
+  AggregatorInstitution.belongsTo(Aggregator, {
     foreignKey: "aggregatorId",
     as: "aggregator",
   });

@@ -11,6 +11,7 @@ import {
 } from "./finicity";
 import { syncInstitutions } from "./syncInstitutions";
 import { Request, Response } from "express";
+import { AggregatorInstitution } from "../models/aggregatorInstitution";
 
 describe("syncInstitutions", () => {
   describe("finicity institutions", () => {
@@ -37,6 +38,8 @@ describe("syncInstitutions", () => {
 
       finicityAggregatorId = (await getAggregatorByName("finicity"))
         ?.id as number;
+
+      await AggregatorInstitution.destroy({ force: true, truncate: true });
 
       missingAggregatorIntegration = await AggregatorIntegration.create({
         institution_id: testInstitutionWithMissingAggregatorInstitution.id,
@@ -65,17 +68,17 @@ describe("syncInstitutions", () => {
       existingAggregatorIntegration = await AggregatorIntegration.create({
         institution_id: testInstitutionWithExistingAggregatorInstitution.id,
         aggregatorId: finicityAggregatorId,
-        aggregator_institution_id:
-          firstFinicityAggregatorInstitution.aggregatorInstitutionId,
+        aggregator_institution_id: firstFinicityAggregatorInstitution.id,
         isActive: false,
         supports_aggregation:
-          !firstFinicityAggregatorInstitution.supportsAggregation,
-        supports_history: !firstFinicityAggregatorInstitution.supportsHistory,
+          !firstFinicityAggregatorInstitution.supportsTransactions,
+        supports_history:
+          !firstFinicityAggregatorInstitution.supportsTransactionHistory,
         supports_identification:
-          !firstFinicityAggregatorInstitution.supportsIdentification,
+          !firstFinicityAggregatorInstitution.supportsAccountOwner,
         supports_oauth: !firstFinicityAggregatorInstitution.supportsOAuth,
         supports_verification:
-          !firstFinicityAggregatorInstitution.supportsVerification,
+          !firstFinicityAggregatorInstitution.supportsAccountNumber,
         supportsRewards: true,
         supportsBalance: !firstFinicityAggregatorInstitution.supportsBalance,
       });
@@ -86,16 +89,37 @@ describe("syncInstitutions", () => {
       await testInstitutionWithExistingAggregatorInstitution.destroy();
       await missingAggregatorIntegration.destroy();
       await testInstitutionWithMissingAggregatorInstitution.destroy();
+
+      await AggregatorInstitution.destroy({ force: true, truncate: true });
     });
 
     it("runs without a request or response", async () => {
+      server.use(
+        http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
+          return HttpResponse.json({
+            ...finicityInstitutionsPage1,
+            found: 5,
+            institutions: [
+              ...finicityInstitutionsPage1.institutions,
+              ...new Array(20).fill(0).map((_, index) => ({
+                ...finicityInstitutionsPage1.institutions[0],
+                id: 1999999 + index,
+              })),
+            ],
+          });
+        }),
+      );
+
+      expect(missingAggregatorIntegration.isActive).toBe(true);
+      expect(existingAggregatorIntegration.isActive).toBe(false);
+
       await syncInstitutions();
 
       await missingAggregatorIntegration.reload();
       await existingAggregatorIntegration.reload();
 
-      expect(missingAggregatorIntegration.isActive).toBe(true);
-      expect(existingAggregatorIntegration.isActive).toBe(false);
+      expect(missingAggregatorIntegration.isActive).toBe(false);
+      expect(existingAggregatorIntegration.isActive).toBe(true);
     });
 
     it("fails if any aggregator fails", async () => {
@@ -119,11 +143,11 @@ describe("syncInstitutions", () => {
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send).toHaveBeenCalledWith({
         message: "Institution sync completed with errors.",
-        errors: ["Failed to fetch institutions from finicity"],
+        errors: ["Failed to sync institutions for finicity"],
       });
     });
 
-    it("doesn't update finicity aggregator integrations unless there are at least 5000 finicity aggregator institutions, and responds with a 202 by default", async () => {
+    it("responds with a 202 by default", async () => {
       const req = {
         body: {},
       } as Request;
@@ -139,15 +163,9 @@ describe("syncInstitutions", () => {
       expect(res.send).toHaveBeenCalledWith({
         message: "Institution sync started.",
       });
-
-      await missingAggregatorIntegration.reload();
-      await existingAggregatorIntegration.reload();
-
-      expect(missingAggregatorIntegration.isActive).toBe(true);
-      expect(existingAggregatorIntegration.isActive).toBe(false);
     });
 
-    it("fetches institutions from finicity, marks missing ones inactive, and updates existing ones and marks them as active if there are at least 5000 aggregator institutions, responds with a 200 if shouldWaitForCompletion", async () => {
+    it("fetches institutions from finicity, marks missing ones inactive, and updates existing ones and marks them as active, responds with a 200 if shouldWaitForCompletion", async () => {
       server.use(
         http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
           return HttpResponse.json({
@@ -155,7 +173,7 @@ describe("syncInstitutions", () => {
             found: 5,
             institutions: [
               ...finicityInstitutionsPage1.institutions,
-              ...new Array(5000).fill(0).map((_, index) => ({
+              ...new Array(20).fill(0).map((_, index) => ({
                 ...finicityInstitutionsPage1.institutions[0],
                 id: 1999999 + index,
               })),
@@ -193,19 +211,19 @@ describe("syncInstitutions", () => {
       expect(afterCount).toEqual(beforeCount);
 
       expect(existingAggregatorIntegration.supports_aggregation).toBe(
-        firstFinicityAggregatorInstitution.supportsAggregation,
+        firstFinicityAggregatorInstitution.supportsTransactions,
       );
       expect(existingAggregatorIntegration.supports_history).toBe(
-        firstFinicityAggregatorInstitution.supportsHistory,
+        firstFinicityAggregatorInstitution.supportsTransactionHistory,
       );
       expect(existingAggregatorIntegration.supports_identification).toBe(
-        firstFinicityAggregatorInstitution.supportsIdentification,
+        firstFinicityAggregatorInstitution.supportsAccountOwner,
       );
       expect(existingAggregatorIntegration.supports_oauth).toBe(
         firstFinicityAggregatorInstitution.supportsOAuth,
       );
       expect(existingAggregatorIntegration.supports_verification).toBe(
-        firstFinicityAggregatorInstitution.supportsVerification,
+        firstFinicityAggregatorInstitution.supportsAccountNumber,
       );
       expect(existingAggregatorIntegration.supportsRewards).toBe(false);
       expect(existingAggregatorIntegration.supportsBalance).toBe(

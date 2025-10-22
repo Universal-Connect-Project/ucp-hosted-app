@@ -1,9 +1,8 @@
 import * as config from "../shared/environment";
 import {
-  mapFinicityInstitution,
   FETCH_FINICITY_ACCESS_TOKEN_URL,
   FETCH_FINICITY_INSTITUTIONS_URL,
-  fetchFinicityInstitutions,
+  syncFinicityInstitutions,
 } from "./finicity";
 import { server } from "../test/testServer";
 import { http, HttpResponse } from "msw";
@@ -12,31 +11,120 @@ import {
   finicityInstitutionsPage1,
   finicityInstitutionsPage2,
 } from "../test/testData/finicityInstitutions";
-import { Aggregator } from "../models/aggregator";
+import { AggregatorInstitution } from "../models/aggregatorInstitution";
+import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 
 describe("finicity institutions", () => {
-  describe("fetchFinicityInstitutions", () => {
+  describe("syncFinicityInstitutions", () => {
     describe("with valid configuration", () => {
-      beforeEach(() => {
+      let finicityAggregatorId: number;
+
+      beforeEach(async () => {
         jest.spyOn(config, "getConfig").mockReturnValue(fakeEnvironment);
+
+        await AggregatorInstitution.destroy({ force: true, truncate: true });
+
+        finicityAggregatorId = (await getAggregatorByName("finicity"))?.id;
       });
 
-      it("fetches institutions from Finicity, maps them, and stitches the pages together", async () => {
-        const finicityAggregatorId = (
-          await Aggregator.findOne({
-            where: { name: "finicity" },
-            raw: true,
-          })
-        )?.id as number;
+      afterEach(async () => {
+        await AggregatorInstitution.destroy({ force: true, truncate: true });
+      });
 
+      it("removes existing aggregatorInstitutions if they aren't in the updated finicity list", async () => {
+        const existingAggregatorInstitution =
+          await AggregatorInstitution.create({
+            aggregatorId: finicityAggregatorId,
+            id: "999999",
+            name: "Old Institution",
+            supportsAccountNumber: false,
+            supportsAccountOwner: false,
+            supportsBalance: false,
+            supportsOAuth: false,
+            supportsRewards: false,
+            supportsTransactions: false,
+            supportsTransactionHistory: false,
+            url: "https://www.oldinstitution.com",
+          });
+
+        server.use(
+          http.get(FETCH_FINICITY_INSTITUTIONS_URL, ({ request }) => {
+            const url = new URL(request.url);
+            const start = url.searchParams.get("start");
+
+            if (start === "2") {
+              return HttpResponse.json({
+                ...finicityInstitutionsPage2,
+                institutions: new Array(21).fill(null).map((_, index) => ({
+                  accountOwner: true,
+                  ach: false,
+                  aha: true,
+                  availBalance: false,
+                  id: `finicityTesting${index}`,
+                  name: "Bank of Testing",
+                  oauthEnabled: true,
+                  transAgg: false,
+                  urlHomeApp: "https://www.bankoftesting.com",
+                })),
+              });
+            }
+
+            return HttpResponse.json(finicityInstitutionsPage1);
+          }),
+        );
+
+        expect(
+          await AggregatorInstitution.findOne({
+            where: { id: existingAggregatorInstitution.id },
+          }),
+        ).not.toBeNull();
+
+        await syncFinicityInstitutions();
+
+        expect(
+          await AggregatorInstitution.findOne({
+            where: { id: existingAggregatorInstitution.id },
+          }),
+        ).toBeNull();
+      }, 20000);
+
+      it("fetches all pages of institutions from Finicity, stores them in the database, when run again it updates the existing records", async () => {
         expect(finicityAggregatorId).toBeDefined();
 
-        expect(await fetchFinicityInstitutions()).toEqual(
-          [
-            ...finicityInstitutionsPage1.institutions,
-            ...finicityInstitutionsPage2.institutions,
-          ].map(mapFinicityInstitution),
-        );
+        const expectedInstitutions = [
+          ...finicityInstitutionsPage1.institutions,
+          ...finicityInstitutionsPage2.institutions,
+        ];
+
+        await syncFinicityInstitutions();
+
+        for (const institution of expectedInstitutions) {
+          const storedInstitution = await AggregatorInstitution.findOne({
+            where: {
+              aggregatorId: finicityAggregatorId,
+              id: institution.id.toString(),
+            },
+            raw: true,
+          });
+
+          expect(storedInstitution!.name).toBe(institution.name);
+          expect(storedInstitution!.url).toBe(institution.urlHomeApp);
+          expect(storedInstitution!.supportsAccountOwner).toBe(
+            institution.accountOwner,
+          );
+          expect(storedInstitution!.supportsAccountNumber).toBe(
+            institution.ach,
+          );
+          expect(storedInstitution!.supportsBalance).toBe(
+            institution.availBalance,
+          );
+          expect(storedInstitution!.supportsOAuth).toBe(
+            institution.oauthEnabled,
+          );
+          expect(storedInstitution!.supportsTransactions).toBe(
+            institution.transAgg,
+          );
+        }
       });
 
       it("throws an error if fetching an access token fails", async () => {
@@ -47,7 +135,7 @@ describe("finicity institutions", () => {
           ),
         );
 
-        await expect(() => fetchFinicityInstitutions()).rejects.toThrow(
+        await expect(() => syncFinicityInstitutions()).rejects.toThrow(
           "Failed to authenticate with Finicity: Bad Request",
         );
       });
@@ -60,7 +148,7 @@ describe("finicity institutions", () => {
           ),
         );
 
-        await expect(() => fetchFinicityInstitutions()).rejects.toThrow(
+        await expect(() => syncFinicityInstitutions()).rejects.toThrow(
           "Failed to fetch institutions from Finicity: Bad Request",
         );
       });
@@ -72,7 +160,7 @@ describe("finicity institutions", () => {
         FINICITY_PARTNER_ID: "fakeId",
       } as unknown as config.Config);
 
-      await expect(() => fetchFinicityInstitutions()).rejects.toThrow(
+      await expect(() => syncFinicityInstitutions()).rejects.toThrow(
         "Missing Finicity environment variables",
       );
     });
