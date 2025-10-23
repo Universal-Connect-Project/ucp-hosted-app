@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { testInstitution } from "../test/testData/institutions";
 import { AggregatorIntegration } from "./aggregatorIntegration";
 import { Institution } from "./institution";
+import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 
 describe("Institution Model", () => {
   it("should create an institution", async () => {
@@ -42,12 +43,17 @@ describe("Institution Model", () => {
 
     expect(createdInstitution).toHaveProperty("id");
 
+    const mxAggregatorId = (await getAggregatorByName("mx")).id;
+    const sophtronAggregatorId = (await getAggregatorByName("sophtron")).id;
+
     const mxAggregatorAttributes = {
+      aggregatorId: mxAggregatorId,
       supports_oauth: true,
       institution_id: createdInstitution.id,
       aggregator_institution_id: "mx_oauth_bank",
     };
     const sophtronAggregatorAttributes = {
+      aggregatorId: sophtronAggregatorId,
       supports_oauth: true,
       institution_id: createdInstitution.id,
       aggregator_institution_id: "sophtron-1234",

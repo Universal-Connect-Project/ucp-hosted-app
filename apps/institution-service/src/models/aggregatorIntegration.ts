@@ -57,7 +57,12 @@ AggregatorIntegration.init(
       type: DataTypes.STRING,
     },
     aggregatorId: {
+      allowNull: false,
       type: DataTypes.INTEGER,
+    },
+    institution_id: {
+      allowNull: false,
+      type: DataTypes.UUID,
     },
     supports_oauth: { type: DataTypes.BOOLEAN, defaultValue: false },
     supports_identification: { type: DataTypes.BOOLEAN, defaultValue: false },
