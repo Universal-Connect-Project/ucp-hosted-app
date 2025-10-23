@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Request, Response } from "express";
-import { Model } from "sequelize";
+import { CreationAttributes, Model } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
-import { createTestAggregatorIntegrationBody } from "../test/testData/aggregatorIntegrations";
 import {
   defaultTestAggregator,
   mxAggregatorId,
@@ -16,14 +15,52 @@ import {
   deleteAggregatorIntegration,
   updateAggregatorIntegration,
 } from "./aggregatorIntegrationController";
+import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
+import { Institution } from "../models/institution";
 
 describe("updateAggregatorIntegration", () => {
   let aggregatorIntegration: AggregatorIntegration;
+  let createTestAggregatorIntegrationBody: CreationAttributes<AggregatorIntegration>;
+  let mxAggregatorId: number;
+
+  let testInstitution: Institution;
 
   beforeAll(async () => {
+    mxAggregatorId = (await getAggregatorByName("mx")).id;
+  });
+
+  beforeEach(async () => {
+    testInstitution = await Institution.create({
+      name: "Test Institution",
+      url: "https://www.testinstitution.com",
+      is_test_bank: true,
+      logo: "test",
+      keywords: [],
+    });
+
+    createTestAggregatorIntegrationBody = {
+      aggregatorId: mxAggregatorId,
+      institution_id: testInstitution.id,
+      isActive: true,
+      aggregator_institution_id: "mx",
+      supports_oauth: true,
+      supports_identification: true,
+      supports_verification: true,
+      supports_aggregation: true,
+      supports_history: true,
+      supportsRewards: true,
+      supportsBalance: true,
+    };
+
     aggregatorIntegration = await AggregatorIntegration.create(
       createTestAggregatorIntegrationBody,
     );
+  });
+
+  afterEach(async () => {
+    await testInstitution.destroy({ force: true });
+
+    await aggregatorIntegration.destroy();
   });
 
   it("responds with 200 when aggregatorIntegration params are valid", async () => {
