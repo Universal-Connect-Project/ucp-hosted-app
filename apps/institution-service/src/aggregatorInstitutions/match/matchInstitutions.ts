@@ -3,7 +3,7 @@ import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { AggregatorIntegration } from "../../models/aggregatorIntegration";
 import { Institution } from "../../models/institution";
 import { findPotentialMatches } from "./utils";
-import { MatchType } from "./const";
+import { Match } from "./const";
 
 export const matchInstitutions = async (aggregatorId: number) => {
   const institutionIdsThatAlreadyHaveAnActiveAggregatorIntegrationForThisAggregator =
@@ -47,13 +47,32 @@ export const matchInstitutions = async (aggregatorId: number) => {
       raw: true,
     });
 
-  const handleAutoMatch = async ({
+  const startingNeedsMatchingCount =
+    aggregatorInstitutionsThatNeedMatching.length;
+
+  let matchCount = 0;
+
+  const handleAutoMatch = ({
     aggregatorInstitution,
     match,
   }: {
     aggregatorInstitution: AggregatorInstitution;
-    match: MatchType;
-  }) => {};
+    match: Match;
+  }) => {
+    matchCount++;
+
+    console.log(
+      "🤖 Auto-matching",
+      aggregatorInstitution.name,
+      "to",
+      match.institution.name,
+    );
+
+    ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator =
+      ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator.filter(
+        (institution) => institution.id !== match.institution.id,
+      );
+  };
 
   for (const aggregatorInstitution of aggregatorInstitutionsThatNeedMatching) {
     const matches = findPotentialMatches(
@@ -61,8 +80,25 @@ export const matchInstitutions = async (aggregatorId: number) => {
       ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator,
     );
 
-    console.log(matches);
+    const [firstMatch] = matches;
+
+    if (matches.length) {
+      if (matches.length === 1) {
+        if (firstMatch.top2AverageScore >= 0.8) {
+          handleAutoMatch({ aggregatorInstitution, match: firstMatch });
+        }
+      } else if (matches.length > 1) {
+        if (
+          firstMatch.top2AverageScore >= 0.9 ||
+          firstMatch.averageTotalScore >= 0.85
+        ) {
+          handleAutoMatch({ aggregatorInstitution, match: firstMatch });
+        }
+      }
+    }
   }
 
-  console.log("test");
+  console.log(
+    `Auto matched ${matchCount} institutions out of ${startingNeedsMatchingCount} needing matched. ${startingNeedsMatchingCount - matchCount} remaining.`,
+  );
 };
