@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.addConstraint("aggregatorIntegrations", {
       fields: ["institution_id", "aggregatorId"],
       type: "unique",
@@ -10,10 +10,10 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.removeConstraint(
       "aggregatorIntegrations",
-      "unique_institution_aggregator_constraint"
+      "unique_institution_aggregator_constraint",
     );
-  }
+  },
 };

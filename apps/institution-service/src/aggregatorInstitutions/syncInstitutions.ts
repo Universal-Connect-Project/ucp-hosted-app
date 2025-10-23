@@ -4,6 +4,7 @@ import { syncFinicityInstitutions } from "./finicity";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { Request, Response } from "express";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
+import { matchInstitutions } from "./match/matchInstitutions";
 
 const markMissingAggregatorInstitutionsInactive = async (
   aggregatorId: number,
@@ -122,6 +123,10 @@ export const syncInstitutions = async (
       console.log(
         `Finished syncing aggregator institutions for ${aggregatorName}.`,
       );
+
+      await matchInstitutions(aggregatorId);
+
+      console.log("Finished auto matching institutitions");
     } catch (error) {
       console.error(
         `Error syncing institutions for aggregator ${aggregatorName}:`,
