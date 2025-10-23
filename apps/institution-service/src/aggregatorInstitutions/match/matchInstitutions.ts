@@ -52,26 +52,46 @@ export const matchInstitutions = async (aggregatorId: number) => {
 
   let matchCount = 0;
 
-  const handleAutoMatch = ({
+  const handleAutoMatch = async ({
     aggregatorInstitution,
     match,
   }: {
     aggregatorInstitution: AggregatorInstitution;
     match: Match;
   }) => {
-    matchCount++;
+    const { institution } = match;
 
-    console.log(
-      "🤖 Auto-matching",
-      aggregatorInstitution.name,
-      "to",
-      match.institution.name,
-    );
+    try {
+      await AggregatorIntegration.upsert({
+        aggregatorId,
+        aggregator_institution_id: aggregatorInstitution.id,
+        institution_id: institution.id,
+        isActive: true,
+        supports_aggregation: aggregatorInstitution.supportsTransactions,
+        supportsBalance: aggregatorInstitution.supportsBalance,
+        supports_history: aggregatorInstitution.supportsTransactionHistory,
+        supports_identification: aggregatorInstitution.supportsAccountOwner,
+        supports_oauth: aggregatorInstitution.supportsOAuth,
+        supportsRewards: aggregatorInstitution.supportsRewards,
+        supports_verification: aggregatorInstitution.supportsAccountNumber,
+      });
 
-    ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator =
-      ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator.filter(
-        (institution) => institution.id !== match.institution.id,
+      matchCount++;
+
+      console.log(
+        `🤖 Auto-matched ${aggregatorInstitution.name} to ${institution.name}`,
       );
+
+      ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator =
+        ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator.filter(
+          (inst) => inst.id !== institution.id,
+        );
+    } catch (error) {
+      console.error(
+        `Failed to save auto-match ${aggregatorInstitution.name} to ${institution.name}:`,
+        error,
+      );
+    }
   };
 
   for (const aggregatorInstitution of aggregatorInstitutionsThatNeedMatching) {
@@ -85,14 +105,14 @@ export const matchInstitutions = async (aggregatorId: number) => {
     if (matches.length) {
       if (matches.length === 1) {
         if (firstMatch.top2AverageScore >= 0.8) {
-          handleAutoMatch({ aggregatorInstitution, match: firstMatch });
+          await handleAutoMatch({ aggregatorInstitution, match: firstMatch });
         }
       } else if (matches.length > 1) {
         if (
           firstMatch.top2AverageScore >= 0.9 ||
           firstMatch.averageTotalScore >= 0.85
         ) {
-          handleAutoMatch({ aggregatorInstitution, match: firstMatch });
+          await handleAutoMatch({ aggregatorInstitution, match: firstMatch });
         }
       }
     }
