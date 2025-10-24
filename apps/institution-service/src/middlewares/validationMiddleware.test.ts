@@ -3,7 +3,6 @@ import { NextFunction, Request, Response } from "express";
 import { Aggregator } from "../models/aggregator";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { Institution } from "../models/institution";
-import { mxAggregatorId } from "../test/testData/aggregators";
 import {
   secondSeedInstitutionId,
   seedInstitutionId,
@@ -16,6 +15,7 @@ import {
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "./validationMiddleware";
+import { createTestInstitution } from "../test/createTestInstitution";
 
 const createValidateUserCanActOnInstitutionTests = ({
   adminPermission,
@@ -128,8 +128,9 @@ const createValidateUserCanActOnInstitutionTests = ({
     it("handles used by other aggregators", async () => {
       const next = jest.fn();
 
-      const institutionIdWithOtherAggregators =
-        "c14e9877-c1e3-4d3a-b449-585086d14845";
+      const { cleanupInstitution, institution } = await createTestInstitution({
+        aggregatorIntegrations: { mx: true, sophtron: true },
+      });
 
       const req = {
         headers: {
@@ -138,7 +139,7 @@ const createValidateUserCanActOnInstitutionTests = ({
           }),
         },
         params: {
-          id: institutionIdWithOtherAggregators,
+          id: institution.id,
         },
       } as unknown as Request;
       const res = {
@@ -154,6 +155,8 @@ const createValidateUserCanActOnInstitutionTests = ({
         error:
           "Aggregator cannot edit an institution used by other aggregators",
       });
+
+      await cleanupInstitution();
     });
   });
 
@@ -242,19 +245,18 @@ describe("validationMiddleware", () => {
     });
 
     it("returns 403 when a user is trying to update an aggregator other than their own", async () => {
-      const testAggregatorIntegrations = await AggregatorIntegration.findAll({
-        where: { institution_id: seedInstitutionId },
-        raw: true,
-      });
-      const sophtronAggregatorIntegration = testAggregatorIntegrations.find(
-        (aggInt) => aggInt.aggregator_institution_id == "sophtron_bank",
-      );
+      const { aggregatorIntegrations, cleanupInstitution } =
+        await createTestInstitution({
+          aggregatorIntegrations: { sophtron: true },
+        });
+
+      const sophtronAggregatorIntegration = aggregatorIntegrations.sophtron;
 
       const next = jest.fn();
 
       const req = {
         params: {
-          id: sophtronAggregatorIntegration?.id,
+          id: sophtronAggregatorIntegration.id,
         },
         headers: {
           authorization: createTestAuthorization({
@@ -277,19 +279,17 @@ describe("validationMiddleware", () => {
         error:
           "An Aggregator cannot edit or delete an aggregatorIntegration belonging to another aggregator",
       });
+
+      await cleanupInstitution();
     });
 
     it("passes when an aggregator attempts to update an aggregatorIntegration of their own", async () => {
-      const [mxAggregatorIntegration, _created] =
-        await AggregatorIntegration.findOrCreate({
-          where: {
-            institution_id: seedInstitutionId,
-            aggregatorId: mxAggregatorId,
-          },
-          defaults: {
-            aggregator_institution_id: "mx_bank",
-          },
+      const { aggregatorIntegrations, cleanupInstitution } =
+        await createTestInstitution({
+          aggregatorIntegrations: { mx: true },
         });
+
+      const mxAggregatorIntegration = aggregatorIntegrations.mx;
 
       const next = jest.fn();
 
@@ -313,6 +313,8 @@ describe("validationMiddleware", () => {
       await validateUserCanEditAggregatorIntegration(req, res, next);
 
       expect(next).toHaveBeenCalled();
+
+      await cleanupInstitution();
     });
   });
 
@@ -387,14 +389,13 @@ describe("validationMiddleware", () => {
       });
     });
 
-    it("returns 403 when a user is trying to update an aggregator other than their own", async () => {
-      const testAggregatorIntegrations = await AggregatorIntegration.findAll({
-        where: { institution_id: seedInstitutionId },
-        raw: true,
-      });
-      const sophtronAggregatorIntegration = testAggregatorIntegrations.find(
-        (aggInt) => aggInt.aggregator_institution_id == "sophtron_bank",
-      );
+    it("returns 403 when a user is trying to delete an aggregator other than their own", async () => {
+      const { aggregatorIntegrations, cleanupInstitution } =
+        await createTestInstitution({
+          aggregatorIntegrations: { sophtron: true },
+        });
+
+      const sophtronAggregatorIntegration = aggregatorIntegrations.sophtron;
 
       const next = jest.fn();
 
@@ -423,16 +424,16 @@ describe("validationMiddleware", () => {
         error:
           "An Aggregator cannot edit or delete an aggregatorIntegration belonging to another aggregator",
       });
+
+      await cleanupInstitution();
     });
 
     it("passes when an aggregator attempts to delete an aggregatorIntegration of their own", async () => {
-      const testAggregatorIntegrations = await AggregatorIntegration.findAll({
-        where: { institution_id: seedInstitutionId },
-        raw: true,
-      });
-      const mxAggregatorIntegration = testAggregatorIntegrations.find(
-        (aggInt) => aggInt.aggregator_institution_id == "mx_bank",
-      );
+      const { aggregatorIntegrations, cleanupInstitution } =
+        await createTestInstitution({
+          aggregatorIntegrations: { mx: true },
+        });
+      const mxAggregatorIntegration = aggregatorIntegrations.mx;
 
       const next = jest.fn();
 
@@ -456,6 +457,8 @@ describe("validationMiddleware", () => {
       await validateUserCanDeleteAggregatorIntegration(req, res, next);
 
       expect(next).toHaveBeenCalled();
+
+      await cleanupInstitution();
     });
   });
 
