@@ -2,14 +2,8 @@
 import { Request, Response } from "express";
 import { CreationAttributes, Model } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
-import {
-  defaultTestAggregator,
-  mxAggregatorId,
-} from "../test/testData/aggregators";
-import {
-  secondSeedInstitutionId,
-  seedInstitutionId,
-} from "../test/testData/institutions";
+import { mxAggregatorId } from "../test/testData/aggregators";
+import { seedInstitutionId } from "../test/testData/institutions";
 import {
   createAggregatorIntegration,
   deleteAggregatorIntegration,
@@ -17,6 +11,7 @@ import {
 } from "./aggregatorIntegrationController";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { Institution } from "../models/institution";
+import { createTestInstitution } from "../test/createTestInstitution";
 
 describe("updateAggregatorIntegration", () => {
   let aggregatorIntegration: AggregatorIntegration;
@@ -155,17 +150,14 @@ describe("updateAggregatorIntegration", () => {
 
 describe("createAggregatorIntegration", () => {
   it("creates an aggregatorIntegration with default values", async () => {
-    await AggregatorIntegration.destroy({
-      where: {
-        aggregatorId: mxAggregatorId,
-        institution_id: seedInstitutionId,
-      },
-    });
+    const { cleanupInstitution, institution } = await createTestInstitution({});
+
+    const mxAggregatorId = (await getAggregatorByName("mx")).id;
 
     const testBankId = "testBankId";
     const req = {
       body: {
-        institution_id: seedInstitutionId,
+        institution_id: institution.id,
         aggregatorId: mxAggregatorId,
         aggregator_institution_id: testBankId,
       },
@@ -183,19 +175,25 @@ describe("createAggregatorIntegration", () => {
     expect(res.json).toHaveBeenCalledWith({
       message: "AggregatorIntegration created successfully",
       aggregatorIntegration: expect.objectContaining({
-        ...defaultTestAggregator,
         aggregator_institution_id: testBankId,
+        aggregatorId: mxAggregatorId,
+        institution_id: institution.id,
+        isActive: true,
+        supports_oauth: false,
+        supports_identification: false,
+        supports_verification: false,
+        supports_aggregation: true,
+        supports_history: false,
+        supportsRewards: false,
+        supportsBalance: false,
       }),
     });
+
+    await cleanupInstitution();
   });
 
   it("creates an aggregatorIntegration with custom values", async () => {
-    await AggregatorIntegration.destroy({
-      where: {
-        aggregatorId: mxAggregatorId,
-        institution_id: secondSeedInstitutionId,
-      },
-    });
+    const { cleanupInstitution, institution } = await createTestInstitution({});
 
     const customValues = {
       isActive: false,
@@ -206,8 +204,8 @@ describe("createAggregatorIntegration", () => {
       supports_history: true,
       supportsRewards: true,
       supportsBalance: true,
-      institution_id: secondSeedInstitutionId,
-      aggregatorId: mxAggregatorId,
+      institution_id: institution.id,
+      aggregatorId: (await getAggregatorByName("mx")).id,
       aggregator_institution_id: "testBankId",
     };
     const req = {
@@ -229,6 +227,8 @@ describe("createAggregatorIntegration", () => {
         ...customValues,
       }),
     });
+
+    await cleanupInstitution();
   });
 
   it("returns 400 for invalid data", async () => {
@@ -258,21 +258,16 @@ describe("createAggregatorIntegration", () => {
   });
 
   it("returns 409 for trying to create an integration when one already exists on the Institution/Aggregator combo", async () => {
+    const { aggregatorIntegrations, cleanupInstitution, institution } =
+      await createTestInstitution({
+        aggregatorIntegrations: { mx: true },
+      });
+
     const createBody = {
-      institution_id: seedInstitutionId,
-      aggregatorId: mxAggregatorId,
+      institution_id: institution.id,
+      aggregatorId: aggregatorIntegrations.mx.aggregatorId,
       aggregator_institution_id: "mx_bank",
     };
-
-    await AggregatorIntegration.findOrCreate({
-      where: {
-        institution_id: seedInstitutionId,
-        aggregatorId: mxAggregatorId,
-      },
-      defaults: {
-        aggregator_institution_id: "mx_bank",
-      },
-    });
 
     const req = {
       body: createBody,
@@ -293,24 +288,22 @@ describe("createAggregatorIntegration", () => {
           "An AggregatorIntegration for that Institution/Aggregator already exists.",
       }),
     );
+
+    await cleanupInstitution();
   });
 });
 
 describe("deleteAggregatorIntegration", () => {
   it("returns 204 when an aggregatorIntegration is deleted", async () => {
-    await AggregatorIntegration.destroy({
-      where: {
-        institution_id: defaultTestAggregator.institution_id,
-        aggregatorId: defaultTestAggregator.aggregatorId,
-      },
-    });
+    const { cleanupInstitution, aggregatorIntegrations } =
+      await createTestInstitution({
+        aggregatorIntegrations: { mx: true },
+      });
 
-    const newAggregatorIntegration = await AggregatorIntegration.create(
-      defaultTestAggregator,
-    );
+    const createdAggregatorIntegration = aggregatorIntegrations.mx;
 
     const req = {
-      params: { id: newAggregatorIntegration.id },
+      params: { id: createdAggregatorIntegration.id },
     } as unknown as Request;
 
     const res = {
@@ -322,6 +315,8 @@ describe("deleteAggregatorIntegration", () => {
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(204);
+
+    await cleanupInstitution();
   });
 
   it("returns 404 when an aggregatorIntegration is not found", async () => {
