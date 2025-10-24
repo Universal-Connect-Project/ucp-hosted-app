@@ -130,10 +130,10 @@ export const calculateUrlScore = (
     return { name: scoreName, score: 0.95, type: MatchType.ExactNormalized };
   }
 
-  const plaidDomain = extractDomain(normalizedAggregatorUrl);
+  const aggregatorDomain = extractDomain(normalizedAggregatorUrl);
   const ucpDomain = extractDomain(normalizedUcpUrl);
 
-  if (plaidDomain === ucpDomain) {
+  if (aggregatorDomain === ucpDomain) {
     return { name: scoreName, score: 0.8, type: MatchType.ExactDomain };
   }
 
@@ -142,7 +142,8 @@ export const calculateUrlScore = (
     normalizedUcpUrl,
   );
 
-  const domainSimilarity = calculateSimilarity(plaidDomain, ucpDomain) * 0.9;
+  const domainSimilarity =
+    calculateSimilarity(aggregatorDomain, ucpDomain) * 0.9;
 
   return similarity >= domainSimilarity
     ? { name: scoreName, score: similarity, type: MatchType.Similarity }
