@@ -3,30 +3,37 @@
 import { Request, Response } from "express";
 import { getPerformanceAuthInstitutions } from "./getPerformanceAuthInstitutions";
 import { InstitutionDetail } from "../institutions/consts";
-import { Institution } from "../models/institution";
+import { createTestInstitution } from "../test/createTestInstitution";
 
 const uniqueKeywordString = "unique";
 const testInstitutionName = "Delete this";
 
 describe("getPerformanceAuthInstitutions", () => {
-  let idToDelete: string;
+  let institutionWithUniqueKeywordCleanup: () => Promise<void>;
+  let secondInstitutionCleanup: () => Promise<void>;
 
   beforeAll(async () => {
-    const institution = await Institution.create({
-      name: testInstitutionName,
-      keywords: [uniqueKeywordString],
-      logo: "https://example.com/logo.png",
-      url: "https://unique.com",
-      is_test_bank: true,
-      routing_numbers: ["123456789"],
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    const first = await createTestInstitution({
+      institution: {
+        name: testInstitutionName,
+        keywords: [uniqueKeywordString],
+      },
     });
-    idToDelete = institution.id as string;
+
+    institutionWithUniqueKeywordCleanup = first.cleanupInstitution;
+
+    const second = await createTestInstitution({
+      institution: {
+        name: "Another Institution",
+      },
+    });
+
+    secondInstitutionCleanup = second.cleanupInstitution;
   });
 
   afterAll(async () => {
-    await Institution.destroy({ where: { id: idToDelete } });
+    await institutionWithUniqueKeywordCleanup();
+    await secondInstitutionCleanup();
   });
 
   it("should return institutions with pagination and sorting", async () => {

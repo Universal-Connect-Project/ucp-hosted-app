@@ -1,18 +1,22 @@
 /* eslint-disable @typescript-eslint/unbound-method, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import { Request, Response } from "express";
-import { seedInstitutionId } from "../test/testData/institutions";
 import { createTestAuthorization } from "../test/utils";
 import { getInstitution } from "./getInstitution";
+import { createTestInstitution } from "../test/createTestInstitution";
 
 describe("getInstitution", () => {
   it("responds with an institution and has the expected attributes", async () => {
+    const { cleanupInstitution, institution } = await createTestInstitution({
+      aggregatorIntegrations: { sophtron: true },
+    });
+
     const req = {
       headers: {
         authorization: createTestAuthorization({
           permissions: [],
         }),
       },
-      params: { id: seedInstitutionId },
+      params: { id: institution.id },
     } as unknown as Request;
     const res = {
       json: jest.fn(),
@@ -25,13 +29,13 @@ describe("getInstitution", () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
         institution: expect.objectContaining({
-          id: seedInstitutionId,
-          name: "Wells Fargo",
-          keywords: ["wells", "fargo"],
-          logo: "https://content.moneydesktop.com/storage/MD_Assets/Ipad%20Logos/100x100/INS-6073ad01-da9e-f6ba-dfdf-5f1500d8e867_100x100.png",
-          url: "https://wellsfargo.com",
-          is_test_bank: false,
-          routing_numbers: ["111111111"],
+          id: institution.id,
+          name: institution.name,
+          keywords: institution.keywords,
+          logo: institution.logo,
+          url: institution.url,
+          is_test_bank: institution.is_test_bank,
+          routing_numbers: institution.routing_numbers,
           createdAt: expect.any(Date),
           updatedAt: expect.any(Date),
           aggregatorIntegrations: expect.arrayContaining([
@@ -74,6 +78,8 @@ describe("getInstitution", () => {
         canEdit: expect.any(Boolean),
       }),
     );
+
+    await cleanupInstitution();
   });
 
   it("responds with 404 when id param is invalid", async () => {
