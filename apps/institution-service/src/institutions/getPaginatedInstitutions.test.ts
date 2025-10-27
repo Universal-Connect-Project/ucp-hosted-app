@@ -2,10 +2,10 @@
 import { Request, Response } from "express";
 import { getPaginatedInstitutions } from "./getPaginatedInstitutions";
 import { DEFAULT_PAGINATION_PAGE_SIZE } from "../shared/const";
-import { seedInstitutionId } from "../test/testData/institutions";
 import { Institution } from "../models/institution";
 import { checkIsSorted } from "../test/checkIsSorted";
 import { PaginatedInstitutionsResponse } from "./consts";
+import { createTestInstitution } from "../test/createTestInstitution";
 
 const buildInstitutionRequest = ({
   search,
@@ -57,8 +57,74 @@ const buildInstitutionRequest = ({
   } as unknown as Request;
 };
 
+const createFilterTest = ({
+  aggregatorIntegrationPropKey,
+  filterKey,
+}: {
+  aggregatorIntegrationPropKey: string;
+  filterKey: string;
+}) => {
+  it(`filters by ${filterKey}`, async () => {
+    await Institution.truncate({ cascade: true });
+
+    const aggregatorIntegration = {
+      isActive: true,
+      supports_aggregation: false,
+      supports_history: false,
+      supports_oauth: false,
+      supports_identification: false,
+      supports_verification: false,
+      supportsRewards: false,
+      supportsBalance: false,
+    };
+
+    const institutionThatShouldShowUp = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: { ...aggregatorIntegration, [aggregatorIntegrationPropKey]: true },
+      },
+    });
+
+    const institutionThatShouldntShowUp = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: aggregatorIntegration,
+      },
+    });
+
+    const req = buildInstitutionRequest({
+      [filterKey]: true,
+    });
+    const res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    } as unknown as Response;
+
+    await getPaginatedInstitutions(req, res);
+
+    const jsonResponse = (res.json as jest.Mock).mock
+      .calls[0][0] as PaginatedInstitutionsResponse;
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(jsonResponse.totalRecords).toBe(1);
+
+    expect(jsonResponse.institutions[0].id).toBe(
+      institutionThatShouldShowUp.institution.id,
+    );
+
+    await institutionThatShouldShowUp.cleanupInstitution();
+    await institutionThatShouldntShowUp.cleanupInstitution();
+  });
+};
+
 describe("getPaginatedInstitutions", () => {
   it("returns a paginated list of institutions", async () => {
+    await Institution.truncate({ cascade: true });
+
+    const firstInstitution = await createTestInstitution({
+      aggregatorIntegrations: { mx: true },
+    });
+    const secondInstitution = await createTestInstitution({
+      aggregatorIntegrations: { sophtron: true },
+    });
+
     const PAGE_SIZE = 100;
     const CURRENT_PAGE = 1;
     const req = {
@@ -115,6 +181,9 @@ describe("getPaginatedInstitutions", () => {
         ]),
       }),
     );
+
+    await firstInstitution.cleanupInstitution();
+    await secondInstitution.cleanupInstitution();
   });
 
   it("gets default pagination values when none are passed", async () => {
@@ -140,80 +209,42 @@ describe("getPaginatedInstitutions", () => {
     );
   });
 
-  it("returns correct items from search term", async () => {
-    const req = {
-      query: {
-        search: "wells",
-      },
-    } as unknown as Request;
-    const res = {
-      json: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-    } as unknown as Response;
-
-    await getPaginatedInstitutions(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        totalRecords: 1,
-        totalPages: expect.any(Number),
-        institutions: expect.arrayContaining([
-          expect.objectContaining({
-            id: seedInstitutionId,
-            name: "Wells Fargo",
-          }),
-        ]),
-      }),
-    );
-  });
-
-  [
-    "isActive",
-    "supports_oauth",
-    "supports_identification",
-    "supports_verification",
-    "supports_aggregation",
-    "supports_history",
-    "supportsRewards",
-    "supportsBalance",
-  ].forEach((keyword) => {
-    const req = {
-      query: {
-        [keyword]: "true",
-      },
-    } as unknown as Request;
-    const res = {
-      json: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-    } as unknown as Response;
-
-    it(`returns expected response with filter: ${keyword} = true`, async () => {
-      await getPaginatedInstitutions(req, res);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          institutions: expect.arrayContaining([
-            expect.objectContaining({
-              aggregatorIntegrations: expect.arrayContaining([
-                expect.objectContaining({
-                  [keyword]: true,
-                }),
-              ]),
-            }),
-          ]),
-        }),
-      );
+  describe("individual key filter tests", () => {
+    [
+      ["supports_oauth", "supportsOauth"],
+      ["supports_identification", "supportsIdentification"],
+      ["supports_verification", "supportsVerification"],
+      ["supports_aggregation", "supportsAggregation"],
+      ["supports_history", "supportsHistory"],
+      ["supportsRewards", "supportsRewards"],
+      ["supportsBalance", "supportsBalance"],
+    ].forEach(([aggregatorIntegrationPropKey, filterKey]) => {
+      createFilterTest({ aggregatorIntegrationPropKey, filterKey });
     });
   });
 
-  it("hides institutions that don't have aggregator integrations", async () => {
-    const req = {
-      query: {
-        search: "No aggregator integrations",
-      },
-    } as unknown as Request;
+  it("filters by search term", async () => {
+    await Institution.truncate({ cascade: true });
 
+    const institutionThatShouldShowUp = await createTestInstitution({
+      institution: {
+        name: "Wells Fargo",
+        keywords: [],
+      },
+      aggregatorIntegrations: { mx: true },
+    });
+
+    const institutionThatShouldntShowUp = await createTestInstitution({
+      institution: {
+        name: "No Fargo",
+        keywords: [],
+      },
+      aggregatorIntegrations: { mx: true },
+    });
+
+    const req = buildInstitutionRequest({
+      search: "wells",
+    });
     const res = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis(),
@@ -222,45 +253,29 @@ describe("getPaginatedInstitutions", () => {
     await getPaginatedInstitutions(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
+    const jsonResponse = (res.json as jest.Mock).mock
+      .calls[0][0] as PaginatedInstitutionsResponse;
+    expect(jsonResponse.totalRecords).toBe(1);
 
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        totalRecords: 0,
-        institutions: [],
-      }),
+    expect(jsonResponse.institutions[0].id).toBe(
+      institutionThatShouldShowUp.institution.id,
     );
-  });
 
-  it("shows institutions that don't have aggregator integrations if includeInactiveIntegrations", async () => {
-    const req = {
-      query: {
-        includeInactiveIntegrations: "true",
-        search: "No aggregator integrations",
-      },
-    } as unknown as Request;
-
-    const res = {
-      json: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-    } as unknown as Response;
-
-    await getPaginatedInstitutions(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(200);
-
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        totalRecords: 1,
-        institutions: expect.arrayContaining([
-          expect.objectContaining({
-            aggregatorIntegrations: [],
-          }),
-        ]),
-      }),
-    );
+    await institutionThatShouldShowUp.cleanupInstitution();
+    await institutionThatShouldntShowUp.cleanupInstitution();
   });
 
   it("filters properly by aggregator", async () => {
+    await Institution.truncate({ cascade: true });
+
+    const institutionWithMxAggregator = await createTestInstitution({
+      aggregatorIntegrations: { mx: true },
+    });
+
+    const institutionWithSophtronAggregator = await createTestInstitution({
+      aggregatorIntegrations: { sophtron: true },
+    });
+
     const req = {
       query: {
         aggregatorName: ["mx"],
@@ -274,19 +289,16 @@ describe("getPaginatedInstitutions", () => {
     await getPaginatedInstitutions(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        institutions: expect.arrayContaining([
-          expect.objectContaining({
-            aggregatorIntegrations: expect.arrayContaining([
-              expect.objectContaining({
-                aggregator: expect.objectContaining({ name: "mx" }),
-              }),
-            ]),
-          }),
-        ]),
-      }),
+    const jsonResponse = (res.json as jest.Mock).mock
+      .calls[0][0] as PaginatedInstitutionsResponse;
+    expect(jsonResponse.totalRecords).toBe(1);
+
+    expect(jsonResponse.institutions[0].id).toBe(
+      institutionWithMxAggregator.institution.id,
     );
+
+    await institutionWithMxAggregator.cleanupInstitution();
+    await institutionWithSophtronAggregator.cleanupInstitution();
   });
 
   it("responds with 500 when there's an error", async () => {
@@ -306,6 +318,20 @@ describe("getPaginatedInstitutions", () => {
   });
 
   it("gets a list of institutions including mx or finicity integrations", async () => {
+    await Institution.truncate({ cascade: true });
+
+    const institutionWithMxAggregator = await createTestInstitution({
+      aggregatorIntegrations: { mx: true },
+    });
+
+    const institutionWithFinicityAggregator = await createTestInstitution({
+      aggregatorIntegrations: { finicity: true },
+    });
+
+    const institutionWithSophtronAggregator = await createTestInstitution({
+      aggregatorIntegrations: { sophtron: true },
+    });
+
     const req = buildInstitutionRequest({
       aggregatorName: ["mx", "finicity"],
     });
@@ -320,54 +346,40 @@ describe("getPaginatedInstitutions", () => {
       .calls[0][0] as PaginatedInstitutionsResponse;
     expect(res.status).toHaveBeenCalledWith(200);
     expect(jsonResponse.currentPage).toBe(1);
-    expect(jsonResponse.totalRecords).toBeGreaterThan(0);
-    jsonResponse.institutions.forEach((institution) => {
-      const hasRequiredAggregator = institution.aggregatorIntegrations.some(
-        (integration) =>
-          integration.aggregator.name === "mx" ||
-          integration.aggregator.name === "finicity",
-      );
+    expect(jsonResponse.totalRecords).toBe(2);
 
-      expect(hasRequiredAggregator).toBeTruthy();
-    });
-  });
+    const institutionIds = jsonResponse.institutions.map((i) => i.id);
+    expect(institutionIds).toContain(
+      institutionWithMxAggregator.institution.id,
+    );
+    expect(institutionIds).toContain(
+      institutionWithFinicityAggregator.institution.id,
+    );
 
-  it("gets a list of institutions that have an integration that supports filtered job types", async () => {
-    const req = buildInstitutionRequest({
-      supportsIdentification: true,
-      supportsVerification: true,
-      supportsAggregation: true,
-      supportsHistory: true,
-      supportsRewards: true,
-      supportsBalance: true,
-    });
-    const res = {
-      json: jest.fn(),
-      status: jest.fn().mockReturnThis(),
-    } as unknown as Response;
-
-    await getPaginatedInstitutions(req, res);
-
-    const jsonResponse = (res.json as jest.Mock).mock
-      .calls[0][0] as PaginatedInstitutionsResponse;
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(jsonResponse.totalRecords).toBeGreaterThan(0);
-    jsonResponse.institutions.forEach((institution) => {
-      const jobTypesSupported = institution.aggregatorIntegrations.some(
-        (aggInt) =>
-          aggInt.supports_aggregation &&
-          aggInt.supports_identification &&
-          aggInt.supports_verification &&
-          aggInt.supportsRewards &&
-          aggInt.supportsBalance &&
-          aggInt.supports_history,
-      );
-
-      expect(jobTypesSupported).toBeTruthy();
-    });
+    await institutionWithMxAggregator.cleanupInstitution();
+    await institutionWithFinicityAggregator.cleanupInstitution();
+    await institutionWithSophtronAggregator.cleanupInstitution();
   });
 
   it("gets a list of active institutions with an mx integration and supports_history", async () => {
+    const institutionThatShouldShowUp = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: {
+          isActive: true,
+          supports_history: true,
+        },
+      },
+    });
+
+    const institutionThatShouldntShowUp = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: {
+          isActive: true,
+          supports_history: false,
+        },
+      },
+    });
+
     const req = buildInstitutionRequest({
       aggregatorName: "mx",
       supportsHistory: true,
@@ -382,20 +394,36 @@ describe("getPaginatedInstitutions", () => {
     const jsonResponse = (res.json as jest.Mock).mock
       .calls[0][0] as PaginatedInstitutionsResponse;
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(jsonResponse.totalRecords).toBeGreaterThan(0);
-    jsonResponse.institutions.forEach((institution) => {
-      const hasExpectedAttributes = institution.aggregatorIntegrations.some(
-        (aggInt) =>
-          aggInt.aggregator.name === "mx" &&
-          aggInt.isActive &&
-          aggInt.supports_history,
-      );
+    expect(jsonResponse.totalRecords).toBe(1);
+    expect(jsonResponse.institutions[0].id).toBe(
+      institutionThatShouldShowUp.institution.id,
+    );
 
-      expect(hasExpectedAttributes).toBeTruthy();
-    });
+    await institutionThatShouldShowUp.cleanupInstitution();
+    await institutionThatShouldntShowUp.cleanupInstitution();
   });
 
   it("gets a list of active institutions with an mx integration and supports_history and has OAuth", async () => {
+    const institutionThatShouldShowUp = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: {
+          isActive: true,
+          supports_history: true,
+          supports_oauth: true,
+        },
+      },
+    });
+
+    const institutionThatShouldntShowUp = await createTestInstitution({
+      aggregatorIntegrations: {
+        sophtron: {
+          isActive: true,
+          supports_history: true,
+          supports_oauth: true,
+        },
+      },
+    });
+
     const req = buildInstitutionRequest({
       aggregatorName: "mx",
       supportsHistory: true,
@@ -410,26 +438,48 @@ describe("getPaginatedInstitutions", () => {
     const jsonResponse = (res.json as jest.Mock).mock
       .calls[0][0] as PaginatedInstitutionsResponse;
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+    expect(jsonResponse.totalRecords).toBe(1);
 
-    jsonResponse.institutions.forEach((institution) => {
-      const hasExpectedAttributes = institution.aggregatorIntegrations.some(
-        (aggInt) =>
-          aggInt.aggregator.name === "mx" &&
-          aggInt.isActive &&
-          aggInt.supports_history &&
-          aggInt.supports_oauth,
-      );
+    expect(jsonResponse.institutions[0].id).toBe(
+      institutionThatShouldShowUp.institution.id,
+    );
 
-      expect(hasExpectedAttributes).toBeTruthy();
-    });
+    await institutionThatShouldShowUp.cleanupInstitution();
+    await institutionThatShouldntShowUp.cleanupInstitution();
   });
 
   it("gets a list of active institutions with mx agg support, supports_history, has OAuth and 'Bank' in the name", async () => {
+    const allRequiredProps = {
+      isActive: true,
+      supports_aggregation: true,
+      supports_history: true,
+      supports_oauth: true,
+    };
+
+    const firstInstitution = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: allRequiredProps,
+      },
+      institution: {
+        name: "Banking Institution Test",
+      },
+    });
+
+    const secondInstitution = await createTestInstitution({
+      institution: {
+        name: "Another Bank Institution",
+      },
+      aggregatorIntegrations: {
+        mx: { ...allRequiredProps, supports_oauth: false },
+      },
+    });
+
     const req = buildInstitutionRequest({
       search: "Bank",
       aggregatorName: "mx",
       supportsHistory: true,
+      supportsAggregation: true,
+      supportsOauth: true,
     });
     const res = {
       json: jest.fn(),
@@ -440,25 +490,35 @@ describe("getPaginatedInstitutions", () => {
 
     const jsonResponse = (res.json as jest.Mock).mock
       .calls[0][0] as PaginatedInstitutionsResponse;
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(jsonResponse.totalRecords).toBeGreaterThan(0);
-    jsonResponse.institutions.forEach((institution) => {
-      expect(institution.name.includes("Bank")).toBeTruthy();
-      let hasExpectedAttributes = false;
-      institution.aggregatorIntegrations.forEach((aggInt) => {
-        if (aggInt.aggregator.name === "mx") {
-          hasExpectedAttributes =
-            aggInt.isActive && aggInt.supports_history && aggInt.supports_oauth;
-        }
-      });
-      expect(hasExpectedAttributes).toBeTruthy();
-    });
+
+    expect(jsonResponse.institutions.length).toBe(1);
+
+    expect(jsonResponse.institutions[0].id).toBe(
+      firstInstitution.institution.id,
+    );
+
+    await firstInstitution.cleanupInstitution();
+    await secondInstitution.cleanupInstitution();
   });
 
   it("gets a list of active institutions with 'Wells' in the name", async () => {
+    const firstInstitution = await createTestInstitution({
+      institution: {
+        name: "Wells Testing Institution",
+      },
+      aggregatorIntegrations: { mx: true },
+    });
+
+    const secondInstitution = await createTestInstitution({
+      institution: {
+        name: "Not Included Bank",
+      },
+    });
+
     const req = buildInstitutionRequest({
       search: "Wells",
     });
+
     const res = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis(),
@@ -470,13 +530,30 @@ describe("getPaginatedInstitutions", () => {
       .calls[0][0] as PaginatedInstitutionsResponse;
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(jsonResponse.totalRecords).toBeGreaterThan(0);
-    jsonResponse.institutions.forEach((institution) => {
-      expect(institution.name.toLowerCase().includes("wells")).toBeTruthy();
-    });
+    expect(jsonResponse.totalRecords).toBe(1);
+    expect(jsonResponse.institutions[0].id).toBe(
+      firstInstitution.institution.id,
+    );
+
+    await firstInstitution.cleanupInstitution();
+    await secondInstitution.cleanupInstitution();
   });
 
   it("includes institutions with inactive integrations when includeInactiveIntegrations is passed", async () => {
+    await Institution.truncate({ cascade: true });
+
+    const firstInstitution = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: { isActive: false },
+      },
+    });
+
+    const secondInstitution = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: { isActive: true },
+      },
+    });
+
     const req = buildInstitutionRequest({
       includeInactiveIntegrations: true,
       aggregatorName: ["mx", "sophtron", "finicity"],
@@ -492,21 +569,31 @@ describe("getPaginatedInstitutions", () => {
       .calls[0][0] as PaginatedInstitutionsResponse;
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+    expect(jsonResponse.totalRecords).toBe(2);
 
-    const inactiveInstitutionFound = jsonResponse.institutions.some(
-      (institution) => {
-        const activeAggregatorFound = institution.aggregatorIntegrations.some(
-          (aggInt) => aggInt.isActive,
-        );
-        return !activeAggregatorFound;
-      },
-    );
+    const institutionIds = jsonResponse.institutions.map((i) => i.id);
+    expect(institutionIds).toContain(firstInstitution.institution.id);
+    expect(institutionIds).toContain(secondInstitution.institution.id);
 
-    expect(inactiveInstitutionFound).toBeTruthy();
+    await firstInstitution.cleanupInstitution();
+    await secondInstitution.cleanupInstitution();
   });
 
   it("excludes institutions with inactive integrations when includeInactiveIntegrations is not passed", async () => {
+    await Institution.truncate({ cascade: true });
+
+    const firstInstitution = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: { isActive: false },
+      },
+    });
+
+    const secondInstitution = await createTestInstitution({
+      aggregatorIntegrations: {
+        mx: { isActive: true },
+      },
+    });
+
     const req = buildInstitutionRequest({
       aggregatorName: ["mx", "sophtron", "finicity"],
     });
@@ -521,21 +608,34 @@ describe("getPaginatedInstitutions", () => {
       .calls[0][0] as PaginatedInstitutionsResponse;
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(jsonResponse.totalRecords).toBeGreaterThan(0);
+    expect(jsonResponse.totalRecords).toBe(1);
 
-    const inactiveInstitutionFound = jsonResponse.institutions.some(
-      (institution) => {
-        const activeAggregatorFound = institution.aggregatorIntegrations.some(
-          (aggInt) => aggInt.isActive,
-        );
-        return !activeAggregatorFound;
-      },
+    expect(jsonResponse.institutions[0].id).toBe(
+      secondInstitution.institution.id,
     );
 
-    expect(inactiveInstitutionFound).toBeFalsy();
+    await firstInstitution.cleanupInstitution();
+    await secondInstitution.cleanupInstitution();
   });
 
   it("uses default sort order if sortBy is not passed in to request", async () => {
+    await Institution.truncate({ cascade: true });
+
+    const firstInstitution = await createTestInstitution({
+      institution: { name: "B Institution" },
+      aggregatorIntegrations: { mx: true },
+    });
+
+    const secondInstitution = await createTestInstitution({
+      institution: { name: "A Institution" },
+      aggregatorIntegrations: { mx: true },
+    });
+
+    const thirdInstitution = await createTestInstitution({
+      institution: { name: "C Institution" },
+      aggregatorIntegrations: { mx: true },
+    });
+
     const req = buildInstitutionRequest({});
 
     const res = {
@@ -551,9 +651,30 @@ describe("getPaginatedInstitutions", () => {
     expect(
       checkIsSorted(jsonResponse.institutions, "createdAt", "desc"),
     ).toBeTruthy();
+
+    await firstInstitution.cleanupInstitution();
+    await secondInstitution.cleanupInstitution();
+    await thirdInstitution.cleanupInstitution();
   });
 
   it("uses custom sort order when sortBy is provided", async () => {
+    await Institution.truncate({ cascade: true });
+
+    const firstInstitution = await createTestInstitution({
+      institution: { name: "B Institution" },
+      aggregatorIntegrations: { mx: true },
+    });
+
+    const secondInstitution = await createTestInstitution({
+      institution: { name: "A Institution" },
+      aggregatorIntegrations: { mx: true },
+    });
+
+    const thirdInstitution = await createTestInstitution({
+      institution: { name: "C Institution" },
+      aggregatorIntegrations: { mx: true },
+    });
+
     const sortBy = "id:asc";
 
     const req = buildInstitutionRequest({
@@ -571,5 +692,9 @@ describe("getPaginatedInstitutions", () => {
       .calls[0][0] as PaginatedInstitutionsResponse;
 
     expect(checkIsSorted(jsonResponse.institutions, "id", "asc")).toBeTruthy();
+
+    await firstInstitution.cleanupInstitution();
+    await secondInstitution.cleanupInstitution();
+    await thirdInstitution.cleanupInstitution();
   });
 });
