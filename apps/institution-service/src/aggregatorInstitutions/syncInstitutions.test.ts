@@ -12,6 +12,7 @@ import {
 import { syncInstitutions } from "./syncInstitutions";
 import { Request, Response } from "express";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
+import { createTestInstitution } from "../test/createTestInstitution";
 
 describe("syncInstitutions", () => {
   describe("finicity institutions", () => {
@@ -26,6 +27,10 @@ describe("syncInstitutions", () => {
     );
 
     beforeEach(async () => {
+      await Institution.truncate({ cascade: true });
+      await AggregatorIntegration.truncate({ cascade: true });
+      await AggregatorInstitution.truncate({ cascade: true });
+
       testInstitutionWithMissingAggregatorInstitution =
         await Institution.create({
           name: "Test Bank",
@@ -85,12 +90,9 @@ describe("syncInstitutions", () => {
     });
 
     afterEach(async () => {
-      await existingAggregatorIntegration.destroy();
-      await testInstitutionWithExistingAggregatorInstitution.destroy();
-      await missingAggregatorIntegration.destroy();
-      await testInstitutionWithMissingAggregatorInstitution.destroy();
-
-      await AggregatorInstitution.destroy({ force: true, truncate: true });
+      await Institution.truncate({ cascade: true });
+      await AggregatorIntegration.truncate({ cascade: true });
+      await AggregatorInstitution.truncate({ cascade: true });
     });
 
     it("runs without a request or response", async () => {
@@ -165,7 +167,13 @@ describe("syncInstitutions", () => {
       });
     });
 
-    it("fetches institutions from finicity, marks missing ones inactive, and updates existing ones and marks them as active, responds with a 200 if shouldWaitForCompletion", async () => {
+    it("fetches institutions from finicity, marks missing ones inactive, updates existing ones and marks them as active, matches institutions, responds with a 200 if shouldWaitForCompletion", async () => {
+      const newInstitution = {
+        id: 43782194783921,
+        name: "The fellowship of the bank",
+        urlHomeApp: "https://www.thefellowshipofthebank.com",
+      };
+
       server.use(
         http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
           return HttpResponse.json({
@@ -173,6 +181,7 @@ describe("syncInstitutions", () => {
             found: 5,
             institutions: [
               ...finicityInstitutionsPage1.institutions,
+              newInstitution,
               ...new Array(20).fill(0).map((_, index) => ({
                 ...finicityInstitutionsPage1.institutions[0],
                 id: 1999999 + index,
@@ -196,7 +205,22 @@ describe("syncInstitutions", () => {
         send: jest.fn(),
       } as unknown as Response;
 
+      const { institution } = await createTestInstitution({
+        institution: {
+          name: newInstitution.name,
+          url: newInstitution.urlHomeApp,
+        },
+      });
+
       await syncInstitutions(req, res);
+
+      const newAggregatorIntegrations =
+        await institution.getAggregatorIntegrations();
+
+      expect(newAggregatorIntegrations.length).toBe(1);
+      expect(newAggregatorIntegrations[0].aggregator_institution_id).toBe(
+        newInstitution.id.toString(),
+      );
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalledWith({
@@ -208,7 +232,7 @@ describe("syncInstitutions", () => {
 
       const afterCount = await AggregatorIntegration.count();
 
-      expect(afterCount).toEqual(beforeCount);
+      expect(afterCount).toEqual(beforeCount + 1);
 
       expect(existingAggregatorIntegration.supports_aggregation).toBe(
         firstFinicityAggregatorInstitution.supportsTransactions,
