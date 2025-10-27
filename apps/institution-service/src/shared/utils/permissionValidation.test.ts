@@ -11,9 +11,8 @@ import {
   validateUserCanEditAggregatorIntegration,
   validateUserCanEditInstitution,
 } from "./permissionValidation";
-
-const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
-const allAggregatorsInstitutionId = "d7b98242-3645-4de4-b770-f59a197942cb";
+import { createTestInstitution } from "../../test/createTestInstitution";
+import { UUID } from "crypto";
 
 const createValidateInstitutionPermissions = ({
   adminPermission,
@@ -31,6 +30,23 @@ const createValidateInstitutionPermissions = ({
   }) => Promise<true | ActOnInstitutionValidationErrorReason>;
 }) =>
   describe(`validate permissions for ${adminPermission}`, () => {
+    let mxOnlyInstitutionId: UUID;
+    let cleanup: () => Promise<void>;
+
+    beforeAll(async () => {
+      const mxOnlyInstitution = await createTestInstitution({
+        aggregatorIntegrations: {
+          mx: true,
+        },
+      });
+      mxOnlyInstitutionId = mxOnlyInstitution.institution.id as UUID;
+      cleanup = mxOnlyInstitution.cleanupInstitution;
+    });
+
+    afterAll(async () => {
+      await cleanup();
+    });
+
     it("returns true if they are a super admin", async () => {
       expect(
         await validateFunction({
@@ -62,8 +78,6 @@ const createValidateInstitutionPermissions = ({
     });
 
     it("returns UsedByOtherAggregators if they are an aggregator and there is another aggregator", async () => {
-      const mxOnlyInstitutionId = "559848ae-c552-4e8a-a391-64e23a609114";
-
       expect(
         await validateFunction({
           institutionId: mxOnlyInstitutionId,
@@ -141,6 +155,23 @@ describe("permissionValidation", () => {
   });
 
   describe("validateUserCanActOnAggregatorIntegration", () => {
+    let mxOnlyInstitutionId: UUID;
+    let cleanup: () => Promise<void>;
+
+    beforeAll(async () => {
+      const mxOnlyInstitution = await createTestInstitution({
+        aggregatorIntegrations: {
+          mx: true,
+        },
+      });
+      mxOnlyInstitutionId = mxOnlyInstitution.institution.id as UUID;
+      cleanup = mxOnlyInstitution.cleanupInstitution;
+    });
+
+    afterAll(async () => {
+      await cleanup();
+    });
+
     it("returns true if they're a super admin", async () => {
       expect(
         await validateUserCanEditAggregatorIntegration({
@@ -307,6 +338,38 @@ describe("permissionValidation", () => {
   });
 
   describe("getUsersAggregatorIntegrationCreationPermissions", () => {
+    let mxOnlyInstitutionId: UUID;
+    let cleanup: () => Promise<void>;
+
+    let allAggregatorsInstitutionId: UUID;
+    let allAggregatorsCleanup: () => Promise<void>;
+
+    beforeAll(async () => {
+      const mxOnlyInstitution = await createTestInstitution({
+        aggregatorIntegrations: {
+          mx: true,
+        },
+      });
+      mxOnlyInstitutionId = mxOnlyInstitution.institution.id as UUID;
+      cleanup = mxOnlyInstitution.cleanupInstitution;
+
+      const allAggregatorsInstitution = await createTestInstitution({
+        aggregatorIntegrations: {
+          finicity: true,
+          mx: true,
+          sophtron: true,
+        },
+      });
+      allAggregatorsInstitutionId = allAggregatorsInstitution.institution
+        .id as UUID;
+      allAggregatorsCleanup = allAggregatorsInstitution.cleanupInstitution;
+    });
+
+    afterAll(async () => {
+      await cleanup();
+      await allAggregatorsCleanup();
+    });
+
     it("returns an array of aggregators with hasAccessToAllAggregators if they are a super admin and there are aggregators without an integration", async () => {
       const response = await getUsersAggregatorIntegrationCreationPermissions({
         institutionId: mxOnlyInstitutionId,
