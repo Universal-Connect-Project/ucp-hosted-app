@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import { CreationAttributes, Model } from "sequelize";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { mxAggregatorId } from "../test/testData/aggregators";
-import { seedInstitutionId } from "../test/testData/institutions";
 import {
   createAggregatorIntegration,
   deleteAggregatorIntegration,
@@ -232,9 +231,11 @@ describe("createAggregatorIntegration", () => {
   });
 
   it("returns 400 for invalid data", async () => {
+    const institution = await createTestInstitution({});
+
     const req = {
       body: {
-        institution_id: seedInstitutionId,
+        institution_id: institution.institution.id,
         aggregatorId: mxAggregatorId,
         aggregator_institution_id: null,
       },
@@ -255,6 +256,8 @@ describe("createAggregatorIntegration", () => {
           'null value in column "aggregator_institution_id" of relation "aggregatorIntegrations" violates not-null constraint',
       }),
     );
+
+    await institution.cleanupInstitution();
   });
 
   it("returns 409 for trying to create an integration when one already exists on the Institution/Aggregator combo", async () => {
