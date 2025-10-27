@@ -35,7 +35,7 @@ describe("matchInstitutions", () => {
 
     const mxAggregatorId = (await getAggregatorByName("mx")).id;
     const testBankAggregatorInstitution = await AggregatorInstitution.create({
-      id: "test_bank_aggregator_institution_id",
+      id: "1",
       aggregatorId: mxAggregatorId,
       name: "Star Wars Episode 1: The Phantom Bankz",
       url: "https://www.starwarsepisode1thephantonbankz.com",
@@ -43,7 +43,7 @@ describe("matchInstitutions", () => {
 
     const institution2AggregatorInstitution =
       await AggregatorInstitution.create({
-        id: "wells_fargo_aggregator_institution_id",
+        id: "2",
         aggregatorId: mxAggregatorId,
         name: "Harry Potter and the Bank of Azkabanz",
         url: "https://www.harrypotterandthebankofazkabanz.com",
@@ -67,7 +67,66 @@ describe("matchInstitutions", () => {
     ).toBe(institution2AggregatorInstitution.id);
   });
 
-  it("doesn't create more than 1 aggregator integration for the same institution even if it would normally match", () => {});
+  it("doesn't create more than 1 aggregator integration for the same institution even if it would normally match", async () => {
+    const { institution } = await createTestInstitution({
+      institution: {
+        name: "Test",
+        url: "https://www.test.com",
+      },
+    });
 
-  it("doesn't create aggregator integrations for institutions with dissimilar names and urls", () => {});
+    const mxAggregatorId = (await getAggregatorByName("mx")).id;
+
+    const aggregatorInstitutionProps = {
+      aggregatorId: mxAggregatorId,
+      name: "Test",
+      url: "https://www.testt.com",
+    };
+
+    const aggregatorInstitution1 = await AggregatorInstitution.create({
+      ...aggregatorInstitutionProps,
+      id: "1",
+    });
+
+    await AggregatorInstitution.create({
+      ...aggregatorInstitutionProps,
+      id: "2",
+    });
+
+    await matchInstitutions(mxAggregatorId);
+
+    const institution1AggregatorIntegrations =
+      await institution.getAggregatorIntegrations();
+
+    expect(await AggregatorIntegration.count()).toBe(1);
+
+    expect(institution1AggregatorIntegrations).toHaveLength(1);
+    expect(
+      institution1AggregatorIntegrations[0].aggregator_institution_id,
+    ).toBe(aggregatorInstitution1.id);
+  });
+
+  it("doesn't create aggregator integrations for institutions with dissimilar names and urls", async () => {
+    const { institution } = await createTestInstitution({
+      institution: {
+        name: "Completely Different Bank",
+        url: "https://www.completelydifferentbank.com",
+      },
+    });
+
+    const mxAggregatorId = (await getAggregatorByName("mx")).id;
+    await AggregatorInstitution.create({
+      id: "1",
+      aggregatorId: mxAggregatorId,
+      name: "Some Other Bank",
+      url: "https://www.someotherbank.com",
+    });
+
+    await matchInstitutions(mxAggregatorId);
+
+    const institutionAggregatorIntegrations =
+      institution.getAggregatorIntegrations();
+
+    expect(await institutionAggregatorIntegrations).toHaveLength(0);
+  });
 });
