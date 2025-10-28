@@ -12,7 +12,7 @@ describe("matchInstitutions", () => {
     await AggregatorIntegration.truncate({ force: true });
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await Institution.truncate({ cascade: true });
     await AggregatorInstitution.truncate({ force: true });
     await AggregatorIntegration.truncate({ force: true });

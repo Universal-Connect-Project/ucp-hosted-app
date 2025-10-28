@@ -89,7 +89,7 @@ describe("syncInstitutions", () => {
       });
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       await Institution.truncate({ cascade: true });
       await AggregatorIntegration.truncate({ cascade: true });
       await AggregatorInstitution.truncate({ cascade: true });
