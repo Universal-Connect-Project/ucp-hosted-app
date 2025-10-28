@@ -1,5 +1,7 @@
 name: Institution E2E (No Institutions)
 
+permissions:
+  contents: read
 on: pull_request
 
 jobs:
