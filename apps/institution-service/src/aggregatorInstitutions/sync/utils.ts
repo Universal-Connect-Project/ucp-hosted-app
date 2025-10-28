@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { AggregatorInstitution } from "../models/aggregatorInstitution";
+import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 
 export const removeMissingAggregatorInstitutions = async ({
   aggregatorId,

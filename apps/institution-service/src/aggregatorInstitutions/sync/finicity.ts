@@ -1,5 +1,5 @@
-import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
-import { getConfig } from "../shared/environment";
+import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByName";
+import { getConfig } from "../../shared/environment";
 import { createOrUpdateAggregatorInstitution } from "./createOrUpdateAggregatorInstitution";
 import { removeMissingAggregatorInstitutions } from "./utils";
 

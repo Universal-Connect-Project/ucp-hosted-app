@@ -1,5 +1,5 @@
-import { AggregatorInstitution } from "../models/aggregatorInstitution";
-import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
+import { AggregatorInstitution } from "../../models/aggregatorInstitution";
+import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByName";
 import { removeMissingAggregatorInstitutions } from "./utils";
 
 describe("utils", () => {

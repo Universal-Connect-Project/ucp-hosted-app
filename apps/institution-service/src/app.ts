@@ -18,7 +18,7 @@ import {
   PERFORMANCE_AUTH_ROUTE,
 } from "./shared/consts/routes";
 import { useRateLimiting } from "./useRateLimiting";
-import { syncInstitutions } from "./aggregatorInstitutions/syncInstitutions";
+import { syncInstitutions } from "./aggregatorInstitutions/sync/syncInstitutions";
 
 sequelize
   .authenticate()

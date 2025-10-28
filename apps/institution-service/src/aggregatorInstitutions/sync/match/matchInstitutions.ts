@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
-import { AggregatorInstitution } from "../../models/aggregatorInstitution";
-import { AggregatorIntegration } from "../../models/aggregatorIntegration";
-import { Institution } from "../../models/institution";
+import { AggregatorInstitution } from "../../../models/aggregatorInstitution";
+import { AggregatorIntegration } from "../../../models/aggregatorIntegration";
+import { Institution } from "../../../models/institution";
 import { findPotentialMatches } from "./utils";
 import { Match } from "./const";
 

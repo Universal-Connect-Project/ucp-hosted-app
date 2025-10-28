@@ -1,4 +1,4 @@
-import { Institution } from "../../models/institution";
+import { Institution } from "../../../models/institution";
 
 export enum MatchType {
   DomainSimilarity = "domain similarity",

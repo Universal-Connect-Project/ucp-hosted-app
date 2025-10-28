@@ -8,8 +8,8 @@ import {
   normalizeUrl,
 } from "./utils";
 import { MatchType, Score } from "./const";
-import { AggregatorInstitution } from "../../models/aggregatorInstitution";
-import { Institution } from "../../models/institution";
+import { AggregatorInstitution } from "../../../models/aggregatorInstitution";
+import { Institution } from "../../../models/institution";
 
 const createExpectScore =
   (name: string) =>

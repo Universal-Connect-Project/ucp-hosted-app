@@ -1,18 +1,18 @@
-import * as config from "../shared/environment";
+import * as config from "../../shared/environment";
 import {
   FETCH_FINICITY_ACCESS_TOKEN_URL,
   FETCH_FINICITY_INSTITUTIONS_URL,
   syncFinicityInstitutions,
 } from "./finicity";
-import { server } from "../test/testServer";
+import { server } from "../../test/testServer";
 import { http, HttpResponse } from "msw";
-import { fakeEnvironment } from "../test/testData/environment";
+import { fakeEnvironment } from "../../test/testData/environment";
 import {
   finicityInstitutionsPage1,
   finicityInstitutionsPage2,
-} from "../test/testData/finicityInstitutions";
-import { AggregatorInstitution } from "../models/aggregatorInstitution";
-import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
+} from "../../test/testData/finicityInstitutions";
+import { AggregatorInstitution } from "../../models/aggregatorInstitution";
+import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByName";
 
 describe("finicity institutions", () => {
   describe("syncFinicityInstitutions", () => {

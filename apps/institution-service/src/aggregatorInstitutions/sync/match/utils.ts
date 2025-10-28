@@ -1,7 +1,7 @@
 import { distance } from "fastest-levenshtein";
 import { Match, MatchType, Score } from "./const";
-import { AggregatorInstitution } from "../../models/aggregatorInstitution";
-import { Institution } from "../../models/institution";
+import { AggregatorInstitution } from "../../../models/aggregatorInstitution";
+import { Institution } from "../../../models/institution";
 
 export function normalizeInstitutionName(name: string): string {
   return name

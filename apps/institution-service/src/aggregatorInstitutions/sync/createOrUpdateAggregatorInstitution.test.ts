@@ -1,6 +1,6 @@
 import { CreationAttributes } from "sequelize";
-import { AggregatorInstitution } from "../models/aggregatorInstitution";
-import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
+import { AggregatorInstitution } from "../../models/aggregatorInstitution";
+import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByName";
 import { createOrUpdateAggregatorInstitution } from "./createOrUpdateAggregatorInstitution";
 
 describe("createOrUpdateAggregatorInstitution", () => {
