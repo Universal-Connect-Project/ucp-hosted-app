@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { http, HttpResponse } from "msw";
-import { AggregatorIntegration } from "../models/aggregatorIntegration";
-import { Institution } from "../models/institution";
-import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
-import { finicityInstitutionsPage1 } from "../test/testData/finicityInstitutions";
-import { server } from "../test/testServer";
+import { AggregatorIntegration } from "../../models/aggregatorIntegration";
+import { Institution } from "../../models/institution";
+import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByName";
+import { finicityInstitutionsPage1 } from "../../test/testData/finicityInstitutions";
+import { server } from "../../test/testServer";
 import {
   FETCH_FINICITY_INSTITUTIONS_URL,
   mapFinicityInstitution,
 } from "./finicity";
 import { syncInstitutions } from "./syncInstitutions";
 import { Request, Response } from "express";
-import { AggregatorInstitution } from "../models/aggregatorInstitution";
-import { createTestInstitution } from "../test/createTestInstitution";
+import { AggregatorInstitution } from "../../models/aggregatorInstitution";
+import { createTestInstitution } from "../../test/createTestInstitution";
 
 describe("syncInstitutions", () => {
   describe("finicity institutions", () => {

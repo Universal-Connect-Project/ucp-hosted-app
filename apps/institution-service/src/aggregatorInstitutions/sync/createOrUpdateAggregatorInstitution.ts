@@ -1,5 +1,5 @@
 import { CreationAttributes } from "sequelize";
-import { AggregatorInstitution } from "../models/aggregatorInstitution";
+import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 
 export const createOrUpdateAggregatorInstitution = async (
   aggregatorInstitution: CreationAttributes<AggregatorInstitution>,

@@ -1,8 +1,8 @@
-import { AggregatorInstitution } from "../../models/aggregatorInstitution";
-import { AggregatorIntegration } from "../../models/aggregatorIntegration";
-import { Institution } from "../../models/institution";
-import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByName";
-import { createTestInstitution } from "../../test/createTestInstitution";
+import { AggregatorInstitution } from "../../../models/aggregatorInstitution";
+import { AggregatorIntegration } from "../../../models/aggregatorIntegration";
+import { Institution } from "../../../models/institution";
+import { getAggregatorByName } from "../../../shared/aggregators/getAggregatorByName";
+import { createTestInstitution } from "../../../test/createTestInstitution";
 import { matchInstitutions } from "./matchInstitutions";
 
 describe("matchInstitutions", () => {
