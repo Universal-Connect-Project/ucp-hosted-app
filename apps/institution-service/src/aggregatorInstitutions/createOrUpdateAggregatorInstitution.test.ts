@@ -69,6 +69,30 @@ describe("createOrUpdateAggregatorInstitution", () => {
     await createdAggregatorInstitution.destroy();
   });
 
+  it("updates an existing institution if it's been deleted", async () => {
+    const createdAggregatorInstitution =
+      await createOrUpdateAggregatorInstitution(requiredBody);
+
+    const updatedAtBefore = createdAggregatorInstitution.updatedAt;
+
+    await createdAggregatorInstitution.destroy();
+
+    const newName = "Updated Institution";
+
+    await createOrUpdateAggregatorInstitution({
+      ...requiredBody,
+      name: newName,
+    } as AggregatorInstitution);
+
+    await createdAggregatorInstitution.reload();
+
+    expect(createdAggregatorInstitution.name).toBe(newName);
+
+    expect(createdAggregatorInstitution.updatedAt).not.toEqual(updatedAtBefore);
+
+    await createdAggregatorInstitution.destroy();
+  });
+
   it("doesn't update the updatedAt timestamp if nothing changes", async () => {
     const createdAggregatorInstitution =
       await createOrUpdateAggregatorInstitution(requiredBody);
