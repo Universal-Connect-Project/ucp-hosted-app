@@ -6,43 +6,39 @@ import { findPotentialMatches } from "./utils";
 import { Match } from "./const";
 
 export const matchInstitutions = async (aggregatorId: number) => {
-  const institutionIdsThatAlreadyHaveAnActiveAggregatorIntegrationForThisAggregator =
-    await AggregatorIntegration.findAll({
-      where: { aggregatorId, isActive: true },
-      attributes: ["institution_id"],
-      raw: true,
-    }).then((integrations) =>
-      integrations.map(
-        (integration) =>
-          (integration as { institution_id: string }).institution_id,
-      ),
-    );
+  const institutionIdsUnavailableToMatch = await AggregatorIntegration.findAll({
+    where: { aggregatorId, isActive: true },
+    attributes: ["institution_id"],
+    raw: true,
+  }).then((integrations) =>
+    integrations.map(
+      (integration) =>
+        (integration as { institution_id: string }).institution_id,
+    ),
+  );
 
-  let ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator =
-    await Institution.findAll({
-      where: {
-        id: {
-          [Op.notIn]:
-            institutionIdsThatAlreadyHaveAnActiveAggregatorIntegrationForThisAggregator,
-        },
+  let institutionsAvailableToMatch = await Institution.findAll({
+    where: {
+      id: {
+        [Op.notIn]: institutionIdsUnavailableToMatch,
       },
-      raw: true,
-    });
+    },
+    raw: true,
+  });
 
-  const aggregatorIntegrationAggregatorInstitutionIds =
-    await AggregatorIntegration.findAll({
-      where: { aggregatorId },
-      attributes: ["aggregator_institution_id"],
-      raw: true,
-    }).then((integrations) =>
-      integrations.map((integration) => integration.aggregator_institution_id),
-    );
+  const matchedAggregatorInstitutionIds = await AggregatorIntegration.findAll({
+    where: { aggregatorId, isActive: true },
+    attributes: ["aggregator_institution_id"],
+    raw: true,
+  }).then((integrations) =>
+    integrations.map((integration) => integration.aggregator_institution_id),
+  );
 
   const aggregatorInstitutionsThatNeedMatching =
     await AggregatorInstitution.findAll({
       where: {
         aggregatorId,
-        id: { [Op.notIn]: aggregatorIntegrationAggregatorInstitutionIds },
+        id: { [Op.notIn]: matchedAggregatorInstitutionIds },
       },
       raw: true,
     });
@@ -82,10 +78,9 @@ export const matchInstitutions = async (aggregatorId: number) => {
         `🤖 Auto-matched ${aggregatorInstitution.name} to ${institution.name}`,
       );
 
-      ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator =
-        ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator.filter(
-          (inst) => inst.id !== institution.id,
-        );
+      institutionsAvailableToMatch = institutionsAvailableToMatch.filter(
+        (inst) => inst.id !== institution.id,
+      );
     } catch (error) {
       console.error(
         `Failed to save auto-match ${aggregatorInstitution.name} to ${institution.name}:`,
@@ -97,7 +92,7 @@ export const matchInstitutions = async (aggregatorId: number) => {
   for (const aggregatorInstitution of aggregatorInstitutionsThatNeedMatching) {
     const matches = findPotentialMatches(
       aggregatorInstitution,
-      ucpInstitutionsWithoutAnAggregatorIntegrationForThisAggregator,
+      institutionsAvailableToMatch,
     );
 
     const [firstMatch] = matches;
