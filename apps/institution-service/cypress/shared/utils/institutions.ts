@@ -5,6 +5,7 @@ import { getAggregators } from "./aggregator";
 import { testInstitution } from "../../../src/test/testData/institutions";
 import { Aggregator } from "../../../src/models/aggregator";
 import { createTestAggregatorIntegration } from "./aggregatorIntegration";
+import { Institution } from "../../../src/models/institution";
 
 export const getInstitutionsWithFiltersRequest = ({
   integrationFieldFilter,
@@ -74,12 +75,16 @@ export const deleteInstitution = ({
   });
 };
 
-export const createTestInstitution = (token: string) => {
+export const createTestInstitution = (
+  token: string,
+  institution?: Partial<Institution>,
+) => {
   return cy.request({
     url: `http://localhost:${PORT}/institutions`,
     method: "POST",
     body: {
       ...testInstitution,
+      ...institution,
     },
     headers: {
       Authorization: createAuthorizationHeader(token),

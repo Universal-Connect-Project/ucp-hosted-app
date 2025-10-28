@@ -1,18 +1,18 @@
-import { Institution } from "../../src/models/institution";
+import { Institution } from "../../../src/models/institution";
 import {
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
-} from "../shared/constants/accessTokens";
-import { syncAggregatorInstitutions } from "../shared/utils/aggregatorInstitutions";
+} from "../../shared/constants/accessTokens";
+import { syncAggregatorInstitutions } from "../../shared/utils/aggregatorInstitutions";
 import {
   createTestAggregatorIntegration,
   deleteAggregatorIntegration,
-} from "../shared/utils/aggregatorIntegration";
+} from "../../shared/utils/aggregatorIntegration";
 import {
   createTestInstitution,
   deleteInstitution,
   getInstitution,
-} from "../shared/utils/institutions";
+} from "../../shared/utils/institutions";
 
 const finicityAggregatorId = 2;
 
@@ -26,9 +26,9 @@ describe("aggregator institution syncing", () => {
     });
   });
 
-  describe("with new institution", () => {
+  describe("with existing and missing aggregator institutions", () => {
     interface TestProps {
-      aggregatorInstitutionId: number;
+      aggregatorInstitutionId: string;
       aggregatorIntegrationId?: number;
       institutionId?: string;
       isAggregatorIntegrationActive?: boolean;
@@ -36,14 +36,17 @@ describe("aggregator institution syncing", () => {
     }
 
     const existingAggregatorInstitutionTestProps: TestProps = {
-      aggregatorInstitutionId: 10,
+      aggregatorInstitutionId: "10",
       shouldStartAsActive: false,
     };
 
     const missingAggregatorInstitutionTestProps: TestProps = {
-      aggregatorInstitutionId: 134115151515252,
+      aggregatorInstitutionId: "134115151515252",
       shouldStartAsActive: true,
     };
+
+    let institutionIdThatShouldMatch: string;
+    let matchedAggregatorIntegrationId: number;
 
     const prepAggregatorIntegration = (testProps: TestProps) => {
       return createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
@@ -52,8 +55,7 @@ describe("aggregator institution syncing", () => {
 
           return createTestAggregatorIntegration(testProps.institutionId, {
             aggregatorId: finicityAggregatorId,
-            aggregatorInstitutionId:
-              testProps.aggregatorInstitutionId.toString(),
+            aggregatorInstitutionId: testProps.aggregatorInstitutionId,
             isActive: testProps.shouldStartAsActive,
           }).then(
             (
@@ -72,14 +74,23 @@ describe("aggregator institution syncing", () => {
     };
 
     beforeEach(() => {
-      prepAggregatorIntegration(existingAggregatorInstitutionTestProps).then(
-        () => {
-          prepAggregatorIntegration(missingAggregatorInstitutionTestProps);
-        },
-      );
+      prepAggregatorIntegration(existingAggregatorInstitutionTestProps)
+        .then(() =>
+          prepAggregatorIntegration(missingAggregatorInstitutionTestProps),
+        )
+        .then(() =>
+          createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV, {
+            name: "Capital One",
+            url: "https://www.capitalone.com",
+          }).then(
+            (response: Cypress.Response<{ institution: Institution }>) => {
+              institutionIdThatShouldMatch = response.body.institution.id;
+            },
+          ),
+        );
     });
 
-    it("allows a super admin to sync institutions, waits for completion, and updates an aggregator institution from inactive to active if existing, and active to inactive if it no longer exists", () => {
+    it("allows a super admin to sync institutions, waits for completion, and updates an aggregator institution from inactive to active if existing, and active to inactive if it no longer exists, and matches aggregator institution to institutions", () => {
       expect(
         existingAggregatorInstitutionTestProps.isAggregatorIntegrationActive,
       ).to.eq(false);
@@ -112,13 +123,35 @@ describe("aggregator institution syncing", () => {
                 institution.aggregatorIntegrations[0].isActive;
 
               expect(markedAsActive).to.eq(false);
+
+              getInstitution({
+                institutionId: institutionIdThatShouldMatch,
+              }).then(
+                (response: Cypress.Response<{ institution: Institution }>) => {
+                  const institution = response.body.institution;
+
+                  expect(institution.aggregatorIntegrations).to.have.length(1);
+                  expect(
+                    institution.aggregatorIntegrations[0]
+                      .aggregator_institution_id,
+                  ).to.eq("170778");
+
+                  matchedAggregatorIntegrationId =
+                    institution.aggregatorIntegrations[0].id;
+                },
+              );
             },
           );
         });
       });
     });
 
-    const cleanupAggregatorIntegration = (testProps: TestProps) => {
+    interface CleanupProps {
+      institutionId: string;
+      aggregatorIntegrationId: number;
+    }
+
+    const cleanupAggregatorIntegration = (testProps: CleanupProps) => {
       return deleteAggregatorIntegration({
         aggregatorIntegrationId: testProps.aggregatorIntegrationId,
         token: SUPER_USER_ACCESS_TOKEN_ENV,
@@ -130,11 +163,20 @@ describe("aggregator institution syncing", () => {
     };
 
     afterEach(() => {
-      cleanupAggregatorIntegration(existingAggregatorInstitutionTestProps).then(
-        () => {
-          cleanupAggregatorIntegration(missingAggregatorInstitutionTestProps);
-        },
-      );
+      cleanupAggregatorIntegration(
+        existingAggregatorInstitutionTestProps as CleanupProps,
+      )
+        .then(() => {
+          cleanupAggregatorIntegration(
+            missingAggregatorInstitutionTestProps as CleanupProps,
+          );
+        })
+        .then(() => {
+          cleanupAggregatorIntegration({
+            institutionId: institutionIdThatShouldMatch,
+            aggregatorIntegrationId: matchedAggregatorIntegrationId,
+          });
+        });
     });
   });
 });
