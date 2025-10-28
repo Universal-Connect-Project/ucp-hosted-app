@@ -4,15 +4,19 @@ import { AggregatorInstitution } from "../models/aggregatorInstitution";
 export const createOrUpdateAggregatorInstitution = async (
   aggregatorInstitution: CreationAttributes<AggregatorInstitution>,
 ) => {
-  const [institution, created] = await AggregatorInstitution.findOrCreate({
+  let institution = await AggregatorInstitution.findOne({
+    paranoid: false,
     where: {
-      id: aggregatorInstitution.id,
       aggregatorId: aggregatorInstitution.aggregatorId,
+      id: aggregatorInstitution.id,
     },
-    defaults: aggregatorInstitution,
   });
 
-  if (!created) {
+  if (institution) {
+    if (institution.deletedAt) {
+      await institution.restore();
+    }
+
     institution.name = aggregatorInstitution.name;
     institution.supportsOAuth = !!aggregatorInstitution.supportsOAuth;
     institution.supportsAccountNumber =
@@ -28,6 +32,8 @@ export const createOrUpdateAggregatorInstitution = async (
     institution.url = aggregatorInstitution.url || null;
 
     await institution.save();
+  } else {
+    institution = await AggregatorInstitution.create(aggregatorInstitution);
   }
 
   return institution;

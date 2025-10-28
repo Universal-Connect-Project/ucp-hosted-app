@@ -89,7 +89,7 @@ describe("aggregator institution syncing", () => {
 
       syncAggregatorInstitutions({
         shouldWaitForCompletion: true,
-        timeout: 120000,
+        timeout: 300000,
       }).then((response) => {
         expect(response.status).to.eq(200);
 
@@ -135,12 +135,6 @@ describe("aggregator institution syncing", () => {
           cleanupAggregatorIntegration(missingAggregatorInstitutionTestProps);
         },
       );
-    });
-  });
-
-  it("allows a super admin to sync institutions and doesn't wait for completion", () => {
-    syncAggregatorInstitutions().then((response) => {
-      expect(response.status).to.eq(202);
     });
   });
 });

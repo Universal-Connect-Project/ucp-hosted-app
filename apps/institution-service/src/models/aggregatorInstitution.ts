@@ -34,6 +34,7 @@ export class AggregatorInstitution extends Model<
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
+  declare deletedAt: CreationOptional<Date>;
 
   declare static associations: {
     aggregator: Association<AggregatorInstitution, Aggregator>;
@@ -50,6 +51,9 @@ AggregatorInstitution.init(
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
     },
     id: {
       allowNull: false,
