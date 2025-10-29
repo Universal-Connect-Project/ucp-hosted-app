@@ -20,14 +20,17 @@ router.post(
 const getPaginatedAggregatorInstitutionsQueryParamValidator =
   createRequestQueryParamSchemaValidator(
     Joi.object({
-      page: Joi.number().integer().min(1),
-      pageSize: Joi.number().integer().min(1).max(100).optional(),
+      aggregatorIds: Joi.string().optional(),
+      page: Joi.number().integer().min(1).required(),
+      pageSize: Joi.number().integer().min(1).max(100).required(),
+      name: Joi.string().optional(),
     }),
   );
 
 router.get(
   "/",
-  [validateUIAudience, getPaginatedAggregatorInstitutionsQueryParamValidator], // Should this be super admin only?
+  validateUIAudience,
+  getPaginatedAggregatorInstitutionsQueryParamValidator, // Should this be super admin only?
   getPaginatedAggregatorInstitutionsHandler as RequestHandler,
 );
 
