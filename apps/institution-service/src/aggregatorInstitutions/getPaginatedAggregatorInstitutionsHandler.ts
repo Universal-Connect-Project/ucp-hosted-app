@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import { getPaginationOptions } from "../shared/utils/pagination";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
 
+interface QueryParams {
+  aggregatorIds?: string;
+}
+
 export const getPaginatedAggregatorInstitutionsHandler = async (
   req: Request,
   res: Response,
@@ -9,9 +13,14 @@ export const getPaginatedAggregatorInstitutionsHandler = async (
   try {
     const { limit, offset, page } = getPaginationOptions(req);
 
+    const { aggregatorIds } = req.query as QueryParams;
+
     const { count, rows } = await AggregatorInstitution.findAndCountAll({
       limit,
       offset,
+      where: {
+        ...(aggregatorIds && { aggregatorId: aggregatorIds.split(",") }),
+      },
     });
 
     res.json({

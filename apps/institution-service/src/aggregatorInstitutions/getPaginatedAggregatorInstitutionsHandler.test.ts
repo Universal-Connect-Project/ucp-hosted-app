@@ -5,13 +5,18 @@ import { AggregatorInstitution } from "../models/aggregatorInstitution";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 
 describe("getPaginatedAggregatorInstitutionsHandler", () => {
+  let finicityAggregatorId: number;
+  let mxAggregatorId: number;
+  let sophtronAggregatorId: number;
+
   beforeEach(async () => {
     await AggregatorInstitution.destroy({ where: {}, force: true });
+    finicityAggregatorId = (await getAggregatorByName("finicity")).id;
+    mxAggregatorId = (await getAggregatorByName("mx")).id;
+    sophtronAggregatorId = (await getAggregatorByName("sophtron")).id;
   });
 
   it("returns a list of institutions by page and pageSize", async () => {
-    const finicityAggregatorId = (await getAggregatorByName("finicity")).id;
-
     const firstInstitution = await AggregatorInstitution.create({
       aggregatorId: finicityAggregatorId,
       id: "aggregatorInstitution1",
@@ -91,6 +96,84 @@ describe("getPaginatedAggregatorInstitutionsHandler", () => {
             supportsTransactionHistory:
               secondInstitution.supportsTransactionHistory,
             url: secondInstitution.url,
+          }),
+        ]),
+      }),
+    );
+  });
+
+  it("filters by aggregatorId", async () => {
+    await AggregatorInstitution.create({
+      aggregatorId: finicityAggregatorId,
+      id: "aggregatorInstitution1",
+      name: "Test Aggregator Institution 1",
+      url: "https://test-aggregator1.com",
+    });
+
+    const mxInstitution = await AggregatorInstitution.create({
+      aggregatorId: mxAggregatorId,
+      id: "aggregatorInstitution2",
+      name: "Test Aggregator Institution 2",
+      url: "https://test-aggregator2.com",
+    });
+
+    const sophtronInstitution = await AggregatorInstitution.create({
+      aggregatorId: sophtronAggregatorId,
+      id: "aggregatorInstitution3",
+      name: "Test Aggregator Institution 3",
+      url: "https://test-aggregator3.com",
+    });
+
+    const res = {
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const req = {
+      query: {
+        aggregatorIds: `${mxAggregatorId},${sophtronAggregatorId}`,
+        page: "1",
+        pageSize: "10",
+      },
+    } as unknown as Request;
+
+    await getPaginatedAggregatorInstitutionsHandler(req, res);
+
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: 1,
+        pageSize: 10,
+        totalRecords: 2,
+        totalPages: 1,
+        aggregatorInstitutions: expect.arrayContaining([
+          expect.objectContaining({
+            id: mxInstitution.id,
+            name: mxInstitution.name,
+            createdAt: mxInstitution.createdAt,
+            updatedAt: mxInstitution.updatedAt,
+            supportsAccountOwner: mxInstitution.supportsAccountOwner,
+            supportsAccountNumber: mxInstitution.supportsAccountNumber,
+            supportsBalance: mxInstitution.supportsBalance,
+            supportsOAuth: mxInstitution.supportsOAuth,
+            supportsRewards: mxInstitution.supportsRewards,
+            supportsTransactions: mxInstitution.supportsTransactions,
+            supportsTransactionHistory:
+              mxInstitution.supportsTransactionHistory,
+            url: mxInstitution.url,
+          }),
+          expect.objectContaining({
+            id: sophtronInstitution.id,
+            name: sophtronInstitution.name,
+            createdAt: sophtronInstitution.createdAt,
+            updatedAt: sophtronInstitution.updatedAt,
+            supportsAccountOwner: sophtronInstitution.supportsAccountOwner,
+            supportsAccountNumber: sophtronInstitution.supportsAccountNumber,
+            supportsBalance: sophtronInstitution.supportsBalance,
+            supportsOAuth: sophtronInstitution.supportsOAuth,
+            supportsRewards: sophtronInstitution.supportsRewards,
+            supportsTransactions: sophtronInstitution.supportsTransactions,
+            supportsTransactionHistory:
+              sophtronInstitution.supportsTransactionHistory,
+            url: sophtronInstitution.url,
           }),
         ]),
       }),
