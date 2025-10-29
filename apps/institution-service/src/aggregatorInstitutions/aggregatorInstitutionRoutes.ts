@@ -4,6 +4,9 @@ import { requiredScopes } from "express-oauth2-jwt-bearer";
 import { validateUIAudience } from "../shared/utils/permissionValidation";
 import { syncInstitutions } from "./sync/syncInstitutions";
 import { AGGREGATOR_INSTITUTIONS_SYNC_CHILD_ROUTE } from "../shared/consts/routes";
+import { getPaginatedAggregatorInstitutionsHandler } from "./getPaginatedAggregatorInstitutionsHandler";
+import { createRequestQueryParamSchemaValidator } from "@repo/backend-utils";
+import Joi from "joi";
 
 const router = Router();
 
@@ -12,6 +15,20 @@ router.post(
   [validateUIAudience],
   requiredScopes(UiUserPermissions.SYNC_AGGREGATOR_INSTITUTIONS),
   syncInstitutions as RequestHandler,
+);
+
+const getPaginatedAggregatorInstitutionsQueryParamValidator =
+  createRequestQueryParamSchemaValidator(
+    Joi.object({
+      page: Joi.number().integer().min(1),
+      pageSize: Joi.number().integer().min(1).max(100).optional(),
+    }),
+  );
+
+router.get(
+  "/",
+  [validateUIAudience, getPaginatedAggregatorInstitutionsQueryParamValidator], // Should this be super admin only?
+  getPaginatedAggregatorInstitutionsHandler as RequestHandler,
 );
 
 export default router;
