@@ -17,7 +17,7 @@ router.post(
   syncInstitutions as RequestHandler,
 );
 
-const getPaginatedAggregatorInstitutionsQueryParamValidator =
+export const getPaginatedAggregatorInstitutionsQueryParamValidator =
   createRequestQueryParamSchemaValidator(
     Joi.object({
       aggregatorIds: Joi.string().optional(),
