@@ -16,6 +16,7 @@ describe("aggregatorInstitution endpoints", () => {
           ...requiredQueryParams,
           aggregatorIds: "agg1,agg2",
           name: "Test Institution",
+          sortBy: "name:DESC",
         },
       } as unknown as Request;
       const res = {} as Response;

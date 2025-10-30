@@ -317,6 +317,112 @@ describe("getPaginatedAggregatorInstitutionsHandler", () => {
     );
   });
 
+  it("sorts by specified createdAt:DESC with name as secondary sort", async () => {
+    const institutionA = await AggregatorInstitution.create({
+      aggregatorId: finicityAggregatorId,
+      id: "aggregatorInstitution1",
+      name: "Institution A",
+      url: "https://a-institution.com",
+      createdAt: new Date("2023-01-02"),
+    });
+
+    const institutionB = await AggregatorInstitution.create({
+      aggregatorId: finicityAggregatorId,
+      id: "aggregatorInstitution2",
+      name: "Institution B",
+      url: "https://b-institution.com",
+      createdAt: new Date("2023-01-02"),
+    });
+    const institutionC = await AggregatorInstitution.create({
+      aggregatorId: finicityAggregatorId,
+      id: "aggregatorInstitution3",
+      name: "Institution C",
+      url: "https://c-institution.com",
+      createdAt: new Date("2023-01-03"),
+    });
+
+    const res = {
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const req = {
+      query: {
+        page: "1",
+        pageSize: "10",
+        sortBy: "createdAt:DESC",
+      },
+    } as unknown as Request;
+
+    await getPaginatedAggregatorInstitutionsHandler(req, res);
+
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: 1,
+        pageSize: 10,
+        totalRecords: 3,
+        totalPages: 1,
+        aggregatorInstitutions: [
+          expectInstitution(institutionC),
+          expectInstitution(institutionA),
+          expectInstitution(institutionB),
+        ],
+      }),
+    );
+  });
+
+  it("sorts by specified name:ASC with createdAt as secondary sort", async () => {
+    const institutionA = await AggregatorInstitution.create({
+      aggregatorId: finicityAggregatorId,
+      id: "aggregatorInstitution1",
+      name: "A Institution",
+      url: "https://a-institution.com",
+      createdAt: new Date("2023-01-01"),
+    });
+
+    const institutionB = await AggregatorInstitution.create({
+      aggregatorId: finicityAggregatorId,
+      id: "aggregatorInstitution2",
+      name: "A Institution",
+      url: "https://b-institution.com",
+      createdAt: new Date("2023-01-02"),
+    });
+    const institutionC = await AggregatorInstitution.create({
+      aggregatorId: finicityAggregatorId,
+      id: "aggregatorInstitution3",
+      name: "C Institution",
+      url: "https://c-institution.com",
+      createdAt: new Date("2023-01-03"),
+    });
+
+    const res = {
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const req = {
+      query: {
+        page: "1",
+        pageSize: "10",
+        sortBy: "name:ASC",
+      },
+    } as unknown as Request;
+
+    await getPaginatedAggregatorInstitutionsHandler(req, res);
+
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: 1,
+        pageSize: 10,
+        totalRecords: 3,
+        totalPages: 1,
+        aggregatorInstitutions: [
+          expectInstitution(institutionB),
+          expectInstitution(institutionA),
+          expectInstitution(institutionC),
+        ],
+      }),
+    );
+  });
+
   it("responds with a 500 and an error on failure", async () => {
     const req = {
       query: { page: "1", pageSize: "1" },

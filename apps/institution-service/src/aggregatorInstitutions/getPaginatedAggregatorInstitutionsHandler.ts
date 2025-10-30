@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
-import { getPaginationOptions } from "../shared/utils/pagination";
+import {
+  getPaginationOptions,
+  parseSort,
+  SortDirection,
+} from "../shared/utils/pagination";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
-import { Op } from "sequelize";
+import { Op, OrderItem } from "sequelize";
 
 interface QueryParams {
   aggregatorIds?: string;
   name?: string;
   shouldIncludeMatched: string;
+  sortBy?: string;
 }
 
 export const getPaginatedAggregatorInstitutionsHandler = async (
@@ -20,13 +25,33 @@ export const getPaginatedAggregatorInstitutionsHandler = async (
       aggregatorIds,
       name,
       shouldIncludeMatched: shouldIncludeMatchedString,
+      sortBy,
     } = req.query as unknown as QueryParams;
+
+    const { column, direction } = parseSort(
+      sortBy || `name:${SortDirection.ASC}`,
+    );
+
+    let order: OrderItem[] = [];
+
+    if (column === "name") {
+      order = [
+        ["name", direction as SortDirection],
+        ["createdAt", SortDirection.DESC],
+      ];
+    } else {
+      order = [
+        [column, direction as SortDirection],
+        ["name", SortDirection.ASC],
+      ];
+    }
 
     const shouldIncludeMatched = shouldIncludeMatchedString === "true";
 
     const { count, rows } = await AggregatorInstitution.findAndCountAll({
       limit,
       offset,
+      order,
       where: {
         ...(aggregatorIds && { aggregatorId: aggregatorIds.split(",") }),
         ...(name && { name: { [Op.iLike]: `%${name}%` } }),

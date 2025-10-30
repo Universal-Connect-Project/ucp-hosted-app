@@ -25,6 +25,7 @@ export const getPaginatedAggregatorInstitutionsQueryParamValidator =
       pageSize: Joi.number().integer().min(1).max(100).required(),
       name: Joi.string().optional(),
       shouldIncludeMatched: Joi.boolean().required(),
+      sortBy: Joi.string().optional(),
     }),
   );
 
