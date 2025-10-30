@@ -6,6 +6,7 @@ import { Op } from "sequelize";
 interface QueryParams {
   aggregatorIds?: string;
   name?: string;
+  shouldIncludeMatched: string;
 }
 
 export const getPaginatedAggregatorInstitutionsHandler = async (
@@ -15,7 +16,13 @@ export const getPaginatedAggregatorInstitutionsHandler = async (
   try {
     const { limit, offset, page } = getPaginationOptions(req);
 
-    const { aggregatorIds, name } = req.query as QueryParams;
+    const {
+      aggregatorIds,
+      name,
+      shouldIncludeMatched: shouldIncludeMatchedString,
+    } = req.query as unknown as QueryParams;
+
+    const shouldIncludeMatched = shouldIncludeMatchedString === "true";
 
     const { count, rows } = await AggregatorInstitution.findAndCountAll({
       limit,
@@ -23,6 +30,18 @@ export const getPaginatedAggregatorInstitutionsHandler = async (
       where: {
         ...(aggregatorIds && { aggregatorId: aggregatorIds.split(",") }),
         ...(name && { name: { [Op.iLike]: `%${name}%` } }),
+        ...(shouldIncludeMatched
+          ? {}
+          : {
+              [Op.and]: AggregatorInstitution.sequelize!.literal(
+                `
+                CONCAT("AggregatorInstitution"."aggregatorId", "AggregatorInstitution"."id") NOT IN (
+                SELECT DISTINCT CONCAT("aggregatorIntegrations"."aggregatorId", "aggregatorIntegrations"."aggregator_institution_id")
+                FROM "aggregatorIntegrations"
+                WHERE "aggregatorIntegrations"."isActive" = TRUE
+                )`,
+              ),
+            }),
       },
     });
 

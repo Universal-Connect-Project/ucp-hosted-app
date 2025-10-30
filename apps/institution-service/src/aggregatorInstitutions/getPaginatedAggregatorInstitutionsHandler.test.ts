@@ -3,6 +3,26 @@ import { Request, Response } from "express";
 import { getPaginatedAggregatorInstitutionsHandler } from "./getPaginatedAggregatorInstitutionsHandler";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
+import { AggregatorIntegration } from "../models/aggregatorIntegration";
+import { Institution } from "../models/institution";
+import { createTestInstitution } from "../test/createTestInstitution";
+
+const expectInstitution = (institution: AggregatorInstitution) =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  expect.objectContaining({
+    id: institution.id,
+    name: institution.name,
+    createdAt: institution.createdAt,
+    updatedAt: institution.updatedAt,
+    supportsAccountOwner: institution.supportsAccountOwner,
+    supportsAccountNumber: institution.supportsAccountNumber,
+    supportsBalance: institution.supportsBalance,
+    supportsOAuth: institution.supportsOAuth,
+    supportsRewards: institution.supportsRewards,
+    supportsTransactions: institution.supportsTransactions,
+    supportsTransactionHistory: institution.supportsTransactionHistory,
+    url: institution.url,
+  });
 
 describe("getPaginatedAggregatorInstitutionsHandler", () => {
   let finicityAggregatorId: number;
@@ -11,12 +31,15 @@ describe("getPaginatedAggregatorInstitutionsHandler", () => {
 
   beforeEach(async () => {
     await AggregatorInstitution.destroy({ where: {}, force: true });
+    await AggregatorIntegration.destroy({ where: {}, force: true });
+    await Institution.truncate({ cascade: true });
+
     finicityAggregatorId = (await getAggregatorByName("finicity")).id;
     mxAggregatorId = (await getAggregatorByName("mx")).id;
     sophtronAggregatorId = (await getAggregatorByName("sophtron")).id;
   });
 
-  it("returns a list of institutions by page and pageSize", async () => {
+  it("paginates", async () => {
     const firstInstitution = await AggregatorInstitution.create({
       aggregatorId: finicityAggregatorId,
       id: "aggregatorInstitution1",
@@ -82,21 +105,7 @@ describe("getPaginatedAggregatorInstitutionsHandler", () => {
         totalRecords: 2,
         totalPages: 2,
         aggregatorInstitutions: expect.arrayContaining([
-          expect.objectContaining({
-            id: secondInstitution.id,
-            name: secondInstitution.name,
-            createdAt: secondInstitution.createdAt,
-            updatedAt: secondInstitution.updatedAt,
-            supportsAccountOwner: secondInstitution.supportsAccountOwner,
-            supportsAccountNumber: secondInstitution.supportsAccountNumber,
-            supportsBalance: secondInstitution.supportsBalance,
-            supportsOAuth: secondInstitution.supportsOAuth,
-            supportsRewards: secondInstitution.supportsRewards,
-            supportsTransactions: secondInstitution.supportsTransactions,
-            supportsTransactionHistory:
-              secondInstitution.supportsTransactionHistory,
-            url: secondInstitution.url,
-          }),
+          expectInstitution(secondInstitution),
         ]),
       }),
     );
@@ -145,36 +154,8 @@ describe("getPaginatedAggregatorInstitutionsHandler", () => {
         totalRecords: 2,
         totalPages: 1,
         aggregatorInstitutions: expect.arrayContaining([
-          expect.objectContaining({
-            id: mxInstitution.id,
-            name: mxInstitution.name,
-            createdAt: mxInstitution.createdAt,
-            updatedAt: mxInstitution.updatedAt,
-            supportsAccountOwner: mxInstitution.supportsAccountOwner,
-            supportsAccountNumber: mxInstitution.supportsAccountNumber,
-            supportsBalance: mxInstitution.supportsBalance,
-            supportsOAuth: mxInstitution.supportsOAuth,
-            supportsRewards: mxInstitution.supportsRewards,
-            supportsTransactions: mxInstitution.supportsTransactions,
-            supportsTransactionHistory:
-              mxInstitution.supportsTransactionHistory,
-            url: mxInstitution.url,
-          }),
-          expect.objectContaining({
-            id: sophtronInstitution.id,
-            name: sophtronInstitution.name,
-            createdAt: sophtronInstitution.createdAt,
-            updatedAt: sophtronInstitution.updatedAt,
-            supportsAccountOwner: sophtronInstitution.supportsAccountOwner,
-            supportsAccountNumber: sophtronInstitution.supportsAccountNumber,
-            supportsBalance: sophtronInstitution.supportsBalance,
-            supportsOAuth: sophtronInstitution.supportsOAuth,
-            supportsRewards: sophtronInstitution.supportsRewards,
-            supportsTransactions: sophtronInstitution.supportsTransactions,
-            supportsTransactionHistory:
-              sophtronInstitution.supportsTransactionHistory,
-            url: sophtronInstitution.url,
-          }),
+          expectInstitution(mxInstitution),
+          expectInstitution(sophtronInstitution),
         ]),
       }),
     );
@@ -223,36 +204,114 @@ describe("getPaginatedAggregatorInstitutionsHandler", () => {
         totalRecords: 2,
         totalPages: 1,
         aggregatorInstitutions: expect.arrayContaining([
-          expect.objectContaining({
-            id: mxInstitution.id,
-            name: mxInstitution.name,
-            createdAt: mxInstitution.createdAt,
-            updatedAt: mxInstitution.updatedAt,
-            supportsAccountOwner: mxInstitution.supportsAccountOwner,
-            supportsAccountNumber: mxInstitution.supportsAccountNumber,
-            supportsBalance: mxInstitution.supportsBalance,
-            supportsOAuth: mxInstitution.supportsOAuth,
-            supportsRewards: mxInstitution.supportsRewards,
-            supportsTransactions: mxInstitution.supportsTransactions,
-            supportsTransactionHistory:
-              mxInstitution.supportsTransactionHistory,
-            url: mxInstitution.url,
-          }),
-          expect.objectContaining({
-            id: sophtronInstitution.id,
-            name: sophtronInstitution.name,
-            createdAt: sophtronInstitution.createdAt,
-            updatedAt: sophtronInstitution.updatedAt,
-            supportsAccountOwner: sophtronInstitution.supportsAccountOwner,
-            supportsAccountNumber: sophtronInstitution.supportsAccountNumber,
-            supportsBalance: sophtronInstitution.supportsBalance,
-            supportsOAuth: sophtronInstitution.supportsOAuth,
-            supportsRewards: sophtronInstitution.supportsRewards,
-            supportsTransactions: sophtronInstitution.supportsTransactions,
-            supportsTransactionHistory:
-              sophtronInstitution.supportsTransactionHistory,
-            url: sophtronInstitution.url,
-          }),
+          expectInstitution(mxInstitution),
+          expectInstitution(sophtronInstitution),
+        ]),
+      }),
+    );
+  });
+
+  it("filters by matched and unmatched depending on shouldIncludeMatched", async () => {
+    const aggregatorInstitutionWithoutAggregatorIntegration =
+      await AggregatorInstitution.create({
+        aggregatorId: mxAggregatorId,
+        id: "aggregatorInstitution1",
+        name: "Bank of the First Order",
+        url: "https://test-aggregator1.com",
+      });
+
+    const aggregatorInstitutionWithActiveAggregatorIntegration =
+      await AggregatorInstitution.create({
+        aggregatorId: mxAggregatorId,
+        id: "aggregatorInstitution2",
+        name: "Galactic Empire Bank",
+        url: "https://test-aggregator2.com",
+      });
+
+    const aggregatorInstitutionWithInactiveAggregatorIntegration =
+      await AggregatorInstitution.create({
+        aggregatorId: mxAggregatorId,
+        id: "aggregatorInstitution3",
+        name: "Galactic Empire Credit Union",
+        url: "https://test-aggregator3.com",
+      });
+
+    const { institution } = await createTestInstitution({});
+    const { institution: institution2 } = await createTestInstitution({});
+
+    await AggregatorIntegration.create({
+      aggregatorId: mxAggregatorId,
+      aggregator_institution_id:
+        aggregatorInstitutionWithActiveAggregatorIntegration.id,
+      institution_id: institution.id,
+      isActive: true,
+    });
+
+    await AggregatorIntegration.create({
+      aggregatorId: mxAggregatorId,
+      aggregator_institution_id:
+        aggregatorInstitutionWithInactiveAggregatorIntegration.id,
+      institution_id: institution2.id,
+      isActive: false,
+    });
+
+    const res = {
+      json: jest.fn(),
+    } as unknown as Response;
+
+    await getPaginatedAggregatorInstitutionsHandler(
+      {
+        query: {
+          page: "1",
+          pageSize: "10",
+          shouldIncludeMatched: "false",
+        },
+      } as unknown as Request,
+      res,
+    );
+
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: 1,
+        pageSize: 10,
+        totalRecords: 2,
+        totalPages: 1,
+        aggregatorInstitutions: expect.arrayContaining([
+          expectInstitution(
+            aggregatorInstitutionWithInactiveAggregatorIntegration,
+          ),
+          expectInstitution(aggregatorInstitutionWithoutAggregatorIntegration),
+        ]),
+      }),
+    );
+
+    (res.json as jest.Mock).mockClear();
+
+    await getPaginatedAggregatorInstitutionsHandler(
+      {
+        query: {
+          page: "1",
+          pageSize: "10",
+          shouldIncludeMatched: "true",
+        },
+      } as unknown as Request,
+      res,
+    );
+
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: 1,
+        pageSize: 10,
+        totalRecords: 3,
+        totalPages: 1,
+        aggregatorInstitutions: expect.arrayContaining([
+          expectInstitution(
+            aggregatorInstitutionWithInactiveAggregatorIntegration,
+          ),
+          expectInstitution(aggregatorInstitutionWithoutAggregatorIntegration),
+          expectInstitution(
+            aggregatorInstitutionWithActiveAggregatorIntegration,
+          ),
         ]),
       }),
     );
