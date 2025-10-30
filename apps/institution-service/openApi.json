@@ -1012,6 +1012,125 @@
         }
       }
     },
+    "/aggregatorInstitutions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Get a paginated list of aggregator institutions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "example": 30,
+            "description": "Page to be returned in the paginated response."
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "example": 3,
+            "description": "The number of aggregator institutions to be returned in the paginated response."
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "example": "American"
+            },
+            "required": false,
+            "example": "American",
+            "description": "Search term for the aggregator institutions query"
+          },
+          {
+            "in": "query",
+            "name": "shouldIncludeMatched",
+            "schema": {
+              "type": "boolean",
+              "enum": [true],
+              "example": true
+            },
+            "required": true,
+            "example": true,
+            "description": "Whether to include aggregator institutions that are already matched to UCP institutions"
+          },
+          {
+            "in": "query",
+            "name": "aggregatorIds",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "example": "mx,sophtron",
+            "description": "Aggregator institution must belong to any of these aggregators"
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "example": "createdAt:DESC",
+            "description": "Field to sort by. Use the field name followed by the sort direction: ASC (default) or DESC."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "currentPage": 30,
+                      "pageSize": 3,
+                      "totalRecords": 29489,
+                      "totalPages": 9830,
+                      "aggregatorInstitutions": [
+                        {
+                          "aggregatorId": 2,
+                          "createdAt": "2025-10-29T06:01:03.855Z",
+                          "deletedAt": null,
+                          "id": "10",
+                          "name": "Discover Card (All Account Types)",
+                          "supportsAccountOwner": true,
+                          "supportsAccountNumber": true,
+                          "supportsBalance": true,
+                          "supportsOAuth": false,
+                          "supportsRewards": false,
+                          "supportsTransactions": true,
+                          "supportsTransactionHistory": false,
+                          "url": "www.discovercard.com",
+                          "updatedAt": "2025-10-29T06:01:03.856Z"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Aggregator Institution List"
+      }
+    },
     "/aggregatorInstitutions/sync": {
       "post": {
         "security": [
