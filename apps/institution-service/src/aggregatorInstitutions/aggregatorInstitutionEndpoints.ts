@@ -25,7 +25,12 @@ export const getPaginatedAggregatorInstitutionsQueryParamValidator =
       pageSize: Joi.number().integer().min(1).max(100).required(),
       name: Joi.string().optional(),
       shouldIncludeMatched: Joi.boolean().required(),
-      sortBy: Joi.string().optional(),
+      sortBy: Joi.string()
+        .pattern(/^(\w+):(ASC|DESC)$/)
+        .messages({
+          "string.pattern.base":
+            'Sort parameter must be in the format "columnName:ORDER", where ORDER is ASC or DESC (e.g., name:ASC).',
+        }),
     }),
   );
 

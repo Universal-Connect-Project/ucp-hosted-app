@@ -99,6 +99,31 @@ describe("aggregatorInstitution endpoints", () => {
       );
     });
 
+    it("should not call next, should respond with a 400 error for invalid sortBy", () => {
+      const req = {
+        query: {
+          ...requiredQueryParams,
+          sortBy: "invalidSortBy",
+        },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+      const next = jest.fn();
+
+      getPaginatedAggregatorInstitutionsQueryParamValidator(req, res, next);
+
+      expect(next).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error:
+            'Sort parameter must be in the format "columnName:ORDER", where ORDER is ASC or DESC (e.g., name:ASC).',
+        }),
+      );
+    });
+
     it("should not call next, should respond with a 400 error for invalid shouldIncludeMatched", () => {
       const req = {
         query: {
