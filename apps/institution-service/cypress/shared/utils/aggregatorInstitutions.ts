@@ -1,7 +1,10 @@
 import { PORT } from "../../../src/shared/const";
 import { SUPER_USER_ACCESS_TOKEN_ENV } from "../constants/accessTokens";
 import { createAuthorizationHeader } from "./authorization";
-import { AGGREGATOR_INSTITUTIONS_SYNC_ROUTE } from "../../../src/shared/consts/routes";
+import {
+  AGGREGATOR_INSTITUTIONS_ROUTE,
+  AGGREGATOR_INSTITUTIONS_SYNC_ROUTE,
+} from "../../../src/shared/consts/routes";
 
 export const syncAggregatorInstitutions = ({
   accessTokenEnv = SUPER_USER_ACCESS_TOKEN_ENV,
@@ -20,5 +23,24 @@ export const syncAggregatorInstitutions = ({
     },
     failOnStatusCode,
     timeout,
+  });
+};
+
+export const getAggregatorInstitutions = ({
+  accessTokenEnv = SUPER_USER_ACCESS_TOKEN_ENV,
+  qs,
+}: {
+  accessTokenEnv?: string;
+  qs: Record<string, string>;
+}) => {
+  const url = `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}`;
+
+  return cy.request({
+    url,
+    method: "GET",
+    headers: {
+      Authorization: createAuthorizationHeader(accessTokenEnv),
+    },
+    qs,
   });
 };

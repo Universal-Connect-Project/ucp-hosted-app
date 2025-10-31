@@ -9,7 +9,7 @@ import aggregatorIntegrationRoutes from "./routes/aggregatorIntegrationRoutes";
 import aggregatorRoutes from "./aggregators/aggregatorEndpoints";
 import institutionRoutes from "./institutions/institutionEndpoints";
 import permissionsRoutes from "./routes/permissionRoutes";
-import aggregatorInstitutionRoutes from "./aggregatorInstitutions/aggregatorInstitutionRoutes";
+import aggregatorInstitutionRoutes from "./aggregatorInstitutions/aggregatorInstitutionEndpoints";
 import { PORT } from "./shared/const";
 import performanceAuthEndpoints from "./performanceAuth/performanceAuthEndpoints";
 import {

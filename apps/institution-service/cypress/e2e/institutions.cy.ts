@@ -294,11 +294,11 @@ describe("PUT /institutions/:id (Institution update)", () => {
     let institutionId: string;
 
     before(() => {
-      createTestInstitutionAndAddIntegration(mxAggregatorId).then(
-        (createdInstitutionId) => {
-          institutionId = createdInstitutionId;
-        },
-      );
+      createTestInstitutionAndAddIntegration({
+        aggregatorId: mxAggregatorId,
+      }).then((createdInstitutionId) => {
+        institutionId = createdInstitutionId;
+      });
     });
 
     after(() => {
