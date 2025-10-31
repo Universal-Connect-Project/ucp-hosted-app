@@ -9,7 +9,7 @@ import { Op, OrderItem } from "sequelize";
 
 interface QueryParams {
   aggregatorIds?: string;
-  name?: string;
+  search?: string;
   shouldIncludeMatched: string;
   sortBy?: string;
 }
@@ -23,7 +23,7 @@ export const getPaginatedAggregatorInstitutionsHandler = async (
 
     const {
       aggregatorIds,
-      name,
+      search,
       shouldIncludeMatched: shouldIncludeMatchedString,
       sortBy,
     } = req.query as unknown as QueryParams;
@@ -54,7 +54,7 @@ export const getPaginatedAggregatorInstitutionsHandler = async (
       order,
       where: {
         ...(aggregatorIds && { aggregatorId: aggregatorIds.split(",") }),
-        ...(name && { name: { [Op.iLike]: `%${name}%` } }),
+        ...(search && { name: { [Op.iLike]: `%${search}%` } }),
         ...(shouldIncludeMatched
           ? {}
           : {

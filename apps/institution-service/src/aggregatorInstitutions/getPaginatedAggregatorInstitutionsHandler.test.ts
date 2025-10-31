@@ -189,7 +189,7 @@ describe("getPaginatedAggregatorInstitutionsHandler", () => {
 
     const req = {
       query: {
-        name: "galactic empire",
+        search: "galactic empire",
         page: "1",
         pageSize: "10",
       },

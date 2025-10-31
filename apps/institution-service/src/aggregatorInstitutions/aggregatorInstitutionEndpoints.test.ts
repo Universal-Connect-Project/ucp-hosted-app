@@ -15,7 +15,7 @@ describe("aggregatorInstitution endpoints", () => {
         query: {
           ...requiredQueryParams,
           aggregatorIds: "agg1,agg2",
-          name: "Test Institution",
+          search: "Test Institution",
           sortBy: "name:DESC",
         },
       } as unknown as Request;

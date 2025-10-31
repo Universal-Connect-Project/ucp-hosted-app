@@ -23,7 +23,7 @@ export const getPaginatedAggregatorInstitutionsQueryParamValidator =
       aggregatorIds: Joi.string().optional(),
       page: Joi.number().integer().min(1).required(),
       pageSize: Joi.number().integer().min(1).max(100).required(),
-      name: Joi.string().optional(),
+      search: Joi.string().optional(),
       shouldIncludeMatched: Joi.boolean().required(),
       sortBy: Joi.string()
         .pattern(/^(\w+):(ASC|DESC)$/)
@@ -37,7 +37,7 @@ export const getPaginatedAggregatorInstitutionsQueryParamValidator =
 router.get(
   "/",
   validateUIAudience,
-  getPaginatedAggregatorInstitutionsQueryParamValidator, // Should this be super admin only?
+  getPaginatedAggregatorInstitutionsQueryParamValidator,
   getPaginatedAggregatorInstitutionsHandler as RequestHandler,
 );
 
