@@ -1,9 +1,9 @@
-import { AggregatorInstitution } from "../../src/models/aggregatorInstitution";
-import { PORT } from "../../src/shared/const";
-import { AGGREGATOR_INSTITUTIONS_ROUTE } from "../../src/shared/consts/routes";
-import { getAggregatorInstitutions } from "./noInstitutions/aggregatorInstitutions";
-import { createTestInstitutionAndAddIntegration } from "../shared/utils/institutions";
-import { runTokenInvalidCheck } from "../support/utils";
+import { AggregatorInstitution } from "../../../src/models/aggregatorInstitution";
+import { PORT } from "../../../src/shared/const";
+import { AGGREGATOR_INSTITUTIONS_ROUTE } from "../../../src/shared/consts/routes";
+import { getAggregatorInstitutions } from "../../shared/utils/aggregatorInstitutions";
+import { createTestInstitutionAndAddIntegration } from "../../shared/utils/institutions";
+import { runTokenInvalidCheck } from "../../support/utils";
 
 describe("aggregator institutions", () => {
   describe("GET /aggregatorInstitutions", () => {
