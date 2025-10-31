@@ -28,11 +28,9 @@ export const syncAggregatorInstitutions = ({
 
 export const getAggregatorInstitutions = ({
   accessTokenEnv = SUPER_USER_ACCESS_TOKEN_ENV,
-  failOnStatusCode = true,
   qs,
 }: {
   accessTokenEnv?: string;
-  failOnStatusCode?: boolean;
   qs: Record<string, string>;
 }) => {
   const url = `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}`;
@@ -43,7 +41,6 @@ export const getAggregatorInstitutions = ({
     headers: {
       Authorization: createAuthorizationHeader(accessTokenEnv),
     },
-    failOnStatusCode,
     qs,
   });
 };

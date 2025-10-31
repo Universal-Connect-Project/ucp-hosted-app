@@ -2,6 +2,7 @@ import { defineConfig } from "cypress";
 import "./src/dotEnv";
 import { PORT } from "./src/shared/const";
 import { AggregatorInstitution } from "./src/models/aggregatorInstitution";
+import { AggregatorIntegration } from "./src/models/aggregatorIntegration";
 
 const createAggregatorInstitutions = async (
   aggregatorInstitutions: AggregatorInstitution[],
@@ -11,6 +12,14 @@ const createAggregatorInstitutions = async (
 
 const clearAggregatorInstitutions = async () => {
   return await AggregatorInstitution.destroy({
+    where: {},
+    truncate: true,
+    force: true,
+  });
+};
+
+const clearAggregatorIntegrations = async () => {
+  return await AggregatorIntegration.destroy({
     where: {},
     truncate: true,
     force: true,
@@ -30,6 +39,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       on("task", {
         clearAggregatorInstitutions,
+        clearAggregatorIntegrations,
         createAggregatorInstitutions,
       });
     },
