@@ -3,7 +3,7 @@ import {
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
 } from "../../shared/constants/accessTokens";
-import { syncAggregatorInstitutions } from "../../shared/utils/aggregatorInstitutions";
+import { syncAggregatorInstitutions } from "./aggregatorInstitutions";
 import {
   createTestAggregatorIntegration,
   deleteAggregatorIntegration,

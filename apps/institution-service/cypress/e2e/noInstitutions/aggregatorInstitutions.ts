@@ -1,6 +1,6 @@
 import { PORT } from "../../../src/shared/const";
-import { SUPER_USER_ACCESS_TOKEN_ENV } from "../constants/accessTokens";
-import { createAuthorizationHeader } from "./authorization";
+import { SUPER_USER_ACCESS_TOKEN_ENV } from "../../shared/constants/accessTokens";
+import { createAuthorizationHeader } from "../../shared/utils/authorization";
 import {
   AGGREGATOR_INSTITUTIONS_ROUTE,
   AGGREGATOR_INSTITUTIONS_SYNC_ROUTE,
