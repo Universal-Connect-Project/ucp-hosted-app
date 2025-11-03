@@ -101,23 +101,21 @@ describe("GET /institutions/:id (Institution Details)", () => {
   let institutionIdWithAllAggregators: string;
 
   before(() => {
-    createTestInstitutionAndAddIntegration(mxAggregatorId).then(
-      (institutionId) => {
-        institutionIdWithOnlyMXAggregator = institutionId;
+    createTestInstitutionAndAddIntegration({
+      aggregatorId: mxAggregatorId,
+    }).then((institutionId) => {
+      institutionIdWithOnlyMXAggregator = institutionId;
 
-        createTestInstitutionAndAddIntegration(sophtronAggregatorId).then(
-          (sophtronInstitutionId) => {
-            institutionIdWithOnlySophtronAggregator = sophtronInstitutionId;
+      createTestInstitutionAndAddIntegration({
+        aggregatorId: sophtronAggregatorId,
+      }).then((sophtronInstitutionId) => {
+        institutionIdWithOnlySophtronAggregator = sophtronInstitutionId;
 
-            createTestInstitutionWithAllAggregators().then(
-              (allAggregatorsId) => {
-                institutionIdWithAllAggregators = allAggregatorsId;
-              },
-            );
-          },
-        );
-      },
-    );
+        createTestInstitutionWithAllAggregators().then((allAggregatorsId) => {
+          institutionIdWithAllAggregators = allAggregatorsId;
+        });
+      });
+    });
   });
 
   after(() => {

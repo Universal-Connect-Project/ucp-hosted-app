@@ -124,15 +124,20 @@ export const createTestInstitutionWithAllAggregators = () => {
   );
 };
 
-export const createTestInstitutionAndAddIntegration = (
-  aggregatorId: number,
-) => {
+export const createTestInstitutionAndAddIntegration = ({
+  aggregatorId,
+  aggregatorInstitutionId,
+}: {
+  aggregatorId: number;
+  aggregatorInstitutionId?: string;
+}) => {
   return createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
     (response: Cypress.Response<{ institution: { id: string } }>) => {
       const institutionId = response.body.institution.id;
 
       return createTestAggregatorIntegration(institutionId, {
         aggregatorId,
+        aggregatorInstitutionId,
       }).then(() => {
         return institutionId;
       });
