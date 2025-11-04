@@ -7,6 +7,7 @@ import { AGGREGATOR_INSTITUTIONS_SYNC_CHILD_ROUTE } from "../shared/consts/route
 import { getPaginatedAggregatorInstitutionsHandler } from "./getPaginatedAggregatorInstitutionsHandler";
 import { createRequestQueryParamSchemaValidator } from "@repo/backend-utils";
 import Joi from "joi";
+import { getAggregatorInstitution } from "./getAggregatorInstitution";
 
 const router = Router();
 
@@ -39,6 +40,12 @@ router.get(
   validateUIAudience,
   getPaginatedAggregatorInstitutionsQueryParamValidator,
   getPaginatedAggregatorInstitutionsHandler as RequestHandler,
+);
+
+router.get(
+  "/:aggregatorId/:id",
+  validateUIAudience,
+  getAggregatorInstitution as RequestHandler,
 );
 
 export default router;

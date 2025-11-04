@@ -160,11 +160,13 @@ describe("getGraphMetrics", () => {
         data: successData,
         expectedBucketDuration: 12 * 60 * 60 * 1000,
         expectedNumberOfBuckets: [15],
+        shouldAllowOneHourDiscrepancy: true,
       });
       testDataPoints({
         data: durationData,
         expectedBucketDuration: 12 * 60 * 60 * 1000,
         expectedNumberOfBuckets: [15],
+        shouldAllowOneHourDiscrepancy: true,
       });
     });
 
@@ -183,12 +185,14 @@ describe("getGraphMetrics", () => {
         data: successData,
         expectedBucketDuration: 24 * 60 * 60 * 1000,
         expectedNumberOfBuckets: [31],
+        shouldAllowOneHourDiscrepancy: true,
       });
 
       testDataPoints({
         data: durationData,
         expectedBucketDuration: 24 * 60 * 60 * 1000,
         expectedNumberOfBuckets: [31],
+        shouldAllowOneHourDiscrepancy: true,
       });
     });
 

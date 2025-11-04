@@ -11,6 +11,8 @@ import {
 } from "sequelize";
 import sequelize from "../database";
 import { Aggregator } from "./aggregator";
+import { Institution } from "./institution";
+import { AggregatorIntegration } from "./aggregatorIntegration";
 
 export class AggregatorInstitution extends Model<
   InferAttributes<AggregatorInstitution>,
@@ -39,6 +41,22 @@ export class AggregatorInstitution extends Model<
   declare static associations: {
     aggregator: Association<AggregatorInstitution, Aggregator>;
   };
+
+  async getInstitutions() {
+    return Institution.findAll({
+      include: [
+        {
+          model: AggregatorIntegration,
+          as: "aggregatorIntegrations",
+          where: {
+            aggregator_institution_id: this.id,
+            aggregatorId: this.aggregatorId,
+          },
+          required: true,
+        },
+      ],
+    });
+  }
 }
 
 AggregatorInstitution.init(
