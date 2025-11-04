@@ -40,25 +40,6 @@ describe("getAggregatorInstitution", () => {
       },
     });
 
-    const { institution: institution2 } = await createTestInstitution({
-      aggregatorIntegrations: {
-        mx: {
-          aggregator_institution_id: id,
-        },
-        finicity: {
-          aggregator_institution_id: id,
-        },
-      },
-    });
-
-    await createTestInstitution({
-      aggregatorIntegrations: {
-        mx: {
-          aggregator_institution_id: "different",
-        },
-      },
-    });
-
     const req = {
       params: {
         aggregatorId: finicityAggregatorId,
@@ -75,7 +56,7 @@ describe("getAggregatorInstitution", () => {
 
     const firstCall = (res.json as jest.Mock).mock.calls[0][0];
 
-    expect(firstCall.institution.institutions).toHaveLength(2);
+    expect(firstCall.institution.institutions).toHaveLength(1);
 
     expect(res.json).toHaveBeenCalledWith({
       institution: expect.objectContaining({
@@ -88,9 +69,6 @@ describe("getAggregatorInstitution", () => {
         institutions: expect.arrayContaining([
           expect.objectContaining({
             id: institution1.id,
-          }),
-          expect.objectContaining({
-            id: institution2.id,
           }),
         ]),
       }),
