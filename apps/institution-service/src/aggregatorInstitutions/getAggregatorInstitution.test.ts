@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Request, Response } from "express";
@@ -72,6 +73,52 @@ describe("getAggregatorInstitution", () => {
           }),
         ]),
       }),
+    });
+  });
+
+  it("should return 404 if the aggregator institution is not found", async () => {
+    const req = {
+      params: {
+        aggregatorId: 9999,
+        id: "nonExistentId",
+      },
+    } as unknown as Request;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    await getAggregatorInstitution(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Aggregator Institution not found",
+    });
+  });
+
+  it("should handle errors and return 500", async () => {
+    const req = {
+      params: {
+        aggregatorId: 1,
+        id: "someId",
+      },
+    } as unknown as Request;
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    jest
+      .spyOn(AggregatorInstitution, "findOne")
+      .mockRejectedValueOnce(new Error("Database error"));
+
+    await getAggregatorInstitution(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Failed to fetch aggregator institution",
     });
   });
 });

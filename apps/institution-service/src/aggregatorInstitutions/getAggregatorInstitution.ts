@@ -14,7 +14,9 @@ export const getAggregatorInstitution = async (req: Request, res: Response) => {
     });
 
     if (!institution) {
-      return res.status(404).json({ message: "Institution not found" });
+      return res
+        .status(404)
+        .json({ message: "Aggregator Institution not found" });
     }
 
     const institutions = await institution.getInstitutions();
