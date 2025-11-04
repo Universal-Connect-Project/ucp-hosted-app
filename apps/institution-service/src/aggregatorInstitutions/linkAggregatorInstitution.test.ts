@@ -171,4 +171,55 @@ describe("linkAggregatorInstitution", () => {
 
     expect(await AggregatorIntegration.count()).toBe(1);
   });
+
+  it("should return 404 if aggregator institution not found", async () => {
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const req = {
+      body: {
+        aggregatorId: 999,
+        aggregatorInstitutionId: "non-existent-id",
+        institutionId: "some-institution-id",
+      },
+    } as unknown as LinkAggregatorInstitutionRequest;
+
+    await linkAggregatorInstitution(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Aggregator Institution not found",
+    });
+  });
+
+  it("should handle errors gracefully", async () => {
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const req = {
+      body: {
+        aggregatorId: 999,
+        aggregatorInstitutionId: "some-id",
+        institutionId: "some-institution-id",
+      },
+    } as unknown as LinkAggregatorInstitutionRequest;
+
+    // Simulate a database error
+    jest
+      .spyOn(AggregatorInstitution, "findOne")
+      .mockRejectedValueOnce(new Error("Database error"));
+
+    await linkAggregatorInstitution(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Failed to link aggregator institution",
+    });
+  });
 });
