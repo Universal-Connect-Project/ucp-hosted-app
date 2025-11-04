@@ -1,4 +1,5 @@
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
+import { createTestInstitution } from "../test/createTestInstitution";
 import { AggregatorInstitution } from "./aggregatorInstitution";
 
 describe("aggregatorInstitution model", () => {
@@ -139,5 +140,54 @@ describe("aggregatorInstitution model", () => {
     await expect(
       AggregatorInstitution.create({ ...body, aggregatorId: 5000 }),
     ).rejects.toThrow();
+  });
+
+  describe("getInstitutions", () => {
+    it("returns institutions associated with the aggregator institution", async () => {
+      const createdAggregatorInstitution =
+        await AggregatorInstitution.create(body);
+
+      const { cleanupInstitution, institution } = await createTestInstitution({
+        aggregatorIntegrations: {
+          mx: {
+            aggregator_institution_id: createdAggregatorInstitution.id,
+          },
+          finicity: {
+            aggregator_institution_id: createdAggregatorInstitution.id,
+          },
+        },
+      });
+
+      const {
+        cleanupInstitution: cleanupInstitution2,
+        institution: institution2,
+      } = await createTestInstitution({
+        aggregatorIntegrations: {
+          finicity: {
+            aggregator_institution_id: createdAggregatorInstitution.id,
+          },
+        },
+      });
+
+      const { cleanupInstitution: cleanupInstitution3 } =
+        await createTestInstitution({
+          aggregatorIntegrations: {
+            finicity: {
+              aggregator_institution_id: crypto.randomUUID(),
+            },
+          },
+        });
+
+      const institutions = await createdAggregatorInstitution.getInstitutions();
+
+      expect(institutions.length).toEqual(2);
+      expect(institutions[0].id).toEqual(institution.id);
+      expect(institutions[1].id).toEqual(institution2.id);
+
+      await createdAggregatorInstitution.destroy({ force: true });
+      await cleanupInstitution();
+      await cleanupInstitution2();
+      await cleanupInstitution3();
+    });
   });
 });
