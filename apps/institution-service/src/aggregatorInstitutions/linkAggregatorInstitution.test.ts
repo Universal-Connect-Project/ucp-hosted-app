@@ -195,6 +195,44 @@ describe("linkAggregatorInstitution", () => {
     });
   });
 
+  it("should return 404 if institution not found", async () => {
+    const finicityAggregatorId = (await getAggregatorByName("finicity")).id;
+
+    const aggregatorInstitution = await AggregatorInstitution.create({
+      aggregatorId: finicityAggregatorId,
+      id: "agg-inst-123",
+      name: "Test Aggregator Institution",
+      supportsTransactions: true,
+      supportsBalance: false,
+      supportsRewards: true,
+      supportsOAuth: false,
+      supportsAccountOwner: true,
+      supportsAccountNumber: false,
+      supportsTransactionHistory: true,
+    });
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const req = {
+      body: {
+        aggregatorId: finicityAggregatorId,
+        aggregatorInstitutionId: aggregatorInstitution.id,
+        institutionId: crypto.randomUUID(),
+      },
+    } as unknown as LinkAggregatorInstitutionRequest;
+
+    await linkAggregatorInstitution(req, res);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Institution not found",
+    });
+  });
+
   it("should handle errors gracefully", async () => {
     const res = {
       status: jest.fn().mockReturnThis(),

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AggregatorIntegration } from "../models/aggregatorIntegration";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
 import { UUID } from "crypto";
+import { Institution } from "../models/institution";
 
 export interface LinkAggregatorInstitutionRequest extends Request {
   body: {
@@ -30,6 +31,16 @@ export const linkAggregatorInstitution = async (
       return res
         .status(404)
         .json({ message: "Aggregator Institution not found" });
+    }
+
+    const institution = await Institution.findOne({
+      where: {
+        id: institutionId,
+      },
+    });
+
+    if (!institution) {
+      return res.status(404).json({ message: "Institution not found" });
     }
 
     await AggregatorIntegration.upsert({
