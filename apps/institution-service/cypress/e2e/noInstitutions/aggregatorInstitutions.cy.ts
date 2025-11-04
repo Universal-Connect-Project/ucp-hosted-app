@@ -1,7 +1,11 @@
 import { AggregatorInstitution } from "../../../src/models/aggregatorInstitution";
 import { PORT } from "../../../src/shared/const";
 import { AGGREGATOR_INSTITUTIONS_ROUTE } from "../../../src/shared/consts/routes";
-import { USER_ACCESS_TOKEN_ENV } from "../../shared/constants/accessTokens";
+import {
+  AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+  SUPER_USER_ACCESS_TOKEN_ENV,
+  USER_ACCESS_TOKEN_ENV,
+} from "../../shared/constants/accessTokens";
 import { getAggregatorInstitutions } from "../../shared/utils/aggregatorInstitutions";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
 import { createTestInstitutionAndAddIntegration } from "../../shared/utils/institutions";
@@ -10,7 +14,7 @@ import { runTokenInvalidCheck } from "../../support/utils";
 describe("aggregator institutions", () => {
   let createdInstitutionId: string;
 
-  before(() => {
+  beforeEach(() => {
     cy.task("clearAggregatorInstitutions")
       .then(() => cy.task("clearAggregatorIntegrations"))
       .then(() =>
@@ -62,6 +66,121 @@ describe("aggregator institutions", () => {
       .then((institutionId) => {
         createdInstitutionId = institutionId;
       });
+  });
+
+  describe("POST /aggregatorInstitutions/link", () => {
+    runTokenInvalidCheck({
+      url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/link`,
+      method: "POST",
+    });
+
+    it("returns 403 if not super admin or aggregator admin", () => {
+      cy.request({
+        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/link`,
+        method: "POST",
+        headers: {
+          Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
+        },
+        failOnStatusCode: false,
+        body: {
+          aggregatorId: 1,
+          aggregatorInstitutionId: "1",
+          institutionId: "institution-id",
+        },
+      }).then((response) => {
+        expect(response.status).to.eq(403);
+        expect(response.body).to.have.property(
+          "error",
+          "Insufficient permissions",
+        );
+      });
+    });
+
+    it("returns 403 if aggregator admin, but not for their aggregator", () => {
+      cy.request({
+        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/link`,
+        method: "POST",
+        headers: {
+          Authorization: createAuthorizationHeader(
+            AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+          ),
+        },
+        failOnStatusCode: false,
+        body: {
+          aggregatorId: 1,
+          aggregatorInstitutionId: "1",
+          institutionId: "institution-id",
+        },
+      }).then((response) => {
+        expect(response.status).to.eq(403);
+        expect(response.body).to.have.property(
+          "error",
+          "An Aggregator cannot create an aggregatorIntegration belonging to another aggregator",
+        );
+      });
+    });
+
+    describe("successful linking", () => {
+      const mxAggregatorId = 98;
+      const createdAggregatorInstitutionId = "4";
+
+      beforeEach(() => {
+        cy.task("createAggregatorInstitutions", [
+          {
+            aggregatorId: mxAggregatorId,
+            id: createdAggregatorInstitutionId,
+            name: "MX Aggregator Institution",
+            createdAt: new Date("2023-01-06"),
+          },
+        ]);
+      });
+
+      it("links an institution to an aggregator institution as a super admin", () => {
+        cy.request({
+          url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/link`,
+          method: "POST",
+          headers: {
+            Authorization: createAuthorizationHeader(
+              SUPER_USER_ACCESS_TOKEN_ENV,
+            ),
+          },
+          body: {
+            aggregatorId: mxAggregatorId,
+            aggregatorInstitutionId: createdAggregatorInstitutionId,
+            institutionId: createdInstitutionId,
+          },
+        }).then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property(
+            "message",
+            "Aggregator Institution linked successfully",
+          );
+        });
+      });
+
+      it("links an institution to an aggregator institution as an aggregator admin", () => {
+        cy.request({
+          url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/link`,
+          method: "POST",
+          headers: {
+            Authorization: createAuthorizationHeader(
+              AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+            ),
+          },
+          body: {
+            aggregatorId: mxAggregatorId,
+            aggregatorInstitutionId: createdAggregatorInstitutionId,
+            institutionId: createdInstitutionId,
+          },
+        }).then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property(
+            "message",
+            "Aggregator Institution linked successfully",
+          );
+        });
+      });
+    });
   });
 
   describe("GET /aggregatorInstitutions/:aggregatorId/:id", () => {

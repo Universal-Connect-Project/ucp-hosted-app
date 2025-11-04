@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Request, Response } from "express";
-import { getPaginatedAggregatorInstitutionsQueryParamValidator } from "./aggregatorInstitutionEndpoints";
+import {
+  getPaginatedAggregatorInstitutionsQueryParamValidator,
+  linkAggregatorInstitutionBodyValidator,
+} from "./aggregatorInstitutionEndpoints";
 
 describe("aggregatorInstitution endpoints", () => {
   describe("getPaginatedAggregatorInstitutionsQueryParamValidator", () => {
@@ -169,6 +172,57 @@ describe("aggregatorInstitution endpoints", () => {
         expect.objectContaining({
           error: '"shouldIncludeMatched" is required',
         }),
+      );
+    });
+  });
+
+  describe("linkAggregatorInstitutionBodyValidator", () => {
+    const validRequestBody = {
+      aggregatorId: 1,
+      aggregatorInstitutionId: "agg-inst-123",
+      institutionId: "inst-456",
+    };
+
+    it("should call next() for valid request body", () => {
+      const req = {
+        body: validRequestBody,
+      } as unknown as Request;
+      const res = {} as Response;
+      const next = jest.fn();
+
+      linkAggregatorInstitutionBodyValidator(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+    });
+
+    describe("missing required fields", () => {
+      ["aggregatorInstitutionId", "aggregatorId", "institutionId"].forEach(
+        (field) => {
+          it(`should not call next, should respond with a 400 error for missing ${field}`, () => {
+            const req = {
+              body: {
+                ...validRequestBody,
+                [field]: undefined,
+              },
+            } as unknown as Request;
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn(),
+            } as unknown as Response;
+            const next = jest.fn();
+
+            linkAggregatorInstitutionBodyValidator(req, res, next);
+
+            expect(next).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith(
+              expect.objectContaining({
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                error: expect.stringContaining(`"${field}" is required`),
+              }),
+            );
+          });
+        },
       );
     });
   });
