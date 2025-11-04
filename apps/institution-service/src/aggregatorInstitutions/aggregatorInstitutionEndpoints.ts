@@ -5,9 +5,14 @@ import { validateUIAudience } from "../shared/utils/permissionValidation";
 import { syncInstitutions } from "./sync/syncInstitutions";
 import { AGGREGATOR_INSTITUTIONS_SYNC_CHILD_ROUTE } from "../shared/consts/routes";
 import { getPaginatedAggregatorInstitutionsHandler } from "./getPaginatedAggregatorInstitutionsHandler";
-import { createRequestQueryParamSchemaValidator } from "@repo/backend-utils";
+import {
+  createRequestBodySchemaValidator,
+  createRequestQueryParamSchemaValidator,
+} from "@repo/backend-utils";
 import Joi from "joi";
 import { getAggregatorInstitution } from "./getAggregatorInstitution";
+import { linkAggregatorInstitution } from "./linkAggregatorInstitution";
+import { validateUserCanCreateAggregatorIntegration } from "../middlewares/validationMiddleware";
 
 const router = Router();
 
@@ -35,11 +40,30 @@ export const getPaginatedAggregatorInstitutionsQueryParamValidator =
     }),
   );
 
+export const linkAggregatorInstitutionBodyValidator =
+  createRequestBodySchemaValidator(
+    Joi.object({
+      aggregatorId: Joi.number().required(),
+      aggregatorInstitutionId: Joi.string().required(),
+      institutionId: Joi.string().required(),
+    }),
+  );
+
 router.get(
   "/",
   validateUIAudience,
   getPaginatedAggregatorInstitutionsQueryParamValidator,
   getPaginatedAggregatorInstitutionsHandler as RequestHandler,
+);
+
+router.post(
+  "/link",
+  [
+    validateUIAudience,
+    linkAggregatorInstitutionBodyValidator,
+    validateUserCanCreateAggregatorIntegration,
+  ],
+  linkAggregatorInstitution as RequestHandler,
 );
 
 router.get(
