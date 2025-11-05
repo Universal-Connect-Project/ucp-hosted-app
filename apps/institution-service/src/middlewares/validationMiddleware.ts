@@ -14,7 +14,7 @@ import {
 } from "../shared/utils/permissionValidation";
 
 export const institutionSchema = Joi.object({
-  name: Joi.string(),
+  name: Joi.string().required(),
   keywords: Joi.array().items(Joi.string()),
   logo: Joi.string()
     .uri({ scheme: ["http", "https"] })
@@ -26,7 +26,8 @@ export const institutionSchema = Joi.object({
     .uri({ scheme: ["http", "https"] })
     .messages({
       "string.uri": "The url must be a valid URL",
-    }),
+    })
+    .required(),
   is_test_bank: Joi.boolean(),
   routing_numbers: Joi.array()
     .items(Joi.string().pattern(/^\d{9}$/, "9 digits"))
