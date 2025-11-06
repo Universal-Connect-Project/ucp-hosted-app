@@ -70,7 +70,7 @@ router.post(
   linkAggregatorInstitution as RequestHandler,
 );
 
-export const createAndLinkAggregatorInstitutionBodyValidator =
+export const createInstitutionAndLinkAggregatorInstitutionBodyValidator =
   createRequestBodySchemaValidator(
     Joi.object({
       aggregatorId: Joi.number().required(),
@@ -80,13 +80,13 @@ export const createAndLinkAggregatorInstitutionBodyValidator =
   );
 
 router.post(
-  "/createAndLinkInstitution",
+  "/createInstitutionAndLink",
   [
     validateUIAudience,
     scopeIncludesAny(
       `${UiUserPermissions.CREATE_INSTITUTION} ${UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR}`,
     ),
-    createAndLinkAggregatorInstitutionBodyValidator,
+    createInstitutionAndLinkAggregatorInstitutionBodyValidator,
     validateUserCanCreateAggregatorIntegration,
   ],
   createInstitutionAndLinkAggregatorInstitution as RequestHandler,

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Request, Response } from "express";
 import {
-  createAndLinkAggregatorInstitutionBodyValidator,
+  createInstitutionAndLinkAggregatorInstitutionBodyValidator,
   getPaginatedAggregatorInstitutionsQueryParamValidator,
   linkAggregatorInstitutionBodyValidator,
 } from "./aggregatorInstitutionEndpoints";
@@ -228,7 +228,7 @@ describe("aggregatorInstitution endpoints", () => {
     });
   });
 
-  describe("createAndLinkAggregatorInstitutionBodyValidator", () => {
+  describe("createInstitutionAndLinkAggregatorInstitutionBodyValidator", () => {
     const validRequestBody = {
       aggregatorId: 1,
       aggregatorInstitutionId: "agg-inst-123",
@@ -249,7 +249,11 @@ describe("aggregatorInstitution endpoints", () => {
       const res = {} as Response;
       const next = jest.fn();
 
-      createAndLinkAggregatorInstitutionBodyValidator(req, res, next);
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
 
       expect(next).toHaveBeenCalled();
     });
@@ -267,7 +271,11 @@ describe("aggregatorInstitution endpoints", () => {
       } as unknown as Response;
       const next = jest.fn();
 
-      createAndLinkAggregatorInstitutionBodyValidator(req, res, next);
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
 
       expect(next).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(400);
@@ -291,7 +299,11 @@ describe("aggregatorInstitution endpoints", () => {
       } as unknown as Response;
       const next = jest.fn();
 
-      createAndLinkAggregatorInstitutionBodyValidator(req, res, next);
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
 
       expect(next).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(400);
@@ -315,7 +327,11 @@ describe("aggregatorInstitution endpoints", () => {
       } as unknown as Response;
       const next = jest.fn();
 
-      createAndLinkAggregatorInstitutionBodyValidator(req, res, next);
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
 
       expect(next).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(400);
@@ -342,7 +358,11 @@ describe("aggregatorInstitution endpoints", () => {
       } as unknown as Response;
       const next = jest.fn();
 
-      createAndLinkAggregatorInstitutionBodyValidator(req, res, next);
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
 
       expect(next).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(400);

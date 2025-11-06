@@ -7,7 +7,7 @@ import {
   USER_ACCESS_TOKEN_ENV,
 } from "../../shared/constants/accessTokens";
 import {
-  createAndLinkInstitution,
+  createInstitutionAndLink,
   getAggregatorInstitutions,
 } from "../../shared/utils/aggregatorInstitutions";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
@@ -187,7 +187,7 @@ describe("aggregator institutions", () => {
     });
   });
 
-  describe("POST /aggregatorInstitutions/createAndLinkInstitution", () => {
+  describe("POST /aggregatorInstitutions/createInstitutionAndLink", () => {
     const createdAggregatorInstitutionId = "4";
 
     const validBody = {
@@ -214,12 +214,12 @@ describe("aggregator institutions", () => {
     });
 
     runTokenInvalidCheck({
-      url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/createAndLinkInstitution`,
+      url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/createInstitutionAndLink`,
       method: "POST",
     });
 
     it("creates and links an institution to an aggregator institution as a super admin", () => {
-      createAndLinkInstitution({
+      createInstitutionAndLink({
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         body: validBody,
       }).then((response) => {
@@ -233,7 +233,7 @@ describe("aggregator institutions", () => {
     });
 
     it("creates and links an institution to an aggregator institution as an aggregator admin", () => {
-      createAndLinkInstitution({
+      createInstitutionAndLink({
         accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
         body: validBody,
       }).then((response) => {
@@ -247,7 +247,7 @@ describe("aggregator institutions", () => {
     });
 
     it("responds with 403 Forbidden when trying to create an institution with a linked aggregatorInstitution from a different aggregator", () => {
-      createAndLinkInstitution({
+      createInstitutionAndLink({
         accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
         body: { ...validBody, aggregatorId: 1 },
         failOnStatusCode: false,
@@ -260,8 +260,8 @@ describe("aggregator institutions", () => {
       });
     });
 
-    it("responds with 403 Forbidden when trying to createAndLink as a regular user", () => {
-      createAndLinkInstitution({
+    it("responds with 403 Forbidden when trying to createInstitutionAndLink as a regular user", () => {
+      createInstitutionAndLink({
         accessTokenEnv: USER_ACCESS_TOKEN_ENV,
         body: { ...validBody, aggregatorId: 1 },
         failOnStatusCode: false,
@@ -272,7 +272,7 @@ describe("aggregator institutions", () => {
     });
 
     it("responds with 400 Bad Request when request body is invalid", () => {
-      createAndLinkInstitution({
+      createInstitutionAndLink({
         accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         body: {
           ...validBody,

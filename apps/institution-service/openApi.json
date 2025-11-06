@@ -1195,7 +1195,7 @@
         }
       }
     },
-    "/aggregatorInstitutions/createAndLink": {
+    "/aggregatorInstitutions/createInstitutionAndLink": {
       "post": {
         "security": [
           {
