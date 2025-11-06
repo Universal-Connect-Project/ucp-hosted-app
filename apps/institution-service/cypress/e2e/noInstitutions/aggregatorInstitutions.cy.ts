@@ -6,10 +6,15 @@ import {
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
 } from "../../shared/constants/accessTokens";
-import { getAggregatorInstitutions } from "../../shared/utils/aggregatorInstitutions";
+import {
+  createInstitutionAndLink,
+  getAggregatorInstitutions,
+} from "../../shared/utils/aggregatorInstitutions";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
 import { createTestInstitutionAndAddIntegration } from "../../shared/utils/institutions";
 import { runTokenInvalidCheck } from "../../support/utils";
+
+const mxAggregatorId = 98;
 
 describe("aggregator institutions", () => {
   let createdInstitutionId: string;
@@ -121,7 +126,6 @@ describe("aggregator institutions", () => {
     });
 
     describe("successful linking", () => {
-      const mxAggregatorId = 98;
       const createdAggregatorInstitutionId = "4";
 
       beforeEach(() => {
@@ -179,6 +183,106 @@ describe("aggregator institutions", () => {
             "Aggregator Institution linked successfully",
           );
         });
+      });
+    });
+  });
+
+  describe("POST /aggregatorInstitutions/createInstitutionAndLink", () => {
+    const createdAggregatorInstitutionId = "4";
+
+    const validBody = {
+      aggregatorId: mxAggregatorId,
+      aggregatorInstitutionId: createdAggregatorInstitutionId,
+      institutionData: {
+        keywords: ["new", "institution"],
+        name: "New Institution",
+        routing_numbers: ["123456789"],
+        url: "https://newinstitution.com",
+        logo: "https://newinstitution.com/logo.png",
+      },
+    };
+
+    beforeEach(() => {
+      cy.task("createAggregatorInstitutions", [
+        {
+          aggregatorId: mxAggregatorId,
+          id: createdAggregatorInstitutionId,
+          name: "MX Aggregator Institution",
+          createdAt: new Date("2023-01-06"),
+        },
+      ]);
+    });
+
+    runTokenInvalidCheck({
+      url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/createInstitutionAndLink`,
+      method: "POST",
+    });
+
+    it("creates and links an institution to an aggregator institution as a super admin", () => {
+      createInstitutionAndLink({
+        accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
+        body: validBody,
+      }).then((response) => {
+        expect(response.status).to.eq(201);
+        expect(response.body).to.have.property(
+          "message",
+          "Institution created and linked successfully",
+        );
+        expect(response.body).to.have.property("institutionId");
+      });
+    });
+
+    it("creates and links an institution to an aggregator institution as an aggregator admin", () => {
+      createInstitutionAndLink({
+        accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+        body: validBody,
+      }).then((response) => {
+        expect(response.status).to.eq(201);
+        expect(response.body).to.have.property(
+          "message",
+          "Institution created and linked successfully",
+        );
+        expect(response.body).to.have.property("institutionId");
+      });
+    });
+
+    it("responds with 403 Forbidden when trying to create an institution with a linked aggregatorInstitution from a different aggregator", () => {
+      createInstitutionAndLink({
+        accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+        body: { ...validBody, aggregatorId: 1 },
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.eq(403);
+        expect(response.body).to.have.property(
+          "error",
+          "An Aggregator cannot create an aggregatorIntegration belonging to another aggregator",
+        );
+      });
+    });
+
+    it("responds with 403 Forbidden when trying to createInstitutionAndLink as a regular user", () => {
+      createInstitutionAndLink({
+        accessTokenEnv: USER_ACCESS_TOKEN_ENV,
+        body: { ...validBody, aggregatorId: 1 },
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.eq(403);
+        expect(response.body).to.include("Insufficient Scope");
+      });
+    });
+
+    it("responds with 400 Bad Request when request body is invalid", () => {
+      createInstitutionAndLink({
+        accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
+        body: {
+          ...validBody,
+          aggregatorId: undefined,
+        },
+        failOnStatusCode: false,
+      }).then((response: Cypress.Response<{ error: string }>) => {
+        expect(response.status).to.eq(400);
+        expect(response.body).to.have.property("error");
+        expect(response.body.error).to.eq('"aggregatorId" is required');
       });
     });
   });

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Request, Response } from "express";
 import {
+  createInstitutionAndLinkAggregatorInstitutionBodyValidator,
   getPaginatedAggregatorInstitutionsQueryParamValidator,
   linkAggregatorInstitutionBodyValidator,
 } from "./aggregatorInstitutionEndpoints";
@@ -223,6 +224,152 @@ describe("aggregatorInstitution endpoints", () => {
             );
           });
         },
+      );
+    });
+  });
+
+  describe("createInstitutionAndLinkAggregatorInstitutionBodyValidator", () => {
+    const validRequestBody = {
+      aggregatorId: 1,
+      aggregatorInstitutionId: "agg-inst-123",
+      institutionData: {
+        is_test_bank: true,
+        keywords: ["test", "institution"],
+        logo: "https://testinstitution.com/logo.png",
+        name: "Test Institution",
+        routing_numbers: ["123456789"],
+        url: "https://testinstitution.com",
+      },
+    };
+
+    it("should call next() for valid request body", () => {
+      const req = {
+        body: validRequestBody,
+      } as unknown as Request;
+      const res = {} as Response;
+      const next = jest.fn();
+
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
+
+      expect(next).toHaveBeenCalled();
+    });
+
+    it("should not call next, should respond with a 400 error for missing aggregatorId", () => {
+      const req = {
+        body: {
+          ...validRequestBody,
+          aggregatorId: undefined,
+        },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+      const next = jest.fn();
+
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
+
+      expect(next).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: '"aggregatorId" is required',
+        }),
+      );
+    });
+
+    it("should not call next, should respond with a 400 error for missing aggregatorInstitutionId", () => {
+      const req = {
+        body: {
+          ...validRequestBody,
+          aggregatorInstitutionId: undefined,
+        },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+      const next = jest.fn();
+
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
+
+      expect(next).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: '"aggregatorInstitutionId" is required',
+        }),
+      );
+    });
+
+    it("should not call next, should respond with a 400 error for missing institutionData", () => {
+      const req = {
+        body: {
+          ...validRequestBody,
+          institutionData: undefined,
+        },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+      const next = jest.fn();
+
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
+
+      expect(next).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: '"institutionData" is required',
+        }),
+      );
+    });
+
+    it("should not call next, should respond with a 400 error for invalid institutionData", () => {
+      const req = {
+        body: {
+          ...validRequestBody,
+          institutionData: {
+            // Missing required 'name' field
+            url: "https://testinstitution.com",
+          },
+        },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+      const next = jest.fn();
+
+      createInstitutionAndLinkAggregatorInstitutionBodyValidator(
+        req,
+        res,
+        next,
+      );
+
+      expect(next).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: '"institutionData.name" is required',
+        }),
       );
     });
   });

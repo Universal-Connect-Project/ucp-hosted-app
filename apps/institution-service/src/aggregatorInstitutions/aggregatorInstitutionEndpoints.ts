@@ -1,6 +1,6 @@
 import { UiUserPermissions } from "@repo/shared-utils";
 import { RequestHandler, Router } from "express";
-import { requiredScopes } from "express-oauth2-jwt-bearer";
+import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import { validateUIAudience } from "../shared/utils/permissionValidation";
 import { syncInstitutions } from "./sync/syncInstitutions";
 import { AGGREGATOR_INSTITUTIONS_SYNC_CHILD_ROUTE } from "../shared/consts/routes";
@@ -12,7 +12,11 @@ import {
 import Joi from "joi";
 import { getAggregatorInstitution } from "./getAggregatorInstitution";
 import { linkAggregatorInstitution } from "./linkAggregatorInstitution";
-import { validateUserCanCreateAggregatorIntegration } from "../middlewares/validationMiddleware";
+import {
+  institutionSchema,
+  validateUserCanCreateAggregatorIntegration,
+} from "../middlewares/validationMiddleware";
+import { createInstitutionAndLinkAggregatorInstitution } from "./createInstitutionAndLinkAggregatorInstitution";
 
 const router = Router();
 
@@ -40,6 +44,13 @@ export const getPaginatedAggregatorInstitutionsQueryParamValidator =
     }),
   );
 
+router.get(
+  "/",
+  validateUIAudience,
+  getPaginatedAggregatorInstitutionsQueryParamValidator,
+  getPaginatedAggregatorInstitutionsHandler as RequestHandler,
+);
+
 export const linkAggregatorInstitutionBodyValidator =
   createRequestBodySchemaValidator(
     Joi.object({
@@ -49,13 +60,6 @@ export const linkAggregatorInstitutionBodyValidator =
     }),
   );
 
-router.get(
-  "/",
-  validateUIAudience,
-  getPaginatedAggregatorInstitutionsQueryParamValidator,
-  getPaginatedAggregatorInstitutionsHandler as RequestHandler,
-);
-
 router.post(
   "/link",
   [
@@ -64,6 +68,28 @@ router.post(
     validateUserCanCreateAggregatorIntegration,
   ],
   linkAggregatorInstitution as RequestHandler,
+);
+
+export const createInstitutionAndLinkAggregatorInstitutionBodyValidator =
+  createRequestBodySchemaValidator(
+    Joi.object({
+      aggregatorId: Joi.number().required(),
+      aggregatorInstitutionId: Joi.string().required(),
+      institutionData: institutionSchema.required(),
+    }),
+  );
+
+router.post(
+  "/createInstitutionAndLink",
+  [
+    validateUIAudience,
+    scopeIncludesAny(
+      `${UiUserPermissions.CREATE_INSTITUTION} ${UiUserPermissions.CREATE_INSTITUTION_AGGREGATOR}`,
+    ),
+    createInstitutionAndLinkAggregatorInstitutionBodyValidator,
+    validateUserCanCreateAggregatorIntegration,
+  ],
+  createInstitutionAndLinkAggregatorInstitution as RequestHandler,
 );
 
 router.get(

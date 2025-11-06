@@ -44,3 +44,25 @@ export const getAggregatorInstitutions = ({
     qs,
   });
 };
+
+export const createInstitutionAndLink = ({
+  accessTokenEnv,
+  body,
+  failOnStatusCode = true,
+}: {
+  accessTokenEnv?: string;
+  body: Record<string, unknown>;
+  failOnStatusCode?: boolean;
+}) => {
+  const url = `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/createInstitutionAndLink`;
+
+  return cy.request({
+    url,
+    method: "POST",
+    headers: {
+      Authorization: createAuthorizationHeader(accessTokenEnv),
+    },
+    body,
+    failOnStatusCode,
+  });
+};
