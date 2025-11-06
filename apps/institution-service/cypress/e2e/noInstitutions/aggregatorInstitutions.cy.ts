@@ -6,7 +6,10 @@ import {
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
 } from "../../shared/constants/accessTokens";
-import { getAggregatorInstitutions } from "../../shared/utils/aggregatorInstitutions";
+import {
+  createAndLinkInstitution,
+  getAggregatorInstitutions,
+} from "../../shared/utils/aggregatorInstitutions";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
 import { createTestInstitutionAndAddIntegration } from "../../shared/utils/institutions";
 import { runTokenInvalidCheck } from "../../support/utils";
@@ -216,12 +219,8 @@ describe("aggregator institutions", () => {
     });
 
     it("creates and links an institution to an aggregator institution as a super admin", () => {
-      cy.request({
-        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/createAndLinkInstitution`,
-        method: "POST",
-        headers: {
-          Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-        },
+      createAndLinkInstitution({
+        accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         body: validBody,
       }).then((response) => {
         expect(response.status).to.eq(201);
@@ -234,14 +233,8 @@ describe("aggregator institutions", () => {
     });
 
     it("creates and links an institution to an aggregator institution as an aggregator admin", () => {
-      cy.request({
-        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/createAndLinkInstitution`,
-        method: "POST",
-        headers: {
-          Authorization: createAuthorizationHeader(
-            AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-          ),
-        },
+      createAndLinkInstitution({
+        accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
         body: validBody,
       }).then((response) => {
         expect(response.status).to.eq(201);
@@ -254,14 +247,8 @@ describe("aggregator institutions", () => {
     });
 
     it("responds with 403 Forbidden when trying to create an institution with a linked aggregatorInstitution from a different aggregator", () => {
-      cy.request({
-        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/createAndLinkInstitution`,
-        method: "POST",
-        headers: {
-          Authorization: createAuthorizationHeader(
-            AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-          ),
-        },
+      createAndLinkInstitution({
+        accessTokenEnv: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
         body: { ...validBody, aggregatorId: 1 },
         failOnStatusCode: false,
       }).then((response) => {
@@ -274,12 +261,8 @@ describe("aggregator institutions", () => {
     });
 
     it("responds with 403 Forbidden when trying to createAndLink as a regular user", () => {
-      cy.request({
-        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/createAndLinkInstitution`,
-        method: "POST",
-        headers: {
-          Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
-        },
+      createAndLinkInstitution({
+        accessTokenEnv: USER_ACCESS_TOKEN_ENV,
         body: { ...validBody, aggregatorId: 1 },
         failOnStatusCode: false,
       }).then((response) => {
@@ -289,12 +272,8 @@ describe("aggregator institutions", () => {
     });
 
     it("responds with 400 Bad Request when request body is invalid", () => {
-      cy.request({
-        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/createAndLinkInstitution`,
-        method: "POST",
-        headers: {
-          Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
-        },
+      createAndLinkInstitution({
+        accessTokenEnv: SUPER_USER_ACCESS_TOKEN_ENV,
         body: {
           ...validBody,
           aggregatorId: undefined,
