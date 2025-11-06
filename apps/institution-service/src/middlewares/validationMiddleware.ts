@@ -2,7 +2,6 @@ import { UiUserPermissions } from "@repo/shared-utils";
 import { UUID } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
-import jwt from "jsonwebtoken";
 import { Aggregator } from "../models/aggregator";
 import {
   ActOnAggregatorIntegrationValidationErrorReason,
@@ -11,6 +10,8 @@ import {
   validateUserCanDeleteInstitution as deleteInstitutionValidation,
   validateUserCanEditAggregatorIntegration as editAggIntValidation,
   validateUserCanEditInstitution as editInstitutionValidation,
+  getAggregatorNameFromRequest,
+  getPermissionsFromRequest,
 } from "../shared/utils/permissionValidation";
 
 export const institutionSchema = Joi.object({
@@ -183,10 +184,8 @@ export const validateUserCanCreateAggregatorIntegration = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.authorization?.split(" ")?.[1];
-  const decodedToken = jwt.decode(token as string) as DecodedToken;
-  const permissions = decodedToken.permissions;
-  const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
+  const aggregatorName = getAggregatorNameFromRequest(req);
+  const permissions = getPermissionsFromRequest(req);
 
   if (permissions.includes(UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION)) {
     return next();

@@ -5,6 +5,14 @@ import {
 } from "./patchAggregatorInstitution";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
+import { createAuthorizationHeaders } from "../test/token";
+import { UiUserPermissions } from "@repo/shared-utils";
+
+const headersWithAccess = createAuthorizationHeaders({
+  jwtPayload: {
+    permissions: [UiUserPermissions.UPDATE_AGGREGATOR_INSTITUTION],
+  },
+});
 
 describe("patchAggregatorInstitution", () => {
   let finicityAggregatorId: number;
@@ -32,6 +40,9 @@ describe("patchAggregatorInstitution", () => {
 
     const req = {
       body: { isReviewed: true },
+      headers: {
+        ...headersWithAccess,
+      },
       params: {
         aggregatorId: aggregatorInstitution.aggregatorId,
         aggregatorInstitutionId: aggregatorInstitution.id,
@@ -71,6 +82,9 @@ describe("patchAggregatorInstitution", () => {
 
     const req = {
       body: { isReviewed: false },
+      headers: {
+        ...headersWithAccess,
+      },
       params: {
         aggregatorId: aggregatorInstitution.aggregatorId,
         aggregatorInstitutionId: aggregatorInstitution.id,
@@ -100,6 +114,9 @@ describe("patchAggregatorInstitution", () => {
   it("should return 404 if the Aggregator Institution is not found", async () => {
     const req = {
       body: { isReviewed: true },
+      headers: {
+        ...headersWithAccess,
+      },
       params: {
         aggregatorId: finicityAggregatorId,
         aggregatorInstitutionId: "non_existent_id",
@@ -123,6 +140,9 @@ describe("patchAggregatorInstitution", () => {
   it("should handle internal server errors gracefully", async () => {
     const req = {
       body: { isReviewed: true },
+      headers: {
+        ...headersWithAccess,
+      },
       params: {
         aggregatorId: finicityAggregatorId,
         aggregatorInstitutionId: "inst_123",

@@ -50,6 +50,9 @@ export const UiUserPermissions = {
   UPDATE_AGGREGATOR_INTEGRATION: "update:aggregatorIntegration",
   UPDATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR:
     "update:aggregatorIntegration:aggregator",
+  UPDATE_AGGREGATOR_INSTITUTION: "update:aggregatorInstitution",
+  UPDATE_AGGREGATOR_INSTITUTION_AS_AGGREGATOR:
+    "update:aggregatorInstitution:aggregator",
   CREATE_AGGREGATOR_INTEGRATION: "create:aggregatorIntegration",
   CREATE_AGGREGATOR_INTEGRATION_AS_AGGREGATOR:
     "create:aggregatorIntegration:aggregator",

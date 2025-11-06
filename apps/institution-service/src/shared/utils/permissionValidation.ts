@@ -34,6 +34,25 @@ export interface DecodedToken {
   };
 }
 
+const getDecodedTokenFromRequest = (req: Request) => {
+  const token = req.headers.authorization?.split(" ")?.[1];
+  const decodedToken = jwt.decode(token as string) as DecodedToken;
+
+  return decodedToken;
+};
+
+export const getAggregatorNameFromRequest = (req: Request) => {
+  const decodedToken = getDecodedTokenFromRequest(req);
+
+  return decodedToken["ucw/appMetaData"]?.aggregatorId;
+};
+
+export const getPermissionsFromRequest = (req: Request) => {
+  const decodedToken = getDecodedTokenFromRequest(req);
+
+  return decodedToken.permissions;
+};
+
 export enum ActOnInstitutionValidationErrorReason {
   GenericError,
   InsufficientScope,
@@ -51,9 +70,7 @@ export const createValidateUserCanActOnInstitution =
   }) =>
   async ({ institutionId, req }: { institutionId: string; req: Request }) => {
     try {
-      const token = req.headers.authorization?.split(" ")?.[1] as string;
-      const decodedToken = jwt.decode(token) as DecodedToken;
-      const permissions = decodedToken.permissions;
+      const permissions = getPermissionsFromRequest(req);
 
       if (permissions.includes(adminPermission)) {
         return true;
@@ -67,7 +84,7 @@ export const createValidateUserCanActOnInstitution =
         return ActOnInstitutionValidationErrorReason.InvalidInstitutionId;
       }
 
-      const aggregatorId = decodedToken["ucw/appMetaData"].aggregatorId;
+      const aggregatorId = getAggregatorNameFromRequest(req);
 
       const aggregators = await institution?.getAggregators({ raw: true });
       const hasOtherAggregators = aggregators?.some(
@@ -119,9 +136,7 @@ export const createValidateUserCanActOnAggregatorIntegration =
     req: Request;
   }) => {
     try {
-      const token = req.headers.authorization?.split(" ")?.[1];
-      const decodedToken = jwt.decode(token as string) as DecodedToken;
-      const permissions = decodedToken.permissions;
+      const permissions = getPermissionsFromRequest(req);
 
       if (permissions.includes(adminPermission)) {
         return true;
@@ -136,7 +151,7 @@ export const createValidateUserCanActOnAggregatorIntegration =
         return ActOnAggregatorIntegrationValidationErrorReason.InvalidAggregatorIntegrationId;
       }
 
-      const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
+      const aggregatorName = getAggregatorNameFromRequest(req);
       const aggregator = await aggregatorIntegration?.getAggregator();
 
       if (aggregatorName !== aggregator?.name) {
@@ -173,11 +188,8 @@ export const getUsersAggregatorIntegrationCreationPermissions = async ({
   const noAccessResponse = {
     aggregatorsThatCanBeAdded: [],
   };
-
-  const token = req.headers.authorization?.split(" ")?.[1];
-  const decodedToken = jwt.decode(token as string) as DecodedToken;
-  const permissions = decodedToken.permissions;
-  const aggregatorName = decodedToken["ucw/appMetaData"]?.aggregatorId;
+  const permissions = getPermissionsFromRequest(req);
+  const aggregatorName = getAggregatorNameFromRequest(req);
 
   const aggregators = await Aggregator.findAll({
     raw: true,
