@@ -37,6 +37,7 @@ export class AggregatorInstitution extends Model<
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare deletedAt: CreationOptional<Date>;
+  declare reviewedAt: CreationOptional<Date | null>;
 
   declare static associations: {
     aggregator: Association<AggregatorInstitution, Aggregator>;
@@ -81,6 +82,10 @@ AggregatorInstitution.init(
     name: {
       allowNull: false,
       type: DataTypes.STRING,
+    },
+    reviewedAt: {
+      allowNull: true,
+      type: DataTypes.DATE,
     },
     supportsAccountOwner: {
       defaultValue: false,
