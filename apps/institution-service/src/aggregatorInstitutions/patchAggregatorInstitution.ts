@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
 import {
   getAggregatorNameFromRequest,
@@ -6,6 +6,8 @@ import {
 } from "../shared/utils/permissionValidation";
 import { UiUserPermissions } from "@repo/shared-utils";
 import { Aggregator } from "../models/aggregator";
+import { createWithRequestBodySchemaValidator } from "@repo/backend-utils";
+import Joi from "joi";
 
 export interface PatchAggregatorInstitutionRequest extends Request {
   body: {
@@ -17,14 +19,25 @@ export interface PatchAggregatorInstitutionRequest extends Request {
   };
 }
 
+const withValidateBody = createWithRequestBodySchemaValidator(
+  Joi.object({
+    isReviewed: Joi.boolean().required(),
+  }),
+);
+
 const withValidateUserHasPermission =
   (
     handler: (
       req: PatchAggregatorInstitutionRequest,
       res: Response,
+      next: NextFunction,
     ) => Promise<void>,
   ) =>
-  async (req: PatchAggregatorInstitutionRequest, res: Response) => {
+  async (
+    req: PatchAggregatorInstitutionRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
     const permissions = getPermissionsFromRequest(req);
 
     if (
@@ -57,12 +70,13 @@ const withValidateUserHasPermission =
       }
     }
 
-    return handler(req, res);
+    return handler(req, res, next);
   };
 
 const patchAggregatorInstitutionNoChecks = async (
   req: PatchAggregatorInstitutionRequest,
   res: Response,
+  _next: NextFunction,
 ) => {
   try {
     const {
@@ -100,5 +114,5 @@ const patchAggregatorInstitutionNoChecks = async (
 };
 
 export const patchAggregatorInstitution = withValidateUserHasPermission(
-  patchAggregatorInstitutionNoChecks,
+  withValidateBody(patchAggregatorInstitutionNoChecks),
 );

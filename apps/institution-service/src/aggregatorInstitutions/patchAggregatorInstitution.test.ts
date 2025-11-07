@@ -8,6 +8,8 @@ import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
 import { UiUserPermissions } from "@repo/shared-utils";
 import { createTestAuthorization } from "../test/token";
 
+const next = () => {};
+
 const headersWithAccess = {
   authorization: createTestAuthorization({
     permissions: [UiUserPermissions.UPDATE_AGGREGATOR_INSTITUTION],
@@ -54,7 +56,7 @@ describe("patchAggregatorInstitution", () => {
       json: jest.fn(),
     } as unknown as Response;
 
-    await patchAggregatorInstitution(req, res);
+    await patchAggregatorInstitution(req, res, next);
 
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -96,7 +98,7 @@ describe("patchAggregatorInstitution", () => {
       json: jest.fn(),
     } as unknown as Response;
 
-    await patchAggregatorInstitution(req, res);
+    await patchAggregatorInstitution(req, res, next);
 
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -128,7 +130,7 @@ describe("patchAggregatorInstitution", () => {
       json: jest.fn(),
     } as unknown as Response;
 
-    await patchAggregatorInstitution(req, res);
+    await patchAggregatorInstitution(req, res, next);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(404);
@@ -158,7 +160,7 @@ describe("patchAggregatorInstitution", () => {
       .spyOn(AggregatorInstitution, "findOne")
       .mockRejectedValue(new Error("Database error"));
 
-    await patchAggregatorInstitution(req, res);
+    await patchAggregatorInstitution(req, res, next);
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.status).toHaveBeenCalledWith(500);
@@ -183,7 +185,7 @@ describe("patchAggregatorInstitution", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      await patchAggregatorInstitution(req, res);
+      await patchAggregatorInstitution(req, res, next);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(403);
@@ -220,7 +222,7 @@ describe("patchAggregatorInstitution", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      await patchAggregatorInstitution(req, res);
+      await patchAggregatorInstitution(req, res, next);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(403);
@@ -255,7 +257,7 @@ describe("patchAggregatorInstitution", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      await patchAggregatorInstitution(req, res);
+      await patchAggregatorInstitution(req, res, next);
 
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -296,7 +298,7 @@ describe("patchAggregatorInstitution", () => {
         json: jest.fn(),
       } as unknown as Response;
 
-      await patchAggregatorInstitution(req, res);
+      await patchAggregatorInstitution(req, res, next);
 
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -307,6 +309,34 @@ describe("patchAggregatorInstitution", () => {
           }),
         }),
       );
+    });
+  });
+
+  describe("body validation", () => {
+    it("should return 400 if isReviewed is missing", async () => {
+      const req = {
+        body: {},
+        headers: {
+          ...headersWithAccess,
+        },
+        params: {
+          aggregatorId: "test",
+          aggregatorInstitutionId: "inst_123",
+        },
+      } as unknown as PatchAggregatorInstitutionRequest;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await patchAggregatorInstitution(req, res, next);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: '"isReviewed" is required',
+      });
     });
   });
 });
