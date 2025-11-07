@@ -286,15 +286,15 @@ describe("aggregator institutions", () => {
     });
   });
 
-  describe("GET /aggregatorInstitutions/:aggregatorId/:id", () => {
+  describe("GET /aggregatorInstitutions/:id/aggregator/:aggregatorId/", () => {
     runTokenInvalidCheck({
-      url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/1/4`,
+      url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/${createdAggregatorInstitutionId}/aggregator/1`,
       method: "GET",
     });
 
     it("retrieves an aggregator institution by aggregatorId and id, includes matched institutions", () => {
       cy.request({
-        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/1/4`,
+        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/${createdAggregatorInstitutionId}/aggregator/1`,
         method: "GET",
         headers: {
           Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
@@ -402,7 +402,7 @@ describe("aggregator institutions", () => {
     });
   });
 
-  describe("PATCH /aggregatorInstitutions/:aggregatorId/:aggregatorInstitutionId", () => {
+  describe("PATCH /aggregatorInstitutions/:aggregatorInstitutionId/aggregator/:aggregatorId", () => {
     beforeEach(() => {
       cy.task("createAggregatorInstitutions", [
         {
@@ -415,13 +415,13 @@ describe("aggregator institutions", () => {
     });
 
     runTokenInvalidCheck({
-      url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/1/4`,
+      url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/${createdAggregatorInstitutionId}/aggregator/1`,
       method: "PATCH",
     });
 
     it("returns 403 if not super admin or aggregator admin", () => {
       cy.request({
-        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/1/4`,
+        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/${createdAggregatorInstitutionId}/aggregator/1`,
         method: "PATCH",
         headers: {
           Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
@@ -441,7 +441,7 @@ describe("aggregator institutions", () => {
 
     it("allows super admin to patch aggregator institution", () => {
       cy.request({
-        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/1/4`,
+        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/${createdAggregatorInstitutionId}/aggregator/1`,
         method: "PATCH",
         headers: {
           Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
@@ -474,7 +474,7 @@ describe("aggregator institutions", () => {
 
     it("allows aggregator admin to patch their own aggregator institution", () => {
       cy.request({
-        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/${mxAggregatorId}/4`,
+        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/${createdAggregatorInstitutionId}/aggregator/${mxAggregatorId}`,
         method: "PATCH",
         headers: {
           Authorization: createAuthorizationHeader(

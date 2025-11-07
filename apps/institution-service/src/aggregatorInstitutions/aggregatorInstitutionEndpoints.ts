@@ -94,13 +94,13 @@ router.post(
 );
 
 router.get(
-  "/:aggregatorId/:id",
+  "/:id/aggregator/:aggregatorId/",
   validateUIAudience,
   getAggregatorInstitution as RequestHandler,
 );
 
 router.patch(
-  "/:aggregatorId/:aggregatorInstitutionId",
+  "/:aggregatorInstitutionId/aggregator/:aggregatorId/",
   validateUIAudience,
   patchAggregatorInstitution as unknown as RequestHandler,
 );

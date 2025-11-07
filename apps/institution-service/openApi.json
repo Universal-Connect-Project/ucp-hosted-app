@@ -1131,7 +1131,7 @@
         "summary": "Aggregator Institution List"
       }
     },
-    "/aggregatorInstitutions/{aggregatorId}/{id}": {
+    "/aggregatorInstitutions/{id}/aggregator/{aggregatorId}": {
       "get": {
         "security": [
           {
