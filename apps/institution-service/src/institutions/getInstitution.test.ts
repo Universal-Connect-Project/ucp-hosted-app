@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import { Request, Response } from "express";
-import { createTestAuthorization } from "../test/utils";
+import { createTestAuthorization } from "../test/token";
 import { getInstitution } from "./getInstitution";
 import { createTestInstitution } from "../test/createTestInstitution";
 

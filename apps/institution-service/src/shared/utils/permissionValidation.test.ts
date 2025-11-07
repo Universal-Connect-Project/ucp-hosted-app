@@ -1,10 +1,12 @@
 import { UiUserPermissions } from "@repo/shared-utils";
 import { Request } from "express";
 import { Institution } from "../../models/institution";
-import { createTestAuthorization } from "../../test/utils";
+import { createTestAuthorization } from "../../test/token";
 import {
   ActOnAggregatorIntegrationValidationErrorReason,
   ActOnInstitutionValidationErrorReason,
+  getAggregatorNameFromRequest,
+  getPermissionsFromRequest,
   getUsersAggregatorIntegrationCreationPermissions,
   validateUserCanDeleteAggregatorIntegration,
   validateUserCanDeleteInstitution,
@@ -478,6 +480,41 @@ describe("permissionValidation", () => {
       ).toEqual({
         aggregatorsThatCanBeAdded: [],
       });
+    });
+  });
+
+  describe("getAggregatorNameFromRequest", () => {
+    it("returns the aggregatorName from the request", () => {
+      const req = {
+        headers: {
+          authorization: createTestAuthorization({
+            aggregatorId: "sophtron",
+            permissions: [],
+          }),
+        },
+      } as Request;
+
+      expect(getAggregatorNameFromRequest(req)).toBe("sophtron");
+    });
+  });
+
+  describe("getPermissionsFromRequest", () => {
+    it("returns the permissions from the request", () => {
+      const req = {
+        headers: {
+          authorization: createTestAuthorization({
+            permissions: [
+              UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION,
+              UiUserPermissions.DELETE_INSTITUTION,
+            ],
+          }),
+        },
+      } as Request;
+
+      expect(getPermissionsFromRequest(req)).toEqual([
+        UiUserPermissions.CREATE_AGGREGATOR_INTEGRATION,
+        UiUserPermissions.DELETE_INSTITUTION,
+      ]);
     });
   });
 });

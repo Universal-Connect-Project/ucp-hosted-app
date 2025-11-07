@@ -8,6 +8,8 @@ import {
   createRequestQueryParamSchemaValidator,
   validatePerformanceGraphRequestSchema,
   validateAggregatorRequestSchema,
+  createWithRequestBodySchemaValidator,
+  createWithRequestParamsSchemaValidator,
 } from "./validation";
 import { NextFunction, request, Request, Response } from "express";
 import Joi from "joi";
@@ -91,6 +93,70 @@ describe("validation", () => {
     createValidator: createRequestQueryParamSchemaValidator,
     requestValidationLocation: "query",
     title: "createRequestQueryParamSchemaValidator",
+  });
+
+  describe("withValidation", () => {
+    [
+      [createWithRequestBodySchemaValidator, "body"],
+      [createWithRequestParamsSchemaValidator, "params"],
+    ].forEach(([createWithValidator, location]) => {
+      describe(location, () => {
+        it(`should call handler when request ${location} is valid`, () => {
+          const req = {
+            [location as string]: { name: "Jane Doe" },
+          } as unknown as Request;
+
+          const res = {} as unknown as Response;
+
+          const next = jest.fn();
+
+          const handler = jest.fn();
+
+          const withValidation = (createWithValidator as Function)(
+            Joi.object({
+              name: Joi.string().required(),
+            }),
+          );
+
+          const wrappedHandler = withValidation(handler);
+
+          wrappedHandler(req, res, next);
+
+          expect(handler).toHaveBeenCalledWith(req, res, next);
+        });
+
+        it(`should return 400 status and error message when request ${location} is invalid`, () => {
+          const req = {
+            [location as string]: {},
+          } as unknown as Request;
+
+          const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+          } as unknown as Response;
+
+          const next = jest.fn();
+
+          const handler = jest.fn();
+
+          const withValidation = (createWithValidator as Function)(
+            Joi.object({
+              name: Joi.string().required(),
+            }),
+          );
+
+          const wrappedHandler = withValidation(handler);
+
+          wrappedHandler(req, res, next);
+
+          expect(res.status).toHaveBeenCalledWith(400);
+          expect(res.json).toHaveBeenCalledWith({
+            error: expect.stringContaining('"name" is required'),
+          });
+          expect(handler).not.toHaveBeenCalled();
+        });
+      });
+    });
   });
 
   describe("validateAggregatorRequestSchema", () => {
