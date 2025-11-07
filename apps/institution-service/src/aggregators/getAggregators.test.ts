@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Request, Response } from "express";
-import { createTestAuthorization } from "../test/utils";
+import { createTestAuthorization } from "../test/token";
 import { getAggregators } from "./getAggregators";
 import { Aggregator } from "../models/aggregator";
 

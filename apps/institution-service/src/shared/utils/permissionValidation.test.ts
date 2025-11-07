@@ -1,7 +1,7 @@
 import { UiUserPermissions } from "@repo/shared-utils";
 import { Request } from "express";
 import { Institution } from "../../models/institution";
-import { createTestAuthorization } from "../../test/utils";
+import { createTestAuthorization } from "../../test/token";
 import {
   ActOnAggregatorIntegrationValidationErrorReason,
   ActOnInstitutionValidationErrorReason,

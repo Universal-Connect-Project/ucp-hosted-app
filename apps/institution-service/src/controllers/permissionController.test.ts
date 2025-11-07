@@ -1,6 +1,6 @@
 import { UiUserPermissions } from "@repo/shared-utils";
 import { Request, Response } from "express";
-import { createTestAuthorization } from "../test/utils";
+import { createTestAuthorization } from "../test/token";
 import { getPermissions } from "./permissionController";
 
 describe("permissionController", () => {

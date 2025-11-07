@@ -1,38 +1,27 @@
 import { testRSAToken } from "@repo/shared-utils";
 import { Algorithm, JwtPayload, sign, SignOptions } from "jsonwebtoken";
 
-const createFakeTestToken = ({
-  jwtPayload = {},
+export const createTestAuthorization = ({
+  aggregatorId = "mx",
+  permissions = [],
 }: {
-  jwtPayload?: Partial<JwtPayload>;
-}): string => {
-  let token: string;
-
+  aggregatorId?: string;
+  permissions: string[];
+}) => {
   const options: SignOptions = {
     header: {
       alg: "RS256" as Algorithm,
       kid: "0",
     },
     algorithm: "RS256" as Algorithm,
-    audience: [],
-    issuer: `https://test/`,
   };
 
-  try {
-    token = sign(jwtPayload, testRSAToken, options);
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
+  const payload: JwtPayload = {
+    permissions,
+    "ucw/appMetaData": {
+      aggregatorId,
+    },
+  };
 
-  return token;
-};
-
-export const createAuthorizationHeaders = ({
-  jwtPayload = {},
-}: {
-  jwtPayload?: Partial<JwtPayload>;
-}): { authorization: string } => {
-  const token = createFakeTestToken({ jwtPayload });
-  return { authorization: `Bearer ${token}` };
+  return `Bearer ${sign(payload, testRSAToken, options)}`;
 };

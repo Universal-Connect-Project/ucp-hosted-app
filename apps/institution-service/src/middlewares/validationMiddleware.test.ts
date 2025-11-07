@@ -7,7 +7,7 @@ import {
   secondSeedInstitutionId,
   seedInstitutionId,
 } from "../test/testData/institutions";
-import { createTestAuthorization } from "../test/utils";
+import { createTestAuthorization } from "../test/token";
 import {
   validateUserCanCreateAggregatorIntegration,
   validateUserCanDeleteAggregatorIntegration,

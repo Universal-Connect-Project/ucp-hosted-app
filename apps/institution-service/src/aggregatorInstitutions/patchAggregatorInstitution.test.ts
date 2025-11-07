@@ -5,14 +5,14 @@ import {
 } from "./patchAggregatorInstitution";
 import { AggregatorInstitution } from "../models/aggregatorInstitution";
 import { getAggregatorByName } from "../shared/aggregators/getAggregatorByName";
-import { createAuthorizationHeaders } from "../test/token";
 import { UiUserPermissions } from "@repo/shared-utils";
+import { createTestAuthorization } from "../test/token";
 
-const headersWithAccess = createAuthorizationHeaders({
-  jwtPayload: {
+const headersWithAccess = {
+  authorization: createTestAuthorization({
     permissions: [UiUserPermissions.UPDATE_AGGREGATOR_INSTITUTION],
-  },
-});
+  }),
+};
 
 describe("patchAggregatorInstitution", () => {
   let finicityAggregatorId: number;
@@ -202,15 +202,11 @@ describe("patchAggregatorInstitution", () => {
       const req = {
         body: { isReviewed: true },
         headers: {
-          ...createAuthorizationHeaders({
-            jwtPayload: {
-              permissions: [
-                UiUserPermissions.UPDATE_AGGREGATOR_INSTITUTION_AS_AGGREGATOR,
-              ],
-              "ucw/appMetaData": {
-                aggregatorId: "mx",
-              },
-            },
+          authorization: createTestAuthorization({
+            aggregatorId: "mx",
+            permissions: [
+              UiUserPermissions.UPDATE_AGGREGATOR_INSTITUTION_AS_AGGREGATOR,
+            ],
           }),
         },
         params: {
@@ -244,10 +240,8 @@ describe("patchAggregatorInstitution", () => {
       const req = {
         body: { isReviewed: true },
         headers: {
-          ...createAuthorizationHeaders({
-            jwtPayload: {
-              permissions: [UiUserPermissions.UPDATE_AGGREGATOR_INSTITUTION],
-            },
+          authorization: createTestAuthorization({
+            permissions: [UiUserPermissions.UPDATE_AGGREGATOR_INSTITUTION],
           }),
         },
         params: {
@@ -284,15 +278,11 @@ describe("patchAggregatorInstitution", () => {
       const req = {
         body: { isReviewed: true },
         headers: {
-          ...createAuthorizationHeaders({
-            jwtPayload: {
-              permissions: [
-                UiUserPermissions.UPDATE_AGGREGATOR_INSTITUTION_AS_AGGREGATOR,
-              ],
-              "ucw/appMetaData": {
-                aggregatorId: "finicity",
-              },
-            },
+          authorization: createTestAuthorization({
+            aggregatorId: "finicity",
+            permissions: [
+              UiUserPermissions.UPDATE_AGGREGATOR_INSTITUTION_AS_AGGREGATOR,
+            ],
           }),
         },
         params: {
