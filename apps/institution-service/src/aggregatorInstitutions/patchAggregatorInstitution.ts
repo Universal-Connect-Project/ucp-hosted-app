@@ -52,7 +52,7 @@ const withValidateUserHasPermission =
       if (!aggregator || aggregator.name !== aggregatorName) {
         return res.status(403).json({
           error:
-            "An aggregator admin can't update a different aggregator's institution",
+            "An aggregator admin can only manage their own aggregator institutions",
         });
       }
     }

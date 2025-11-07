@@ -50,7 +50,7 @@ export const getAggregatorNameFromRequest = (req: Request) => {
 export const getPermissionsFromRequest = (req: Request) => {
   const decodedToken = getDecodedTokenFromRequest(req);
 
-  return decodedToken.permissions;
+  return decodedToken?.permissions || [];
 };
 
 export enum ActOnInstitutionValidationErrorReason {
