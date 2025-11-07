@@ -37,12 +37,10 @@ const createWithRequestSchemaValidatorCreator =
     const { error } = schema.validate(req[requestProp]);
 
     if (error) {
-      res.status(400).json({ error: error.details[0].message });
-      return;
+      return res.status(400).json({ error: error.details[0].message });
     }
 
-    handler(req, res, next);
-    return;
+    return handler(req, res, next);
   };
 
 export const createWithRequestBodySchemaValidator =
