@@ -15,6 +15,7 @@ import { createTestInstitutionAndAddIntegration } from "../../shared/utils/insti
 import { runTokenInvalidCheck } from "../../support/utils";
 
 const mxAggregatorId = 98;
+const createdAggregatorInstitutionId = "4";
 
 describe("aggregator institutions", () => {
   let createdInstitutionId: string;
@@ -126,8 +127,6 @@ describe("aggregator institutions", () => {
     });
 
     describe("successful linking", () => {
-      const createdAggregatorInstitutionId = "4";
-
       beforeEach(() => {
         cy.task("createAggregatorInstitutions", [
           {
@@ -398,6 +397,110 @@ describe("aggregator institutions", () => {
           expect(firstResult.name).to.eq("Resistance Credit Union");
           expect(firstResult.aggregatorId).to.eq(1);
           expect(firstResult.id).to.eq("4");
+        },
+      );
+    });
+  });
+
+  describe("PATCH /aggregatorInstitutions/:aggregatorId/:aggregatorInstitutionId", () => {
+    beforeEach(() => {
+      cy.task("createAggregatorInstitutions", [
+        {
+          aggregatorId: mxAggregatorId,
+          id: createdAggregatorInstitutionId,
+          name: "MX Aggregator Institution",
+          createdAt: new Date("2023-01-06"),
+        },
+      ]);
+    });
+
+    runTokenInvalidCheck({
+      url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/1/4`,
+      method: "PATCH",
+    });
+
+    it("returns 403 if not super admin or aggregator admin", () => {
+      cy.request({
+        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/1/4`,
+        method: "PATCH",
+        headers: {
+          Authorization: createAuthorizationHeader(USER_ACCESS_TOKEN_ENV),
+        },
+        failOnStatusCode: false,
+        body: {
+          isReviewed: true,
+        },
+      }).then((response) => {
+        expect(response.status).to.eq(403);
+        expect(response.body).to.have.property(
+          "error",
+          "Insufficient permissions",
+        );
+      });
+    });
+
+    it("allows super admin to patch aggregator institution", () => {
+      cy.request({
+        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/1/4`,
+        method: "PATCH",
+        headers: {
+          Authorization: createAuthorizationHeader(SUPER_USER_ACCESS_TOKEN_ENV),
+        },
+        body: {
+          isReviewed: true,
+        },
+      }).then(
+        (
+          response: Cypress.Response<{
+            aggregatorInstitution: AggregatorInstitution;
+          }>,
+        ) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property("aggregatorInstitution");
+          expect(response.body.aggregatorInstitution).to.have.property(
+            "id",
+            "4",
+          );
+          expect(response.body.aggregatorInstitution).to.have.property(
+            "aggregatorId",
+            1,
+          );
+          expect(response.body.aggregatorInstitution).to.have.property(
+            "reviewedAt",
+          );
+        },
+      );
+    });
+
+    it("allows aggregator admin to patch their own aggregator institution", () => {
+      cy.request({
+        url: `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_ROUTE}/${mxAggregatorId}/4`,
+        method: "PATCH",
+        headers: {
+          Authorization: createAuthorizationHeader(
+            AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+          ),
+        },
+        body: {
+          isReviewed: false,
+        },
+      }).then(
+        (
+          response: Cypress.Response<{
+            aggregatorInstitution: AggregatorInstitution;
+          }>,
+        ) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property("aggregatorInstitution");
+          expect(response.body.aggregatorInstitution).to.have.property(
+            "id",
+            "4",
+          );
+          expect(response.body.aggregatorInstitution).to.have.property(
+            "aggregatorId",
+            98,
+          );
+          expect(response.body.aggregatorInstitution.reviewedAt).to.eq(null);
         },
       );
     });

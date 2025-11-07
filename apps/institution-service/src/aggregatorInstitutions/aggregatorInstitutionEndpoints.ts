@@ -17,6 +17,7 @@ import {
   validateUserCanCreateAggregatorIntegration,
 } from "../middlewares/validationMiddleware";
 import { createInstitutionAndLinkAggregatorInstitution } from "./createInstitutionAndLinkAggregatorInstitution";
+import { patchAggregatorInstitution } from "./patchAggregatorInstitution";
 
 const router = Router();
 
@@ -96,6 +97,12 @@ router.get(
   "/:aggregatorId/:id",
   validateUIAudience,
   getAggregatorInstitution as RequestHandler,
+);
+
+router.patch(
+  "/:aggregatorId/:aggregatorInstitutionId",
+  validateUIAudience,
+  patchAggregatorInstitution as unknown as RequestHandler,
 );
 
 export default router;
