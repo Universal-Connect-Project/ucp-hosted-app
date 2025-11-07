@@ -29,11 +29,12 @@ export const createRequestBodySchemaValidator = (schema: ObjectSchema) => {
   };
 };
 
-export const createWithRequestBodySchemaValidator =
+const createWithRequestSchemaValidatorCreator =
+  (requestProp: "body" | "query" | "params") =>
   (schema: ObjectSchema) =>
   (handler: Function) =>
   (req: Request, res: Response, next: NextFunction) => {
-    const { error } = schema.validate(req.body);
+    const { error } = schema.validate(req[requestProp]);
 
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
@@ -41,6 +42,12 @@ export const createWithRequestBodySchemaValidator =
 
     return handler(req, res, next);
   };
+
+export const createWithRequestBodySchemaValidator =
+  createWithRequestSchemaValidatorCreator("body");
+
+export const createWithRequestParamsSchemaValidator =
+  createWithRequestSchemaValidatorCreator("params");
 
 export const createRequestQueryParamSchemaValidator =
   (schema: ObjectSchema) =>

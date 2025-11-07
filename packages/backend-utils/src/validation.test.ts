@@ -9,6 +9,7 @@ import {
   validatePerformanceGraphRequestSchema,
   validateAggregatorRequestSchema,
   createWithRequestBodySchemaValidator,
+  createWithRequestParamsSchemaValidator,
 } from "./validation";
 import { NextFunction, request, Request, Response } from "express";
 import Joi from "joi";
@@ -94,60 +95,67 @@ describe("validation", () => {
     title: "createRequestQueryParamSchemaValidator",
   });
 
-  describe("createWithRequestBodySchemaValidator", () => {
-    it("should call handler when request body is valid", () => {
-      const req = {
-        body: { name: "Jane Doe" },
-      } as unknown as Request;
+  describe("withValidation", () => {
+    [
+      [createWithRequestBodySchemaValidator, "body"],
+      [createWithRequestParamsSchemaValidator, "params"],
+    ].forEach(([createWithValidator, location]) => {
+      describe(location, () => {
+        it(`should call handler when request ${location} is valid`, () => {
+          const req = {
+            [location as string]: { name: "Jane Doe" },
+          } as unknown as Request;
 
-      const res = {} as unknown as Response;
+          const res = {} as unknown as Response;
 
-      const next = jest.fn();
+          const next = jest.fn();
 
-      const handler = jest.fn();
+          const handler = jest.fn();
 
-      const withBodyValidation = createWithRequestBodySchemaValidator(
-        Joi.object({
-          name: Joi.string().required(),
-        }),
-      );
+          const withValidation = (createWithValidator as Function)(
+            Joi.object({
+              name: Joi.string().required(),
+            }),
+          );
 
-      const wrappedHandler = withBodyValidation(handler);
+          const wrappedHandler = withValidation(handler);
 
-      wrappedHandler(req, res, next);
+          wrappedHandler(req, res, next);
 
-      expect(handler).toHaveBeenCalledWith(req, res, next);
-    });
+          expect(handler).toHaveBeenCalledWith(req, res, next);
+        });
 
-    it("should return 400 status and error message when request body is invalid", () => {
-      const req = {
-        body: {},
-      } as unknown as Request;
+        it(`should return 400 status and error message when request ${location} is invalid`, () => {
+          const req = {
+            [location as string]: {},
+          } as unknown as Request;
 
-      const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      } as unknown as Response;
+          const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+          } as unknown as Response;
 
-      const next = jest.fn();
+          const next = jest.fn();
 
-      const handler = jest.fn();
+          const handler = jest.fn();
 
-      const withBodyValidation = createWithRequestBodySchemaValidator(
-        Joi.object({
-          name: Joi.string().required(),
-        }),
-      );
+          const withValidation = (createWithValidator as Function)(
+            Joi.object({
+              name: Joi.string().required(),
+            }),
+          );
 
-      const wrappedHandler = withBodyValidation(handler);
+          const wrappedHandler = withValidation(handler);
 
-      wrappedHandler(req, res, next);
+          wrappedHandler(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({
-        error: expect.stringContaining('"name" is required'),
+          expect(res.status).toHaveBeenCalledWith(400);
+          expect(res.json).toHaveBeenCalledWith({
+            error: expect.stringContaining('"name" is required'),
+          });
+          expect(handler).not.toHaveBeenCalled();
+        });
       });
-      expect(handler).not.toHaveBeenCalled();
     });
   });
 

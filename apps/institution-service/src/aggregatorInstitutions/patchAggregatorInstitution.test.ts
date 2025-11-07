@@ -339,4 +339,57 @@ describe("patchAggregatorInstitution", () => {
       });
     });
   });
+
+  describe("params validation", () => {
+    it("should return 400 if aggregatorId is not a number", async () => {
+      const req = {
+        body: { isReviewed: true },
+        headers: {
+          ...headersWithAccess,
+        },
+        params: {
+          aggregatorId: "test",
+          aggregatorInstitutionId: "inst_123",
+        },
+      } as unknown as PatchAggregatorInstitutionRequest;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await patchAggregatorInstitution(req, res, next);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: '"aggregatorId" must be a number',
+      });
+    });
+
+    it("should return 400 if aggregatorInstitutionId is missing", async () => {
+      const req = {
+        body: { isReviewed: true },
+        headers: {
+          ...headersWithAccess,
+        },
+        params: {
+          aggregatorId: "1",
+        },
+      } as unknown as PatchAggregatorInstitutionRequest;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await patchAggregatorInstitution(req, res, next);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: '"aggregatorInstitutionId" is required',
+      });
+    });
+  });
 });

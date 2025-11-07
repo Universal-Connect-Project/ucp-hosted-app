@@ -6,7 +6,10 @@ import {
 } from "../shared/utils/permissionValidation";
 import { UiUserPermissions } from "@repo/shared-utils";
 import { Aggregator } from "../models/aggregator";
-import { createWithRequestBodySchemaValidator } from "@repo/backend-utils";
+import {
+  createWithRequestBodySchemaValidator,
+  createWithRequestParamsSchemaValidator,
+} from "@repo/backend-utils";
 import Joi from "joi";
 
 export interface PatchAggregatorInstitutionRequest extends Request {
@@ -22,6 +25,13 @@ export interface PatchAggregatorInstitutionRequest extends Request {
 const withValidateBody = createWithRequestBodySchemaValidator(
   Joi.object({
     isReviewed: Joi.boolean().required(),
+  }),
+);
+
+const withValidateParams = createWithRequestParamsSchemaValidator(
+  Joi.object({
+    aggregatorId: Joi.number().required(),
+    aggregatorInstitutionId: Joi.string().required(),
   }),
 );
 
@@ -114,5 +124,5 @@ const patchAggregatorInstitutionNoChecks = async (
 };
 
 export const patchAggregatorInstitution = withValidateUserHasPermission(
-  withValidateBody(patchAggregatorInstitutionNoChecks),
+  withValidateBody(withValidateParams(patchAggregatorInstitutionNoChecks)),
 );
