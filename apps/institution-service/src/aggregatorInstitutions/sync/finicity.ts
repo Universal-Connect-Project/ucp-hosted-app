@@ -110,9 +110,13 @@ const createFetchAndConvertInstitutionPage =
 export const syncFinicityInstitutions = async () => {
   const token = await fetchAccessToken();
 
+  const fetchAndConvertInstitutionPage =
+    createFetchAndConvertInstitutionPage(token);
+
   const aggregatorInstitutionSyncer = createAggregatorInstitutionSyncer({
     aggregatorName: "finicity",
-    fetchAndConvertInstitutionPage: createFetchAndConvertInstitutionPage(token),
+    fetchAndConvertInstitutionPage,
+    minimumValidInstitutionCount: 5000,
   });
 
   await aggregatorInstitutionSyncer();

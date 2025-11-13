@@ -23,12 +23,14 @@ export const createAggregatorInstitutionSyncer =
   ({
     aggregatorName,
     fetchAndConvertInstitutionPage,
+    minimumValidInstitutionCount,
   }: {
     aggregatorName: string;
     fetchAndConvertInstitutionPage: ({ page }: { page: number }) => Promise<{
       convertedInstitutions: CreationAttributes<AggregatorInstitution>[];
       totalPages: number;
     }>;
+    minimumValidInstitutionCount: number;
   }) =>
   async () => {
     const aggregatorId = (await getAggregatorByName(aggregatorName)).id;
@@ -63,6 +65,6 @@ export const createAggregatorInstitutionSyncer =
     await removeMissingAggregatorInstitutions({
       aggregatorId,
       aggregatorInstitutionIds: allAggregatorInstitutionIds,
-      minimumValidInstitutionCount: 5000,
+      minimumValidInstitutionCount,
     });
   };
