@@ -1,6 +1,5 @@
 import { getConfig } from "../../shared/environment";
 import { createAggregatorInstitutionSyncer } from "./createAggregatorInstitutionSyncer";
-import { createOrUpdateAggregatorInstitution } from "./createOrUpdateAggregatorInstitution";
 
 export const FETCH_FINICITY_ACCESS_TOKEN_URL =
   "https://api.finicity.com/aggregation/v2/partners/authentication";
@@ -74,9 +73,9 @@ export const mapFinicityInstitution = (institution: FinicityInstitution) => ({
   url: institution.urlHomeApp,
 });
 
-const createFetchAndStoreInstitutionPage =
+const createFetchAndConvertInstitutionPage =
   (token: string) =>
-  async ({ aggregatorId, page }: { aggregatorId: number; page: number }) => {
+  async ({ page }: { page: number }) => {
     const { FINICITY_APP_KEY } = getConfig();
 
     const response = await fetch(
@@ -100,19 +99,10 @@ const createFetchAndStoreInstitutionPage =
     const { found, institutions } =
       (await response.json()) as FinicityInstitutionsResponse;
 
-    for (const institution of institutions) {
-      await createOrUpdateAggregatorInstitution({
-        aggregatorId,
-        ...mapFinicityInstitution(institution),
-      });
-    }
-
-    const aggregatorInstitutionIds = institutions.map((inst) =>
-      inst.id.toString(),
-    );
+    const convertedInstitutions = institutions.map(mapFinicityInstitution);
 
     return {
-      aggregatorInstitutionIds,
+      convertedInstitutions,
       totalPages: Math.ceil(found / pageSize),
     };
   };
@@ -122,7 +112,7 @@ export const syncFinicityInstitutions = async () => {
 
   const aggregatorInstitutionSyncer = createAggregatorInstitutionSyncer({
     aggregatorName: "finicity",
-    fetchAndStoreInstitutionPage: createFetchAndStoreInstitutionPage(token),
+    fetchAndConvertInstitutionPage: createFetchAndConvertInstitutionPage(token),
   });
 
   await aggregatorInstitutionSyncer();
