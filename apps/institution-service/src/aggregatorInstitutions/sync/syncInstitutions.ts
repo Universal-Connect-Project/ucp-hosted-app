@@ -107,6 +107,10 @@ export const syncInstitutions = async (
       aggregatorName: "finicity",
       syncInstitutions: syncFinicityInstitutions,
     },
+    // {
+    //   aggregatorName: "mx",
+    //   syncInstitutions: syncMXInstitutions,
+    // },
   ];
 
   for (const { aggregatorName, syncInstitutions } of institutionFetchers) {
