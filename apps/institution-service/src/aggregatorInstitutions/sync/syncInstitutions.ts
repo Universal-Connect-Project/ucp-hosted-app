@@ -5,6 +5,7 @@ import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByNam
 import { Request, Response } from "express";
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { matchInstitutions } from "./match/matchInstitutions";
+import { syncMXInstitutions } from "./mx";
 
 const markMissingAggregatorInstitutionsInactive = async (
   aggregatorId: number,
@@ -107,10 +108,10 @@ export const syncInstitutions = async (
       aggregatorName: "finicity",
       syncInstitutions: syncFinicityInstitutions,
     },
-    // {
-    //   aggregatorName: "mx",
-    //   syncInstitutions: syncMXInstitutions,
-    // },
+    {
+      aggregatorName: "mx",
+      syncInstitutions: syncMXInstitutions,
+    },
   ];
 
   for (const { aggregatorName, syncInstitutions } of institutionFetchers) {
