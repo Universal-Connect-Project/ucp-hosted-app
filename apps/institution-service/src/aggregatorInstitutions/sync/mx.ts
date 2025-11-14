@@ -28,7 +28,7 @@ const MXJobTypeMap = {
   supportsTransactionHistory: "transaction_history",
 };
 
-const mapMXInstitution = (mxInstitution: MXInstitution) => {
+export const mapMXInstitution = (mxInstitution: MXInstitution) => {
   const supportsJobTypesProps = Object.keys(MXJobTypeMap).reduce((acc, key) => {
     const mxProduct = MXJobTypeMap[key as keyof typeof MXJobTypeMap];
 

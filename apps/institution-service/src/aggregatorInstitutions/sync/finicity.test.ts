@@ -14,6 +14,14 @@ import {
 } from "../../test/testData/finicityInstitutions";
 import { generateSyncAggregatorInstitutionsTests } from "./test/generateSyncAggregatorInstitutionsTests";
 
+const modifiedPage2Institutions = [
+  ...finicityInstitutionsPage2.institutions,
+  ...new Array(21).fill(null).map((_, index) => ({
+    ...finicityInstitutionsPage2.institutions[0],
+    id: index + 5,
+  })),
+];
+
 describe("finicity institutions", () => {
   describe("syncFinicityInstitutions", () => {
     generateSyncAggregatorInstitutionsTests({
@@ -22,7 +30,7 @@ describe("finicity institutions", () => {
         "Failed to fetch institutions from Finicity: Bad Request",
       expectedInstitutions: [
         ...finicityInstitutionsPage1.institutions,
-        ...finicityInstitutionsPage2.institutions,
+        ...modifiedPage2Institutions,
       ].map(mapFinicityInstitution),
       setupServerForFailure: () => {
         server.use(
@@ -41,20 +49,7 @@ describe("finicity institutions", () => {
             if (start === "2") {
               return HttpResponse.json({
                 ...finicityInstitutionsPage2,
-                institutions: [
-                  ...finicityInstitutionsPage2.institutions,
-                  ...new Array(21).fill(null).map((_, index) => ({
-                    accountOwner: true,
-                    ach: false,
-                    aha: true,
-                    availBalance: false,
-                    id: `finicityTesting${index}`,
-                    name: "Bank of Testing",
-                    oauthEnabled: true,
-                    transAgg: false,
-                    urlHomeApp: "https://www.bankoftesting.com",
-                  })),
-                ],
+                institutions: [...modifiedPage2Institutions],
               });
             }
 

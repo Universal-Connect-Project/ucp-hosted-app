@@ -100,6 +100,10 @@ export const generateSyncAggregatorInstitutionsTests = ({
           institution.supportsTransactions,
         );
       }
+
+      expect(
+        await AggregatorInstitution.count({ where: { aggregatorId } }),
+      ).toBe(expectedInstitutions.length);
     });
 
     it("throws an error if fetching institutions fails", async () => {
