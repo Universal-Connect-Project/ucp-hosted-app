@@ -6,6 +6,8 @@ import { Request, Response } from "express";
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { matchInstitutions } from "./match/matchInstitutions";
 import { syncMXInstitutions } from "./mx";
+import { createWithRequestBodySchemaValidator } from "@repo/backend-utils";
+import Joi from "joi";
 
 const markMissingAggregatorInstitutionsInactive = async (
   aggregatorId: number,
@@ -87,36 +89,21 @@ export const updateExistingAggregatorIntegrations = async (
   }
 };
 
-interface SyncInstitutionsRequest extends Request {
-  body: {
-    shouldWaitForCompletion?: boolean;
-  };
-}
-
-export const syncInstitutions = async (
-  req?: SyncInstitutionsRequest,
-  res?: Response,
-) => {
-  if (!req?.body?.shouldWaitForCompletion) {
-    res?.status(202).send({ message: "Institution sync started." });
-  }
-
-  const aggregatorErrors = [];
-
-  const institutionFetchers = [
-    {
-      aggregatorName: "finicity",
-      syncInstitutions: syncFinicityInstitutions,
-    },
-    {
-      aggregatorName: "mx",
-      syncInstitutions: syncMXInstitutions,
-    },
-  ];
-
-  for (const { aggregatorName, syncInstitutions } of institutionFetchers) {
+const createSyncInstitutionsForAggregator =
+  ({
+    aggregatorName,
+    syncInstitutions,
+  }: {
+    aggregatorName: string;
+    syncInstitutions: () => Promise<void>;
+  }) =>
+  async () => {
     try {
       await syncInstitutions();
+
+      console.log(
+        `Finished syncing aggregator institutions from ${aggregatorName}.`,
+      );
 
       const aggregatorId = (await getAggregatorByName(aggregatorName))
         ?.id as number;
@@ -126,39 +113,76 @@ export const syncInstitutions = async (
       await updateExistingAggregatorIntegrations(aggregatorId);
 
       console.log(
-        `Finished syncing aggregator institutions for ${aggregatorName}.`,
+        `Finished syncing aggregator integrations for ${aggregatorName}.`,
       );
 
       await matchInstitutions(aggregatorId);
 
-      console.log("Finished auto matching institutitions");
+      console.log(`Finished auto matching institutions for ${aggregatorName}.`);
     } catch (error) {
       console.error(
-        `Error syncing institutions for aggregator ${aggregatorName}:`,
+        `Error during sync process for aggregator ${aggregatorName}:`,
         error,
       );
-
-      aggregatorErrors.push(aggregatorName);
+      throw error;
     }
-  }
+  };
 
-  if (req?.body?.shouldWaitForCompletion) {
-    if (aggregatorErrors.length) {
-      console.error(
-        "Errors occurred during institution sync:",
-        aggregatorErrors,
-      );
-      res?.status(500).send({
-        message: "Institution sync completed with errors.",
-        errors: aggregatorErrors.map(
-          (aggregatorName) =>
-            `Failed to sync institutions for ${aggregatorName}`,
-        ),
+export const syncInstitutionsForFinicity = createSyncInstitutionsForAggregator({
+  aggregatorName: "finicity",
+  syncInstitutions: syncFinicityInstitutions,
+});
+
+export const syncInstitutionsForMX = createSyncInstitutionsForAggregator({
+  aggregatorName: "mx",
+  syncInstitutions: syncMXInstitutions,
+});
+
+const withRequestBodySchemaValidator = createWithRequestBodySchemaValidator(
+  Joi.object({
+    aggregatorName: Joi.string().valid("finicity", "mx").required(),
+    shouldWaitForCompletion: Joi.boolean().optional(),
+  }),
+);
+
+interface SyncInstitutionsRequest extends Request {
+  body: {
+    aggregatorName: string;
+    shouldWaitForCompletion?: boolean;
+  };
+}
+
+export const syncAggregatorInstitutionsHandler = withRequestBodySchemaValidator(
+  async (req: SyncInstitutionsRequest, res: Response) => {
+    const aggregatorName = req.body.aggregatorName as "finicity" | "mx";
+
+    if (!req?.body?.shouldWaitForCompletion) {
+      res?.status(202).send({
+        message: `Institution sync started for ${aggregatorName}.`,
       });
-    } else {
-      res?.status(200).send({ message: "Institution sync completed." });
     }
-  }
 
-  console.log("Finished syncing aggregator institutions.");
-};
+    const aggregatorNameToSyncerMap = {
+      finicity: syncInstitutionsForFinicity,
+      mx: syncInstitutionsForMX,
+    };
+
+    try {
+      await aggregatorNameToSyncerMap[aggregatorName]();
+    } catch (_error) {
+      if (req?.body?.shouldWaitForCompletion) {
+        res?.status(500).send({
+          error: `Failed to sync institutions for ${aggregatorName}`,
+        });
+      }
+
+      return;
+    }
+
+    if (req?.body?.shouldWaitForCompletion) {
+      res
+        ?.status(200)
+        .send({ message: `Institution sync completed for ${aggregatorName}.` });
+    }
+  },
+);

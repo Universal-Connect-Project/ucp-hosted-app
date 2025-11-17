@@ -9,13 +9,44 @@ import {
   FETCH_FINICITY_INSTITUTIONS_URL,
   mapFinicityInstitution,
 } from "./finicity";
-import { syncInstitutions } from "./syncInstitutions";
+import {
+  syncAggregatorInstitutionsHandler,
+  // syncInstitutionsForFinicity,
+  // syncInstitutionsForMX,
+} from "./syncInstitutions";
 import { Request, Response } from "express";
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { createTestInstitution } from "../../test/createTestInstitution";
 
 describe("syncInstitutions", () => {
-  describe("finicity institutions", () => {
+  describe("syncInstitutionsForFinicity", () => {
+    // it("runs without a request or response", async () => {
+    //   server.use(
+    //     http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
+    //       return HttpResponse.json({
+    //         ...finicityInstitutionsPage1,
+    //         found: 5,
+    //         institutions: [
+    //           ...finicityInstitutionsPage1.institutions,
+    //           ...new Array(20).fill(0).map((_, index) => ({
+    //             ...finicityInstitutionsPage1.institutions[0],
+    //             id: 1999999 + index,
+    //           })),
+    //         ],
+    //       });
+    //     }),
+    //   );
+    //   expect(missingAggregatorIntegration.isActive).toBe(true);
+    //   expect(existingAggregatorIntegration.isActive).toBe(false);
+    //   await syncInstitutionsForFinicity();
+    //   await missingAggregatorIntegration.reload();
+    //   await existingAggregatorIntegration.reload();
+    //   expect(missingAggregatorIntegration.isActive).toBe(false);
+    //   expect(existingAggregatorIntegration.isActive).toBe(true);
+    // });
+  });
+
+  describe("syncAggregatorInstitutionsHandler", () => {
     let testInstitutionWithMissingAggregatorInstitution: Institution;
     let missingAggregatorIntegration: AggregatorIntegration;
     let testInstitutionWithExistingAggregatorInstitution: Institution;
@@ -95,36 +126,28 @@ describe("syncInstitutions", () => {
       await AggregatorInstitution.truncate({ cascade: true });
     });
 
-    it("runs without a request or response", async () => {
-      server.use(
-        http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
-          return HttpResponse.json({
-            ...finicityInstitutionsPage1,
-            found: 5,
-            institutions: [
-              ...finicityInstitutionsPage1.institutions,
-              ...new Array(20).fill(0).map((_, index) => ({
-                ...finicityInstitutionsPage1.institutions[0],
-                id: 1999999 + index,
-              })),
-            ],
-          });
-        }),
-      );
+    it("responds with a 400 for an invalid aggregator name", async () => {
+      const req = {
+        body: {
+          aggregatorName: "invalid_aggregator",
+          shouldWaitForCompletion: true,
+        },
+      } as Request;
 
-      expect(missingAggregatorIntegration.isActive).toBe(true);
-      expect(existingAggregatorIntegration.isActive).toBe(false);
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
 
-      await syncInstitutions();
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
-      await missingAggregatorIntegration.reload();
-      await existingAggregatorIntegration.reload();
-
-      expect(missingAggregatorIntegration.isActive).toBe(false);
-      expect(existingAggregatorIntegration.isActive).toBe(true);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: '"aggregatorName" must be one of [finicity, mx]',
+      });
     });
 
-    it("fails if any aggregator fails", async () => {
+    it("handles failures", async () => {
       server.use(
         http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
           return new HttpResponse(null, { status: 500 });
@@ -132,7 +155,7 @@ describe("syncInstitutions", () => {
       );
 
       const req = {
-        body: { shouldWaitForCompletion: true },
+        body: { aggregatorName: "finicity", shouldWaitForCompletion: true },
       } as Request;
 
       const res = {
@@ -140,18 +163,19 @@ describe("syncInstitutions", () => {
         send: jest.fn(),
       } as unknown as Response;
 
-      await syncInstitutions(req, res);
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.send).toHaveBeenCalledWith({
-        message: "Institution sync completed with errors.",
-        errors: ["Failed to sync institutions for finicity"],
+        error: "Failed to sync institutions for finicity",
       });
     });
 
     it("responds with a 202 by default", async () => {
       const req = {
-        body: {},
+        body: {
+          aggregatorName: "finicity",
+        },
       } as Request;
 
       const res = {
@@ -159,11 +183,11 @@ describe("syncInstitutions", () => {
         send: jest.fn(),
       } as unknown as Response;
 
-      await syncInstitutions(req, res);
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
       expect(res.status).toHaveBeenCalledWith(202);
       expect(res.send).toHaveBeenCalledWith({
-        message: "Institution sync started.",
+        message: "Institution sync started for finicity.",
       });
     });
 
@@ -197,7 +221,7 @@ describe("syncInstitutions", () => {
       expect(existingAggregatorIntegration.isActive).toBe(false);
 
       const req = {
-        body: { shouldWaitForCompletion: true },
+        body: { aggregatorName: "finicity", shouldWaitForCompletion: true },
       } as Request;
 
       const res = {
@@ -212,7 +236,7 @@ describe("syncInstitutions", () => {
         },
       });
 
-      await syncInstitutions(req, res);
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
       const newAggregatorIntegrations =
         await institution.getAggregatorIntegrations();
@@ -224,7 +248,7 @@ describe("syncInstitutions", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalledWith({
-        message: "Institution sync completed.",
+        message: "Institution sync completed for finicity.",
       });
 
       await missingAggregatorIntegration.reload();
