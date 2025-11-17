@@ -3,6 +3,7 @@ import "./src/dotEnv";
 import { PORT } from "./src/shared/const";
 import { AggregatorInstitution } from "./src/models/aggregatorInstitution";
 import { AggregatorIntegration } from "./src/models/aggregatorIntegration";
+import { Institution } from "./src/models/institution";
 
 const createAggregatorInstitutions = async (
   aggregatorInstitutions: AggregatorInstitution[],
@@ -14,6 +15,13 @@ const clearAggregatorInstitutions = async () => {
   return await AggregatorInstitution.destroy({
     where: {},
     truncate: true,
+    force: true,
+  });
+};
+
+const clearInstitutions = async () => {
+  return await Institution.truncate({
+    cascade: true,
     force: true,
   });
 };
@@ -41,6 +49,7 @@ export default defineConfig({
         clearAggregatorInstitutions,
         clearAggregatorIntegrations,
         createAggregatorInstitutions,
+        clearInstitutions,
       });
     },
   },

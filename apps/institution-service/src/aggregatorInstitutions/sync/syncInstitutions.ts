@@ -138,6 +138,17 @@ export const syncInstitutionsForMX = createSyncInstitutionsForAggregator({
   syncInstitutions: syncMXInstitutions,
 });
 
+const aggregatorNameToSyncerMap = {
+  finicity: syncInstitutionsForFinicity,
+  mx: syncInstitutionsForMX,
+};
+
+export const syncAllAggregatorInstitutions = async () => {
+  for (const syncer of Object.values(aggregatorNameToSyncerMap)) {
+    await syncer();
+  }
+};
+
 const withRequestBodySchemaValidator = createWithRequestBodySchemaValidator(
   Joi.object({
     aggregatorName: Joi.string().valid("finicity", "mx").required(),
@@ -161,11 +172,6 @@ export const syncAggregatorInstitutionsHandler = withRequestBodySchemaValidator(
         message: `Institution sync started for ${aggregatorName}.`,
       });
     }
-
-    const aggregatorNameToSyncerMap = {
-      finicity: syncInstitutionsForFinicity,
-      mx: syncInstitutionsForMX,
-    };
 
     try {
       await aggregatorNameToSyncerMap[aggregatorName]();

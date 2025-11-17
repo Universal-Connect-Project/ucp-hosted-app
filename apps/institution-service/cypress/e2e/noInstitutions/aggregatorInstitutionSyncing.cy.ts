@@ -4,22 +4,26 @@ import {
   USER_ACCESS_TOKEN_ENV,
 } from "../../shared/constants/accessTokens";
 import { syncAggregatorInstitutions } from "../../shared/utils/aggregatorInstitutions";
-import {
-  createTestAggregatorIntegration,
-  deleteAggregatorIntegration,
-} from "../../shared/utils/aggregatorIntegration";
+import { createTestAggregatorIntegration } from "../../shared/utils/aggregatorIntegration";
 import {
   createTestInstitution,
-  deleteInstitution,
   getInstitution,
 } from "../../shared/utils/institutions";
 
 const finicityAggregatorId = 2;
 
 describe("aggregator institution syncing", () => {
+  beforeEach(() =>
+    cy
+      .task("clearAggregatorInstitutions")
+      .then(() => cy.task("clearAggregatorIntegrations"))
+      .then(() => cy.task("clearInstitutions")),
+  );
+
   it("fails when a non-admin tries to sync institutions", () => {
     syncAggregatorInstitutions({
       accessTokenEnv: USER_ACCESS_TOKEN_ENV,
+      aggregatorName: "finicity",
       failOnStatusCode: false,
     }).then((response) => {
       expect(response.status).to.eq(403);
@@ -46,7 +50,6 @@ describe("aggregator institution syncing", () => {
     };
 
     let institutionIdThatShouldMatch: string;
-    let matchedAggregatorIntegrationId: number;
 
     const prepAggregatorIntegration = (testProps: TestProps) => {
       return createTestInstitution(SUPER_USER_ACCESS_TOKEN_ENV).then(
@@ -99,6 +102,7 @@ describe("aggregator institution syncing", () => {
       ).to.eq(true);
 
       syncAggregatorInstitutions({
+        aggregatorName: "finicity",
         shouldWaitForCompletion: true,
         timeout: 300000,
       }).then((response) => {
@@ -135,9 +139,6 @@ describe("aggregator institution syncing", () => {
                     institution.aggregatorIntegrations[0]
                       .aggregator_institution_id,
                   ).to.eq("170778");
-
-                  matchedAggregatorIntegrationId =
-                    institution.aggregatorIntegrations[0].id;
                 },
               );
             },
@@ -146,37 +147,11 @@ describe("aggregator institution syncing", () => {
       });
     });
 
-    interface CleanupProps {
-      institutionId: string;
-      aggregatorIntegrationId: number;
-    }
-
-    const cleanupAggregatorIntegration = (testProps: CleanupProps) => {
-      return deleteAggregatorIntegration({
-        aggregatorIntegrationId: testProps.aggregatorIntegrationId,
-        token: SUPER_USER_ACCESS_TOKEN_ENV,
-      }).then(() => {
-        return deleteInstitution({
-          institutionId: testProps.institutionId,
-        });
-      });
-    };
-
-    afterEach(() => {
-      cleanupAggregatorIntegration(
-        existingAggregatorInstitutionTestProps as CleanupProps,
-      )
-        .then(() => {
-          cleanupAggregatorIntegration(
-            missingAggregatorInstitutionTestProps as CleanupProps,
-          );
-        })
-        .then(() => {
-          cleanupAggregatorIntegration({
-            institutionId: institutionIdThatShouldMatch,
-            aggregatorIntegrationId: matchedAggregatorIntegrationId,
-          });
-        });
-    });
+    afterEach(() =>
+      cy
+        .task("clearAggregatorInstitutions")
+        .then(() => cy.task("clearAggregatorIntegrations"))
+        .then(() => cy.task("clearInstitutions")),
+    );
   });
 });

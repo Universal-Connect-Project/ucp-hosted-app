@@ -8,14 +8,24 @@ import {
 
 export const syncAggregatorInstitutions = ({
   accessTokenEnv = SUPER_USER_ACCESS_TOKEN_ENV,
+  aggregatorName,
   failOnStatusCode = true,
   shouldWaitForCompletion = false,
   timeout = 5000,
-} = {}) => {
+}: {
+  accessTokenEnv?: string;
+  aggregatorName: string;
+  failOnStatusCode?: boolean;
+  shouldWaitForCompletion?: boolean;
+  timeout?: number;
+}) => {
   const syncUrl = `http://localhost:${PORT}${AGGREGATOR_INSTITUTIONS_SYNC_ROUTE}`;
 
   return cy.request({
-    body: shouldWaitForCompletion ? { shouldWaitForCompletion: true } : {},
+    body: {
+      aggregatorName,
+      shouldWaitForCompletion,
+    },
     url: syncUrl,
     method: "POST",
     headers: {
