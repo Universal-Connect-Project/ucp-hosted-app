@@ -28,7 +28,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: "lts/Iron"
           check-latest: true
 
       - name: Install dependencies
@@ -36,7 +36,7 @@ jobs:
 
       - name: Setup Postgres Database
         run: |
-          npm run db:setup --workspace apps/institution-service     
+          npm run db:setup --workspace apps/institution-service
 
       - name: Cypress run (Rate limiting)
         uses: cypress-io/github-action@v6
