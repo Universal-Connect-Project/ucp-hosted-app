@@ -22,7 +22,7 @@ import { patchAggregatorInstitution } from "./patchAggregatorInstitution";
 const router = Router();
 
 router.post(
-  `${AGGREGATOR_INSTITUTIONS_SYNC_CHILD_ROUTE}`,
+  AGGREGATOR_INSTITUTIONS_SYNC_CHILD_ROUTE,
   [validateUIAudience],
   requiredScopes(UiUserPermissions.SYNC_AGGREGATOR_INSTITUTIONS),
   syncAggregatorInstitutionsHandler as RequestHandler,
