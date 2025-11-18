@@ -133,12 +133,12 @@ const createSyncInstitutionsForAggregator =
     }
   };
 
-export const syncInstitutionsForFinicity = createSyncInstitutionsForAggregator({
+const syncInstitutionsForFinicity = createSyncInstitutionsForAggregator({
   aggregatorName: "finicity",
   syncInstitutions: syncFinicityInstitutions,
 });
 
-export const syncInstitutionsForMX = createSyncInstitutionsForAggregator({
+const syncInstitutionsForMX = createSyncInstitutionsForAggregator({
   aggregatorName: "mx",
   syncInstitutions: syncMXInstitutions,
 });
@@ -149,8 +149,12 @@ const aggregatorNameToSyncerMap = {
 };
 
 export const syncAllAggregatorInstitutions = async () => {
-  for (const syncer of Object.values(aggregatorNameToSyncerMap)) {
-    await syncer({});
+  for (const [name, syncer] of Object.entries(aggregatorNameToSyncerMap)) {
+    try {
+      await syncer({});
+    } catch (error) {
+      console.error(`Aggregator ${name} failed to sync:`, error);
+    }
   }
 };
 

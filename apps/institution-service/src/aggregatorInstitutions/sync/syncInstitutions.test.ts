@@ -11,39 +11,78 @@ import {
 } from "./finicity";
 import {
   syncAggregatorInstitutionsHandler,
-  // syncInstitutionsForFinicity,
-  // syncInstitutionsForMX,
+  syncAllAggregatorInstitutions,
 } from "./syncInstitutions";
 import { Request, Response } from "express";
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { createTestInstitution } from "../../test/createTestInstitution";
 
 describe("syncInstitutions", () => {
-  describe("syncInstitutionsForFinicity", () => {
-    // it("runs without a request or response", async () => {
-    //   server.use(
-    //     http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
-    //       return HttpResponse.json({
-    //         ...finicityInstitutionsPage1,
-    //         found: 5,
-    //         institutions: [
-    //           ...finicityInstitutionsPage1.institutions,
-    //           ...new Array(20).fill(0).map((_, index) => ({
-    //             ...finicityInstitutionsPage1.institutions[0],
-    //             id: 1999999 + index,
-    //           })),
-    //         ],
-    //       });
-    //     }),
-    //   );
-    //   expect(missingAggregatorIntegration.isActive).toBe(true);
-    //   expect(existingAggregatorIntegration.isActive).toBe(false);
-    //   await syncInstitutionsForFinicity();
-    //   await missingAggregatorIntegration.reload();
-    //   await existingAggregatorIntegration.reload();
-    //   expect(missingAggregatorIntegration.isActive).toBe(false);
-    //   expect(existingAggregatorIntegration.isActive).toBe(true);
-    // });
+  let mxAggregatorId: number;
+  let finicityAggregatorId: number;
+
+  beforeAll(async () => {
+    mxAggregatorId = (await getAggregatorByName("mx"))?.id as number;
+    finicityAggregatorId = (await getAggregatorByName("finicity"))
+      ?.id as number;
+  });
+
+  describe("syncAllAggregatorInstitutions", () => {
+    beforeEach(async () => {
+      await Institution.truncate({ cascade: true });
+      await AggregatorIntegration.truncate({ cascade: true });
+      await AggregatorInstitution.truncate({ cascade: true });
+    });
+
+    it("syncs all aggregator institutions for all aggregators", async () => {
+      expect(await AggregatorInstitution.count()).toBe(0);
+
+      await syncAllAggregatorInstitutions();
+
+      expect(
+        await AggregatorInstitution.count({
+          where: {
+            aggregatorId: finicityAggregatorId,
+          },
+        }),
+      ).toBeGreaterThan(0);
+
+      expect(
+        await AggregatorInstitution.count({
+          where: {
+            aggregatorId: mxAggregatorId,
+          },
+        }),
+      ).toBeGreaterThan(0);
+    });
+
+    it("continues syncing other aggregators even if one fails", async () => {
+      server.use(
+        http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
+          return new HttpResponse(null, { status: 500 });
+        }),
+      );
+
+      expect(await AggregatorInstitution.count()).toBe(0);
+
+      await syncAllAggregatorInstitutions();
+
+      expect(
+        await AggregatorInstitution.count({
+          where: {
+            aggregatorId: finicityAggregatorId,
+          },
+        }),
+      ).toBe(0);
+
+      expect(
+        await AggregatorInstitution.count({
+          where: {
+            aggregatorId: mxAggregatorId,
+          },
+        }),
+      ).toBeGreaterThan(0);
+    });
   });
 
   describe("syncAggregatorInstitutionsHandler", () => {
@@ -51,7 +90,6 @@ describe("syncInstitutions", () => {
     let missingAggregatorIntegration: AggregatorIntegration;
     let testInstitutionWithExistingAggregatorInstitution: Institution;
     let existingAggregatorIntegration: AggregatorIntegration;
-    let finicityAggregatorId: number;
 
     const firstFinicityAggregatorInstitution = mapFinicityInstitution(
       finicityInstitutionsPage1.institutions[0],
@@ -71,9 +109,6 @@ describe("syncInstitutions", () => {
           is_test_bank: true,
           routing_numbers: ["123456789"],
         });
-
-      finicityAggregatorId = (await getAggregatorByName("finicity"))
-        ?.id as number;
 
       await AggregatorInstitution.destroy({ force: true, truncate: true });
 
