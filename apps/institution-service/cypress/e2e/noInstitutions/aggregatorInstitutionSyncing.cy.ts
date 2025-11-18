@@ -99,7 +99,7 @@ const generateSyncAggregatorInstitutionsTests = ({
         );
     });
 
-    afterEach(() =>
+    after(() =>
       cy
         .task("clearAggregatorInstitutions")
         .then(() => cy.task("clearAggregatorIntegrations"))
@@ -186,7 +186,7 @@ describe("aggregator institution syncing", () => {
     aggregatorId: 98,
     aggregatorInstitutionIdThatShouldMatch: "capital_one",
     aggregatorName: "mx",
-    existingAggregatorInstitutionId: "us_bank",
+    existingAggregatorInstitutionId: "76888",
     missingAggregatorInstitutionId: "134115151515252",
     institutionNameThatShouldMatch: "Capital One",
     institutionUrlThatShouldMatch: "https://www.capitalone.com",

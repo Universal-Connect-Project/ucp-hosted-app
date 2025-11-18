@@ -17,7 +17,11 @@ export const generateSyncAggregatorInstitutionsTests = ({
   expectedInstitutions: CreationAttributes<AggregatorInstitution>[];
   setupServerForFailure: () => void;
   setupServerForSuccess: () => void;
-  syncAggregatorInstitutions: () => Promise<void>;
+  syncAggregatorInstitutions: ({
+    e2eLimitRequests,
+  }: {
+    e2eLimitRequests?: boolean;
+  }) => Promise<void>;
 }) =>
   describe(`${aggregatorName} syncInstitutions`, () => {
     let aggregatorId: number;
@@ -57,7 +61,7 @@ export const generateSyncAggregatorInstitutionsTests = ({
         }),
       ).not.toBeNull();
 
-      await syncAggregatorInstitutions();
+      await syncAggregatorInstitutions({});
 
       expect(
         await AggregatorInstitution.findOne({
@@ -71,7 +75,7 @@ export const generateSyncAggregatorInstitutionsTests = ({
 
       setupServerForSuccess();
 
-      await syncAggregatorInstitutions();
+      await syncAggregatorInstitutions({});
 
       for (const institution of expectedInstitutions) {
         const storedInstitution = await AggregatorInstitution.findOne({
@@ -109,7 +113,7 @@ export const generateSyncAggregatorInstitutionsTests = ({
     it("throws an error if fetching institutions fails", async () => {
       setupServerForFailure();
 
-      await expect(() => syncAggregatorInstitutions()).rejects.toThrow(
+      await expect(() => syncAggregatorInstitutions({})).rejects.toThrow(
         expectedFetchError,
       );
     });

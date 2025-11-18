@@ -24,6 +24,7 @@
     "test:db:reset": "npx sequelize-cli db:drop --env test && npm run test:db:setup",
     "dev": "nodemon ./src/app.ts",
     "dev:noRateLimiting": "DISABLE_RATE_LIMITING=true npm run dev",
+    "dev:noRateLimiting:limitSyncRequests": "DISABLE_RATE_LIMITING=true E2E_LIMIT_SYNC_REQUESTS=true npm run dev",
     "prod": "PRODUCTION=true npm run dev",
     "lint": "eslint . --ext .ts --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier . --check"
@@ -31,6 +32,7 @@
   "dependencies": {
     "@repo/backend-utils": "*",
     "@repo/shared-utils": "*",
+    "axios": "^1.13.2",
     "cors": "^2.8.5",
     "cron": "^4.3.3",
     "dotenv": "^16.4.5",
@@ -38,6 +40,7 @@
     "express-oauth2-jwt-bearer": "^1.6.0",
     "express-rate-limit": "^7.4.0",
     "fastest-levenshtein": "^1.0.16",
+    "https-proxy-agent": "^7.0.6",
     "joi": "^17.13.3",
     "jwt-decode": "^4.0.0",
     "pg": "^8.12.0",

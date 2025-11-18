@@ -26,16 +26,23 @@ export const createAggregatorInstitutionSyncer =
     minimumValidInstitutionCount,
   }: {
     aggregatorName: string;
-    fetchAndConvertInstitutionPage: ({ page }: { page: number }) => Promise<{
+    fetchAndConvertInstitutionPage: ({
+      e2eLimitRequests,
+      page,
+    }: {
+      e2eLimitRequests?: boolean;
+      page: number;
+    }) => Promise<{
       convertedInstitutions: CreationAttributes<AggregatorInstitution>[];
       totalPages: number;
     }>;
     minimumValidInstitutionCount: number;
   }) =>
-  async () => {
+  async ({ e2eLimitRequests }: { e2eLimitRequests?: boolean }) => {
     const aggregatorId = (await getAggregatorByName(aggregatorName)).id;
 
     const firstPage = await fetchAndConvertInstitutionPage({
+      e2eLimitRequests,
       page: 1,
     });
 
@@ -52,6 +59,7 @@ export const createAggregatorInstitutionSyncer =
 
     for (let page = 2; page < totalPages + 1; page++) {
       const { convertedInstitutions } = await fetchAndConvertInstitutionPage({
+        e2eLimitRequests,
         page,
       });
 

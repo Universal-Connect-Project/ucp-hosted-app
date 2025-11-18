@@ -24,6 +24,7 @@ export const syncAggregatorInstitutions = ({
   return cy.request({
     body: {
       aggregatorName,
+      e2eLimitRequests: true,
       shouldWaitForCompletion,
     },
     url: syncUrl,

@@ -119,5 +119,5 @@ export const syncFinicityInstitutions = async () => {
     minimumValidInstitutionCount: 5000,
   });
 
-  await aggregatorInstitutionSyncer();
+  await aggregatorInstitutionSyncer({});
 };
