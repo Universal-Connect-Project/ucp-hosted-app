@@ -19,6 +19,17 @@ const storeInstitutions = async ({
   }
 };
 
+export type FetchAndConvertInstitutionPage = ({
+  e2eLimitRequests,
+  page,
+}: {
+  e2eLimitRequests?: boolean;
+  page: number;
+}) => Promise<{
+  convertedInstitutions: CreationAttributes<AggregatorInstitution>[];
+  totalPages: number;
+}>;
+
 export const createAggregatorInstitutionSyncer =
   ({
     aggregatorName,
@@ -26,16 +37,7 @@ export const createAggregatorInstitutionSyncer =
     minimumValidInstitutionCount,
   }: {
     aggregatorName: string;
-    fetchAndConvertInstitutionPage: ({
-      e2eLimitRequests,
-      page,
-    }: {
-      e2eLimitRequests?: boolean;
-      page: number;
-    }) => Promise<{
-      convertedInstitutions: CreationAttributes<AggregatorInstitution>[];
-      totalPages: number;
-    }>;
+    fetchAndConvertInstitutionPage: FetchAndConvertInstitutionPage;
     minimumValidInstitutionCount: number;
   }) =>
   async ({ e2eLimitRequests }: { e2eLimitRequests?: boolean }) => {
