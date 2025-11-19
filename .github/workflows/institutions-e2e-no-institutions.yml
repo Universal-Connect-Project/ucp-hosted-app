@@ -6,7 +6,7 @@ on: pull_request
 
 jobs:
   e2e-tests:
-    name: Cypress (Institutions)
+    name: Cypress (No Institutions)
     runs-on: ubuntu-latest
 
     services:
@@ -94,6 +94,8 @@ jobs:
           echo FINICITY_APP_KEY=${{ secrets.FINICITY_APP_KEY }} >> ${ENV_FILE_PATH}
           echo FINICITY_PARTNER_ID=${{ secrets.FINICITY_PARTNER_ID }} >> ${ENV_FILE_PATH}
           echo FINICITY_SECRET=${{ secrets.FINICITY_SECRET }} >> ${ENV_FILE_PATH}
+          echo MX_CLIENT_ID=${{ secrets.MX_CLIENT_ID }} >> ${ENV_FILE_PATH}
+          echo MX_API_SECRET=${{ secrets.MX_API_SECRET }} >> ${ENV_FILE_PATH}
           echo PROXY_URL=${{ secrets.INSTITUTION_SERVICE_PROXY_URL }} >> ${ENV_FILE_PATH}
 
       - name: Seed Influx with Performance Data
