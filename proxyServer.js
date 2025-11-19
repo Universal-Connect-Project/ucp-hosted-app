@@ -4,10 +4,18 @@ const path = require('path');
 
 const app = express();
 
+const baseProps = {
+  changeOrigin: true,
+  headers: {
+    "Connection": "keep-alive"
+  },
+  logger: console,
+}
+
 // Forward requests to internal services
-app.use('/institution-service', createProxyMiddleware({ target: 'http://127.0.0.1:8088', changeOrigin: true, logger: console }));
-app.use('/authentication-service', createProxyMiddleware({ target: 'http://127.0.0.1:8089', changeOrigin: true, logger: console }));
-app.use('/performance-service', createProxyMiddleware({ target: 'http://127.0.0.1:8090', changeOrigin: true, logger: console }));
+app.use('/institution-service', createProxyMiddleware({ target: 'http://127.0.0.1:8088', ...baseProps }));
+app.use('/authentication-service', createProxyMiddleware({ target: 'http://127.0.0.1:8089', ...baseProps }));
+app.use('/performance-service', createProxyMiddleware({ target: 'http://127.0.0.1:8090', ...baseProps }));
 
 app.use('/', express.static('apps/ucp-ui/dist'));
 
