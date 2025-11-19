@@ -6,16 +6,13 @@ const app = express();
 
 const baseProps = {
   changeOrigin: true,
-  headers: {
-    "Connection": "keep-alive"
-  },
   logger: console,
 }
 
 // Forward requests to internal services
-app.use('/institution-service', createProxyMiddleware({ target: 'http://127.0.0.1:8088', ...baseProps }));
-app.use('/authentication-service', createProxyMiddleware({ target: 'http://127.0.0.1:8089', ...baseProps }));
-app.use('/performance-service', createProxyMiddleware({ target: 'http://127.0.0.1:8090', ...baseProps }));
+app.use('/institution-service', createProxyMiddleware({ target: 'http://localhost:8088', ...baseProps }));
+app.use('/authentication-service', createProxyMiddleware({ target: 'http://localhost:8089', ...baseProps }));
+app.use('/performance-service', createProxyMiddleware({ target: 'http://localhost:8090', ...baseProps }));
 
 app.use('/', express.static('apps/ucp-ui/dist'));
 
