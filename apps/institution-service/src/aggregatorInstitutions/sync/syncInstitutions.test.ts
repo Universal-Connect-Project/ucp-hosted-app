@@ -16,6 +16,7 @@ import {
 import { Request, Response } from "express";
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { createTestInstitution } from "../../test/createTestInstitution";
+import { E2E_LIMIT_SYNC_REQUESTS_ERROR } from "./utils";
 
 describe("syncInstitutions", () => {
   let mxAggregatorId: number;
@@ -161,6 +162,28 @@ describe("syncInstitutions", () => {
       await AggregatorInstitution.truncate({ cascade: true });
     });
 
+    it("fails if e2eLimitRequests is passed, but the env variable is not set", async () => {
+      const req = {
+        body: {
+          aggregatorName: "finicity",
+          shouldWaitForCompletion: true,
+          e2eLimitRequests: true,
+        },
+      } as Request;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: E2E_LIMIT_SYNC_REQUESTS_ERROR,
+      });
+    });
+
     it("responds with a 400 for an invalid aggregator name", async () => {
       const req = {
         body: {
@@ -195,13 +218,13 @@ describe("syncInstitutions", () => {
 
       const res = {
         status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
+        json: jest.fn(),
       } as unknown as Response;
 
       await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.send).toHaveBeenCalledWith({
+      expect(res.json).toHaveBeenCalledWith({
         error: "Failed to sync institutions for finicity",
       });
     });
@@ -215,13 +238,13 @@ describe("syncInstitutions", () => {
 
       const res = {
         status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
+        json: jest.fn(),
       } as unknown as Response;
 
       await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
       expect(res.status).toHaveBeenCalledWith(202);
-      expect(res.send).toHaveBeenCalledWith({
+      expect(res.json).toHaveBeenCalledWith({
         message: "Institution sync started for finicity.",
       });
     });
@@ -261,7 +284,7 @@ describe("syncInstitutions", () => {
 
       const res = {
         status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
+        json: jest.fn(),
       } as unknown as Response;
 
       const { institution } = await createTestInstitution({
@@ -282,7 +305,7 @@ describe("syncInstitutions", () => {
       );
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalledWith({
+      expect(res.json).toHaveBeenCalledWith({
         message: "Institution sync completed for finicity.",
       });
 

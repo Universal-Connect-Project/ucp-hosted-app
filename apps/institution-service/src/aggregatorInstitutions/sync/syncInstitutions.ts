@@ -8,7 +8,10 @@ import { matchInstitutions } from "./match/matchInstitutions";
 import { syncMXInstitutions } from "./mx";
 import { createWithRequestBodySchemaValidator } from "@repo/backend-utils";
 import Joi from "joi";
-import { getShouldLimitRequestsForE2E } from "./utils";
+import {
+  E2E_LIMIT_SYNC_REQUESTS_ERROR,
+  getShouldLimitRequestsForE2E,
+} from "./utils";
 
 const markMissingAggregatorInstitutionsInactive = async (
   aggregatorId: number,
@@ -179,7 +182,7 @@ export const syncAggregatorInstitutionsHandler = withRequestBodySchemaValidator(
     const aggregatorName = req.body.aggregatorName as "finicity" | "mx";
 
     if (!req?.body?.shouldWaitForCompletion) {
-      res.status(202).send({
+      res.status(202).json({
         message: `Institution sync started for ${aggregatorName}.`,
       });
     }
@@ -190,11 +193,21 @@ export const syncAggregatorInstitutionsHandler = withRequestBodySchemaValidator(
       await aggregatorNameToSyncerMap[aggregatorName]({
         e2eLimitRequests: req.body.e2eLimitRequests,
       });
-    } catch (_error) {
+    } catch (error) {
       if (req?.body?.shouldWaitForCompletion) {
-        res.status(500).send({
-          error: `Failed to sync institutions for ${aggregatorName}`,
-        });
+        if (
+          error instanceof Error &&
+          error.message === E2E_LIMIT_SYNC_REQUESTS_ERROR
+        ) {
+          res.status(400).json({
+            error: E2E_LIMIT_SYNC_REQUESTS_ERROR,
+          });
+          return;
+        } else {
+          res.status(500).json({
+            error: `Failed to sync institutions for ${aggregatorName}`,
+          });
+        }
       }
 
       return;
@@ -203,7 +216,7 @@ export const syncAggregatorInstitutionsHandler = withRequestBodySchemaValidator(
     if (req?.body?.shouldWaitForCompletion) {
       res
         .status(200)
-        .send({ message: `Institution sync completed for ${aggregatorName}.` });
+        .json({ message: `Institution sync completed for ${aggregatorName}.` });
     }
   },
 );

@@ -1,6 +1,7 @@
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByName";
 import {
+  E2E_LIMIT_SYNC_REQUESTS_ERROR,
   getShouldLimitRequestsForE2E,
   removeMissingAggregatorInstitutions,
 } from "./utils";
@@ -100,7 +101,7 @@ describe("utils", () => {
       });
 
       expect(() => getShouldLimitRequestsForE2E(true)).toThrow(
-        "Cannot limit requests unless E2E_LIMIT_SYNC_REQUESTS is enabled",
+        E2E_LIMIT_SYNC_REQUESTS_ERROR,
       );
     });
   });
