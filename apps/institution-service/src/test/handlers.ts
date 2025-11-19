@@ -11,7 +11,9 @@ import {
 import { FETCH_MX_INSTITUTIONS_URL } from "../aggregatorInstitutions/sync/mx";
 import {
   mxInstitutionsPage1,
+  mxInstitutionsPage1Limited,
   mxInstitutionsPage2,
+  mxInstitutionsPage2Limited,
 } from "./testData/mxInstitutions";
 
 export const handlers = [
@@ -31,11 +33,23 @@ export const handlers = [
   http.get(FETCH_MX_INSTITUTIONS_URL, ({ request }) => {
     const url = new URL(request.url);
     const page = url.searchParams.get("page");
+    const recordsPerPage = url.searchParams.get("records_per_page");
+    const name = url.searchParams.get("name");
 
-    if (page === "2") {
-      return HttpResponse.json(mxInstitutionsPage2);
+    if (recordsPerPage === "60" && name === "capital") {
+      if (page === "2") {
+        return HttpResponse.json(mxInstitutionsPage2Limited);
+      }
+
+      return HttpResponse.json(mxInstitutionsPage1Limited);
     }
 
-    return HttpResponse.json(mxInstitutionsPage1);
+    if (recordsPerPage === "100" && name === null) {
+      if (page === "2") {
+        return HttpResponse.json(mxInstitutionsPage2);
+      }
+
+      return HttpResponse.json(mxInstitutionsPage1);
+    }
   }),
 ];

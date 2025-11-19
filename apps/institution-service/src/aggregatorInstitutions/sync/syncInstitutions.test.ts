@@ -17,6 +17,13 @@ import { Request, Response } from "express";
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { createTestInstitution } from "../../test/createTestInstitution";
 import { E2E_LIMIT_SYNC_REQUESTS_ERROR } from "./utils";
+import {
+  mxInstitutionsPage1,
+  mxInstitutionsPage1Limited,
+  mxInstitutionsPage2,
+  mxInstitutionsPage2Limited,
+} from "../../test/testData/mxInstitutions";
+import * as environment from "../../shared/environment";
 
 describe("syncInstitutions", () => {
   let mxAggregatorId: number;
@@ -339,5 +346,94 @@ describe("syncInstitutions", () => {
       expect(missingAggregatorIntegration.isActive).toBe(false);
       expect(existingAggregatorIntegration.isActive).toBe(true);
     }, 20000);
+
+    it("fetches the full set of institutions from mx when e2eLimitRequests is not passed", async () => {
+      jest.spyOn(environment, "getConfig").mockReturnValue({
+        E2E_LIMIT_SYNC_REQUESTS: true,
+      });
+
+      const req = {
+        body: {
+          aggregatorName: "mx",
+          shouldWaitForCompletion: true,
+        },
+      } as Request;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Institution sync completed for mx.",
+      });
+
+      const allMxAggregatorInstitutionIds = (
+        await AggregatorInstitution.findAll({
+          where: { aggregatorId: mxAggregatorId },
+        })
+      ).map(({ id }: AggregatorInstitution) => id);
+
+      const expectedMxAggregatorInstitutionIds = [
+        ...mxInstitutionsPage1.institutions,
+        ...mxInstitutionsPage2.institutions.filter((inst) => !inst.is_hidden),
+      ].map((institution) => institution.code);
+
+      expect(allMxAggregatorInstitutionIds.length).toBe(
+        expectedMxAggregatorInstitutionIds.length,
+      );
+
+      expectedMxAggregatorInstitutionIds.forEach((id) => {
+        expect(allMxAggregatorInstitutionIds).toContain(id);
+      });
+    });
+
+    it("fetches a reduced set of institutions from mx when e2eLimitRequests is true", async () => {
+      jest.spyOn(environment, "getConfig").mockReturnValue({
+        E2E_LIMIT_SYNC_REQUESTS: true,
+      });
+
+      const req = {
+        body: {
+          aggregatorName: "mx",
+          shouldWaitForCompletion: true,
+          e2eLimitRequests: true,
+        },
+      } as Request;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Institution sync completed for mx.",
+      });
+
+      const allMxAggregatorInstitutionIds = (
+        await AggregatorInstitution.findAll({
+          where: { aggregatorId: mxAggregatorId },
+        })
+      ).map(({ id }: AggregatorInstitution) => id);
+
+      const expectedMxAggregatorInstitutionIds = [
+        ...mxInstitutionsPage1Limited.institutions,
+        ...mxInstitutionsPage2Limited.institutions,
+      ].map((institution) => institution.code);
+
+      expect(allMxAggregatorInstitutionIds.length).toBe(
+        expectedMxAggregatorInstitutionIds.length,
+      );
+
+      expectedMxAggregatorInstitutionIds.forEach((id) => {
+        expect(allMxAggregatorInstitutionIds).toContain(id);
+      });
+    });
   });
 });
