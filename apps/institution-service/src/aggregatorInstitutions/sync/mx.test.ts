@@ -8,8 +8,13 @@ import { generateSyncAggregatorInstitutionsTests } from "./test/generateSyncAggr
 import { server } from "../../test/testServer";
 import {
   mxInstitutionsPage1,
+  mxInstitutionsPage1Limited,
   mxInstitutionsPage2,
+  mxInstitutionsPage2Limited,
 } from "../../test/testData/mxInstitutions";
+import { AggregatorInstitution } from "../../models/aggregatorInstitution";
+import * as environment from "../../shared/environment";
+import { E2E_LIMIT_SYNC_REQUESTS_ERROR } from "./utils";
 
 const extraInstitutions = new Array(21).fill(null).map((_, index) => ({
   ...mxInstitutionsPage1.institutions[0],
@@ -79,6 +84,37 @@ describe("MX institution syncing", () => {
         url: secondMXInstitution.url,
       });
     });
+  });
+
+  it("reduces the page size, only fetches 2 pages, and filters by capital when e2eLimitRequests is true", async () => {
+    jest.spyOn(environment, "getConfig").mockReturnValue({
+      E2E_LIMIT_SYNC_REQUESTS: true,
+    });
+
+    await syncMXInstitutions({ e2eLimitRequests: true });
+
+    const allAggregatorInstitutionIds = (
+      await AggregatorInstitution.findAll()
+    ).map((inst) => inst.id);
+
+    const expectedInstitutionIds = [
+      ...mxInstitutionsPage1Limited.institutions,
+      ...mxInstitutionsPage2Limited.institutions,
+    ]
+      .map(mapMXInstitution)
+      .map((inst) => inst.id);
+
+    expectedInstitutionIds.forEach((id) => {
+      expect(allAggregatorInstitutionIds).toContain(id);
+    });
+  });
+
+  it("throws an error if e2eLimitRequests is true and and its not set on the server", async () => {
+    jest.spyOn(environment, "getConfig").mockReturnValue({});
+
+    await expect(
+      syncMXInstitutions({ e2eLimitRequests: true }),
+    ).rejects.toThrow(E2E_LIMIT_SYNC_REQUESTS_ERROR);
   });
 
   generateSyncAggregatorInstitutionsTests({
