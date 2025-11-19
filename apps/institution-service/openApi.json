@@ -71,7 +71,8 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "tags": ["Aggregators"]
       }
     },
     "/institutions/cacheList": {
@@ -176,7 +177,8 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Institution Cache List with widget authorization"
+        "summary": "Institution Cache List with widget authorization",
+        "tags": ["Institutions"]
       }
     },
     "/institutions/cacheList/download": {
@@ -281,7 +283,8 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Institution Cache List with permissions for regular UI users"
+        "summary": "Institution Cache List with permissions for regular UI users",
+        "tags": ["Institutions"]
       }
     },
     "/institutions/{id}": {
@@ -324,7 +327,9 @@
               }
             }
           }
-        }
+        },
+        "summary": "Delete Institution",
+        "tags": ["Institutions"]
       },
       "put": {
         "security": [
@@ -435,7 +440,9 @@
               }
             }
           }
-        }
+        },
+        "summary": "Update Institution",
+        "tags": ["Institutions"]
       },
       "get": {
         "security": [
@@ -584,7 +591,8 @@
             }
           }
         },
-        "summary": "Institution Detail"
+        "summary": "Institution Detail",
+        "tags": ["Institutions"]
       }
     },
     "/permissions": {
@@ -612,7 +620,9 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "summary": "Get Institution Permissions",
+        "tags": ["Permissions"]
       }
     },
     "/institutions": {
@@ -923,7 +933,8 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Institution List"
+        "summary": "Institution List",
+        "tags": ["Institutions"]
       },
       "post": {
         "security": [
@@ -1009,7 +1020,9 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "summary": "Create Institution",
+        "tags": ["Institutions"]
       }
     },
     "/aggregatorInstitutions": {
@@ -1128,7 +1141,8 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Aggregator Institution List"
+        "summary": "Aggregator Institution List",
+        "tags": ["Aggregator Institutions"]
       }
     },
     "/aggregatorInstitutions/{id}/aggregator/{aggregatorId}": {
@@ -1192,7 +1206,9 @@
               }
             }
           }
-        }
+        },
+        "summary": "Get Aggregator Institution",
+        "tags": ["Aggregator Institutions"]
       },
       "patch": {
         "security": [
@@ -1283,7 +1299,9 @@
               }
             }
           }
-        }
+        },
+        "summary": "Patch Aggregator Institution",
+        "tags": ["Aggregator Institutions"]
       }
     },
     "/aggregatorInstitutions/createInstitutionAndLink": {
@@ -1393,7 +1411,9 @@
               }
             }
           }
-        }
+        },
+        "summary": "Create and Link Institution",
+        "tags": ["Aggregator Institutions"]
       }
     },
     "/aggregatorInstitutions/link": {
@@ -1465,7 +1485,9 @@
               }
             }
           }
-        }
+        },
+        "summary": "Link Aggregator Institution",
+        "tags": ["Aggregator Institutions"]
       }
     },
     "/aggregatorInstitutions/sync": {
@@ -1475,7 +1497,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "Sync all aggregator institutions",
+        "description": "Sync aggregator institutions for an aggregator",
         "parameters": [],
         "requestBody": {
           "required": false,
@@ -1484,6 +1506,14 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "aggregatorName": {
+                    "type": "string",
+                    "description": "The name of the aggregator to sync institutions for"
+                  },
+                  "e2eLimitRequests": {
+                    "type": "boolean",
+                    "description": "Whether to limit requests for E2E testing purposes."
+                  },
                   "shouldWaitForCompletion": {
                     "type": "boolean",
                     "description": "Whether to wait for the sync to complete before returning a response. Defaults to false."
@@ -1501,7 +1531,7 @@
                 "schema": {
                   "type": "object",
                   "example": {
-                    "message": "Institution sync completed."
+                    "message": "Institution sync completed for <aggregatorName>."
                   }
                 }
               }
@@ -1514,7 +1544,7 @@
                 "schema": {
                   "type": "object",
                   "example": {
-                    "message": "Institution sync started."
+                    "message": "Institution sync started for <aggregatorName>."
                   }
                 }
               }
@@ -1530,14 +1560,15 @@
                 "schema": {
                   "type": "object",
                   "example": {
-                    "message": "Institution sync completed with errors.",
-                    "errors": ["Failed to fetch institutions from finicity"]
+                    "error": "Failed to sync institutions for <aggregatorName>"
                   }
                 }
               }
             }
           }
-        }
+        },
+        "summary": "Sync Aggregator Institutions",
+        "tags": ["Aggregator Institutions"]
       }
     },
     "/aggregatorIntegrations/{id}": {
@@ -1592,7 +1623,9 @@
               }
             }
           }
-        }
+        },
+        "summary": "Delete AggregatorIntegration",
+        "tags": ["Aggregator Integrations"]
       },
       "put": {
         "security": [
@@ -1712,7 +1745,9 @@
               }
             }
           }
-        }
+        },
+        "summary": "Update AggregatorIntegration",
+        "tags": ["Aggregator Integrations"]
       }
     },
     "/aggregatorIntegrations": {
@@ -1834,7 +1869,9 @@
               }
             }
           }
-        }
+        },
+        "summary": "Create AggregatorIntegration",
+        "tags": ["Aggregator Integrations"]
       }
     },
     "/performanceAuth/aggregators": {
@@ -1871,7 +1908,9 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "summary": "Aggregator List",
+        "tags": ["Aggregators"]
       }
     },
     "/performanceAuth/institutions": {
@@ -1959,7 +1998,8 @@
             "description": "Unauthorized"
           }
         },
-        "summary": "Institution List"
+        "summary": "Institution List",
+        "tags": ["Institutions"]
       }
     }
   }

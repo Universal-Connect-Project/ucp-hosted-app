@@ -18,7 +18,7 @@ import {
   PERFORMANCE_AUTH_ROUTE,
 } from "./shared/consts/routes";
 import { useRateLimiting } from "./useRateLimiting";
-import { syncInstitutions } from "./aggregatorInstitutions/sync/syncInstitutions";
+import { syncAllAggregatorInstitutions } from "./aggregatorInstitutions/sync/syncInstitutions";
 
 sequelize
   .authenticate()
@@ -34,7 +34,7 @@ CronJob.from({
   cronTime: "0 0 0 * * *",
   onTick: async () => {
     try {
-      await syncInstitutions();
+      await syncAllAggregatorInstitutions();
     } catch (error) {
       console.error("Failed to sync institutions:", error);
     }

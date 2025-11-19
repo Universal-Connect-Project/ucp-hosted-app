@@ -1,6 +1,11 @@
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByName";
-import { removeMissingAggregatorInstitutions } from "./utils";
+import {
+  E2E_LIMIT_SYNC_REQUESTS_ERROR,
+  getShouldLimitRequestsForE2E,
+  removeMissingAggregatorInstitutions,
+} from "./utils";
+import * as environment from "../../shared/environment";
 
 describe("utils", () => {
   describe("removeMissingAggregatorInstitutions", () => {
@@ -66,6 +71,38 @@ describe("utils", () => {
           where: { id: existingAggregatorInstitution.id },
         }),
       ).toBeNull();
+    });
+  });
+
+  describe("getShouldLimitRequestsForE2E", () => {
+    it("returns true when both e2eLimitRequests and E2E_LIMIT_SYNC_REQUESTS are true", () => {
+      jest.spyOn(environment, "getConfig").mockReturnValue({
+        E2E_LIMIT_SYNC_REQUESTS: true,
+      });
+
+      const result = getShouldLimitRequestsForE2E(true);
+
+      expect(result).toBe(true);
+    });
+
+    it("returns false when e2eLimitRequests is false", () => {
+      jest.spyOn(environment, "getConfig").mockReturnValue({
+        E2E_LIMIT_SYNC_REQUESTS: true,
+      });
+
+      const result = getShouldLimitRequestsForE2E(false);
+
+      expect(result).toBe(false);
+    });
+
+    it("throws an error when e2eLimitRequests is true but E2E_LIMIT_SYNC_REQUESTS is false", () => {
+      jest.spyOn(environment, "getConfig").mockReturnValue({
+        E2E_LIMIT_SYNC_REQUESTS: false,
+      });
+
+      expect(() => getShouldLimitRequestsForE2E(true)).toThrow(
+        E2E_LIMIT_SYNC_REQUESTS_ERROR,
+      );
     });
   });
 });

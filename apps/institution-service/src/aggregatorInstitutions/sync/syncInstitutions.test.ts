@@ -9,18 +9,95 @@ import {
   FETCH_FINICITY_INSTITUTIONS_URL,
   mapFinicityInstitution,
 } from "./finicity";
-import { syncInstitutions } from "./syncInstitutions";
+import {
+  syncAggregatorInstitutionsHandler,
+  syncAllAggregatorInstitutions,
+} from "./syncInstitutions";
 import { Request, Response } from "express";
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { createTestInstitution } from "../../test/createTestInstitution";
+import { E2E_LIMIT_SYNC_REQUESTS_ERROR } from "./utils";
+import {
+  mxInstitutionsPage1,
+  mxInstitutionsPage1Limited,
+  mxInstitutionsPage2,
+  mxInstitutionsPage2Limited,
+} from "../../test/testData/mxInstitutions";
+import * as environment from "../../shared/environment";
 
 describe("syncInstitutions", () => {
-  describe("finicity institutions", () => {
+  let mxAggregatorId: number;
+  let finicityAggregatorId: number;
+
+  beforeAll(async () => {
+    mxAggregatorId = (await getAggregatorByName("mx"))?.id as number;
+    finicityAggregatorId = (await getAggregatorByName("finicity"))
+      ?.id as number;
+  });
+
+  describe("syncAllAggregatorInstitutions", () => {
+    beforeEach(async () => {
+      await Institution.truncate({ cascade: true });
+      await AggregatorIntegration.truncate({ cascade: true });
+      await AggregatorInstitution.truncate({ cascade: true });
+    });
+
+    it("syncs all aggregator institutions for all aggregators", async () => {
+      expect(await AggregatorInstitution.count()).toBe(0);
+
+      await syncAllAggregatorInstitutions();
+
+      expect(
+        await AggregatorInstitution.count({
+          where: {
+            aggregatorId: finicityAggregatorId,
+          },
+        }),
+      ).toBeGreaterThan(0);
+
+      expect(
+        await AggregatorInstitution.count({
+          where: {
+            aggregatorId: mxAggregatorId,
+          },
+        }),
+      ).toBeGreaterThan(0);
+    });
+
+    it("continues syncing other aggregators even if one fails", async () => {
+      server.use(
+        http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
+          return new HttpResponse(null, { status: 500 });
+        }),
+      );
+
+      expect(await AggregatorInstitution.count()).toBe(0);
+
+      await syncAllAggregatorInstitutions();
+
+      expect(
+        await AggregatorInstitution.count({
+          where: {
+            aggregatorId: finicityAggregatorId,
+          },
+        }),
+      ).toBe(0);
+
+      expect(
+        await AggregatorInstitution.count({
+          where: {
+            aggregatorId: mxAggregatorId,
+          },
+        }),
+      ).toBeGreaterThan(0);
+    });
+  });
+
+  describe("syncAggregatorInstitutionsHandler", () => {
     let testInstitutionWithMissingAggregatorInstitution: Institution;
     let missingAggregatorIntegration: AggregatorIntegration;
     let testInstitutionWithExistingAggregatorInstitution: Institution;
     let existingAggregatorIntegration: AggregatorIntegration;
-    let finicityAggregatorId: number;
 
     const firstFinicityAggregatorInstitution = mapFinicityInstitution(
       finicityInstitutionsPage1.institutions[0],
@@ -40,9 +117,6 @@ describe("syncInstitutions", () => {
           is_test_bank: true,
           routing_numbers: ["123456789"],
         });
-
-      finicityAggregatorId = (await getAggregatorByName("finicity"))
-        ?.id as number;
 
       await AggregatorInstitution.destroy({ force: true, truncate: true });
 
@@ -95,36 +169,50 @@ describe("syncInstitutions", () => {
       await AggregatorInstitution.truncate({ cascade: true });
     });
 
-    it("runs without a request or response", async () => {
-      server.use(
-        http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
-          return HttpResponse.json({
-            ...finicityInstitutionsPage1,
-            found: 5,
-            institutions: [
-              ...finicityInstitutionsPage1.institutions,
-              ...new Array(20).fill(0).map((_, index) => ({
-                ...finicityInstitutionsPage1.institutions[0],
-                id: 1999999 + index,
-              })),
-            ],
-          });
-        }),
-      );
+    it("fails if e2eLimitRequests is passed, but the env variable is not set", async () => {
+      const req = {
+        body: {
+          aggregatorName: "finicity",
+          shouldWaitForCompletion: true,
+          e2eLimitRequests: true,
+        },
+      } as Request;
 
-      expect(missingAggregatorIntegration.isActive).toBe(true);
-      expect(existingAggregatorIntegration.isActive).toBe(false);
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
 
-      await syncInstitutions();
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
-      await missingAggregatorIntegration.reload();
-      await existingAggregatorIntegration.reload();
-
-      expect(missingAggregatorIntegration.isActive).toBe(false);
-      expect(existingAggregatorIntegration.isActive).toBe(true);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: E2E_LIMIT_SYNC_REQUESTS_ERROR,
+      });
     });
 
-    it("fails if any aggregator fails", async () => {
+    it("responds with a 400 for an invalid aggregator name", async () => {
+      const req = {
+        body: {
+          aggregatorName: "invalid_aggregator",
+          shouldWaitForCompletion: true,
+        },
+      } as Request;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: '"aggregatorName" must be one of [finicity, mx]',
+      });
+    });
+
+    it("handles failures", async () => {
       server.use(
         http.get(FETCH_FINICITY_INSTITUTIONS_URL, () => {
           return new HttpResponse(null, { status: 500 });
@@ -132,38 +220,39 @@ describe("syncInstitutions", () => {
       );
 
       const req = {
-        body: { shouldWaitForCompletion: true },
+        body: { aggregatorName: "finicity", shouldWaitForCompletion: true },
       } as Request;
 
       const res = {
         status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
+        json: jest.fn(),
       } as unknown as Response;
 
-      await syncInstitutions(req, res);
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.send).toHaveBeenCalledWith({
-        message: "Institution sync completed with errors.",
-        errors: ["Failed to sync institutions for finicity"],
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Failed to sync institutions for finicity",
       });
     });
 
     it("responds with a 202 by default", async () => {
       const req = {
-        body: {},
+        body: {
+          aggregatorName: "finicity",
+        },
       } as Request;
 
       const res = {
         status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
+        json: jest.fn(),
       } as unknown as Response;
 
-      await syncInstitutions(req, res);
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
       expect(res.status).toHaveBeenCalledWith(202);
-      expect(res.send).toHaveBeenCalledWith({
-        message: "Institution sync started.",
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Institution sync started for finicity.",
       });
     });
 
@@ -197,12 +286,12 @@ describe("syncInstitutions", () => {
       expect(existingAggregatorIntegration.isActive).toBe(false);
 
       const req = {
-        body: { shouldWaitForCompletion: true },
+        body: { aggregatorName: "finicity", shouldWaitForCompletion: true },
       } as Request;
 
       const res = {
         status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
+        json: jest.fn(),
       } as unknown as Response;
 
       const { institution } = await createTestInstitution({
@@ -212,7 +301,7 @@ describe("syncInstitutions", () => {
         },
       });
 
-      await syncInstitutions(req, res);
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
 
       const newAggregatorIntegrations =
         await institution.getAggregatorIntegrations();
@@ -223,8 +312,8 @@ describe("syncInstitutions", () => {
       );
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalledWith({
-        message: "Institution sync completed.",
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Institution sync completed for finicity.",
       });
 
       await missingAggregatorIntegration.reload();
@@ -257,5 +346,94 @@ describe("syncInstitutions", () => {
       expect(missingAggregatorIntegration.isActive).toBe(false);
       expect(existingAggregatorIntegration.isActive).toBe(true);
     }, 20000);
+
+    it("fetches the full set of institutions from mx when e2eLimitRequests is not passed", async () => {
+      jest.spyOn(environment, "getConfig").mockReturnValue({
+        E2E_LIMIT_SYNC_REQUESTS: true,
+      });
+
+      const req = {
+        body: {
+          aggregatorName: "mx",
+          shouldWaitForCompletion: true,
+        },
+      } as Request;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Institution sync completed for mx.",
+      });
+
+      const allMxAggregatorInstitutionIds = (
+        await AggregatorInstitution.findAll({
+          where: { aggregatorId: mxAggregatorId },
+        })
+      ).map(({ id }: AggregatorInstitution) => id);
+
+      const expectedMxAggregatorInstitutionIds = [
+        ...mxInstitutionsPage1.institutions,
+        ...mxInstitutionsPage2.institutions.filter((inst) => !inst.is_hidden),
+      ].map((institution) => institution.code);
+
+      expect(allMxAggregatorInstitutionIds.length).toBe(
+        expectedMxAggregatorInstitutionIds.length,
+      );
+
+      expectedMxAggregatorInstitutionIds.forEach((id) => {
+        expect(allMxAggregatorInstitutionIds).toContain(id);
+      });
+    });
+
+    it("fetches a reduced set of institutions from mx when e2eLimitRequests is true", async () => {
+      jest.spyOn(environment, "getConfig").mockReturnValue({
+        E2E_LIMIT_SYNC_REQUESTS: true,
+      });
+
+      const req = {
+        body: {
+          aggregatorName: "mx",
+          shouldWaitForCompletion: true,
+          e2eLimitRequests: true,
+        },
+      } as Request;
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await syncAggregatorInstitutionsHandler(req, res, jest.fn());
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Institution sync completed for mx.",
+      });
+
+      const allMxAggregatorInstitutionIds = (
+        await AggregatorInstitution.findAll({
+          where: { aggregatorId: mxAggregatorId },
+        })
+      ).map(({ id }: AggregatorInstitution) => id);
+
+      const expectedMxAggregatorInstitutionIds = [
+        ...mxInstitutionsPage1Limited.institutions,
+        ...mxInstitutionsPage2Limited.institutions,
+      ].map((institution) => institution.code);
+
+      expect(allMxAggregatorInstitutionIds.length).toBe(
+        expectedMxAggregatorInstitutionIds.length,
+      );
+
+      expectedMxAggregatorInstitutionIds.forEach((id) => {
+        expect(allMxAggregatorInstitutionIds).toContain(id);
+      });
+    });
   });
 });

@@ -5,6 +5,13 @@ import { getAggregatorByName } from "../../shared/aggregators/getAggregatorByNam
 import { Request, Response } from "express";
 import { AggregatorInstitution } from "../../models/aggregatorInstitution";
 import { matchInstitutions } from "./match/matchInstitutions";
+import { syncMXInstitutions } from "./mx";
+import { createWithRequestBodySchemaValidator } from "@repo/backend-utils";
+import Joi from "joi";
+import {
+  E2E_LIMIT_SYNC_REQUESTS_ERROR,
+  getShouldLimitRequestsForE2E,
+} from "./utils";
 
 const markMissingAggregatorInstitutionsInactive = async (
   aggregatorId: number,
@@ -86,32 +93,25 @@ export const updateExistingAggregatorIntegrations = async (
   }
 };
 
-interface SyncInstitutionsRequest extends Request {
-  body: {
-    shouldWaitForCompletion?: boolean;
-  };
-}
-
-export const syncInstitutions = async (
-  req?: SyncInstitutionsRequest,
-  res?: Response,
-) => {
-  if (!req?.body?.shouldWaitForCompletion) {
-    res?.status(202).send({ message: "Institution sync started." });
-  }
-
-  const aggregatorErrors = [];
-
-  const institutionFetchers = [
-    {
-      aggregatorName: "finicity",
-      syncInstitutions: syncFinicityInstitutions,
-    },
-  ];
-
-  for (const { aggregatorName, syncInstitutions } of institutionFetchers) {
+const createSyncInstitutionsForAggregator =
+  ({
+    aggregatorName,
+    syncInstitutions,
+  }: {
+    aggregatorName: string;
+    syncInstitutions: ({
+      e2eLimitRequests,
+    }: {
+      e2eLimitRequests?: boolean;
+    }) => Promise<void>;
+  }) =>
+  async ({ e2eLimitRequests }: { e2eLimitRequests?: boolean }) => {
     try {
-      await syncInstitutions();
+      await syncInstitutions({ e2eLimitRequests });
+
+      console.log(
+        `Finished syncing aggregator institutions from ${aggregatorName}.`,
+      );
 
       const aggregatorId = (await getAggregatorByName(aggregatorName))
         ?.id as number;
@@ -121,39 +121,102 @@ export const syncInstitutions = async (
       await updateExistingAggregatorIntegrations(aggregatorId);
 
       console.log(
-        `Finished syncing aggregator institutions for ${aggregatorName}.`,
+        `Finished syncing aggregator integrations for ${aggregatorName}.`,
       );
 
       await matchInstitutions(aggregatorId);
 
-      console.log("Finished auto matching institutitions");
+      console.log(`Finished auto matching institutions for ${aggregatorName}.`);
     } catch (error) {
       console.error(
-        `Error syncing institutions for aggregator ${aggregatorName}:`,
+        `Error during sync process for aggregator ${aggregatorName}:`,
         error,
       );
-
-      aggregatorErrors.push(aggregatorName);
+      throw error;
     }
-  }
+  };
 
-  if (req?.body?.shouldWaitForCompletion) {
-    if (aggregatorErrors.length) {
-      console.error(
-        "Errors occurred during institution sync:",
-        aggregatorErrors,
-      );
-      res?.status(500).send({
-        message: "Institution sync completed with errors.",
-        errors: aggregatorErrors.map(
-          (aggregatorName) =>
-            `Failed to sync institutions for ${aggregatorName}`,
-        ),
-      });
-    } else {
-      res?.status(200).send({ message: "Institution sync completed." });
-    }
-  }
+const syncInstitutionsForFinicity = createSyncInstitutionsForAggregator({
+  aggregatorName: "finicity",
+  syncInstitutions: syncFinicityInstitutions,
+});
 
-  console.log("Finished syncing aggregator institutions.");
+const syncInstitutionsForMX = createSyncInstitutionsForAggregator({
+  aggregatorName: "mx",
+  syncInstitutions: syncMXInstitutions,
+});
+
+const aggregatorNameToSyncerMap = {
+  finicity: syncInstitutionsForFinicity,
+  mx: syncInstitutionsForMX,
 };
+
+export const syncAllAggregatorInstitutions = async () => {
+  for (const [name, syncer] of Object.entries(aggregatorNameToSyncerMap)) {
+    try {
+      await syncer({});
+    } catch (error) {
+      console.error(`Aggregator ${name} failed to sync:`, error);
+    }
+  }
+};
+
+const withRequestBodySchemaValidator = createWithRequestBodySchemaValidator(
+  Joi.object({
+    aggregatorName: Joi.string().valid("finicity", "mx").required(),
+    e2eLimitRequests: Joi.boolean().optional(),
+    shouldWaitForCompletion: Joi.boolean().optional(),
+  }),
+);
+
+interface SyncInstitutionsRequest extends Request {
+  body: {
+    aggregatorName: string;
+    e2eLimitRequests?: boolean;
+    shouldWaitForCompletion?: boolean;
+  };
+}
+
+export const syncAggregatorInstitutionsHandler = withRequestBodySchemaValidator(
+  async (req: SyncInstitutionsRequest, res: Response) => {
+    const aggregatorName = req.body.aggregatorName as "finicity" | "mx";
+
+    if (!req?.body?.shouldWaitForCompletion) {
+      res.status(202).json({
+        message: `Institution sync started for ${aggregatorName}.`,
+      });
+    }
+
+    try {
+      getShouldLimitRequestsForE2E(!!req.body.e2eLimitRequests);
+
+      await aggregatorNameToSyncerMap[aggregatorName]({
+        e2eLimitRequests: req.body.e2eLimitRequests,
+      });
+    } catch (error) {
+      if (req?.body?.shouldWaitForCompletion) {
+        if (
+          error instanceof Error &&
+          error.message === E2E_LIMIT_SYNC_REQUESTS_ERROR
+        ) {
+          res.status(400).json({
+            error: E2E_LIMIT_SYNC_REQUESTS_ERROR,
+          });
+          return;
+        } else {
+          res.status(500).json({
+            error: `Failed to sync institutions for ${aggregatorName}`,
+          });
+        }
+      }
+
+      return;
+    }
+
+    if (req?.body?.shouldWaitForCompletion) {
+      res
+        .status(200)
+        .json({ message: `Institution sync completed for ${aggregatorName}.` });
+    }
+  },
+);

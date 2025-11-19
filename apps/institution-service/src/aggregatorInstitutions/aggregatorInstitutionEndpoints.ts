@@ -2,7 +2,7 @@ import { UiUserPermissions } from "@repo/shared-utils";
 import { RequestHandler, Router } from "express";
 import { requiredScopes, scopeIncludesAny } from "express-oauth2-jwt-bearer";
 import { validateUIAudience } from "../shared/utils/permissionValidation";
-import { syncInstitutions } from "./sync/syncInstitutions";
+import { syncAggregatorInstitutionsHandler } from "./sync/syncInstitutions";
 import { AGGREGATOR_INSTITUTIONS_SYNC_CHILD_ROUTE } from "../shared/consts/routes";
 import { getPaginatedAggregatorInstitutionsHandler } from "./getPaginatedAggregatorInstitutionsHandler";
 import {
@@ -25,7 +25,7 @@ router.post(
   AGGREGATOR_INSTITUTIONS_SYNC_CHILD_ROUTE,
   [validateUIAudience],
   requiredScopes(UiUserPermissions.SYNC_AGGREGATOR_INSTITUTIONS),
-  syncInstitutions as RequestHandler,
+  syncAggregatorInstitutionsHandler as RequestHandler,
 );
 
 export const getPaginatedAggregatorInstitutionsQueryParamValidator =
