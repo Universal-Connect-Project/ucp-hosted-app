@@ -1,0 +1,176 @@
+import { decode, JwtPayload } from "jsonwebtoken";
+import os from "os";
+import path from "path";
+import fs from "fs";
+
+const fetchNewToken = async ({
+  audience,
+  clientId,
+  clientSecret,
+  domain,
+}: {
+  audience: string;
+  clientId: string;
+  clientSecret: string;
+  domain: string;
+}) => {
+  const response = await fetch(`https://${domain}/oauth/token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      client_id: clientId,
+      client_secret: clientSecret,
+      audience,
+      grant_type: "client_credentials",
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Auth0 token request failed: ${response.statusText}`);
+  }
+
+  const data = (await response.json()) as {
+    access_token: string;
+    expires_in: number;
+  };
+  const expiresInMs = data.expires_in * 1000;
+
+  const accessToken = data.access_token;
+
+  return { accessToken, expiresInMs };
+};
+
+const getAvailableToken = async ({
+  getFromCache,
+  localToken,
+  tokenFilePath,
+}: {
+  audience: string;
+  domain: string;
+  getFromCache: () => Promise<string | null>;
+  localToken: string | null;
+  tokenFilePath: string;
+}) => {
+  const getTokenIfUnexpired = (token: string | null) => {
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const { exp } = decode(token, { json: true }) as JwtPayload;
+
+      const oneSecondInMs = 1000;
+
+      const willTokenExpireSoon =
+        !exp || Date.now() >= exp * oneSecondInMs - 60000;
+
+      if (willTokenExpireSoon) {
+        return null;
+      }
+
+      return token;
+    } catch (_error) {
+      return null;
+    }
+  };
+
+  const tokenGetters = [
+    () => localToken,
+    () => {
+      try {
+        return fs.readFileSync(tokenFilePath, "utf8");
+      } catch {
+        return null;
+      }
+    },
+    getFromCache,
+  ];
+
+  for (const getToken of tokenGetters) {
+    const token = await getToken();
+    const validToken = getTokenIfUnexpired(token);
+
+    if (validToken) {
+      localToken = validToken;
+      return validToken;
+    }
+  }
+
+  return null;
+};
+
+export const createM2MTokenGetter = ({
+  audience,
+  clientId,
+  clientSecret,
+  fileName,
+  getFromCache,
+  domain,
+  setInCache,
+}: {
+  audience: string;
+  clientId: string;
+  clientSecret: string;
+  domain: string;
+  fileName: string;
+  getFromCache: () => Promise<string | null>;
+  setInCache: (tokenData: { expireIn: number; token: string }) => Promise<void>;
+}) => {
+  let localToken: string | null = null;
+
+  const clearLocalToken = () => {
+    localToken = null;
+  };
+
+  const tokenFileName: string = `${domain}-${audience}-${fileName}.txt`;
+  const tokenFilePath: string = path.join(os.tmpdir(), tokenFileName);
+
+  const storeTokenEverywhere = async ({
+    token,
+    expiresInMs,
+  }: {
+    token: string;
+    expiresInMs: number;
+  }) => {
+    localToken = token;
+
+    fs.writeFileSync(tokenFilePath, token);
+
+    await setInCache({
+      expireIn: expiresInMs,
+      token,
+    });
+  };
+
+  const get = async (): Promise<string> => {
+    const availableToken = await getAvailableToken({
+      audience,
+      domain,
+      getFromCache,
+      localToken,
+      tokenFilePath,
+    });
+
+    if (availableToken) {
+      return availableToken;
+    }
+
+    const { accessToken: newAccessToken, expiresInMs } = await fetchNewToken({
+      audience,
+      clientId,
+      clientSecret,
+      domain,
+    });
+
+    await storeTokenEverywhere({
+      expiresInMs,
+      token: newAccessToken,
+    });
+
+    return newAccessToken;
+  };
+
+  return { clearLocalToken, get };
+};
