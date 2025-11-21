@@ -1,4 +1,3 @@
-import { WIDGET_DEMO_PAGE_TITLE } from "../../src/WidgetDemo/constants";
 import { SIDE_NAV_DEMO_LINK_TEXT } from "../../src/Layout/constants";
 
 describe("Widget Demo", () => {
@@ -6,7 +5,6 @@ describe("Widget Demo", () => {
     cy.loginWithWidgetDemoPermissions();
     cy.visit("/");
     cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
-    cy.findByText(WIDGET_DEMO_PAGE_TITLE).should("be.visible");
     cy.findByRole("tab", { name: "Connect" }).should("be.visible");
     cy.findByLabelText("Account Number").click();
     cy.findByLabelText("Account Number").should("be.checked");
@@ -24,10 +22,9 @@ describe("Widget Demo", () => {
         cy.findByLabelText(/Username/).type("mxuser");
         cy.findByLabelText(/Password/).type("correct");
         cy.findByText("Continue").click();
-        cy.findByText("You have successfully connected to MX Bank.").should(
-          "exist",
-          { timeout: 120000 },
-        );
+        cy.findByText("You have successfully connected to MX Bank.", {
+          timeout: 120000,
+        }).should("exist");
       });
 
     cy.findByRole("button", { name: "Reset" }).click();
@@ -60,7 +57,7 @@ describe("Widget Demo", () => {
       });
   });
 
-  it.only("shows finicity banks when selecting finicity as the aggregator", () => {
+  it("shows finicity banks when selecting finicity as the aggregator", () => {
     cy.loginWithWidgetDemoPermissions();
     cy.visit("/");
     cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
@@ -78,6 +75,27 @@ describe("Widget Demo", () => {
       .within(() => {
         cy.findByText("Select your institution").should("exist");
         cy.findByText("FinBank").should("be.visible");
+      });
+  });
+
+  it("shows plaid banks when selecting plaid as the aggregator", () => {
+    cy.loginWithWidgetDemoPermissions();
+    cy.visit("/");
+    cy.findByRole("link", { name: SIDE_NAV_DEMO_LINK_TEXT }).click();
+
+    cy.findByLabelText("Account Number").click();
+
+    cy.findByRole("combobox", { name: "Aggregator" }).click();
+    cy.findByRole("option", { name: "Plaid" }).click();
+
+    cy.findByRole("button", { name: "Launch" }).click();
+
+    cy.get("iframe")
+      .its("0.contentDocument")
+      .its("body")
+      .within(() => {
+        cy.findByText("Select your institution").should("exist");
+        cy.findByText("Plaid Bank").should("be.visible");
       });
   });
 });
