@@ -1,5 +1,11 @@
+import fs from "fs";
 import { beforeEach, describe, it } from "vitest";
-import { createM2MTokenHandler } from "./m2mToken";
+import { createM2MTokenHandler, tokenStorageFolderPath } from "./m2mToken";
+import { m2mAccessTokenResponse } from "./test/testData/m2mAccessToken";
+import { server } from "./test/testServer";
+import { http, HttpResponse } from "msw";
+import { FETCH_ACCESS_TOKEN_URL } from "./test/handlers";
+import { createFakeAccessToken } from "./test/createFakeAccessToken";
 
 describe("m2mToken", () => {
   describe("createM2MTokenHandler", () => {
@@ -16,12 +22,48 @@ describe("m2mToken", () => {
       cacheObject["token"] = tokenData.token;
     };
 
-    let m2mTokenHandler: {
-      getToken: () => Promise<string | null>;
-      clearLocalToken: () => void;
+    const clearCache = () => {
+      cacheObject = {};
     };
 
-    beforeEach(() => {
+    let m2mTokenHandler: {
+      clearLocalToken: () => void;
+      getLocalToken: () => string | null;
+      getToken: () => Promise<string | null>;
+      tokenFilePath: string;
+    };
+
+    const clearTokenFiles = () => {
+      if (fs.existsSync(tokenStorageFolderPath)) {
+        fs.rmSync(tokenStorageFolderPath, { recursive: true, force: true });
+      }
+    };
+
+    let validAccessToken: string;
+
+    const prepareTokenSuccess = () => {
+      validAccessToken = createFakeAccessToken({ expiresInSeconds: 120 });
+
+      server.use(
+        http.post(FETCH_ACCESS_TOKEN_URL, () =>
+          HttpResponse.json({
+            access_token: validAccessToken,
+          }),
+        ),
+      );
+    };
+
+    const prepareDifferentToken = () => {
+      server.use(
+        http.post(FETCH_ACCESS_TOKEN_URL, () =>
+          HttpResponse.json({
+            access_token: "junkToken",
+          }),
+        ),
+      );
+    };
+
+    beforeEach(async () => {
       m2mTokenHandler = createM2MTokenHandler({
         audience: "https://api.example.com",
         domain: "example-domain",
@@ -31,10 +73,132 @@ describe("m2mToken", () => {
         getTokenFromCache,
         setTokenInCache,
       });
+
+      clearTokenFiles();
+
+      clearCache();
     });
 
-    it("should fetch a new token when no valid token is available and store it in a local variable, a cache, and a file", async () => {
+    it("should fetch a new token if the first one is junk", async () => {
+      const junkAccessToken = "junkToken";
+
+      server.use(
+        http.post(FETCH_ACCESS_TOKEN_URL, () =>
+          HttpResponse.json({
+            access_token: junkAccessToken,
+          }),
+        ),
+      );
+
+      const firstToken = await m2mTokenHandler.getToken();
+
+      expect(firstToken).toBe(junkAccessToken);
+
+      prepareTokenSuccess();
+
+      const secondToken = await m2mTokenHandler.getToken();
+
+      expect(secondToken).toBe(validAccessToken);
+    });
+
+    it("should fetch a new token when no token is available and store it in a local variable, a cache, and a file", async () => {
+      expect(fs.existsSync(m2mTokenHandler.tokenFilePath)).toBe(false);
+      expect(await getTokenFromCache()).toBeNull();
+
+      expect(m2mTokenHandler.getLocalToken()).toBeNull();
+
       const token = await m2mTokenHandler.getToken();
+
+      expect(token).toBe(m2mAccessTokenResponse.access_token);
+
+      const file = fs.readFileSync(m2mTokenHandler.tokenFilePath, "utf-8");
+
+      expect(file).toEqual(m2mAccessTokenResponse.access_token);
+
+      expect(await getTokenFromCache()).toEqual(
+        m2mAccessTokenResponse.access_token,
+      );
+    });
+
+    it("should fetch a new token if the local token will expire in less than 60 seconds", async () => {
+      const expiredAccessToken = createFakeAccessToken({
+        expiresInSeconds: 59,
+      });
+
+      server.use(
+        http.post(FETCH_ACCESS_TOKEN_URL, () =>
+          HttpResponse.json({
+            access_token: expiredAccessToken,
+          }),
+        ),
+      );
+
+      const firstToken = await m2mTokenHandler.getToken();
+
+      expect(firstToken).toBe(expiredAccessToken);
+
+      const validAccessToken = createFakeAccessToken({ expiresInSeconds: 120 });
+
+      server.use(
+        http.post(FETCH_ACCESS_TOKEN_URL, () =>
+          HttpResponse.json({
+            access_token: validAccessToken,
+          }),
+        ),
+      );
+
+      const secondToken = await m2mTokenHandler.getToken();
+
+      expect(secondToken).toBe(validAccessToken);
+    });
+
+    it("should return the local token if it is available and not expired", async () => {
+      prepareTokenSuccess();
+
+      const firstToken = await m2mTokenHandler.getToken();
+
+      expect(firstToken).toBe(validAccessToken);
+
+      clearTokenFiles();
+      clearCache();
+
+      prepareDifferentToken();
+
+      const secondToken = await m2mTokenHandler.getToken();
+
+      expect(secondToken).toBe(validAccessToken);
+    });
+
+    it("should returns the cached token if it is available and not expired", async () => {
+      prepareTokenSuccess();
+
+      const firstToken = await m2mTokenHandler.getToken();
+      expect(firstToken).toBe(validAccessToken);
+
+      m2mTokenHandler.clearLocalToken();
+      clearTokenFiles();
+
+      prepareDifferentToken();
+
+      const secondToken = await m2mTokenHandler.getToken();
+      expect(secondToken).toBe(validAccessToken);
+    });
+
+    it("should return the file token if it is available and not expired", async () => {
+      prepareTokenSuccess();
+
+      const firstToken = await m2mTokenHandler.getToken();
+
+      expect(firstToken).toBe(validAccessToken);
+
+      m2mTokenHandler.clearLocalToken();
+      clearCache();
+
+      prepareDifferentToken();
+
+      const secondToken = await m2mTokenHandler.getToken();
+
+      expect(secondToken).toBe(validAccessToken);
     });
   });
 });

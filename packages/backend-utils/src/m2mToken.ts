@@ -3,6 +3,8 @@ import path from "path";
 import fs from "fs";
 import sanitize from "sanitize-filename";
 
+export const tokenStorageFolderPath = path.join(__dirname, "tokenStorage");
+
 const fetchNewToken = async ({
   audience,
   clientId,
@@ -127,15 +129,15 @@ export const createM2MTokenHandler = ({
     localToken = null;
   };
 
-  const tokenFolderPath = path.join(__dirname, "tokenStorage");
-  if (!fs.existsSync(tokenFolderPath)) {
-    fs.mkdirSync(tokenFolderPath);
-  }
+  const getLocalToken = () => localToken;
 
   const tokenFileName: string = sanitize(
-    `${domain}-${audience}-${fileName}.txt`,
+    `${domain}-${audience}-${clientId}-${fileName}.txt`,
   );
-  const tokenFilePath: string = path.join(tokenFolderPath, tokenFileName);
+  const tokenFilePath: string = path.join(
+    tokenStorageFolderPath,
+    tokenFileName,
+  );
 
   const storeTokenEverywhere = async ({
     token,
@@ -145,6 +147,10 @@ export const createM2MTokenHandler = ({
     expiresInMs: number;
   }) => {
     localToken = token;
+
+    if (!fs.existsSync(tokenStorageFolderPath)) {
+      fs.mkdirSync(tokenStorageFolderPath, { recursive: true });
+    }
 
     fs.writeFileSync(tokenFilePath, token);
 
@@ -182,5 +188,5 @@ export const createM2MTokenHandler = ({
     return newAccessToken;
   };
 
-  return { clearLocalToken, getToken };
+  return { clearLocalToken, getLocalToken, getToken, tokenFilePath };
 };
