@@ -37,14 +37,12 @@ describe("Connect", () => {
     await userEvent.click(
       screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
     );
-    await waitFor(() => {
-      const iframe = screen.getByTitle(WIDGET_DEMO_IFRAME_TITLE);
-      expect(iframe).toBeInTheDocument();
-      expect(iframe).toHaveAttribute(
-        "src",
-        expect.stringContaining("sophtron"),
-      );
-    });
+    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
+    expect(iframe).toBeInTheDocument();
+    expect(iframe).toHaveAttribute(
+      "src",
+      "http://localhost:8080/widget?token=abc123-def456-789",
+    );
   });
 
   it("dispatches addConnection on successful member connection", async () => {

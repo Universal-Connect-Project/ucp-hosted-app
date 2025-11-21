@@ -13,6 +13,9 @@ import {
   LAUNCH_BUTTON_TEXT,
   WIDGET_DEMO_IFRAME_TITLE,
 } from "./constants";
+import { server } from "../shared/test/testServer";
+import { http, HttpResponse } from "msw";
+import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 
 describe("WidgetConfiguration", () => {
   it("renders the initial configuration form", async () => {
@@ -59,6 +62,18 @@ describe("WidgetConfiguration", () => {
   });
 
   it("calls onSubmit with the correct data when form is valid", async () => {
+    let requestBody: Record<string, unknown> | undefined;
+    const responseData = {
+      widgetUrl: "http://localhost:8080/widget?token=abc123-def456-789",
+    };
+
+    server.use(
+      http.post(`${WIDGET_DEMO_BASE_URL}/widgetUrl`, async ({ request }) => {
+        requestBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(responseData);
+      }),
+    );
+
     render(<Connect />);
     await userEvent.click(
       screen.getByLabelText(supportsJobTypeMap.accountNumber.displayName),
@@ -71,12 +86,16 @@ describe("WidgetConfiguration", () => {
     await userEvent.click(
       screen.getByRole("button", { name: LAUNCH_BUTTON_TEXT }),
     );
-    expect(screen.getByTitle(WIDGET_DEMO_IFRAME_TITLE)).toBeInTheDocument();
-    expect(
-      screen.getByTitle(WIDGET_DEMO_IFRAME_TITLE).getAttribute("src"),
-    ).toContain("sophtron");
-    expect(
-      screen.getByTitle(WIDGET_DEMO_IFRAME_TITLE).getAttribute("src"),
-    ).toContain("accountNumber,transactions");
+    const iframe = await screen.findByTitle(WIDGET_DEMO_IFRAME_TITLE);
+    expect(iframe).toBeInTheDocument();
+    expect(iframe.getAttribute("src")).toBe(responseData.widgetUrl);
+
+    expect(requestBody).toBeDefined();
+    expect(requestBody).toMatchObject({
+      jobTypes: ["accountNumber", "transactions"],
+      aggregatorOverride: "sophtron",
+      targetOrigin: window.location.origin,
+    });
+    expect(requestBody?.userId).toBeDefined();
   });
 });
