@@ -1,7 +1,7 @@
 import { decode, JwtPayload } from "jsonwebtoken";
-import os from "os";
 import path from "path";
 import fs from "fs";
+import sanitize from "sanitize-filename";
 
 const fetchNewToken = async ({
   audience,
@@ -43,13 +43,13 @@ const fetchNewToken = async ({
 };
 
 const getAvailableToken = async ({
-  getFromCache,
+  getTokenFromCache,
   localToken,
   tokenFilePath,
 }: {
   audience: string;
   domain: string;
-  getFromCache: () => Promise<string | null>;
+  getTokenFromCache: () => Promise<string | null>;
   localToken: string | null;
   tokenFilePath: string;
 }) => {
@@ -85,7 +85,7 @@ const getAvailableToken = async ({
         return null;
       }
     },
-    getFromCache,
+    getTokenFromCache,
   ];
 
   for (const getToken of tokenGetters) {
@@ -101,22 +101,25 @@ const getAvailableToken = async ({
   return null;
 };
 
-export const createM2MTokenGetter = ({
+export const createM2MTokenHandler = ({
   audience,
   clientId,
   clientSecret,
   fileName,
-  getFromCache,
+  getTokenFromCache,
   domain,
-  setInCache,
+  setTokenInCache,
 }: {
   audience: string;
   clientId: string;
   clientSecret: string;
   domain: string;
   fileName: string;
-  getFromCache: () => Promise<string | null>;
-  setInCache: (tokenData: { expireIn: number; token: string }) => Promise<void>;
+  getTokenFromCache: () => Promise<string | null>;
+  setTokenInCache: (tokenData: {
+    expireIn: number;
+    token: string;
+  }) => Promise<void>;
 }) => {
   let localToken: string | null = null;
 
@@ -124,8 +127,15 @@ export const createM2MTokenGetter = ({
     localToken = null;
   };
 
-  const tokenFileName: string = `${domain}-${audience}-${fileName}.txt`;
-  const tokenFilePath: string = path.join(os.tmpdir(), tokenFileName);
+  const tokenFolderPath = path.join(__dirname, "tokenStorage");
+  if (!fs.existsSync(tokenFolderPath)) {
+    fs.mkdirSync(tokenFolderPath);
+  }
+
+  const tokenFileName: string = sanitize(
+    `${domain}-${audience}-${fileName}.txt`,
+  );
+  const tokenFilePath: string = path.join(tokenFolderPath, tokenFileName);
 
   const storeTokenEverywhere = async ({
     token,
@@ -138,17 +148,17 @@ export const createM2MTokenGetter = ({
 
     fs.writeFileSync(tokenFilePath, token);
 
-    await setInCache({
+    await setTokenInCache({
       expireIn: expiresInMs,
       token,
     });
   };
 
-  const get = async (): Promise<string> => {
+  const getToken = async (): Promise<string> => {
     const availableToken = await getAvailableToken({
       audience,
       domain,
-      getFromCache,
+      getTokenFromCache,
       localToken,
       tokenFilePath,
     });
@@ -172,5 +182,5 @@ export const createM2MTokenGetter = ({
     return newAccessToken;
   };
 
-  return { clearLocalToken, get };
+  return { clearLocalToken, getToken };
 };

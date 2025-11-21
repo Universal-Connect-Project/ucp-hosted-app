@@ -4,18 +4,20 @@
   "description": "Shared utils for backend specific services",
   "main": "./src/index.ts",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "typescript": "^5.8.3",
     "@types/express": "^4.17.21",
-    "ts-jest": "^29.4.5"
+    "msw": "^2.11.1",
+    "typescript": "^5.8.3",
+    "vitest": "^4.0.12"
   },
   "dependencies": {
     "@repo/shared-utils": "*",
     "express": "^4.21.2",
     "express-oauth2-jwt-bearer": "^1.6.0",
-    "joi": "^17.13.3"
+    "joi": "^17.13.3",
+    "sanitize-filename": "^1.6.3"
   }
 }

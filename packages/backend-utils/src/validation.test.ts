@@ -11,8 +11,9 @@ import {
   createWithRequestBodySchemaValidator,
   createWithRequestParamsSchemaValidator,
 } from "./validation";
-import { NextFunction, request, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const createValidatorTests = ({
   createValidator,
@@ -38,10 +39,10 @@ const createValidatorTests = ({
     beforeEach(() => {
       req = { body: {} };
       res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn(),
       };
-      next = jest.fn();
+      next = vi.fn();
     });
 
     it("should call next() when request body is valid", () => {
@@ -108,9 +109,9 @@ describe("validation", () => {
 
           const res = {} as unknown as Response;
 
-          const next = jest.fn();
+          const next = vi.fn();
 
-          const handler = jest.fn();
+          const handler = vi.fn();
 
           const withValidation = (createWithValidator as Function)(
             Joi.object({
@@ -131,13 +132,13 @@ describe("validation", () => {
           } as unknown as Request;
 
           const res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
+            status: vi.fn().mockReturnThis(),
+            json: vi.fn(),
           } as unknown as Response;
 
-          const next = jest.fn();
+          const next = vi.fn();
 
-          const handler = jest.fn();
+          const handler = vi.fn();
 
           const withValidation = (createWithValidator as Function)(
             Joi.object({
@@ -161,15 +162,15 @@ describe("validation", () => {
 
   describe("validateAggregatorRequestSchema", () => {
     it("should allow a valid timeFrame query parameter", () => {
-      const next = jest.fn();
+      const next = vi.fn();
 
       validateAggregatorRequestSchema(
         {
           query: { timeFrame: "30d" },
         } as unknown as Request,
         {
-          status: jest.fn().mockReturnThis(),
-          json: jest.fn(),
+          status: vi.fn().mockReturnThis(),
+          json: vi.fn(),
         } as unknown as Response,
         next,
       );
@@ -177,10 +178,10 @@ describe("validation", () => {
     });
 
     it("should return 400 for an invalid timeFrame query parameter", () => {
-      const next = jest.fn();
+      const next = vi.fn();
       const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn(),
       } as unknown as Response;
 
       validateAggregatorRequestSchema(
@@ -200,7 +201,7 @@ describe("validation", () => {
 
   describe("validatePerformanceGraphRequestSchema", () => {
     it("should allow a valid timeFrame query parameter", () => {
-      const next = jest.fn();
+      const next = vi.fn();
 
       validatePerformanceGraphRequestSchema(
         {
@@ -211,8 +212,8 @@ describe("validation", () => {
           },
         } as unknown as Request,
         {
-          status: jest.fn().mockReturnThis(),
-          json: jest.fn(),
+          status: vi.fn().mockReturnThis(),
+          json: vi.fn(),
         } as unknown as Response,
         next,
       );
@@ -220,10 +221,10 @@ describe("validation", () => {
     });
 
     it("should return 400 for an invalid timeFrame query parameter", () => {
-      const next = jest.fn();
+      const next = vi.fn();
       const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn(),
       } as unknown as Response;
 
       validatePerformanceGraphRequestSchema(
@@ -241,10 +242,10 @@ describe("validation", () => {
     });
 
     it("should return 400 for an invalid jobTypes query parameter", () => {
-      const next = jest.fn();
+      const next = vi.fn();
       const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn(),
       } as unknown as Response;
 
       validatePerformanceGraphRequestSchema(
