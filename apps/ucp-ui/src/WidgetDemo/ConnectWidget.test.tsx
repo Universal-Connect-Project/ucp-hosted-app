@@ -37,10 +37,13 @@ describe("ConnectWidget", () => {
     expect(iframe).toBeInTheDocument();
   });
 
-  it("renders an error message when token fetch fails", async () => {
+  it("renders an error message when widget URL fetch fails", async () => {
     server.use(
-      http.get(`${WIDGET_DEMO_BASE_URL}/api/token`, () =>
-        HttpResponse.json({ error: "Failed to fetch token" }, { status: 500 }),
+      http.post(`${WIDGET_DEMO_BASE_URL}/widgetUrl`, () =>
+        HttpResponse.json(
+          { error: "Failed to create widget URL" },
+          { status: 500 },
+        ),
       ),
     );
 
@@ -57,8 +60,10 @@ describe("ConnectWidget", () => {
     ).toBeInTheDocument();
 
     server.use(
-      http.get(`${WIDGET_DEMO_BASE_URL}/api/token`, () =>
-        HttpResponse.json({ token: "randomtoken" }),
+      http.post(`${WIDGET_DEMO_BASE_URL}/widgetUrl`, () =>
+        HttpResponse.json({
+          widgetUrl: "http://localhost:8080/widget?token=abc123-def456-789",
+        }),
       ),
     );
 

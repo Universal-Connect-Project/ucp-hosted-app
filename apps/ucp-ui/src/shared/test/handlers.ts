@@ -95,8 +95,10 @@ export const handlers = [
   http.get(AGGREGATOR_DURATION_GRAPH_URL, () =>
     HttpResponse.json(durationGraphData),
   ),
-  http.get(`${WIDGET_DEMO_BASE_URL}/api/token`, () =>
-    HttpResponse.json({ token: "randomtoken" }),
+  http.post(`${WIDGET_DEMO_BASE_URL}/widgetUrl`, () =>
+    HttpResponse.json({
+      widgetUrl: "http://localhost:8080/widget?token=abc123-def456-789",
+    }),
   ),
   http.get(INSTITUTION_SUCCESS_GRAPH_URL, () =>
     HttpResponse.json(successGraphData),

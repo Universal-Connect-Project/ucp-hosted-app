@@ -1,27 +1,37 @@
 import { api } from "../baseApi";
 import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
 
-interface TokenResponse {
-  token: string;
+interface CreateWidgetUrlParams {
+  jobTypes?: string[];
+  userId?: string;
+  targetOrigin?: string;
+  institutionId?: string;
+  connectionId?: string;
+  aggregator?: string;
+  singleAccountSelect?: boolean;
+  aggregatorOverride?: string;
 }
 
-interface TokenParams {
-  userId: string;
+interface CreateWidgetUrlResponse {
+  widgetUrl: string;
 }
 
 export const TOKEN_URL = `${WIDGET_DEMO_BASE_URL}/api/token`;
 
 export const demoApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getDemoToken: builder.query<TokenResponse, TokenParams>({
-      query: ({ userId }) => ({
-        params: { userId },
-        url: TOKEN_URL,
+    createWidgetUrl: builder.query<
+      CreateWidgetUrlResponse,
+      CreateWidgetUrlParams
+    >({
+      query: (body) => ({
+        url: `${WIDGET_DEMO_BASE_URL}/widgetUrl`,
+        method: "POST",
+        body,
       }),
-      keepUnusedDataFor: 0,
     }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetDemoTokenQuery } = demoApi;
+export const { useCreateWidgetUrlQuery } = demoApi;

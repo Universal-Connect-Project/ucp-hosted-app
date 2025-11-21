@@ -1,6 +1,5 @@
 import React from "react";
-import { useGetDemoTokenQuery } from "./api";
-import { WIDGET_DEMO_BASE_URL } from "../shared/constants/environment";
+import { useCreateWidgetUrlQuery } from "./api";
 import { RESET_BUTTON_TEXT } from "./constants";
 import {
   WIDGET_DEMO_ERROR_MESSAGE,
@@ -26,23 +25,27 @@ const ConnectWidget = ({
     return uuidv4();
   }, []);
 
+  const targetOrigin = window.location.origin;
+
   const {
-    data: tokenData,
-    isError: tokenError,
-    isLoading: tokenLoading,
+    data: widgetData,
+    isError: widgetError,
+    isLoading: widgetLoading,
     refetch,
-  } = useGetDemoTokenQuery({
+  } = useCreateWidgetUrlQuery({
+    jobTypes,
     userId,
+    targetOrigin,
+    aggregatorOverride: aggregator,
   });
 
-  const token = tokenData?.token;
-  const targetOrigin = window.location.origin;
+  const widgetUrl = widgetData?.widgetUrl;
 
   return (
     <Stack spacing={4}>
       <div className={styles.iframeContainer} data-testid="demo-component">
-        <PhoneContainer isLoading={tokenLoading}>
-          {tokenError ? (
+        <PhoneContainer isLoading={widgetLoading}>
+          {widgetError ? (
             <div className={`${styles.errorContent} ${styles.phoneContainer}`}>
               <FetchError
                 description={WIDGET_DEMO_ERROR_MESSAGE}
@@ -50,15 +53,15 @@ const ConnectWidget = ({
               />
             </div>
           ) : (
-            <iframe
-              className={styles.phoneContainer}
-              src={`${WIDGET_DEMO_BASE_URL}/widget?jobTypes=${jobTypes.join(
-                ",",
-              )}&userId=${userId}&token=${token}&aggregatorOverride=${aggregator}&targetOrigin=${targetOrigin}`}
-              title={WIDGET_DEMO_IFRAME_TITLE}
-              allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-              sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-            />
+            widgetUrl && (
+              <iframe
+                className={styles.phoneContainer}
+                src={widgetUrl}
+                title={WIDGET_DEMO_IFRAME_TITLE}
+                allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+                sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+              />
+            )
           )}
         </PhoneContainer>
       </div>
