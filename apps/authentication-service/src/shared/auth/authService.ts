@@ -1,59 +1,17 @@
-import { TokenSet } from "auth0";
-
+import { createM2MTokenHandler } from "@repo/backend-utils";
 import envs from "../../config";
-import { ICredentialRequestBody } from "../../shared/auth/authModel";
-import {
-  getCachedToken,
-  getIsTokenExpired,
-  getLocalToken,
-  setCachedToken,
-  setLocalToken,
-} from "../../shared/tokenUtils";
 
 const tokenDomain: string = envs.AUTH0_TOKEN_DOMAIN;
 const audience: string = `https://${tokenDomain}/api/v2/`;
 const clientId: string = envs.AUTH0_CLIENT_ID;
 const clientSecret: string = envs.AUTH0_CLIENT_SECRET;
 
-const fetchAccessToken = async (): Promise<string> => {
-  const body: ICredentialRequestBody = {
-    grant_type: "client_credentials",
-    client_id: clientId,
-    client_secret: clientSecret,
-    audience: audience,
-  };
+const m2mTokenHandler = createM2MTokenHandler({
+  audience,
+  clientId,
+  clientSecret,
+  domain: tokenDomain,
+  fileName: "auth0ManagementApiToken",
+});
 
-  const response: Response = await fetch(`https://${tokenDomain}/oauth/token`, {
-    method: "post",
-    body: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to authenticate using M2M Credentials");
-  }
-
-  const token: string = ((await response.json()) as TokenSet).access_token;
-
-  if (token) {
-    setCachedToken(token);
-    setLocalToken(token);
-  }
-  return Promise.resolve(token);
-};
-
-export const getAccessToken = async (): Promise<string | undefined> => {
-  let currentToken = getLocalToken();
-
-  if (!currentToken || getIsTokenExpired(currentToken)) {
-    currentToken = getCachedToken();
-  }
-
-  if (!currentToken || getIsTokenExpired(currentToken)) {
-    await fetchAccessToken();
-  } else {
-    setLocalToken(currentToken);
-  }
-
-  return Promise.resolve(getLocalToken());
-};
+export const getAccessToken = m2mTokenHandler.getToken;

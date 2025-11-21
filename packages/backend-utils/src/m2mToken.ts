@@ -51,7 +51,7 @@ const getAvailableToken = async ({
 }: {
   audience: string;
   domain: string;
-  getTokenFromCache: () => Promise<string | null>;
+  getTokenFromCache?: () => Promise<string | null>;
   localToken: string | null;
   tokenFilePath: string;
 }) => {
@@ -79,16 +79,19 @@ const getAvailableToken = async ({
   };
 
   const tokenGetters = [
-    () => localToken,
-    () => {
+    async () => localToken,
+    async () => {
       try {
         return fs.readFileSync(tokenFilePath, "utf8");
       } catch {
         return null;
       }
     },
-    getTokenFromCache,
   ];
+
+  if (getTokenFromCache) {
+    tokenGetters.push(getTokenFromCache);
+  }
 
   for (const getToken of tokenGetters) {
     const token = await getToken();
@@ -117,8 +120,8 @@ export const createM2MTokenHandler = ({
   clientSecret: string;
   domain: string;
   fileName: string;
-  getTokenFromCache: () => Promise<string | null>;
-  setTokenInCache: (tokenData: {
+  getTokenFromCache?: () => Promise<string | null>;
+  setTokenInCache?: (tokenData: {
     expireIn: number;
     token: string;
   }) => Promise<void>;
@@ -154,7 +157,7 @@ export const createM2MTokenHandler = ({
 
     fs.writeFileSync(tokenFilePath, token);
 
-    await setTokenInCache({
+    await setTokenInCache?.({
       expireIn: expiresInMs,
       token,
     });
