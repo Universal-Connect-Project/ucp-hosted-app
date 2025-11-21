@@ -19,6 +19,10 @@ describe("m2mToken", () => {
       expireIn: number;
       token: string;
     }) => {
+      if (!tokenData.expireIn) {
+        throw new Error("expireIn is required to set token in cache");
+      }
+
       cacheObject["token"] = tokenData.token;
     };
 
@@ -48,6 +52,7 @@ describe("m2mToken", () => {
         http.post(FETCH_ACCESS_TOKEN_URL, () =>
           HttpResponse.json({
             access_token: validAccessToken,
+            expires_in: 86400,
           }),
         ),
       );
@@ -58,6 +63,7 @@ describe("m2mToken", () => {
         http.post(FETCH_ACCESS_TOKEN_URL, () =>
           HttpResponse.json({
             access_token: "junkToken",
+            expires_in: 86400,
           }),
         ),
       );
@@ -86,6 +92,7 @@ describe("m2mToken", () => {
         http.post(FETCH_ACCESS_TOKEN_URL, () =>
           HttpResponse.json({
             access_token: junkAccessToken,
+            expires_in: 86400,
           }),
         ),
       );
@@ -129,6 +136,7 @@ describe("m2mToken", () => {
         http.post(FETCH_ACCESS_TOKEN_URL, () =>
           HttpResponse.json({
             access_token: expiredAccessToken,
+            expires_in: 59,
           }),
         ),
       );
@@ -143,6 +151,7 @@ describe("m2mToken", () => {
         http.post(FETCH_ACCESS_TOKEN_URL, () =>
           HttpResponse.json({
             access_token: validAccessToken,
+            expires_in: 86400,
           }),
         ),
       );
