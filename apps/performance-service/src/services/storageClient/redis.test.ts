@@ -3,7 +3,7 @@ import {
   get as mockGet,
   set as mockSet,
   keys as mockKeys,
-} from "../../__mocks__/redis";
+} from "../../../__mocks__/redis";
 import {
   del,
   get,

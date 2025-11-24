@@ -32,17 +32,11 @@ describe("m2mToken", () => {
 
     let m2mTokenHandler: {
       clearLocalToken: () => void;
+      clearTokenFiles: () => void;
       getLocalToken: () => string | null;
       getToken: () => Promise<string | null>;
       tokenFilePath: string;
     };
-
-    const clearTokenFiles = () => {
-      if (fs.existsSync(tokenStorageFolderPath)) {
-        fs.rmSync(tokenStorageFolderPath, { recursive: true, force: true });
-      }
-    };
-
     let validAccessToken: string;
 
     const prepareTokenSuccess = () => {
@@ -80,7 +74,7 @@ describe("m2mToken", () => {
         setTokenInCache,
       });
 
-      clearTokenFiles();
+      m2mTokenHandler.clearTokenFiles();
 
       clearCache();
     });
@@ -168,7 +162,7 @@ describe("m2mToken", () => {
 
       expect(firstToken).toBe(validAccessToken);
 
-      clearTokenFiles();
+      m2mTokenHandler.clearTokenFiles();
       clearCache();
 
       prepareDifferentToken();
@@ -185,7 +179,7 @@ describe("m2mToken", () => {
       expect(firstToken).toBe(validAccessToken);
 
       m2mTokenHandler.clearLocalToken();
-      clearTokenFiles();
+      m2mTokenHandler.clearTokenFiles();
 
       prepareDifferentToken();
 

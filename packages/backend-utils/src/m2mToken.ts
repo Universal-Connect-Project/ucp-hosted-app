@@ -142,6 +142,12 @@ export const createM2MTokenHandler = ({
     tokenFileName,
   );
 
+  const clearTokenFiles = () => {
+    if (fs.existsSync(tokenStorageFolderPath)) {
+      fs.rmSync(tokenStorageFolderPath, { recursive: true, force: true });
+    }
+  };
+
   const storeTokenEverywhere = async ({
     token,
     expiresInMs,
@@ -191,5 +197,11 @@ export const createM2MTokenHandler = ({
     return newAccessToken;
   };
 
-  return { clearLocalToken, getLocalToken, getToken, tokenFilePath };
+  return {
+    clearLocalToken,
+    clearTokenFiles,
+    getLocalToken,
+    getToken,
+    tokenFilePath,
+  };
 };

@@ -14,4 +14,4 @@ const m2mTokenHandler = createM2MTokenHandler({
   fileName: "auth0ManagementApiToken",
 });
 
-export const getAccessToken = m2mTokenHandler.getToken;
+export const getManagementAccessToken = m2mTokenHandler.getToken;
