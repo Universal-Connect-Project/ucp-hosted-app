@@ -175,7 +175,7 @@ describe("<Institutions />", () => {
   it("shows a loading state with skeletons before data arrives and while paginating", async () => {
     server.use(
       http.get(INSTITUTION_SERVICE_INSTITUTIONS_URL, async () => {
-        await delay();
+        await delay(100);
 
         return HttpResponse.json(institutionsPage1);
       }),
