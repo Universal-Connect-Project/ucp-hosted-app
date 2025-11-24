@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@vitest/utils": "^4.0.13",
     "msw": "^2.11.1",
     "typescript": "^5.8.3",
     "vitest": "^4.0.12"
