@@ -17,7 +17,6 @@
 // Import commands.js using ES2015 syntax:
 import {
   AUTH0_CLIENT_AUDIENCE,
-  AUTH0_WIDGET_AUDIENCE,
   DefaultPermissions,
   UiClientPermissions,
   UiUserPermissions,
@@ -78,13 +77,8 @@ const authenticateAndStoreToken = ({
 };
 
 before(() => {
-  authenticateAndStoreToken({
-    audience: AUTH0_WIDGET_AUDIENCE,
-    variableName: WIDGET_ACCESS_TOKEN,
-    clientParams: {
-      clientIdString: "WIDGET_CLIENT_ID",
-      clientSecretString: "WIDGET_CLIENT_SECRET",
-    },
+  cy.task("getWidgetM2MToken").then((token) => {
+    Cypress.env(WIDGET_ACCESS_TOKEN, token);
   });
 
   authenticateAndStoreToken({
