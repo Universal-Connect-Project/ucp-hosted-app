@@ -1,5 +1,8 @@
 import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
-import { USER_ACCESS_TOKEN_ENV } from "../shared/constants/accessTokens";
+import {
+  NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
+  USER_ACCESS_TOKEN_ENV,
+} from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { JwtPayload } from "jsonwebtoken";
 import { CachedInstitution } from "../../src/tasks/loadInstitutionsFromJson";
@@ -143,7 +146,7 @@ describe("get cache lists", () => {
     });
     runInvalidPermissionCheck({
       url: cacheListUrl,
-      token_env_var: "NO_WIDGET_PERMISSION_ACCESS_TOKEN",
+      token_env_var: NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
       method: "GET",
     });
   });

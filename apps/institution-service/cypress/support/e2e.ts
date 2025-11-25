@@ -17,6 +17,7 @@
 // Import commands.js using ES2015 syntax:
 import {
   AUTH0_CLIENT_AUDIENCE,
+  AUTH0_WIDGET_AUDIENCE,
   DefaultPermissions,
   UiClientPermissions,
   UiUserPermissions,
@@ -24,6 +25,7 @@ import {
 import { JwtPayload } from "jsonwebtoken";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+  NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
   PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
@@ -91,6 +93,13 @@ before(() => {
     passwordEnvString: "MX_AGGREGATOR_ADMIN_PASSWORD",
     usernameEnvString: "MX_AGGREGATOR_ADMIN_USERNAME",
     variableName: AGGREGATOR_USER_ACCESS_TOKEN_ENV,
+  });
+
+  authenticateAndStoreToken({
+    audience: AUTH0_WIDGET_AUDIENCE,
+    passwordEnvString: "E2E_INSTITUTION_PASSWORD",
+    usernameEnvString: "E2E_INSTITUTION_USERNAME",
+    variableName: NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
   });
 
   cy.task("getWidgetM2MToken").then((token) => {
