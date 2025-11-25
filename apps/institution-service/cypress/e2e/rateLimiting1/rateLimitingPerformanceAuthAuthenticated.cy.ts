@@ -1,8 +1,13 @@
 import { PORT } from "../../../src/shared/const";
 import { PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV } from "../../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
+import { storePerformanceM2MToken } from "../../support/utils";
 
 describe("Rate limit performance auth authenticated", () => {
+  before(() => {
+    return storePerformanceM2MToken();
+  });
+
   it("tests the /performanceAuth/aggregators endpoint limits requests to 500 per minute", () => {
     for (let i = 0; i < 500; i++) {
       cy.request({

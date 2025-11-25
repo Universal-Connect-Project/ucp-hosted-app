@@ -26,7 +26,6 @@ import { JwtPayload } from "jsonwebtoken";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
   WIDGET_AUDIENCE_MISSING_PERMISSIONS_ACCESS_TOKEN_ENV,
-  PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
   WIDGET_ACCESS_TOKEN,
@@ -104,9 +103,5 @@ before(() => {
 
   cy.task("getWidgetM2MToken").then((token) => {
     Cypress.env(WIDGET_ACCESS_TOKEN, token);
-  });
-
-  cy.task("getPerformanceM2MToken").then((token) => {
-    Cypress.env(PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV, token);
   });
 });

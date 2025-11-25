@@ -5,8 +5,13 @@ import {
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 import { expectLooksLikeAggregators } from "../shared/utils/aggregator";
+import { storePerformanceM2MToken } from "../support/utils";
 
 describe("Performance auth endpoints", () => {
+  before(() => {
+    return storePerformanceM2MToken();
+  });
+
   describe("/performanceAuth/aggregators GET", () => {
     it("fails with the wrong authorization", () => {
       cy.request({

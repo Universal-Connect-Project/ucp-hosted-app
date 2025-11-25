@@ -1,8 +1,13 @@
 import { PORT } from "../../../src/shared/const";
 import { PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV } from "../../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
+import { storePerformanceM2MToken } from "../../support/utils";
 
 describe("Rate limit performance auth unauthenticated", () => {
+  before(() => {
+    return storePerformanceM2MToken();
+  });
+
   it("rate limits more quickly if not authorized", () => {
     for (let i = 0; i < 100; i++) {
       cy.request({

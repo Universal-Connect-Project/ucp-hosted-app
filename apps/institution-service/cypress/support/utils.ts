@@ -49,3 +49,9 @@ export const runInvalidPermissionCheck = (
     });
   });
 };
+
+export const storePerformanceM2MToken = () => {
+  cy.task("getPerformanceM2MToken").then((token) => {
+    Cypress.env("PERFORMANCE_SERVICE_ACCESS_TOKEN", token);
+  });
+};
