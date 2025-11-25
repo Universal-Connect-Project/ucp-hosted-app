@@ -28,7 +28,6 @@ import {
   WIDGET_AUDIENCE_MISSING_PERMISSIONS_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
-  WIDGET_ACCESS_TOKEN,
 } from "../shared/constants/accessTokens";
 import "./commands";
 
@@ -99,9 +98,5 @@ before(() => {
     passwordEnvString: "E2E_INSTITUTION_PASSWORD",
     usernameEnvString: "E2E_INSTITUTION_USERNAME",
     variableName: WIDGET_AUDIENCE_MISSING_PERMISSIONS_ACCESS_TOKEN_ENV,
-  });
-
-  cy.task("getWidgetM2MToken").then((token) => {
-    Cypress.env(WIDGET_ACCESS_TOKEN, token);
   });
 });
