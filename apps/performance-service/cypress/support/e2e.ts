@@ -33,39 +33,23 @@ const authenticateAndStoreToken = ({
   passwordEnvString,
   usernameEnvString,
   variableName,
-  clientParams,
 }: {
   audience: string;
   passwordEnvString?: string;
   usernameEnvString?: string;
   variableName: string;
-  clientParams?: {
-    clientIdString: string;
-    clientSecretString: string;
-  };
 }) => {
-  let requestBody = {};
-  if (clientParams) {
-    const { clientIdString, clientSecretString } = clientParams;
-    requestBody = {
-      grant_type: "client_credentials",
-      audience,
-      client_id: Cypress.env(clientIdString) as string,
-      client_secret: Cypress.env(clientSecretString) as string,
-    };
-  } else {
-    requestBody = {
-      audience,
-      client_id: Cypress.env("WEB_UI_CLIENT_ID") as string,
-      grant_type: "password",
-      password: Cypress.env(passwordEnvString) as string,
-      username: Cypress.env(usernameEnvString) as string,
-      scope: [DefaultPermissions, UiClientPermissions, UiUserPermissions]
-        .map((permissions) => Object.values(permissions))
-        .reduce((acc, permissions) => [...acc, ...permissions], [])
-        .join(" "),
-    };
-  }
+  const requestBody = {
+    audience,
+    client_id: Cypress.env("WEB_UI_CLIENT_ID") as string,
+    grant_type: "password",
+    password: Cypress.env(passwordEnvString) as string,
+    username: Cypress.env(usernameEnvString) as string,
+    scope: [DefaultPermissions, UiClientPermissions, UiUserPermissions]
+      .map((permissions) => Object.values(permissions))
+      .reduce((acc, permissions) => [...acc, ...permissions], [])
+      .join(" "),
+  };
 
   cy.request({
     method: "POST",
