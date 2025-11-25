@@ -1,6 +1,6 @@
 import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 import {
-  NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
+  WIDGET_AUDIENCE_MISSING_PERMISSIONS_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
 } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
@@ -146,7 +146,7 @@ describe("get cache lists", () => {
     });
     runInvalidPermissionCheck({
       url: cacheListUrl,
-      token_env_var: NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
+      token_env_var: WIDGET_AUDIENCE_MISSING_PERMISSIONS_ACCESS_TOKEN_ENV,
       method: "GET",
     });
   });
