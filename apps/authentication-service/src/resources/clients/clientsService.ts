@@ -3,7 +3,7 @@ import { Client, ClientCreate, ClientGrant, ClientGrantCreate } from "auth0";
 import { WidgetHostPermissions } from "@repo/shared-utils";
 import envs from "../../config";
 import { ResponseMessage } from "../../resources/clients/clientsModel";
-import { getAccessToken } from "../../shared/auth/authService";
+import { getManagementAccessToken } from "../../shared/utils/getManagementAccessToken";
 import {
   getUserClientId,
   getUserIdFromToken,
@@ -18,7 +18,7 @@ export const createClient = async (
   userToken: string,
   client: ClientCreate,
 ): Promise<Client> => {
-  const token = await getAccessToken();
+  const token = await getManagementAccessToken();
   const userId = await getUserIdFromToken(userToken);
 
   // Check if user already has a client
@@ -58,7 +58,7 @@ export const createClient = async (
 };
 
 export const getClient = async (userToken: string): Promise<Client> => {
-  const token = await getAccessToken();
+  const token = await getManagementAccessToken();
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
   if (!clientId) {
@@ -84,7 +84,7 @@ export const getClient = async (userToken: string): Promise<Client> => {
 export const deleteClient = async (
   userToken: string,
 ): Promise<ResponseMessage> => {
-  const token = await getAccessToken();
+  const token = await getManagementAccessToken();
   const userId = await getUserIdFromToken(userToken);
   const clientId = await getUserClientId(userId);
 
@@ -118,7 +118,7 @@ export const deleteClient = async (
 export const rotateClientSecret = async (
   userToken: string,
 ): Promise<Client> => {
-  const token = await getAccessToken();
+  const token = await getManagementAccessToken();
   const clientId = await getUserClientId(await getUserIdFromToken(userToken));
 
   if (!clientId) {
@@ -144,7 +144,7 @@ export const rotateClientSecret = async (
 export const setClientGrant = async (
   clientGrant: ClientGrantCreate,
 ): Promise<ClientGrant> => {
-  const token = await getAccessToken();
+  const token = await getManagementAccessToken();
 
   return await parseResponse<ClientGrant>(
     await fetch(`https://${authDomain}/api/v2/client-grants`, {

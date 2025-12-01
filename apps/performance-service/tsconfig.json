@@ -10,5 +10,5 @@
       "../../node_modules/@testing-library"
     ]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "__mocks__"]
 }

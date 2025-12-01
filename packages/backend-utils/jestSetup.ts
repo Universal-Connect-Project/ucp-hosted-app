@@ -1,3 +1,0 @@
-beforeAll(async () => {});
-
-afterAll(async () => {});

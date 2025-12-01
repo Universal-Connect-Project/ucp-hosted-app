@@ -1,49 +1,36 @@
+import { createM2MTokenHandler } from "@repo/backend-utils";
 import { AUTH0_PERFORMANCE_SERVICE_AUDIENCE } from "@repo/shared-utils";
+import { get, set } from "../../services/storageClient/redis";
 
-let tokenCache: { token: string; expiresAt: number } | null = null;
+const redisTokenKey = "performanceServiceM2MToken";
 
-export const clearTokenCache = () => {
-  tokenCache = null;
+const setTokenInCache = async ({
+  expireIn,
+  token,
+}: {
+  expireIn: number;
+  token: string;
+}) => {
+  await set(redisTokenKey, { token }, { ex: Math.floor(expireIn / 1000) });
 };
 
-export const getPerformanceServiceAccessToken = async (): Promise<string> => {
-  const now = Date.now();
-
-  if (tokenCache && tokenCache.expiresAt > now) {
-    return tokenCache.token;
-  }
-
-  const response = await fetch(
-    `https://${process.env.AUTH0_DOMAIN!}/oauth/token`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        client_id: process.env.AUTH0_PERFORMANCE_CLIENT_ID!,
-        client_secret: process.env.AUTH0_PERFORMANCE_CLIENT_SECRET!,
-        audience: AUTH0_PERFORMANCE_SERVICE_AUDIENCE,
-        grant_type: "client_credentials",
-      }),
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error(`Auth0 token request failed: ${response.statusText}`);
-  }
-
-  const data = (await response.json()) as {
-    access_token: string;
-    expires_in: number;
-    token_type: string;
-  };
-  const expiresInMs = data.expires_in * 1000;
-
-  tokenCache = {
-    token: data.access_token,
-    expiresAt: now + expiresInMs - 5000, // Refresh 5s before expiry
+const getTokenFromCache = async (): Promise<string | null> => {
+  const { token } = ((await get(redisTokenKey, false)) || {}) as {
+    token: string;
   };
 
-  return data.access_token;
+  return token || null;
 };
+
+export const performanceServiceM2MTokenHandler = createM2MTokenHandler({
+  audience: AUTH0_PERFORMANCE_SERVICE_AUDIENCE,
+  clientId: process.env.AUTH0_PERFORMANCE_CLIENT_ID!,
+  clientSecret: process.env.AUTH0_PERFORMANCE_CLIENT_SECRET!,
+  domain: process.env.AUTH0_DOMAIN!,
+  fileName: "performanceServiceM2MToken",
+  getTokenFromCache,
+  setTokenInCache,
+});
+
+export const getPerformanceServiceAccessToken =
+  performanceServiceM2MTokenHandler.getToken;
