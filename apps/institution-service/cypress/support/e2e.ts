@@ -17,7 +17,6 @@
 // Import commands.js using ES2015 syntax:
 import {
   AUTH0_CLIENT_AUDIENCE,
-  AUTH0_PERFORMANCE_SERVICE_AUDIENCE,
   AUTH0_WIDGET_AUDIENCE,
   DefaultPermissions,
   UiClientPermissions,
@@ -26,11 +25,9 @@ import {
 import { JwtPayload } from "jsonwebtoken";
 import {
   AGGREGATOR_USER_ACCESS_TOKEN_ENV,
-  NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
-  PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV,
+  WIDGET_AUDIENCE_MISSING_PERMISSIONS_ACCESS_TOKEN_ENV,
   SUPER_USER_ACCESS_TOKEN_ENV,
   USER_ACCESS_TOKEN_ENV,
-  WIDGET_ACCESS_TOKEN,
 } from "../shared/constants/accessTokens";
 import "./commands";
 
@@ -39,16 +36,11 @@ const authenticateAndStoreToken = ({
   passwordEnvString,
   usernameEnvString,
   variableName,
-  clientParams,
 }: {
   audience: string;
   passwordEnvString: string;
   usernameEnvString: string;
   variableName: string;
-  clientParams?: {
-    clientIdString: string;
-    clientSecretString: string;
-  };
 }) => {
   const ucpWebUiClientId = Cypress.env("WEB_UI_CLIENT_ID") as string;
 
@@ -61,25 +53,15 @@ const authenticateAndStoreToken = ({
     .reduce((acc, permissions) => [...acc, ...permissions], [])
     .join(" ");
 
-  let requestBody = {};
-  if (clientParams) {
-    const { clientIdString, clientSecretString } = clientParams;
-    requestBody = {
-      grant_type: "client_credentials",
-      audience,
-      client_id: Cypress.env(clientIdString) as string,
-      client_secret: Cypress.env(clientSecretString) as string,
-    };
-  } else {
-    requestBody = {
-      audience,
-      client_id: ucpWebUiClientId,
-      grant_type: "password",
-      password: Cypress.env(passwordEnvString) as string,
-      username: Cypress.env(usernameEnvString) as string,
-      scope: allPermissionsScope,
-    };
-  }
+  const requestBody = {
+    audience,
+    client_id: ucpWebUiClientId,
+    grant_type: "password",
+    password: Cypress.env(passwordEnvString) as string,
+    username: Cypress.env(usernameEnvString) as string,
+    scope: allPermissionsScope,
+  };
+
   cy.request({
     method: "POST",
     url: `https://${Cypress.env("AUTH0_DOMAIN")}/oauth/token`,
@@ -98,13 +80,6 @@ before(() => {
   });
 
   authenticateAndStoreToken({
-    audience: AUTH0_WIDGET_AUDIENCE,
-    passwordEnvString: "E2E_INSTITUTION_PASSWORD",
-    usernameEnvString: "E2E_INSTITUTION_USERNAME",
-    variableName: NO_WIDGET_PERMISSION_ACCESS_TOKEN_ENV,
-  });
-
-  authenticateAndStoreToken({
     audience: AUTH0_CLIENT_AUDIENCE,
     passwordEnvString: "SUPER_ADMIN_PASSWORD",
     usernameEnvString: "SUPER_ADMIN_USERNAME",
@@ -120,23 +95,8 @@ before(() => {
 
   authenticateAndStoreToken({
     audience: AUTH0_WIDGET_AUDIENCE,
-    passwordEnvString: "",
-    usernameEnvString: "",
-    variableName: WIDGET_ACCESS_TOKEN,
-    clientParams: {
-      clientIdString: "WIDGET_CLIENT_ID",
-      clientSecretString: "WIDGET_CLIENT_SECRET",
-    },
-  });
-
-  authenticateAndStoreToken({
-    audience: AUTH0_PERFORMANCE_SERVICE_AUDIENCE,
-    passwordEnvString: "",
-    usernameEnvString: "",
-    variableName: PERFORMANCE_SERVICE_ACCESS_TOKEN_ENV,
-    clientParams: {
-      clientIdString: "PERFORMANCE_SERVICE_CLIENT_ID",
-      clientSecretString: "PERFORMANCE_SERVICE_CLIENT_SECRET",
-    },
+    passwordEnvString: "E2E_INSTITUTION_PASSWORD",
+    usernameEnvString: "E2E_INSTITUTION_USERNAME",
+    variableName: WIDGET_AUDIENCE_MISSING_PERMISSIONS_ACCESS_TOKEN_ENV,
   });
 });

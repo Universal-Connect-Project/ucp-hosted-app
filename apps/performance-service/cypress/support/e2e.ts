@@ -17,7 +17,6 @@
 // Import commands.js using ES2015 syntax:
 import {
   AUTH0_CLIENT_AUDIENCE,
-  AUTH0_WIDGET_AUDIENCE,
   DefaultPermissions,
   UiClientPermissions,
   UiUserPermissions,
@@ -34,39 +33,23 @@ const authenticateAndStoreToken = ({
   passwordEnvString,
   usernameEnvString,
   variableName,
-  clientParams,
 }: {
   audience: string;
   passwordEnvString?: string;
   usernameEnvString?: string;
   variableName: string;
-  clientParams?: {
-    clientIdString: string;
-    clientSecretString: string;
-  };
 }) => {
-  let requestBody = {};
-  if (clientParams) {
-    const { clientIdString, clientSecretString } = clientParams;
-    requestBody = {
-      grant_type: "client_credentials",
-      audience,
-      client_id: Cypress.env(clientIdString) as string,
-      client_secret: Cypress.env(clientSecretString) as string,
-    };
-  } else {
-    requestBody = {
-      audience,
-      client_id: Cypress.env("WEB_UI_CLIENT_ID") as string,
-      grant_type: "password",
-      password: Cypress.env(passwordEnvString) as string,
-      username: Cypress.env(usernameEnvString) as string,
-      scope: [DefaultPermissions, UiClientPermissions, UiUserPermissions]
-        .map((permissions) => Object.values(permissions))
-        .reduce((acc, permissions) => [...acc, ...permissions], [])
-        .join(" "),
-    };
-  }
+  const requestBody = {
+    audience,
+    client_id: Cypress.env("WEB_UI_CLIENT_ID") as string,
+    grant_type: "password",
+    password: Cypress.env(passwordEnvString) as string,
+    username: Cypress.env(usernameEnvString) as string,
+    scope: [DefaultPermissions, UiClientPermissions, UiUserPermissions]
+      .map((permissions) => Object.values(permissions))
+      .reduce((acc, permissions) => [...acc, ...permissions], [])
+      .join(" "),
+  };
 
   cy.request({
     method: "POST",
@@ -78,13 +61,8 @@ const authenticateAndStoreToken = ({
 };
 
 before(() => {
-  authenticateAndStoreToken({
-    audience: AUTH0_WIDGET_AUDIENCE,
-    variableName: WIDGET_ACCESS_TOKEN,
-    clientParams: {
-      clientIdString: "WIDGET_CLIENT_ID",
-      clientSecretString: "WIDGET_CLIENT_SECRET",
-    },
+  cy.task("getWidgetM2MToken").then((token) => {
+    Cypress.env(WIDGET_ACCESS_TOKEN, token);
   });
 
   authenticateAndStoreToken({

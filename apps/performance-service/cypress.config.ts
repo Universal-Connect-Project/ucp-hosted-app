@@ -1,6 +1,8 @@
 import { defineConfig } from "cypress";
 import "./src/dotEnv";
 import { PORT } from "./src/shared/consts/port";
+import { createM2MTokenHandler } from "@repo/backend-utils";
+import { AUTH0_WIDGET_AUDIENCE } from "@repo/shared-utils";
 
 export default defineConfig({
   env: {
@@ -13,7 +15,21 @@ export default defineConfig({
       openMode: 0,
     },
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      const clientId = config.env.WIDGET_CLIENT_ID;
+      const clientSecret = config.env.WIDGET_CLIENT_SECRET;
+      const domain = config.env.AUTH0_DOMAIN;
+
+      const widgetM2MTokenHandler = createM2MTokenHandler({
+        audience: AUTH0_WIDGET_AUDIENCE,
+        clientId,
+        clientSecret,
+        domain,
+        fileName: "performanceServiceWidgetM2ME2E",
+      });
+
+      on("task", {
+        getWidgetM2MToken: widgetM2MTokenHandler.getToken,
+      });
     },
   },
 });

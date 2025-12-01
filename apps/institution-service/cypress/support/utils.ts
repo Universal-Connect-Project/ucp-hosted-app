@@ -1,4 +1,5 @@
 import { InstitutionAttrs } from "../../src/test/testData/institutions";
+import { WIDGET_ACCESS_TOKEN } from "../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../shared/utils/authorization";
 
 interface runTokenInvalidCheckArgs {
@@ -47,5 +48,17 @@ export const runInvalidPermissionCheck = (
     }).then((response: Cypress.Response<{ message: string }>) => {
       expect(response.status).to.eq(403);
     });
+  });
+};
+
+export const storePerformanceM2MToken = () => {
+  cy.task("getPerformanceM2MToken").then((token) => {
+    Cypress.env("PERFORMANCE_SERVICE_ACCESS_TOKEN", token);
+  });
+};
+
+export const storeWidgetM2MToken = () => {
+  cy.task("getWidgetM2MToken").then((token) => {
+    Cypress.env(WIDGET_ACCESS_TOKEN, token);
   });
 };

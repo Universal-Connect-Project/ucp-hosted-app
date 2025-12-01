@@ -2,8 +2,13 @@ import { PORT } from "../../../src/shared/const";
 import { CachedInstitution } from "../../../src/tasks/loadInstitutionsFromJson";
 import { WIDGET_ACCESS_TOKEN } from "../../shared/constants/accessTokens";
 import { createAuthorizationHeader } from "../../shared/utils/authorization";
+import { storeWidgetM2MToken } from "../../support/utils";
 
 describe("Rate Limit cache endpoint", () => {
+  before(() => {
+    storeWidgetM2MToken();
+  });
+
   it("tests the instituion/cacheList endpoint limits requests to 3 per minute", () => {
     for (let i = 0; i < 3; i++) {
       cy.request({
