@@ -46,7 +46,7 @@ const ConnectWidget = ({
       <div className={styles.iframeContainer} data-testid="demo-component">
         <PhoneContainer isLoading={widgetLoading}>
           {widgetError ? (
-            <div className={`${styles.errorContent} ${styles.phoneContainer}`}>
+            <div className={`${styles.errorContent} ${styles.phoneContent}`}>
               <FetchError
                 description={WIDGET_DEMO_ERROR_MESSAGE}
                 refetch={() => void refetch()}
@@ -55,7 +55,7 @@ const ConnectWidget = ({
           ) : (
             widgetUrl && (
               <iframe
-                className={styles.phoneContainer}
+                className={styles.phoneContent}
                 src={widgetUrl}
                 title={WIDGET_DEMO_IFRAME_TITLE}
                 allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
