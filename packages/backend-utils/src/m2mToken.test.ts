@@ -1,6 +1,6 @@
 import fs from "fs";
 import { beforeEach, describe, it } from "vitest";
-import { createM2MTokenHandler, tokenStorageFolderPath } from "./m2mToken";
+import { createM2MTokenHandler } from "./m2mToken";
 import { m2mAccessTokenResponse } from "./test/testData/m2mAccessToken";
 import { server } from "./test/testServer";
 import { http, HttpResponse } from "msw";
