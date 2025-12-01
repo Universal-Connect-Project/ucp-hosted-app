@@ -14,9 +14,14 @@ const PhoneContainer = ({ isLoading, children }: PhoneContainerProps) => {
   return (
     <div>
       <div className={styles.phone}>
-        <SkeletonIfLoading className={styles.phoneScreen} isLoading={isLoading}>
-          {children}
-        </SkeletonIfLoading>
+        <div className={styles.phoneScreen}>
+          <SkeletonIfLoading
+            className={styles.skeletonLoader}
+            isLoading={isLoading}
+          >
+            {children}
+          </SkeletonIfLoading>
+        </div>
 
         <svg
           className={styles.phoneMute}
