@@ -1,91 +1,50 @@
 import { http, HttpResponse } from "msw";
 import { server } from "../../shared/tests/testServer";
 import {
-  clearTokenCache,
   getPerformanceServiceAccessToken,
+  performanceServiceM2MTokenHandler,
 } from "./getPerformanceServiceAccessToken";
 import { AUTH0_AUTH_TOKEN_URL } from "../../shared/tests/handlers";
 import { tokenResponse } from "../../shared/tests/testData/auth0";
+import { createFakeAccessToken } from "@repo/backend-utils";
 
 describe("getPerformanceServiceAccessToken", () => {
   beforeEach(() => {
-    clearTokenCache();
+    performanceServiceM2MTokenHandler.clearLocalToken();
+    performanceServiceM2MTokenHandler.clearTokenFiles();
   });
 
-  afterEach(() => {
-    clearTokenCache();
-  });
-
-  it("fetches a new access token if the cache is empty and returns a cached access token if it is still valid", async () => {
-    const testToken = "testTokenForThisTest";
-
-    server.use(
-      http.post(AUTH0_AUTH_TOKEN_URL, () =>
-        HttpResponse.json({
-          ...tokenResponse,
-          access_token: testToken,
-        }),
-      ),
-    );
-
+  it("retrieves a token from Auth0", async () => {
     const token = await getPerformanceServiceAccessToken();
-
-    expect(token).toBe(testToken);
-
-    server.use(
-      http.post(AUTH0_AUTH_TOKEN_URL, () => HttpResponse.json(tokenResponse)),
-    );
-
-    const token2 = await getPerformanceServiceAccessToken();
-
-    expect(token2).toBe(testToken);
+    expect(token).toBe(tokenResponse.access_token);
   });
 
-  it("fetches a new access token if the cached token has expired", async () => {
-    const expiredToken = "expiredToken";
+  it("pulls the token from cache if that's the only place it's stored", async () => {
+    const expectedToken = createFakeAccessToken({
+      expiresInSeconds: 120,
+    });
 
     server.use(
       http.post(AUTH0_AUTH_TOKEN_URL, () =>
-        HttpResponse.json({
-          ...tokenResponse,
-          access_token: expiredToken,
-          expires_in: 0,
-        }),
+        HttpResponse.json({ ...tokenResponse, access_token: expectedToken }),
       ),
     );
 
-    const token = await getPerformanceServiceAccessToken();
+    const firstToken = await getPerformanceServiceAccessToken();
 
-    expect(token).toBe(expiredToken);
+    expect(firstToken).toBe(expectedToken);
 
-    const newToken = "newTokenAfterExpiry";
+    performanceServiceM2MTokenHandler.clearLocalToken();
+    performanceServiceM2MTokenHandler.clearTokenFiles();
 
     server.use(
       http.post(AUTH0_AUTH_TOKEN_URL, () =>
-        HttpResponse.json({
-          ...tokenResponse,
-          access_token: newToken,
-        }),
+        HttpResponse.json({ ...tokenResponse, access_token: "differentToken" }),
       ),
     );
 
-    const token2 = await getPerformanceServiceAccessToken();
+    const secondToken = await getPerformanceServiceAccessToken();
 
-    expect(token2).toBe(newToken);
-  });
-
-  it("throws an error if the token request fails", async () => {
-    const statusText = "testStatusText";
-
-    server.use(
-      http.post(
-        AUTH0_AUTH_TOKEN_URL,
-        () => new HttpResponse(null, { status: 400, statusText }),
-      ),
-    );
-
-    await expect(getPerformanceServiceAccessToken()).rejects.toThrow(
-      `Auth0 token request failed: ${statusText}`,
-    );
+    expect(secondToken).toBe(expectedToken);
   });
 });

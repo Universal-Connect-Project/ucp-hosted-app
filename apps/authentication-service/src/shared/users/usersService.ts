@@ -2,7 +2,7 @@ import { DefaultPermissions } from "@repo/shared-utils";
 import { JSONApiResponse, UserInfoClient, UserInfoResponse } from "auth0";
 
 import envs from "../../config";
-import { getAccessToken } from "../../shared/auth/authService";
+import { getManagementAccessToken } from "../utils/getManagementAccessToken";
 import { User } from "../../shared/users/usersModel";
 import { parseResponse } from "../../shared/utils";
 
@@ -33,7 +33,7 @@ export const getUserClientId = async (userId: string): Promise<string> => {
 };
 
 export const getUserById = async (userId: string): Promise<User> => {
-  const token = await getAccessToken();
+  const token = await getManagementAccessToken();
   const userIdEncoded = encodeURIComponent(userId);
 
   return await parseResponse<User>(
@@ -52,7 +52,7 @@ export const setUserClientId = async (
   userId: string,
   clientId: string,
 ): Promise<User> => {
-  const token = await getAccessToken();
+  const token = await getManagementAccessToken();
   const userIdEncoded = encodeURIComponent(userId);
   const clientIdEncoded = encodeURIComponent(clientId);
 

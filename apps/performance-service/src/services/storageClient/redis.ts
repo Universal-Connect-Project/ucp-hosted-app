@@ -16,12 +16,14 @@ const redisClient = createClient({
   }),
 });
 
-export const get = async (key: string) => {
+export const get = async (key: string, shouldLogFailure = true) => {
   try {
     const ret = await redisClient.get(key);
     return JSON.parse(`${ret}`) as object;
   } catch {
-    console.error("Failed to get value from Redis");
+    if (shouldLogFailure) {
+      console.error("Failed to get value from Redis");
+    }
   }
 };
 
