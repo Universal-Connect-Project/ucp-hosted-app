@@ -28,6 +28,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@bundled-es-modules/cookie": "^2.0.1",
+    "@bundled-es-modules/statuses": "^1.0.1",
     "husky": "^9.0.11",
     "ts-node": "^10.9.2",
     "turbo": "^2.1.2"
