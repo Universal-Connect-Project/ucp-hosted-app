@@ -53,7 +53,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "lts/Krypton"
+          node-version: 24
           check-latest: true
       - run: npm ci
 

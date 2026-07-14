@@ -37,7 +37,7 @@
   "engines": {
     "node": "20.x"
   },
-  "packageManager": "npm@10.5.0",
+  "packageManager": "npm@11.16.0",
   "workspaces": [
     "apps/*",
     "packages/*"

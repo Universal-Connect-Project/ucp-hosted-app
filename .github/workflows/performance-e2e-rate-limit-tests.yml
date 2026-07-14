@@ -14,7 +14,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: "lts/Krypton"
+          node-version: 24
           check-latest: true
 
       - name: Install dependencies
