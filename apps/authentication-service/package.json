@@ -34,6 +34,8 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "nocache": "^4.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
     "yup": "^1.4.0"
   },
   "devDependencies": {
@@ -52,7 +54,6 @@
     "msw": "2.11.1",
     "prettier": "^3.2.5",
     "ts-jest": "^29.4.5",
-    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   }
