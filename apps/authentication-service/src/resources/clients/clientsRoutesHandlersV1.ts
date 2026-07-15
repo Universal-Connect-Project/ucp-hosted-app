@@ -16,6 +16,8 @@ const handleError = (
   errorMessageCheck: string = "",
   response400Message: string = "Bad request",
 ) => {
+  console.error(error);
+
   if (
     typeof error === "string" &&
     error.toUpperCase() === errorMessageCheck.toUpperCase()
